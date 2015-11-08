@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import me.scarlet.undertailor.util.Font;
-import me.scarlet.undertailor.util.Font.FontData;
-import me.scarlet.undertailor.util.Font.FontData.CharMeta;
+import me.scarlet.undertailor.texts.Font;
+import me.scarlet.undertailor.texts.Font.FontData;
+import me.scarlet.undertailor.texts.Font.FontData.CharMeta;
 import me.scarlet.undertailor.util.Pair;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 

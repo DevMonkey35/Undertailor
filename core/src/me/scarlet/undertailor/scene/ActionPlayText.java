@@ -3,8 +3,8 @@ package me.scarlet.undertailor.scene;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.TimeUtils;
-import me.scarlet.undertailor.util.TextComponent;
-import me.scarlet.undertailor.util.TextComponent.Text;
+import me.scarlet.undertailor.texts.TextComponent;
+import me.scarlet.undertailor.texts.TextComponent.Text;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,9 +1,10 @@
-package me.scarlet.undertailor.util;
+package me.scarlet.undertailor.texts;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.common.base.Preconditions;
-import me.scarlet.undertailor.util.Font.FontData.CharMeta;
+import me.scarlet.undertailor.texts.Font.FontData.CharMeta;
+import me.scarlet.undertailor.util.ConfigurateUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.HashMap;

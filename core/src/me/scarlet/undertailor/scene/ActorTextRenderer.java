@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import me.scarlet.undertailor.manager.FontManager;
-import me.scarlet.undertailor.util.TextComponent.Text;
+import me.scarlet.undertailor.texts.TextComponent.Text;
 
 import java.util.Collection;
 import java.util.HashMap;

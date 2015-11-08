@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import me.scarlet.undertailor.manager.FontManager;
+import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.util.RenderUtil;
 import me.scarlet.undertailor.util.RenderUtil.Rectangle;
-import me.scarlet.undertailor.util.TextComponent.Text;
 
 import java.util.Map.Entry;
 
