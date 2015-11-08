@@ -20,6 +20,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
@@ -27,7 +28,6 @@ allprojects {
 
 project(":desktop") {
     apply plugin: "java"
-
 
     dependencies {
         compile project(":core")
@@ -43,10 +43,13 @@ project(":core") {
     apply plugin: "java"
 
     dependencies {
+        compile "org.luaj:luaj-jse:3.0.1"
+        compile "com.google.guava:guava:19.0-rc2"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+        compile "ninja.leaping.configurate:configurate-json:3.0"
     }
 }
 
