@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Font.FontData;
 import me.scarlet.undertailor.texts.Font.FontData.CharMeta;
+import me.scarlet.undertailor.texts.Style;
+import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.util.Pair;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 
@@ -19,19 +21,19 @@ import java.util.Map.Entry;
 
 public class FontManager {
     
-    public static void write(Batch batch, Font font, String text, int posX, int posY) {
-        write(batch, font, text, posX, posY, 1);
+    public static void write(Batch batch, Font font, String text, Style style, int posX, int posY) {
+        write(batch, font, text, style, posX, posY, 1);
     }
     
-    public static void write(Batch batch, Font font, String text, int posX, int posY, int scale) {
-        write(batch, font, text, posX, posY, scale, 1.0F);
+    public static void write(Batch batch, Font font, String text, Style style, int posX, int posY, int scale) {
+        write(batch, font, text, style, posX, posY, scale, 1.0F);
     }
     
-    public static void write(Batch batch, Font font, String text, int posX, int posY, int scale, float alpha) {
-        write(batch, font, text, posX, posY, scale, alpha, Color.WHITE);
+    public static void write(Batch batch, Font font, String text, Style style, int posX, int posY, int scale, float alpha) {
+        write(batch, font, text, style, posX, posY, scale, alpha, Color.WHITE);
     }
     
-    public static void write(Batch batch, Font font, String text, int posX, int posY, int scale, float alpha, Color color) {
+    public static void write(Batch batch, Font font, String text, Style style, int posX, int posY, int scale, float alpha, Color color) {
         boolean autoEnd = false;
         char[] chars = new char[text.length()];
         text.getChars(0, text.length(), chars, 0);
@@ -48,11 +50,24 @@ public class FontManager {
             }
             
             CharMeta meta = font.getFontData().getCharacterMeta(chara);
-            TextureRegion region = font.getChar(chara);
+            TextureRegion region = new TextureRegion(font.getChar(chara));
             Color used = new Color(color);
             used.a = alpha;
             batch.setColor(used);
-            batch.draw(region, posX + pos + (meta.offX * scale), posY + (meta.offY * scale), 0, 0, region.getRegionWidth(), region.getRegionHeight(), scale, scale, 0);
+            float oX = region.getRegionWidth() / 2.0F;
+            float oY = region.getRegionHeight() / 2.0F;
+            float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
+            float pX = posX + pos + ((meta.offX) * scale) + aX;
+            float pY = posY + ((meta.offY) * scale) + aY;
+            if(style != null) {
+                DisplayMeta dmeta = style.apply(chara);
+                aX = dmeta.offX;
+                aY = dmeta.offY;
+                aScaleX = dmeta.scaleX;
+                aScaleY = dmeta.scaleY;
+            }
+            
+            batch.draw(region, pX + oX, pY + oY, oX, oY, region.getRegionWidth(), region.getRegionHeight(), scale * aScaleX, scale * aScaleY, 0);
             pos += ((region.getRegionWidth() + font.getFontData().getLetterSpacing()) * scale);
         }
         

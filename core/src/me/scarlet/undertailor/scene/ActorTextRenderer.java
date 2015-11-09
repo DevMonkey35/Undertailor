@@ -2,7 +2,7 @@ package me.scarlet.undertailor.scene;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import me.scarlet.undertailor.custom.StackedActor;
 import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 
@@ -11,12 +11,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ActorTextRenderer extends Actor {
+public class ActorTextRenderer extends StackedActor {
     
     public static class TextRendererMeta {
         
-        public int x, y;
-        public TextRendererMeta() {}
+        public int x, y, scale, distanceFromAsterisk, lineDistance;
+        public TextRendererMeta() {
+            this.x = 0;
+            this.y = 0;
+            this.scale = 2;
+            this.lineDistance = 18;
+            this.distanceFromAsterisk = 16;
+        }
+        
+        public TextRendererMeta(int x, int y, int scale, int lineDistance, int distanceFromAsterisk) {
+            this.x = x;
+            this.y = y;
+            this.scale = scale;
+            this.lineDistance = lineDistance;
+            this.distanceFromAsterisk = distanceFromAsterisk;
+        }
     }
     
     protected float alpha[];
@@ -40,6 +54,11 @@ public class ActorTextRenderer extends Actor {
         
         this.setAlpha(1.0F);
         this.setTextAlpha(1.0F);
+    }
+    
+    @Override
+    public boolean allowNextActor() {
+        return false;
     }
     
     @Override
@@ -121,11 +140,17 @@ public class ActorTextRenderer extends Actor {
             if(visibleText) {
                 if(this.getDrawn() != null) {
                     SpriteBatch sbatch = new SpriteBatch();
-                    int x = meta.x;
-                    int y = meta.y;
                     for(Entry<Integer, Text> entry : this.getDrawn().entrySet()) {
                         Text text = entry.getValue();
-                        FontManager.write(sbatch, text.getFont(), text.getText(), x, y, 2, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                        String newText = text.getText().startsWith("*") ? text.getText().substring(1) : text.getText();
+                        int astX = meta.x;
+                        int x = meta.x + (meta.distanceFromAsterisk * meta.scale);
+                        int y = meta.y - ((meta.lineDistance * entry.getKey()) * meta.scale);
+                        if(text.getText().startsWith("*")) {
+                            FontManager.write(sbatch, text.getFont(), "*", text.getStyle(), astX, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                        }
+                        
+                        FontManager.write(sbatch, text.getFont(), newText, text.getStyle(), x, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
                     }
                     
                     sbatch.dispose();

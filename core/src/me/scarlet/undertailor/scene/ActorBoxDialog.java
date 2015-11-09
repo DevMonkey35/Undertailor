@@ -15,21 +15,20 @@ public class ActorBoxDialog extends ActorTextRenderer {
     public static class BoxDialogMeta extends ActorTextRenderer.TextRendererMeta {
         
         public int x2, y2;
-        public int lineDistance; // pixels between lines (by the first character's bottom-left pixel)
         public int asteriskDistance; // pixels between the left border and the beginning asterisk
         public int distanceFromTopBorder; // pixels between top border and first line's bottom-left pixel
-        public int distanceFromLeftBorder; // pixels between left border all lines' left-most pixels
         
         public BoxDialogMeta() {
             this.x = 31; // decides box boundaries instead of text placement
             this.y = 160;
+            this.scale = 2;
             this.x2 = 609;
             this.y2 = 8;
             
             this.lineDistance = 18;
             this.asteriskDistance = 11;
+            this.distanceFromAsterisk = 16;
             this.distanceFromTopBorder = 20;
-            this.distanceFromLeftBorder = 27;
         }
         
         public BoxDialogMeta(int x1, int y1, int x2, int y2) {
@@ -40,12 +39,13 @@ public class ActorBoxDialog extends ActorTextRenderer {
             this.y2 = y2;
         }
         
-        public BoxDialogMeta(int x1, int y1, int x2, int y2, int lineDistance, int asteriskDistance, int distanceFromTopBorder, int distanceFromLeftBorder) {
+        public BoxDialogMeta(int x1, int y1, int x2, int y2, int scale, int lineDistance, int asteriskDistance, int distanceFromTopBorder, int distanceFromAsterisk) {
             this(x1, y1, x2, y2);
+            this.scale = scale;
+            this.distanceFromAsterisk = 16;
             this.lineDistance = lineDistance;
             this.asteriskDistance = asteriskDistance;
             this.distanceFromTopBorder = distanceFromTopBorder;
-            this.distanceFromLeftBorder = distanceFromLeftBorder;
         }
     }
     
@@ -98,11 +98,17 @@ public class ActorBoxDialog extends ActorTextRenderer {
             if(visibleText) {
                 if(this.getDrawn() != null) {
                     SpriteBatch sbatch = new SpriteBatch();
-                    int x = (meta.x + (meta.distanceFromLeftBorder * 2)) + 6;
-                    int y = (meta.y - (meta.distanceFromTopBorder * 2)) - 6;
                     for(Entry<Integer, Text> entry : this.getDrawn().entrySet()) {
                         Text text = entry.getValue();
-                        FontManager.write(sbatch, text.getFont(), text.getText(), text.getText().startsWith("*") ? x - (meta.asteriskDistance * 2): x, y - (entry.getKey() * (meta.lineDistance * 2)), 2, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                        String newText = text.getText().startsWith("*") ? text.getText().substring(1) : text.getText();
+                        int astX = meta.x + 6 + (meta.asteriskDistance * meta.scale);
+                        int x = meta.x + 6 + ((meta.asteriskDistance + meta.distanceFromAsterisk) * meta.scale);
+                        int y = meta.y - 6 - ((meta.distanceFromTopBorder + (meta.lineDistance * entry.getKey())) * meta.scale);
+                        if(text.getText().startsWith("*")) {
+                            FontManager.write(sbatch, text.getFont(), "*", text.getStyle(), astX, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                        }
+                        
+                        FontManager.write(sbatch, text.getFont(), newText, text.getStyle(), x, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
                     }
                     
                     sbatch.dispose();

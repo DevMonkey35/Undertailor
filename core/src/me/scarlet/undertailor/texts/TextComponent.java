@@ -20,17 +20,19 @@ public class TextComponent {
             return new DisplayMeta();
         }
         
-        public float offX, offY, scale, rotation;
+        public float offX, offY, scaleX, scaleY;
         public Color color;
         
-        public DisplayMeta() {}
+        public DisplayMeta() {
+            this(0, 0, 1.0F, 1.0F, Color.WHITE);
+        }
         
-        public DisplayMeta(float offX, float offY, float scale, float rotation, Color color) {
+        public DisplayMeta(float offX, float offY, float scaleX, float scaleY, Color color) {
             this.offX = offX;
             this.offY = offY;
-            this.scale = 1.0F;
-            this.rotation = 0F;
-            this.color = Color.WHITE;
+            this.scaleX = scaleX;
+            this.scaleY = scaleX;
+            this.color = color;
         }
         
     }
@@ -173,10 +175,6 @@ public class TextComponent {
         }
     }
     
-    public static interface Style {
-        public DisplayMeta apply(char character); // called for every letter, including spaces cuz why not
-    }
-    
     private TextComponent parent;
     private String text;
     private Color color;
@@ -189,13 +187,13 @@ public class TextComponent {
         return new TextComponent(text, Color.WHITE, null, font, 5, 0F);
     }
     
-    public TextComponent(String text, Color color, Style style, Font font, Integer speed, float wait) {
+    public TextComponent(String text, Color color, Style style, Font font, Integer speed, Float wait) {
         this.text = text;
         this.color = color == null ? Color.WHITE : color;
+        this.speed = speed == null ? 35 : speed;
+        this.wait = wait == null ? 0.0F : wait;
         this.style = style;
-        this.speed = speed == null ? 5 : speed;
         this.font = font;
-        this.wait = wait;
     }
     
     public String getText() {
