@@ -1,9 +1,11 @@
 package me.scarlet.undertailor.texts;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.google.common.base.Preconditions;
 import me.scarlet.undertailor.texts.Font.FontData.CharMeta;
+import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -15,82 +17,9 @@ import java.util.Set;
 
 public class Font {
     
-    private static final String CHARLIST = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_?!.,:;\"|'`^()[]{}<>+~=-@%#&$*/\\";
+    // private static final String CHARLIST = "";
     
     public static class FontData {
-        
-        public static class Builder {
-            
-            private FontData data;
-            public Builder() {
-                data = new FontData();
-                data.fontName = null;
-                data.charMeta = new HashMap<>();
-                data.globalMeta = null;
-                data.x = 0;
-                data.y = 0;
-                data.pX = 0;
-                data.pY = 0;
-                data.space = 0;
-                data.spacing = 0;
-            }
-            
-            public Builder name(String name) {
-                data.fontName = name;
-                return this;
-            }
-            
-            public Builder gridSizeX(int x) {
-                data.x = x;
-                return this;
-            }
-            
-            public Builder gridSizeY(int y) {
-                data.y = y;
-                return this;
-            }
-            
-            public Builder characterSizeX(int x) {
-                data.pX = x;
-                return this;
-            }
-            
-            public Builder characterSizeY(int y) {
-                data.pY = y;
-                return this;
-            }
-            
-            public Builder letterSpacing(int spacing) {
-                data.spacing = spacing;
-                return this;
-            }
-            
-            public Builder spaceSize(int space) {
-                data.space = space;
-                return this;
-            }
-            
-            public Builder characterMeta(String characters, CharMeta meta) {
-                data.charMeta.put(characters, meta);
-                return this;
-            }
-            
-            public Builder globalMeta(CharMeta meta) {
-                data.globalMeta = meta;
-                return this;
-            }
-            
-            public FontData build() {
-                Preconditions.checkNotNull(data.fontName, "font needs a name");
-                Preconditions.checkArgument(data.x > 0, "grid x must be at least 1");
-                Preconditions.checkArgument(data.y > 0, "grid y must be at least 1");
-                Preconditions.checkArgument(data.pX > 0, "char x must be at least 1");
-                Preconditions.checkArgument(data.pY > 0, "char y must be at least 1");
-                Preconditions.checkArgument(data.spacing > 0, "letter spacing must be at least 1");
-                Preconditions.checkArgument(data.space > 0, "space size must be at least 1");
-                return data;
-            }
-        }
         
         public static class CharMeta {
             
@@ -100,7 +29,7 @@ public class Font {
             
             public static CharMeta fromConfig(ConfigurationNode root) {
                 try {
-                    CharMeta meta = new CharMeta(ConfigurateUtil.processIntArray(root, "fontloader"));
+                    CharMeta meta = new CharMeta(ConfigurateUtil.processIntArray(root));
                     return meta;
                 } catch(RuntimeException e) {
                     e.printStackTrace();
@@ -152,21 +81,18 @@ public class Font {
             }
         }
         
-        public static Builder builder() {
-            return new Builder();
-        }
-        
         public static FontData fromConfig(String name, ConfigurationNode node) {
             FontData data = new FontData();
             ConfigurationNode root = node.getNode("font");
             try {
                 data.fontName = name;
-                data.x = ConfigurateUtil.processInt(root.getNode("gridSizeX"), "fontloader");
-                data.y = ConfigurateUtil.processInt(root.getNode("gridSizeY"), "fontloader");
-                data.pX = ConfigurateUtil.processInt(root.getNode("charSizeX"), "fontloader");
-                data.pY = ConfigurateUtil.processInt(root.getNode("charSizeY"), "fontloader");
-                data.space = ConfigurateUtil.processInt(root.getNode("spaceSize"), "fontloader");
-                data.spacing = ConfigurateUtil.processInt(root.getNode("letterSpacing"), "fontloader");
+                data.x = ConfigurateUtil.processInt(root.getNode("gridSizeX"));
+                data.y = ConfigurateUtil.processInt(root.getNode("gridSizeY"));
+                data.pX = ConfigurateUtil.processInt(root.getNode("charSizeX"));
+                data.pY = ConfigurateUtil.processInt(root.getNode("charSizeY"));
+                data.space = ConfigurateUtil.processInt(root.getNode("spaceSize"));
+                data.spacing = ConfigurateUtil.processInt(root.getNode("letterSpacing"));
+                data.characterList = ConfigurateUtil.processString(root.getNode("charList"));
                 
                 data.globalMeta = CharMeta.fromConfig(root.getNode("globalMeta"));
                 data.charMeta = new HashMap<>();
@@ -183,6 +109,7 @@ public class Font {
         
         private String fontName;
         private CharMeta globalMeta;
+        private String characterList;
         private Map<String, CharMeta> charMeta;
         private int x, y, pX, pY = -1; // grid size, letter size
         private int spacing = -1; // pixels between letters
@@ -244,7 +171,7 @@ public class Font {
         int current = 0;
         for(int iy = 0; iy < data.y; iy++) {
             for(int ix = 0; ix < data.x; ix++) {
-                char currentChar = Font.CHARLIST.charAt(current);
+                char currentChar = data.characterList.charAt(current);
                 CharMeta meta = data.getCharacterMeta(currentChar);
                 TextureRegion region = new TextureRegion(spriteSheet);
                 int height = data.pY;
@@ -258,7 +185,7 @@ public class Font {
                 font.put(currentChar, region);
                 current++;
                 
-                if(current == Font.CHARLIST.length()) {
+                if(current == data.characterList.length()) {
                     break;
                 }
             }
@@ -271,5 +198,66 @@ public class Font {
     
     public TextureRegion getChar(char ch) {
         return font.get(ch);
+    }
+    
+    public void write(Batch batch, String text, Style style, int posX, int posY) {
+        write(batch, text, style, posX, posY, 1);
+    }
+    
+    public void write(Batch batch, String text, Style style, int posX, int posY, int scale) {
+        write(batch, text, style, posX, posY, scale, 1.0F);
+    }
+    
+    public void write(Batch batch, String text, Style style, int posX, int posY, int scale, float alpha) {
+        write(batch, text, style, posX, posY, scale, alpha, Color.WHITE);
+    }
+    
+    public void write(Batch batch, String text, Style style, int posX, int posY, int scale, float alpha, Color color) {
+        char[] chars = new char[text.length()];
+        text.getChars(0, text.length(), chars, 0);
+        int pos = 0;
+        
+        for(char chara : chars) {
+            if(Character.valueOf(' ').compareTo(chara) == 0) {
+                pos += (this.getFontData().getSpaceSize() * scale);
+                continue;
+            }
+            
+            CharMeta meta = this.getFontData().getCharacterMeta(chara);
+            TextureRegion region = new TextureRegion(this.getChar(chara));
+            Color used = new Color(color);
+            used.a = alpha;
+            batch.setColor(used);
+            float oX = region.getRegionWidth() / 2.0F;
+            float oY = region.getRegionHeight() / 2.0F;
+            float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
+            if(style != null) {
+                DisplayMeta dmeta = style.apply(chara);
+                aX = dmeta.offX;
+                aY = dmeta.offY;
+                aScaleX = dmeta.scaleX;
+                aScaleY = dmeta.scaleY;
+            }
+            
+            float pX = posX + pos + ((meta.offX) * scale) + aX;
+            float pY = posY + ((meta.offY) * scale) + aY;
+            
+            batch.draw(region, pX + oX, pY + oY, oX, oY, region.getRegionWidth(), region.getRegionHeight(), scale * aScaleX, scale * aScaleY, 0);
+            pos += ((region.getRegionWidth() + this.getFontData().getLetterSpacing()) * scale);
+        }
+    }
+    
+    public void sheetTest(Batch batch) {
+        int i = 0;
+        int i2 = 0;
+        for(TextureRegion region : font.values()) {
+            int y = 85 + (i2 * 35);
+            batch.draw(region, (20 * i) + 15, y, 0, 0, region.getRegionWidth(), region.getRegionHeight(), 2.0F, 2.0F, 0F);
+            i++;
+            if(i == 15) {
+                i = 0;
+                i2++;
+            }
+        }
     }
 }

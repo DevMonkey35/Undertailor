@@ -3,7 +3,6 @@ package me.scarlet.undertailor.scene;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.util.RenderUtil;
 import me.scarlet.undertailor.util.RenderUtil.Rectangle;
@@ -105,10 +104,10 @@ public class ActorBoxDialog extends ActorTextRenderer {
                         int x = meta.x + 6 + ((meta.asteriskDistance + meta.distanceFromAsterisk) * meta.scale);
                         int y = meta.y - 6 - ((meta.distanceFromTopBorder + (meta.lineDistance * entry.getKey())) * meta.scale);
                         if(text.getText().startsWith("*")) {
-                            FontManager.write(sbatch, text.getFont(), "*", text.getStyle(), astX, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                            text.getFont().write(sbatch, "*", text.getStyle(), astX, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
                         }
                         
-                        FontManager.write(sbatch, text.getFont(), newText, text.getStyle(), x, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                        text.getFont().write(sbatch, newText, text.getStyle(), x, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
                     }
                     
                     sbatch.dispose();

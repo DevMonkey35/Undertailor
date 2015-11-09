@@ -3,7 +3,6 @@ package me.scarlet.undertailor.scene;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import me.scarlet.undertailor.custom.StackedActor;
-import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 
 import java.util.Collection;
@@ -14,7 +13,6 @@ import java.util.Map.Entry;
 public class ActorTextRenderer extends StackedActor {
     
     public static class TextRendererMeta {
-        
         public int x, y, scale, distanceFromAsterisk, lineDistance;
         public TextRendererMeta() {
             this.x = 0;
@@ -36,6 +34,7 @@ public class ActorTextRenderer extends StackedActor {
     protected float alpha[];
     protected float toAlpha[];
     protected float alphaSpeed;
+    protected boolean finished;
     protected boolean removeNext;
     protected TextRendererMeta meta;
     protected Map<Integer, Text> drawn;
@@ -48,6 +47,7 @@ public class ActorTextRenderer extends StackedActor {
         this.visible = false;
         this.visibleText = true;
         this.alphaSpeed = 0.05F;
+        this.finished = false;
         
         this.alpha = new float[3];
         this.toAlpha = new float[3];
@@ -64,6 +64,7 @@ public class ActorTextRenderer extends StackedActor {
     @Override
     public void act(float delta) {
         if(this.hasActions()) {
+            this.setFinished(false);
             ActionPlayText act = (ActionPlayText) this.getActions().get(0);
             boolean finished = act.act(delta);
             if(act.isControlled()) {
@@ -80,7 +81,18 @@ public class ActorTextRenderer extends StackedActor {
                     this.removeAction(act);
                 }
             }
+        } else {
+            this.setFinished(true);
         }
+    }
+    
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
+    
+    private void setFinished(boolean flag) {
+        this.finished = flag;
     }
     
     public Collection<Text> getCurrentText() {
@@ -147,10 +159,10 @@ public class ActorTextRenderer extends StackedActor {
                         int x = meta.x + (meta.distanceFromAsterisk * meta.scale);
                         int y = meta.y - ((meta.lineDistance * entry.getKey()) * meta.scale);
                         if(text.getText().startsWith("*")) {
-                            FontManager.write(sbatch, text.getFont(), "*", text.getStyle(), astX, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                            text.getFont().write(sbatch, "*", text.getStyle(), astX, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
                         }
                         
-                        FontManager.write(sbatch, text.getFont(), newText, text.getStyle(), x, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                        text.getFont().write(sbatch, newText, text.getStyle(), x, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
                     }
                     
                     sbatch.dispose();

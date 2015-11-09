@@ -5,7 +5,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 public class ConfigurateUtil {
     
     // TODO replace runtime ex
-    public static int processInt(ConfigurationNode node, String logTag) throws RuntimeException {
+    public static int processInt(ConfigurationNode node) throws RuntimeException {
         if(node.isVirtual()) {
             throw new RuntimeException("value for node " + pathFromArray(node.getPath()) + " not present");
         } else {
@@ -18,7 +18,7 @@ public class ConfigurateUtil {
         }
     }
     
-    public static int[] processIntArray(ConfigurationNode node, String logTag) throws RuntimeException {
+    public static int[] processIntArray(ConfigurationNode node) throws RuntimeException {
         if(node.isVirtual()) {
             throw new RuntimeException("value for node " + pathFromArray(node.getPath()) + " not present");
         } else {
@@ -31,6 +31,16 @@ public class ConfigurateUtil {
                 throw new RuntimeException("bad value (\"" + str + "\") for node " + pathFromArray(node.getPath()));
             }
         }
+    }
+    
+    public static String processString(ConfigurationNode node) throws RuntimeException {
+        String str = node.getString(null);
+        if(node.isVirtual() || str == null) {
+            throw new RuntimeException("value for node " + pathFromArray(node.getPath()) + " not present");
+        }
+        
+        System.out.println("returned: " + str);
+        return str;
     }
     
     public static String pathFromArray(Object[] path) {
