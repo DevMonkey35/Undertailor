@@ -81,6 +81,10 @@ public class RenderUtil {
     }
     
     public static void drawRectangle(ShapeRenderer renderer, Rectangle rect, float alpha) {
+        if(renderer.isDrawing()) {
+            renderer.end();
+        }
+        
         renderer.setAutoShapeType(true);
         renderer.begin();
         renderer.set(ShapeType.Filled);
