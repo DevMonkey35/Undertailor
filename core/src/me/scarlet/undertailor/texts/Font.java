@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.texts.Font.FontData.CharMeta;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.util.ConfigurateUtil;
@@ -29,11 +30,10 @@ public class Font {
             
             public static CharMeta fromConfig(ConfigurationNode root) {
                 try {
-                    CharMeta meta = new CharMeta(ConfigurateUtil.processIntArray(root));
+                    CharMeta meta = new CharMeta(ConfigurateUtil.processIntArray(root, new Integer[] {0, 0, 0, 0}));
                     return meta;
-                } catch(RuntimeException e) {
-                    e.printStackTrace();
-                    return null;
+                } catch(ConfigurationException e) {
+                    throw e;
                 }
             }
             
@@ -86,13 +86,11 @@ public class Font {
             ConfigurationNode root = node.getNode("font");
             try {
                 data.fontName = name;
-                data.x = ConfigurateUtil.processInt(root.getNode("gridSizeX"));
-                data.y = ConfigurateUtil.processInt(root.getNode("gridSizeY"));
-                data.pX = ConfigurateUtil.processInt(root.getNode("charSizeX"));
-                data.pY = ConfigurateUtil.processInt(root.getNode("charSizeY"));
-                data.space = ConfigurateUtil.processInt(root.getNode("spaceSize"));
-                data.spacing = ConfigurateUtil.processInt(root.getNode("letterSpacing"));
-                data.characterList = ConfigurateUtil.processString(root.getNode("charList"));
+                data.x = ConfigurateUtil.processInt(root.getNode("gridSizeX"), null);
+                data.y = ConfigurateUtil.processInt(root.getNode("gridSizeY"), null);
+                data.space = ConfigurateUtil.processInt(root.getNode("spaceSize"), null);
+                data.spacing = ConfigurateUtil.processInt(root.getNode("letterSpacing"), null);
+                data.characterList = ConfigurateUtil.processString(root.getNode("charList"), null);
                 
                 data.globalMeta = CharMeta.fromConfig(root.getNode("globalMeta"));
                 data.charMeta = new HashMap<>();
@@ -111,7 +109,7 @@ public class Font {
         private CharMeta globalMeta;
         private String characterList;
         private Map<String, CharMeta> charMeta;
-        private int x, y, pX, pY = -1; // grid size, letter size
+        private int x = 1, y = 1; // grid size, letter size
         private int spacing = -1; // pixels between letters
         private int space = -1; // pixels that count as a space
         
@@ -152,14 +150,6 @@ public class Font {
         public int getSpaceSize() {
             return space;
         }
-        
-        public int getLetterSizeX() {
-            return pX;
-        }
-        
-        public int getLetterSizeY() {
-            return pY;
-        }
     }
     
     private FontData data;
@@ -169,19 +159,23 @@ public class Font {
         this.data = data;
         
         int current = 0;
+        int charHeight = (int) (spriteSheet.getHeight() / data.y);
+        int charWidth = (int) (spriteSheet.getWidth() / data.x);
         for(int iy = 0; iy < data.y; iy++) {
             for(int ix = 0; ix < data.x; ix++) {
                 char currentChar = data.characterList.charAt(current);
                 CharMeta meta = data.getCharacterMeta(currentChar);
                 TextureRegion region = new TextureRegion(spriteSheet);
-                int height = data.pY;
-                int width = data.pX;
+                int height = charHeight;
+                int width = charWidth;
+                int wrapY = 0;
                 if(meta != null) {
-                    width = width + meta.boundWrapX;
-                    height = height + meta.boundWrapY;
+                    width = width - meta.boundWrapX;
+                    height = height - meta.boundWrapY;
+                    wrapY = meta.boundWrapY;
                 }
                 
-                region.setRegion(ix * data.pX, iy * data.pY, width, height);
+                region.setRegion(ix * charWidth, (iy * charHeight) + wrapY, width, height);
                 font.put(currentChar, region);
                 current++;
                 
