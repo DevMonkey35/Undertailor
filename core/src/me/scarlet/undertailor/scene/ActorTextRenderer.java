@@ -2,7 +2,7 @@ package me.scarlet.undertailor.scene;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import me.scarlet.undertailor.custom.StackedActor;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ActorTextRenderer extends StackedActor {
+public class ActorTextRenderer extends Actor {
     
     public static class TextRendererMeta {
         public int x, y, scale, distanceFromAsterisk, lineDistance;
@@ -56,9 +56,12 @@ public class ActorTextRenderer extends StackedActor {
         this.setTextAlpha(1.0F);
     }
     
-    @Override
     public boolean allowNextActor() {
         return false;
+    }
+    
+    public boolean removeOnFinish() {
+        return true;
     }
     
     @Override
@@ -86,7 +89,6 @@ public class ActorTextRenderer extends StackedActor {
         }
     }
     
-    @Override
     public boolean isFinished() {
         return finished;
     }

@@ -1,0 +1,19 @@
+{
+    "font": {
+        "gridSizeX": 13,
+        "gridSizeY": 8,
+        "charSizeX": 8,
+        "charSizeY": 12,
+        "letterSpacing": 2,
+        "spaceSize": 8,
+        "globalMeta": [0, 0, 2, 0],
+        "charList": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_?!.,:;\"|'`^()[]{}<>+~=-@%#&$*/\\",
+        
+        "meta": {
+            "*": [0, 0, 0, 0],
+            "WwMm%#&": [0, 0, 1, 0],
+            "gpqy": [0, -3, 2, 0],
+            ".,:;'": [0, 0, 6, 0]
+        }
+    }
+}

@@ -10,6 +10,6 @@ public class DesktopLauncher {
         config.resizable = false;
         config.backgroundFPS = 0;
         config.foregroundFPS = 0;
-        new LwjglApplication(new Undertailor(), config).getGraphics();
+        new LwjglApplication(new Undertailor(), config);
     }
 }

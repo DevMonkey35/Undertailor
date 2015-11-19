@@ -24,36 +24,33 @@
 
 package me.scarlet.undertailor;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
-import me.scarlet.undertailor.scene.ActionPlayText;
-import me.scarlet.undertailor.scene.ActorBoxDialog;
-import me.scarlet.undertailor.util.TextComponent;
-import me.scarlet.undertailor.util.TextComponent.Text;
+import me.scarlet.undertailor.manager.SpriteSheetManager;
+import me.scarlet.undertailor.ui.UIController;
 
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Undertailor extends Game implements ComponentListener {
     
+    public static boolean debug = false;
     public static Undertailor instance;
     
     private long frameCap;
-    private Stage uiStage;
-    private Stage gameStage;
     private FontManager fontManager;
     private AudioManager audioManager;
+    private SpriteSheetManager sheetManager;
+    
+    private static UIController uiController;
     
     public AudioManager getAudioManager() {
         return this.audioManager;
@@ -74,30 +71,24 @@ public class Undertailor extends Game implements ComponentListener {
         Undertailor.instance = this;
         this.frameCap = 0; // refresh rate; 15 is 60fps (1000/60)
         
-        this.uiStage = new Stage(new FitViewport(640, 480)); // dialogue boxes and ui (including all of combat)
-        this.gameStage = new Stage(new FitViewport(640, 480)); // overworld
+        this.sheetManager = new SpriteSheetManager();
         this.audioManager = new AudioManager();
         this.fontManager = new FontManager();
         
+        Undertailor.uiController = new UIController();
+        
         audioManager.loadMusic(new File("music/"), null, false);
         audioManager.loadSounds(new File("sounds/"), null, false);
-        fontManager.loadFonts(new File("sprites/fonts/"));
+        fontManager.loadFonts(new File("fonts/"));
+        sheetManager.loadSprites(new File("sprites/"));
+        
+        /*actor = new Actor();
+        multiStage.getStages().get(1).addActor(actor);*/
+        
         Color cc = Color.BLACK;
         Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
-        
-        // audioManager.getMusic("mus_vsasgore").get().setLooping(true);
-        // audioManager.getMusic("mus_vsasgore").get().play();
-        ActorBoxDialog dia = new ActorBoxDialog(new ActorBoxDialog.BoxDialogMeta());
-        uiStage.addActor(dia);
-        dia.setVisible(true);
-        List<Text> texts = new ArrayList<>();
-        texts.add(new Text(Color.BROWN, null, fontManager.getFont("8bitop"), audioManager.getSound("ds_ovw").get(), 35, 1.0F, new TextComponent("* It's the end.", null, null, null, 5, 0F)));
-        texts.add(new Text(Color.GOLD, null, fontManager.getFont("8bitop"), audioManager.getSound("ds_ovw").get(), 35, 1.0F, new TextComponent("* ... I think.", null, null, null, 5, 0F)));
-        texts.add(new Text(Color.LIME, null, fontManager.getFont("8bitop"), audioManager.getSound("ds_ovw").get(), 35, 1.0F, new TextComponent("* Well, ", null, null, null, 5, 0.7F), new TextComponent("I guess you have time.", null, null, null, 5, 0F)));
-        
-        dia.addAction(new ActionPlayText(dia, texts, true));
     }
-
+    
     @Override
     public void render() {
         long sleepTime = 0;
@@ -110,26 +101,24 @@ public class Undertailor extends Game implements ComponentListener {
             }
         }
         
-        gameStage.act();
-        uiStage.act();
+        uiController.process(Gdx.graphics.getDeltaTime());
+        // multiStage.act(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        gameStage.draw();
-        uiStage.draw();
-        
         SpriteBatch batch = new SpriteBatch();
-        FontManager.write(batch, fontManager.getFont("8bitop"), Gdx.graphics.getFramesPerSecond() + "", 10, 450, 2);
+        uiController.render(batch);
+        // multiStage.draw();
+        
+        batch.begin();
+        fontManager.getFont("8bitop").write(batch, Gdx.graphics.getFramesPerSecond() + "", null, 10, 450, 2);
+        batch.end();
         batch.dispose();
     }
     
     @Override
     public void resize(int width, int height) {
-        gameStage.getViewport().update(width, height);
-        uiStage.getViewport().update(width, height);
     }
     
     public void setStageViewport(Viewport port) {
-        this.uiStage.setViewport(port);
-        this.gameStage.setViewport(port);
     }
 
     @Override
@@ -150,5 +139,16 @@ public class Undertailor extends Game implements ComponentListener {
     @Override
     public void componentHidden(ComponentEvent e) {
         // TODO Auto-generated method stub
+    }
+    
+    public static void debug(String tag, String message) {
+        if(debug) {
+            Gdx.app.setLogLevel(Application.LOG_DEBUG);
+            Gdx.app.debug(tag, message);
+        }
+    }
+    
+    public static UIController getUIController() {
+        return Undertailor.uiController;
     }
 }

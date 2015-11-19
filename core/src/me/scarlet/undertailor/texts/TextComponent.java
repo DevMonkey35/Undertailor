@@ -34,7 +34,6 @@ public class TextComponent {
             this.scaleY = scaleX;
             this.color = color;
         }
-        
     }
     
     public static class Text extends TextComponent {
