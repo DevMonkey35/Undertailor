@@ -5,9 +5,8 @@ import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import java.util.Random;
 
 public class SpasticStyle implements Style {
-
     @Override
-    public DisplayMeta apply(char character) {
+    public DisplayMeta applyCharacter() {
         DisplayMeta meta = new DisplayMeta();
         Random random = new Random();
         float sm = (0.2F * random.nextFloat()) - 0.1F;

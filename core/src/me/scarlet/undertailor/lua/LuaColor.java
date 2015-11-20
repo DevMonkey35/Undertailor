@@ -9,8 +9,9 @@ public class LuaColor extends LuaValue {
     public static final String TYPENAME = "gdx-color";
     public static LuaValue METATABLE;
     
-    public static void checkcolor(LuaValue value) {
+    public static LuaColor checkcolor(LuaValue value) {
         if(!value.typename().equals(LuaColor.TYPENAME)) throw new LuaError("bad argument: expected a " + LuaColor.TYPENAME + "; got " + value.typename());
+        return (LuaColor) value;
     }
     
     private Color color;

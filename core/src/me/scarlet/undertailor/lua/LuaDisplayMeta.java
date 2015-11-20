@@ -14,9 +14,13 @@ public class LuaDisplayMeta extends LuaValue {
     public static LuaValue METATABLE;
     
     public static void checkDisplayMeta(LuaValue value) {
-        if(!value.typename().equals(LuaDisplayMeta.TYPENAME)) {
+        if(!isDisplayMeta(value)) {
             throw new LuaError("bad argument: expected a " + LuaDisplayMeta.TYPENAME + "; got " + value.typename());
         }
+    }
+    
+    public static boolean isDisplayMeta(LuaValue value) {
+        return value.typename().equals(LuaDisplayMeta.TYPENAME);
     }
     
     static class _getPositionOffsets extends VarArgFunction {

@@ -71,7 +71,6 @@ public class ColorsLib extends TwoArgFunction {
         colors.set("fromRGB", new _fromRGB());
         Colors.getColors().entries().forEach(entry -> {
             presets.set(entry.key.toUpperCase(), new LuaColor(entry.value));
-            System.out.println("registered color " + entry.key);
         });
         
         colors.set("presets", presets);

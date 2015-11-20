@@ -13,6 +13,10 @@ public class LuaTextComponent extends LuaValue {
         this.component = component;
     }
     
+    public TextComponent getTextComponent() {
+        return this.component;
+    }
+    
     @Override
     public int type() {
         return LuaValue.TVALUE;

@@ -226,7 +226,7 @@ public class Font {
             float oY = region.getRegionHeight() / 2.0F;
             float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
             if(style != null) {
-                DisplayMeta dmeta = style.apply(chara);
+                DisplayMeta dmeta = style.applyCharacter();
                 aX = dmeta.offX;
                 aY = dmeta.offY;
                 aScaleX = dmeta.scaleX;
