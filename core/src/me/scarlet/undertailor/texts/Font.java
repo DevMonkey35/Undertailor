@@ -1,5 +1,6 @@
 package me.scarlet.undertailor.texts;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -207,11 +208,21 @@ public class Font {
     }
     
     public void write(Batch batch, String text, Style style, int posX, int posY, int scale, float alpha, Color color) {
+        if(text.trim().isEmpty()) {
+            return;
+        }
+        
         char[] chars = new char[text.length()];
         text.getChars(0, text.length(), chars, 0);
         int pos = 0;
         
-        for(char chara : chars) {
+        //for(char chara : chars) {
+        if(style != null) {
+            style.onNextTextRender(Gdx.graphics.getDeltaTime());
+        }
+        
+        for(int i = 0; i < chars.length; i++) {
+            char chara = chars[i];
             if(Character.valueOf(' ').compareTo(chara) == 0) {
                 pos += (this.getFontData().getSpaceSize() * scale);
                 continue;
@@ -226,15 +237,17 @@ public class Font {
             float oY = region.getRegionHeight() / 2.0F;
             float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
             if(style != null) {
-                DisplayMeta dmeta = style.applyCharacter();
-                aX = dmeta.offX;
-                aY = dmeta.offY;
-                aScaleX = dmeta.scaleX;
-                aScaleY = dmeta.scaleY;
+                DisplayMeta dmeta = style.applyCharacter(i, text.replaceAll(" ", "").length());
+                if(dmeta != null) {
+                    aX = dmeta.offX;
+                    aY = dmeta.offY;
+                    aScaleX = dmeta.scaleX;
+                    aScaleY = dmeta.scaleY;
+                }
             }
             
-            float pX = posX + pos + ((meta.offX) * scale) + aX;
-            float pY = posY + ((meta.offY) * scale) + aY;
+            float pX = posX + pos + ((meta.offX) * scale) + (scale * aX);
+            float pY = posY + ((meta.offY) * scale) + (scale * aY);
             
             batch.draw(region, pX + oX, pY + oY, oX, oY, region.getRegionWidth(), region.getRegionHeight(), scale * aScaleX, scale * aScaleY, 0);
             pos += ((region.getRegionWidth() + this.getFontData().getLetterSpacing()) * scale);

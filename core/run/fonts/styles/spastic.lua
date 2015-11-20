@@ -1,5 +1,13 @@
+-- changeable variables
+local shakeDistance = 0.5   -- how far a character is allowed to move from its origin point
+local maxScaleOffset = 0.1  -- how much larger/smaller a character can get
+
+-- actual code
 function applyCharacter()
-    offset = (0.2 * text.randomDouble()) - 0.1
-    scale = 1.0 + offset
-    return text.newDisplayMeta(0, 0, scale, scale)
+    offX = (text.randomDouble() * shakeDistance * 2) - shakeDistance
+    offY = (text.randomDouble() * shakeDistance * 2) - shakeDistance
+    offScaleX = ((maxScaleOffset * 2) * text.randomDouble()) - maxScaleOffset
+    offScaleY = ((maxScaleOffset * 2) * text.randomDouble()) - maxScaleOffset
+    
+    return text.newDisplayMeta(offX, offY, 1.0 + offScaleX, 1.0 + offScaleY)
 end
