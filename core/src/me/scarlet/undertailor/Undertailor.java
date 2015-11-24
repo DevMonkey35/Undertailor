@@ -43,6 +43,7 @@ import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
+import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.ui.UIController;
 import org.luaj.vm2.Globals;
@@ -140,8 +141,17 @@ public class Undertailor extends ApplicationAdapter {
         
         drawBatch.setProjectionMatrix(uiViewport.getCamera().combined);
         drawBatch.begin();
-        fontManager.getFont("8bitop").write(drawBatch, Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
-        writtenText.getFont().write(drawBatch, writtenText, 10, 410);
+        /*
+        Font bitop = fontManager.getFont("8bitop");
+        Font aster = fontManager.getFont("aster");
+        bitop.write(drawBatch, Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
+        bitop.write(drawBatch, "Tits mcgee.", null, null, 10, 250, 1);
+        aster.write(drawBatch, "Ah, that's much better.", null, null, 10, 410, 2);
+        aster.write(drawBatch, "You wouldn't happen to know where", null, null, 10, 370, 1);
+        aster.write(drawBatch, "Sans is, would you?", null, null, 10, 330, 2);
+        //fontManager.getFont("aster").write(drawBatch, "nopqrstuvwxyz", null, null, 10, 290, 2);
+        //writtenText.getFont().write(drawBatch, writtenText, 10, 410);*/
+        sheetManager.getSpriteSheet("aster").sheetTest(drawBatch);
         drawBatch.end();
     }
     

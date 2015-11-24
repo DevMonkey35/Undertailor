@@ -54,15 +54,33 @@ public class ConfigurateUtil {
                 return toPrimitiveArray(defaultt);
             }
         } else {
+            return toPrimitiveArray(processIntegerArray(node, defaultt));
+        }
+    }
+    
+    public static Integer[] processIntegerArray(ConfigurationNode node, Integer[] defaultt) {
+        if(node.isVirtual()) {
+            if(defaultt == null) {
+                throw new NoRecordedValueException("value for node " + pathFromArray(node.getPath()) + " not present");
+            } else {
+                return defaultt;
+            }
+        } else {
             String str = node.getString();
             try {
-                Integer[] returned = node.getList(obj -> {
-                    return (int) Integer.parseInt(obj.toString());
-                }).toArray(new Integer[0]);
-                debug("configutil", "intarray retrieve at " + pathFromArray(node.getPath()) + " returned " + returned.toString());
-                return toPrimitiveArray(returned);
+                String[] stringList = node.getList(obj -> {
+                    return obj.toString();
+                }).toArray(new String[0]);
+                
+                Integer[] returned = new Integer[stringList.length];
+                for(int i = 0; i < stringList.length; i++) {
+                    returned[i] = stringList[i].equals("-") ? null : Integer.parseInt(stringList[i]);
+                }
+                
+                debug("configutil", "integerarray retrieve at " + pathFromArray(node.getPath()) + " returned " + returned.toString());
+                return returned;
             } catch(NumberFormatException e) {
-                throw new ConfigurationException("bad value (\"" + str + "\") for node " + pathFromArray(node.getPath()));
+                throw new ConfigurationException("bad value (\"" + str == null ? "null" : str + "\") for node " + pathFromArray(node.getPath()));
             }
         }
     }
@@ -77,7 +95,6 @@ public class ConfigurateUtil {
             }
         }
         
-        debug("configutil", "intarray retrieve at " + pathFromArray(node.getPath()) + " returned " + str);
         return str;
     }
     
@@ -93,7 +110,7 @@ public class ConfigurateUtil {
     public static int[] toPrimitiveArray(Integer[] array) {
         int[] returned = new int[array.length];
         for(int i = 0; i < returned.length; i++) {
-            returned[i] = array[i];
+            returned[i] = array[i] == null ? 0 : array[i];
         }
         
         return returned;

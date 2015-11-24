@@ -3,6 +3,7 @@ package me.scarlet.undertailor.gfx;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.ConfigurationException;
@@ -128,6 +129,22 @@ public class SpriteSheet {
         
         if(image.getHeight() % height != 0) {
             throw new TextureTilingException("Texture width is not divisible by defined height");
+        }
+    }
+    
+    public void sheetTest(Batch batch) {
+        int i = 0;
+        int i2 = 0;
+        for(Sprite sprite : sprites) {
+            int y = 400 - (i2 * 35);
+            //TextureRegion region = sprite.getTextureRegion();
+            sprite.draw(batch, 20 * i + 16, y);
+            //batch.draw(region, (20 * i) + 15, y, 0, 0, region.getRegionWidth(), region.getRegionHeight(), 2.0F, 2.0F, 0F);
+            i++;
+            if(i == 16) {
+                i = 0;
+                i2++;
+            }
         }
     }
 }

@@ -26,39 +26,61 @@ public class Font {
         
         public static class CharMeta {
             
-            public int offX, offY, boundWrapX, boundWrapY;
+            private Integer offX, offY, boundWrapX, boundWrapY;
             
-            public CharMeta() {}
+            public CharMeta() {
+                this.setValues(new Integer[] {null, null, null, null});
+            }
             
             public static CharMeta fromConfig(ConfigurationNode root) {
                 try {
-                    CharMeta meta = new CharMeta(ConfigurateUtil.processIntArray(root, new Integer[] {0, 0, 0, 0}));
+                    CharMeta meta = new CharMeta(ConfigurateUtil.processIntegerArray(root, new Integer[] {null, null, null, null}));
                     return meta;
                 } catch(ConfigurationException e) {
                     throw e;
                 }
             }
             
-            public CharMeta(int[] values) {
+            public CharMeta(Integer[] values) {
                 this.setValues(values);
             }
             
-            public CharMeta(int offX, int offY) {
-                this(offX, offY, 0, 0);
+            public CharMeta(Integer offX, Integer offY) {
+                this(offX, offY, null, null);
             }
             
-            public CharMeta(int offX, int offY, int boundWrapX, int boundWrapY) {
+            public CharMeta(Integer offX, Integer offY, Integer boundWrapX, Integer boundWrapY) {
                 this.offX = offX;
                 this.offY = offY;
                 this.boundWrapX = boundWrapX;
                 this.boundWrapY = boundWrapY;
             }
             
-            public int[] values() {
-                return new int[] {offX, offY, boundWrapX, boundWrapY};
+            public int getOffsetX() {
+                return offX == null ? 0 : offX;
             }
             
-            public void setValues(int[] values) {
+            public int getOffsetY() {
+                return offY == null ? 0 : offY;
+            }
+            
+            public int getBoundWrapX() {
+                return boundWrapX == null ? 0 : boundWrapX;
+            }
+            
+            public int getBoundWrapY() {
+                return boundWrapY == null ? 0 : boundWrapY;
+            }
+            
+            public int[] values() {
+                return new int[] {getOffsetX(), getOffsetY(), getBoundWrapX(), getBoundWrapY()};
+            }
+            
+            public Integer[] rawValues() {
+                return new Integer[] {offX, offY, boundWrapX, boundWrapY};
+            }
+            
+            public void setValues(Integer[] values) {
                 this.offX = values[0];
                 this.offY = values[1];
                 this.boundWrapX = values[2];
@@ -66,11 +88,13 @@ public class Font {
             }
             
             public CharMeta merge(CharMeta otherMeta) {
-                int[] set = new int[4];
-                int[] values = otherMeta.values();
-                for(int i = 0; i < 4; i++) {
-                    if(values[i] != 0) {
+                Integer[] values = otherMeta.rawValues();
+                Integer[] set = new Integer[values.length];
+                for(int i = 0; i < set.length; i++) {
+                    if(values[i] != null) {
                         set[i] = values[i];
+                    } else {
+                        set[i] = this.values()[i];
                     }
                 }
                 
@@ -79,7 +103,7 @@ public class Font {
             
             @Override
             public String toString() {
-                return "[" + offX + ", " + offY + ", " + boundWrapX + ", " + boundWrapY + "]";
+                return "[" + getOffsetX() + ", " + getOffsetY() + ", " + getBoundWrapX() + ", " + getBoundWrapY() + "]";
             }
         }
         
@@ -94,7 +118,12 @@ public class Font {
                 data.spacing = ConfigurateUtil.processInt(root.getNode("letterSpacing"), null);
                 data.characterList = ConfigurateUtil.processString(root.getNode("charList"), null);
                 
-                data.globalMeta = CharMeta.fromConfig(root.getNode("globalMeta"));
+                if(!root.getNode("globalMeta").isVirtual()) {
+                    data.globalMeta = CharMeta.fromConfig(root.getNode("globalMeta"));
+                } else {
+                    data.globalMeta = new CharMeta();
+                }
+                
                 data.charMeta = new HashMap<>();
                 for(Entry<Object, ? extends ConfigurationNode> entry: root.getNode("meta").getChildrenMap().entrySet()) {
                     data.charMeta.put(entry.getKey().toString(), CharMeta.fromConfig(entry.getValue()));
@@ -172,9 +201,9 @@ public class Font {
                 int width = charWidth;
                 int wrapY = 0;
                 if(meta != null) {
-                    width = width - meta.boundWrapX;
-                    height = height - meta.boundWrapY;
-                    wrapY = meta.boundWrapY;
+                    width = width - meta.getBoundWrapX();
+                    wrapY = meta.getBoundWrapY();
+                    height = height - wrapY;
                 }
                 
                 region.setRegion(ix * charWidth, (iy * charHeight) + wrapY, width, height);
@@ -235,8 +264,6 @@ public class Font {
             //System.out.println(color == null ? "null" : color.toString());
             used.a = alpha;
             batch.setColor(used);
-            float oX = region.getRegionWidth() / 2.0F;
-            float oY = region.getRegionHeight() / 2.0F;
             float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
             if(style != null) {
                 DisplayMeta dmeta = style.applyCharacter(i, text.replaceAll(" ", "").length());
@@ -248,11 +275,15 @@ public class Font {
                 }
             }
             
-            float pX = posX + pos + ((meta.offX) * scale) + (scale * aX);
-            float pY = posY + ((meta.offY) * scale) + (scale * aY);
+            float scaleX = scale * aScaleX;
+            float scaleY = scale * aScaleY;
+            float originX = ((region.getRegionWidth()) / 2.0F) * scaleX;
+            float originY = ((region.getRegionHeight()) / 2.0F) * scaleY;
+            float drawPosX = posX + pos + ((meta.getOffsetX() + aX) * scaleX) + originX;
+            float drawPosY = posY + ((meta.getOffsetY() + aY) * scaleY) + originY;
             
-            batch.draw(region, pX + oX, pY + oY, oX, oY, region.getRegionWidth(), region.getRegionHeight(), scale * aScaleX, scale * aScaleY, 0);
-            pos += ((region.getRegionWidth() + this.getFontData().getLetterSpacing()) * scale);
+            batch.draw(region, drawPosX, drawPosY, originX, originY, region.getRegionWidth(), region.getRegionHeight(), scaleX, scaleY, 0);
+            pos += ((region.getRegionWidth() + this.getFontData().getLetterSpacing()) * scaleX);
         }
     }
     
