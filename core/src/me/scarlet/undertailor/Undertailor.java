@@ -25,36 +25,51 @@
 package me.scarlet.undertailor;
 
 import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import me.scarlet.undertailor.lua.LuaText;
+import me.scarlet.undertailor.lua.lib.ColorsLib;
+import me.scarlet.undertailor.lua.lib.GameLib;
+import me.scarlet.undertailor.lua.lib.MathUtilLib;
+import me.scarlet.undertailor.lua.lib.TextLib;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
+import me.scarlet.undertailor.manager.StyleManager;
+import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.ui.UIController;
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.JsePlatform;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.File;
 
-public class Undertailor extends Game implements ComponentListener {
+public class Undertailor extends ApplicationAdapter {
     
-    public static boolean debug = false;
+    public static boolean debug = true;
     public static Undertailor instance;
     
     private long frameCap;
+    private LuaValue libs[];
+    private SpriteBatch drawBatch;
+    
     private FontManager fontManager;
     private AudioManager audioManager;
+    private StyleManager styleManager;
     private SpriteSheetManager sheetManager;
     
-    private static UIController uiController;
+    private UIController uiController;
+    private Viewport uiViewport;
+    private Camera uiCamera;
     
-    public AudioManager getAudioManager() {
-        return this.audioManager;
-    }
+    private Text writtenText;
     
     @Override
     public void pause() {
@@ -69,24 +84,42 @@ public class Undertailor extends Game implements ComponentListener {
     @Override
     public void create() {
         Undertailor.instance = this;
+        if(debug) {
+            Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        }
+        
+        this.drawBatch = new SpriteBatch();
         this.frameCap = 0; // refresh rate; 15 is 60fps (1000/60)
+        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib()};
         
         this.sheetManager = new SpriteSheetManager();
         this.audioManager = new AudioManager();
+        this.styleManager = new StyleManager();
         this.fontManager = new FontManager();
         
-        Undertailor.uiController = new UIController();
+        this.uiController = new UIController();
+        
+        this.uiCamera = new OrthographicCamera(640, 480);
+        this.uiViewport = new FitViewport(640, 480, uiCamera);
+        this.uiCamera.position.set(uiCamera.viewportWidth/2, uiCamera.viewportHeight/2, 0);
+        this.uiCamera.update();
         
         audioManager.loadMusic(new File("music/"), null, false);
         audioManager.loadSounds(new File("sounds/"), null, false);
         fontManager.loadFonts(new File("fonts/"));
         sheetManager.loadSprites(new File("sprites/"));
+        styleManager.loadStyles(new File("fonts/styles"));
         
         /*actor = new Actor();
         multiStage.getStages().get(1).addActor(actor);*/
+        Globals globals = Undertailor.newGlobals();
+        globals.loadfile("scripts/texttest.lua").invoke();
+        writtenText = LuaText.checkText(globals.get("testtext").call()).getText();
         
         Color cc = Color.BLACK;
         Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
+        
+        new DisposerThread().start();
     }
     
     @Override
@@ -102,53 +135,61 @@ public class Undertailor extends Game implements ComponentListener {
         }
         
         uiController.process(Gdx.graphics.getDeltaTime());
-        // multiStage.act(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        SpriteBatch batch = new SpriteBatch();
-        uiController.render(batch);
-        // multiStage.draw();
+        //uiController.render(drawBatch);
         
-        batch.begin();
-        fontManager.getFont("8bitop").write(batch, Gdx.graphics.getFramesPerSecond() + "", null, 10, 450, 2);
-        batch.end();
-        batch.dispose();
+        drawBatch.setProjectionMatrix(uiViewport.getCamera().combined);
+        drawBatch.begin();
+        fontManager.getFont("8bitop").write(drawBatch, Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
+        writtenText.getFont().write(drawBatch, writtenText, 10, 410);
+        drawBatch.end();
     }
     
     @Override
     public void resize(int width, int height) {
-    }
-    
-    public void setStageViewport(Viewport port) {
-    }
-
-    @Override
-    public void componentResized(ComponentEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent e) {
-        // TODO Auto-generated method stub   
-    }
-
-    @Override
-    public void componentShown(ComponentEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void componentHidden(ComponentEvent e) {
-        // TODO Auto-generated method stub
+        this.uiViewport.update(width, height);
+        this.uiCamera.position.set(uiCamera.viewportWidth/2, uiCamera.viewportHeight/2, 0);
+        this.uiCamera.update();
     }
     
     public static void debug(String tag, String message) {
-        if(debug) {
-            Gdx.app.setLogLevel(Application.LOG_DEBUG);
-            Gdx.app.debug(tag, message);
-        }
+        Gdx.app.debug("[DBUG] " + tag, message);
+    }
+    
+    public static void log(String tag, String message) {
+        Gdx.app.log("[INFO] " + tag, message);
+    }
+    
+    public static void error(String tag, String message) {
+        Gdx.app.error("[ERRR] " + tag, message);
+    }
+    
+    public static void warn(String tag, String message) {
+        log("[WARN] " + tag, message);
     }
     
     public static UIController getUIController() {
-        return Undertailor.uiController;
+        return Undertailor.instance.uiController;
+    }
+    
+    public static FontManager getFontManager() {
+        return Undertailor.instance.fontManager;
+    }
+    
+    public static StyleManager getStyleManager() {
+        return Undertailor.instance.styleManager;
+    }
+    
+    public static AudioManager getAudioManager() {
+        return Undertailor.instance.audioManager;
+    }
+    
+    public static Globals newGlobals() {
+        Globals returned = JsePlatform.standardGlobals();
+        for(LuaValue lib : Undertailor.instance.libs) {
+            returned.load(lib);
+        }
+        
+        return returned;
     }
 }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.texts.Font.FontData.CharMeta;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
+import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -195,19 +196,19 @@ public class Font {
         return font.get(ch);
     }
     
-    public void write(Batch batch, String text, Style style, int posX, int posY) {
-        write(batch, text, style, posX, posY, 1);
+    public void write(Batch batch, Text text, int posX, int posY) {
+        write(batch, text.getText(), text.getStyle(), text.getColor(), posX, posY);
     }
     
-    public void write(Batch batch, String text, Style style, int posX, int posY, int scale) {
-        write(batch, text, style, posX, posY, scale, 1.0F);
+    public void write(Batch batch, String text, Style style, Color color, int posX, int posY) {
+        write(batch, text, style, color, posX, posY, 1);
     }
     
-    public void write(Batch batch, String text, Style style, int posX, int posY, int scale, float alpha) {
-        write(batch, text, style, posX, posY, scale, alpha, Color.WHITE);
+    public void write(Batch batch, String text, Style style, Color color, int posX, int posY, int scale) {
+        write(batch, text, style, color, posX, posY, scale, 1.0F);
     }
     
-    public void write(Batch batch, String text, Style style, int posX, int posY, int scale, float alpha, Color color) {
+    public void write(Batch batch, String text, Style style, Color color, int posX, int posY, int scale, float alpha) {
         if(text.trim().isEmpty()) {
             return;
         }
@@ -230,7 +231,8 @@ public class Font {
             
             CharMeta meta = this.getFontData().getCharacterMeta(chara);
             TextureRegion region = new TextureRegion(this.getChar(chara));
-            Color used = new Color(color);
+            Color used = color == null ? Color.WHITE : new Color(color);
+            //System.out.println(color == null ? "null" : color.toString());
             used.a = alpha;
             batch.setColor(used);
             float oX = region.getRegionWidth() / 2.0F;

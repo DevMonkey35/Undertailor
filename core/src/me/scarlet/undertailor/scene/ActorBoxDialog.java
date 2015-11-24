@@ -104,10 +104,10 @@ public class ActorBoxDialog extends ActorTextRenderer {
                         int x = meta.x + 6 + ((meta.asteriskDistance + meta.distanceFromAsterisk) * meta.scale);
                         int y = meta.y - 6 - ((meta.distanceFromTopBorder + (meta.lineDistance * entry.getKey())) * meta.scale);
                         if(text.getText().startsWith("*")) {
-                            text.getFont().write(sbatch, "*", text.getStyle(), astX, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                            text.getFont().write(sbatch, "*", text.getStyle(), text.getColor(), astX, y, meta.scale, parentAlpha * alpha[0] * alpha[1]);
                         }
                         
-                        text.getFont().write(sbatch, newText, text.getStyle(), x, y, meta.scale, parentAlpha * alpha[0] * alpha[1], text.getColor());
+                        text.getFont().write(sbatch, newText, text.getStyle(), text.getColor(), x, y, meta.scale, parentAlpha * alpha[0] * alpha[1]);
                     }
                     
                     sbatch.dispose();

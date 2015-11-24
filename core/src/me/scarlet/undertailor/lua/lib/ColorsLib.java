@@ -12,6 +12,23 @@ import org.luaj.vm2.lib.TwoArgFunction;
 
 public class ColorsLib extends TwoArgFunction {
     
+    @Override
+    public LuaValue call(LuaValue modname, LuaValue env) {
+        LuaTable colors = new LuaTable();
+        LuaTable presets = new LuaTable();
+        colors.set("fromHex", new _fromHex());
+        colors.set("fromRGB", new _fromRGB());
+        Colors.getColors().entries().forEach(entry -> {
+            presets.set(entry.key.toUpperCase(), new LuaColor(entry.value));
+        });
+        
+        colors.set("presets", presets);
+        
+        if(LuaColor.METATABLE == null) LuaColor.METATABLE = LuaValue.tableOf(new LuaValue[] {LuaValue.INDEX, colors});
+        env.set("colors", colors);
+        return colors;
+    }
+    
     static class _fromHex extends OneArgFunction {
         @Override
         public LuaValue call(LuaValue hexstring) {
@@ -19,13 +36,13 @@ public class ColorsLib extends TwoArgFunction {
             String string = hexstring.toString();
             string = string.charAt(0) == '#' ? string.substring(1) : string;
             if(string.length() < 6) {
-                throw new LuaError("bad argument: invalid hex string; must be in the format RRGGBB");
+                throw new LuaError("bad argument: invalid hex string; must be in the format RRGGBB or RRGGBBAA");
             } else {
                 if(string.length() == 6) {
                     string = string + "FF";
                 } else {
                     if(string.length() != 8) {
-                        throw new LuaError("bad argument: invalid hex string; must be in the format RRGGBB");
+                        throw new LuaError("bad argument: invalid hex string; must be in the format RRGGBB or RRGGBBAA");
                     }
                 }
             }
@@ -61,22 +78,5 @@ public class ColorsLib extends TwoArgFunction {
             System.out.println(c.toString());
             return LuaValue.NIL;
         }
-    }
-    
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable colors = new LuaTable();
-        LuaTable presets = new LuaTable();
-        colors.set("fromHex", new _fromHex());
-        colors.set("fromRGB", new _fromRGB());
-        Colors.getColors().entries().forEach(entry -> {
-            presets.set(entry.key.toUpperCase(), new LuaColor(entry.value));
-        });
-        
-        colors.set("presets", presets);
-        
-        if(LuaColor.METATABLE == null) LuaColor.METATABLE = LuaValue.tableOf(new LuaValue[] {LuaValue.INDEX, colors});
-        env.set("colors", colors);
-        return colors;
     }
 }

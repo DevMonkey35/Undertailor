@@ -1,28 +1,34 @@
 package me.scarlet.undertailor.lua;
 
 import com.badlogic.gdx.Gdx;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
+import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LuaStyle extends LuaValue implements Style {
     
     public static final String TYPENAME = "tailor-textstyle";
+    public static LuaValue METATABLE;
     
     public static final String IMPLMETHOD_ONNEXTTEXTRENDER = "onNextTextRender";
     public static final String IMPLMETHOD_APPLYCHARACTER = "applyCharacter";
     public static final String IMPLMETHOD_ONNEWTEXT = "onNewText";
     
-    public static void checkStyle(LuaValue value) {
+    public static LuaStyle checkStyle(LuaValue value) {
         if(!value.typename().equals(LuaStyle.TYPENAME)) {
             throw new LuaError("bad argument: expected " + LuaStyle.TYPENAME + "; got" + value.typename());
         }
+        
+        return (LuaStyle) value;
     }
     
     public static LuaValue invokeStyleFunction(LuaFunction function, int charIndex, int textLength) {
@@ -51,12 +57,22 @@ public class LuaStyle extends LuaValue implements Style {
         return returned;
     }
     
-    private Map<String, LuaFunction> functions;
-    public LuaStyle(LuaValue impl) throws LuaScriptException {
+    private Style style;
+    private File originFile; // only for lua
+    private Map<String, LuaFunction> functions; // only for lua
+    public LuaStyle(File luaFile) throws LuaScriptException {
+        this.originFile = luaFile;
+        
+        Globals impl = Undertailor.newGlobals();
+        impl.loadfile(luaFile.getAbsolutePath()).invoke();
         this.functions = checkImpl(impl);
         if(functions.isEmpty() || !functions.containsKey(IMPLMETHOD_APPLYCHARACTER)) {
             throw new LuaScriptException("lua style implementation did not implement or incorrectly implemented method " + IMPLMETHOD_APPLYCHARACTER);
         }
+    }
+    
+    public LuaStyle(Style style) {
+        this.style = style;
     }
     
     @Override
@@ -70,21 +86,47 @@ public class LuaStyle extends LuaValue implements Style {
     }
     
     @Override
+    public LuaValue getmetatable() {
+        return METATABLE;
+    }
+    
+    @Override
     public DisplayMeta applyCharacter(int charIndex, int textLength) {
-        LuaFunction function = functions.get(IMPLMETHOD_APPLYCHARACTER);
-        if(function != null) {
-            LuaDisplayMeta luameta = (LuaDisplayMeta) invokeStyleFunction(function, charIndex, textLength);
-            return luameta.getDisplayMeta();
+        if(style == null) {
+            LuaFunction function = functions.get(IMPLMETHOD_APPLYCHARACTER);
+            if(function != null) {
+                LuaDisplayMeta luameta = (LuaDisplayMeta) invokeStyleFunction(function, charIndex, textLength);
+                return luameta.getDisplayMeta();
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            return style.applyCharacter(charIndex, textLength);
         }
     }
     
     @Override
     public void onNextTextRender(float delta) {
-        LuaFunction function = functions.get(IMPLMETHOD_ONNEXTTEXTRENDER);
-        if(function != null) {
-            function.call(LuaValue.valueOf(delta));
+        if(style == null) {
+            LuaFunction function = functions.get(IMPLMETHOD_ONNEXTTEXTRENDER);
+            if(function != null) {
+                function.call(LuaValue.valueOf(delta));
+            }
+        } else {
+            style.onNextTextRender(delta);
         }
+    }
+
+    @Override
+    public Style duplicate() {
+        if(style == null) {
+            try {
+                return new LuaStyle(originFile);
+            } catch(LuaScriptException ignore) {}
+        } else {
+            return style.duplicate();
+        }
+        
+        return null;
     }
 }

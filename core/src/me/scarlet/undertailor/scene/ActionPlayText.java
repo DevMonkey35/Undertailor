@@ -7,7 +7,6 @@ import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ActionPlayText extends Action {
     
@@ -64,10 +63,9 @@ public class ActionPlayText extends Action {
                     currentChar += 1;
                 }
                 
-                Optional<Sound> sound = currentText.getCharacterSound();
-                if(sound.isPresent() && currentChar != this.getTextMax(currentText)) {
-                    sound.get().stop();
-                    sound.get().play();
+                Sound sound = currentText.getComponentAtCharacter(currentChar).getSound();
+                if(sound != null && currentChar != this.getTextMax(currentText)) {
+                    sound.play();
                 }
                 
                 this.lastCharacterTime = TimeUtils.millis();

@@ -2,31 +2,32 @@ package me.scarlet.undertailor.manager;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static me.scarlet.undertailor.Undertailor.log;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.utils.GdxRuntimeException;
+import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.util.MusicWrapper;
+import me.scarlet.undertailor.util.SoundWrapper;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class AudioManager {
     
     private List<Map<String, ? extends Object>> soundTables;
-    private float musicVolume, soundFxVolume;
-    private Map<String, Sound> soundFx;
-    private Map<String, Music> music;
+    private float musicVolume, soundVolume;
+    private Map<String, SoundWrapper> soundFx;
+    private Map<String, MusicWrapper> music;
     
     public AudioManager() {
         soundTables = new ArrayList<Map<String, ?>>();
         soundFx = new HashMap<>();
         music = new HashMap<>();
-        soundFxVolume = 1.0F;
+        soundVolume = 1.0F;
         musicVolume = 1.0F;
         
         soundTables.add(soundFx);
@@ -47,22 +48,54 @@ public class AudioManager {
     
     public void setMusicVolume(float volume) {
         this.musicVolume = volume;
+        if(this.musicVolume > 1.0F) {
+            this.musicVolume = 1.0F;
+        }
+        
+        if(this.musicVolume < 0.0F) {
+            this.musicVolume = 0F;
+        }
     }
     
-    public float getSoundEffectsVolume() {
-        return soundFxVolume;
+    public float getSoundVolume() {
+        return soundVolume;
     }
     
-    public void setSoundEffectsVolume(float volume) {
-        this.soundFxVolume = volume;
+    public void setSoundVolume(float volume) {
+        this.soundVolume = volume;
+        if(this.soundVolume > 1.0F) {
+            this.soundVolume = 1.0F;
+        }
+        
+        if(this.soundVolume < 0.0F) {
+            this.soundVolume = 0F;
+        }
     }
     
-    public Optional<Sound> getSound(String name) {
-        return Optional.ofNullable(soundFx.get(name));
+    public Sound getSound(String name) {
+        SoundWrapper wrapper = this.getSoundWrapper(name);
+        if(wrapper != null) {
+            return wrapper.getReference();
+        }
+        
+        return null;
     }
     
-    public Optional<Music> getMusic(String name) {
-        return Optional.ofNullable(music.get(name));
+    public Music getMusic(String name) {
+        MusicWrapper wrapper = this.getMusicWrapper(name);
+        if(wrapper != null) {
+            return wrapper.getReference();
+        }
+        
+        return null;
+    }
+    
+    public SoundWrapper getSoundWrapper(String name) {
+        return soundFx.get(name);
+    }
+    
+    public MusicWrapper getMusicWrapper(String name) {
+        return music.get(name);
     }
     
     @SuppressWarnings("unchecked")
@@ -87,7 +120,7 @@ public class AudioManager {
         checkArgument(dir.isDirectory(), "Not a directory");
         
         Map<String, Object> mapping = (Map<String, Object>) soundTables.get(table);
-        Gdx.app.log("audioman", "scanning directory " + dir.getAbsolutePath() + " for " + (table == 0 ? "sound" : "music"));
+        log("audioman", "scanning directory " + dir.getAbsolutePath() + " for " + (table == 0 ? "sound" : "music"));
         for(File file : dir.listFiles()) {
             if(file.isDirectory() && recursive) {
                 if(whitelist == null || whitelist.contains(file.getName())) {
@@ -98,26 +131,27 @@ public class AudioManager {
             }
             
             String name = heading + file.getName().split("\\.")[0];
+            if(!file.getName().endsWith(".ogg") && !file.getName().endsWith(".mp3") && !file.getName().endsWith(".wav")) {
+                Undertailor.warn("audioman", "could not register sound/music file \"" + name + "\"; we can only use .OGG, .MP3 and .WAV files");
+                exit = notAllLoaded;
+                continue;
+            }
+            
             if(whitelist == null || whitelist.contains(name)) {
                 if(mapping.containsKey(name)) {
-                    Gdx.app.log("audioman", "WARN: name conflict with another sound file of another type detected (" + name + "); old one will be replaced with new one");
+                    log("audioman", "WARN: name conflict with another sound file of another file type detected (" + name + "); old one will be replaced with new one");
                 }
                 
-                try {
-                    Object value = null;
-                    if(table == 0) { // sound
-                        value = Gdx.audio.newSound(Gdx.files.absolute(file.getAbsolutePath()));
-                        Gdx.app.log("audioman", "registered sound " + name);
-                    } else {
-                        value = Gdx.audio.newMusic(Gdx.files.absolute(file.getAbsolutePath()));
-                        Gdx.app.log("audioman", "registered music " + name);
-                    }
-                    
-                    mapping.put(name, value);
-                } catch(GdxRuntimeException e) {
-                    Gdx.app.error("audioman", "could not register sound/music file \"" + name + "\"; we can only use .OGG, .MP3 and .WAV files");
-                    exit = notAllLoaded;
+                Object value = null;
+                if(table == 0) { // sound
+                    value = new SoundWrapper(file);
+                    log("audioman", "registered sound " + name);
+                } else {
+                    value = new MusicWrapper(file);
+                    log("audioman", "registered music " + name);
                 }
+                
+                mapping.put(name, value);
             }
         }
         

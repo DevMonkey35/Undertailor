@@ -1,5 +1,7 @@
 package me.scarlet.undertailor.manager;
 
+import static me.scarlet.undertailor.Undertailor.log;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import me.scarlet.undertailor.gfx.SpriteSheet;
@@ -30,7 +32,7 @@ public class SpriteSheetManager {
             return;
         }
         
-        Gdx.app.log("sheetman", "loading sprites from directory " + directory.getAbsolutePath());
+        log("sheetman", "loading sprites from directory " + directory.getAbsolutePath());
         File spriteDef = new File(directory, "sprites.json");
         if(!spriteDef.exists()) {
             return;
@@ -40,13 +42,13 @@ public class SpriteSheetManager {
             return;
         }
         
-        Gdx.app.log("sheetman", "sprites.json found");
+        log("sheetman", "sprites.json found");
         try {
             ConfigurationLoader<ConfigurationNode> loader = JSONConfigurationLoader.builder().setFile(spriteDef).build();
             ConfigurationNode root = loader.load();
             root.getNode("sheets").getChildrenMap().values().forEach(node -> {
                 try {
-                    Gdx.app.log("sheetman", "loading spritesheet \"" + node.getKey().toString() + "\"");
+                    log("sheetman", "loading spritesheet \"" + node.getKey().toString() + "\"");
                     SpriteSheet sheet = SpriteSheet.fromConfig(directory, node);
                     sheets.put(sheet.getSheetName(), sheet);
                 } catch(FileNotFoundException e) {

@@ -1,5 +1,7 @@
 package me.scarlet.undertailor.manager;
 
+import static me.scarlet.undertailor.Undertailor.log;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import me.scarlet.undertailor.texts.Font;
@@ -34,7 +36,7 @@ public class FontManager {
             return notDirectory;
         }
         
-        Gdx.app.log("fontman", "searching for fonts in " + dir.getAbsolutePath());
+        log("fontman", "searching for fonts in " + dir.getAbsolutePath());
         Map<String, Pair<File, File>> found = new HashMap<>();
         for(File file : dir.listFiles()) {
             if(!file.getName().endsWith(".png") && !file.getName().endsWith(".underfont")) {
@@ -47,21 +49,21 @@ public class FontManager {
             }
             
             if(file.getName().endsWith(".png")) {
-                Gdx.app.log("fontman", "found spritesheet file");
+                log("fontman", "found spritesheet file");
                 found.get(name).setFirstElement(file);;
             } else if(file.getName().endsWith(".underfont")) {
-                Gdx.app.log("fontman", "found underfont file");
+                log("fontman", "found underfont file");
                 found.get(name).setSecondElement(file);
             }
         }
         
         for(Entry<String, Pair<File, File>> entry : found.entrySet()) {
             if(!entry.getValue().getFirstElement().isPresent() || !entry.getValue().getSecondElement().isPresent()) {
-                Gdx.app.log("fontman", "no font pair");
+                log("fontman", "no font pair");
                 continue;
             }
             
-            Gdx.app.log("fontman", "loading font " + entry.getKey());
+            log("fontman", "loading font " + entry.getKey());
             Texture spriteSheet = new Texture(Gdx.files.absolute(entry.getValue().getFirstElement().get().getAbsolutePath()));
             JSONConfigurationLoader loader = JSONConfigurationLoader.builder()
                     .setFile(entry.getValue().getSecondElement().get())
@@ -83,11 +85,16 @@ public class FontManager {
     }
     
     public Font getFont(String name) {
-        return fonts.get(name);
+        if(fonts.containsKey(name)) {
+            return fonts.get(name);
+        }
+        
+        Gdx.app.error("fontman", "system requested a non-existing font (" + name + ")");
+        return null;
     }
     
     public void registerFont(Font font) {
         fonts.put(font.getFontData().getName(), font);
-        Gdx.app.log("fontman", "registered font " + font.getFontData().getName());
+        log("fontman", "registered font " + font.getFontData().getName());
     }
 }

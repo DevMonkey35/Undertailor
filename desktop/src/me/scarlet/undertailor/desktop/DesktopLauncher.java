@@ -7,7 +7,7 @@ import me.scarlet.undertailor.Undertailor;
 public class DesktopLauncher {
     public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.resizable = false;
+        config.resizable = true;
         config.backgroundFPS = 0;
         config.foregroundFPS = 0;
         new LwjglApplication(new Undertailor(), config);

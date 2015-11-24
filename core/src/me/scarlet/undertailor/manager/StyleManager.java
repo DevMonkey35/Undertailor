@@ -1,15 +1,12 @@
 package me.scarlet.undertailor.manager;
 
+import static me.scarlet.undertailor.Undertailor.log;
+
 import com.badlogic.gdx.Gdx;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaStyle;
-import me.scarlet.undertailor.lua.lib.ColorsLib;
-import me.scarlet.undertailor.lua.lib.MathUtilLib;
-import me.scarlet.undertailor.lua.lib.TextLib;
 import me.scarlet.undertailor.texts.Style;
-import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
-import org.luaj.vm2.lib.jse.JsePlatform;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -19,14 +16,6 @@ import java.util.Map;
 public class StyleManager {
     
     private Map<String, Style> styles;
-    
-    public static Globals newGlobals() {
-        Globals returned = JsePlatform.standardGlobals();
-        returned.load(new ColorsLib());
-        returned.load(new TextLib());
-        returned.load(new MathUtilLib());
-        return returned;
-    }
     
     public StyleManager() {
         this.styles = new HashMap<>();
@@ -45,11 +34,9 @@ public class StyleManager {
             return string.endsWith(".lua");
         })) {
             String styleName = file.getName().substring(0, file.getName().length() - 4);
-            Gdx.app.log("styleman", "loading lua style " + styleName);
-            Globals globals = StyleManager.newGlobals();
-            globals.loadfile(file.getAbsolutePath()).invoke();
+            log("styleman", "loading lua style " + styleName);
             try {
-                styles.put(styleName, new LuaStyle(globals));
+                styles.put(styleName, new LuaStyle(file));
             } catch(LuaScriptException e) {
                 Gdx.app.error("styleman", "failed to load style: " + e.getMessage());
             } catch(LuaError e) {
@@ -60,6 +47,11 @@ public class StyleManager {
     }
     
     public Style getStyle(String name) {
-        return styles.get(name);
+        if(styles.containsKey(name)) {
+            return styles.get(name).duplicate();
+        }
+        
+        Gdx.app.error("styleman", "system requested a non-existing style (" + name + ")");
+        return null;
     }
 }
