@@ -1,8 +1,8 @@
 package me.scarlet.undertailor.manager;
 
+import static me.scarlet.undertailor.Undertailor.error;
 import static me.scarlet.undertailor.Undertailor.log;
 
-import com.badlogic.gdx.Gdx;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaStyle;
 import me.scarlet.undertailor.texts.Style;
@@ -38,10 +38,10 @@ public class StyleManager {
             try {
                 styles.put(styleName, new LuaStyle(file));
             } catch(LuaScriptException e) {
-                Gdx.app.error("styleman", "failed to load style: " + e.getMessage());
+                error("styleman", "failed to load style: " + e.getMessage());
             } catch(LuaError e) {
-                Gdx.app.error("styleman", "failed to load style: lua error");
-                Gdx.app.error("luaparser", e.getMessage());
+                error("styleman", "failed to load style: lua error");
+                error("luaparser", e.getMessage());
             }
         }
     }
@@ -51,7 +51,7 @@ public class StyleManager {
             return styles.get(name).duplicate();
         }
         
-        Gdx.app.error("styleman", "system requested a non-existing style (" + name + ")");
+        error("styleman", "system requested a non-existing style (" + name + ")");
         return null;
     }
 }

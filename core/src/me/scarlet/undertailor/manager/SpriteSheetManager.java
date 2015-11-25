@@ -1,9 +1,10 @@
 package me.scarlet.undertailor.manager;
 
+import static me.scarlet.undertailor.Undertailor.error;
 import static me.scarlet.undertailor.Undertailor.log;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
@@ -52,13 +53,13 @@ public class SpriteSheetManager {
                     SpriteSheet sheet = SpriteSheet.fromConfig(directory, node);
                     sheets.put(sheet.getSheetName(), sheet);
                 } catch(FileNotFoundException e) {
-                    Gdx.app.error("sheetman", "failed to load spritesheet: defined texture file was not found");
-                } catch(Exception e) {
-                    e.printStackTrace();
+                    error("sheetman", "failed to load spritesheet: defined texture file was not found");
+                } catch(TextureTilingException e) {
+                    error("sheetman", "failed to load spritesheet: texture check failed (" + e.getMessage() + ")");
                 }
             });
         } catch(Exception e) {
-            e.printStackTrace();
+            error("sheetman", "failed to load spritesheet: vm exception (" + e.getMessage() + ")", e.getStackTrace());
         }
     }
     

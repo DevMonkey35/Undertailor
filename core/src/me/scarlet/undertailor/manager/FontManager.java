@@ -1,9 +1,11 @@
 package me.scarlet.undertailor.manager;
 
 import static me.scarlet.undertailor.Undertailor.log;
+import static me.scarlet.undertailor.Undertailor.error;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Font.FontData;
 import me.scarlet.undertailor.util.Pair;
@@ -22,18 +24,15 @@ public class FontManager {
         fonts = new HashMap<>();
     }
     
-    public byte loadFonts(File dir) {
-        byte clear = 0x00;
-        byte dirNotFound = 0x01;
-        byte notDirectory = 0x02;
-        byte exit = clear;
-        
+    public void loadFonts(File dir) {
         if(!dir.exists()) {
-            return dirNotFound;
+            error("fontman", "could not load font directory " + dir.getAbsolutePath() + " (did not exist)");
+            return;
         }
         
         if(!dir.isDirectory()) {
-            return notDirectory;
+            error("fontman", "could not load font directory " + dir.getAbsolutePath() + " (not a directory)");
+            return;
         }
         
         log("fontman", "searching for fonts in " + dir.getAbsolutePath());
@@ -77,11 +76,14 @@ public class FontManager {
                 continue;
             }
             
-            Font font = new Font(spriteSheet, data);
-            this.registerFont(font);
+            Font font;
+            try {
+                font = new Font(spriteSheet, data);
+                this.registerFont(font);
+            } catch(TextureTilingException e) {
+                error("fontman", "could not load font " + entry.getKey() + "; " + e.getMessage());
+            }
         }
-        
-        return exit;
     }
     
     public Font getFont(String name) {
@@ -89,7 +91,7 @@ public class FontManager {
             return fonts.get(name);
         }
         
-        Gdx.app.error("fontman", "system requested a non-existing font (" + name + ")");
+        error("fontman", "system requested a non-existing font (" + name + ")");
         return null;
     }
     

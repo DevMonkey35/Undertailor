@@ -90,7 +90,7 @@ public class SpriteSheet {
             for(int iX = 0; iX < meta.gridX; iX++) {
                 int pos = (iY * meta.gridX) + iX;
                 SpriteMeta smeta = null;
-                if(meta.spriteMeta != null && meta.spriteMeta[pos] != null) {
+                if(meta.spriteMeta != null && pos < meta.spriteMeta.length && meta.spriteMeta[pos] != null) {
                     smeta = meta.spriteMeta[pos];
                 }
                 

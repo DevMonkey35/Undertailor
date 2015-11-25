@@ -70,6 +70,7 @@ public class Undertailor extends ApplicationAdapter {
     private Viewport uiViewport;
     private Camera uiCamera;
     
+    // testing variables
     private Text writtenText;
     
     @Override
@@ -90,7 +91,7 @@ public class Undertailor extends ApplicationAdapter {
         }
         
         this.drawBatch = new SpriteBatch();
-        this.frameCap = 0; // refresh rate; 15 is 60fps (1000/60)
+        this.frameCap = 60;
         this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib()};
         
         this.sheetManager = new SpriteSheetManager();
@@ -128,7 +129,7 @@ public class Undertailor extends ApplicationAdapter {
         long sleepTime = 0;
         if(frameCap > 0) {
             try {
-                sleepTime = (long) Math.round(frameCap - (Gdx.graphics.getDeltaTime()));
+                sleepTime = (long) Math.ceil((1000.0/frameCap) - (Gdx.graphics.getDeltaTime()));
                 Thread.sleep(sleepTime);
             } catch(Exception e) {
                 e.printStackTrace();
@@ -141,17 +142,12 @@ public class Undertailor extends ApplicationAdapter {
         
         drawBatch.setProjectionMatrix(uiViewport.getCamera().combined);
         drawBatch.begin();
-        /*
+        
         Font bitop = fontManager.getFont("8bitop");
-        Font aster = fontManager.getFont("aster");
+        Font testfont = fontManager.getFont("8bitop");
         bitop.write(drawBatch, Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
-        bitop.write(drawBatch, "Tits mcgee.", null, null, 10, 250, 1);
-        aster.write(drawBatch, "Ah, that's much better.", null, null, 10, 410, 2);
-        aster.write(drawBatch, "You wouldn't happen to know where", null, null, 10, 370, 1);
-        aster.write(drawBatch, "Sans is, would you?", null, null, 10, 330, 2);
-        //fontManager.getFont("aster").write(drawBatch, "nopqrstuvwxyz", null, null, 10, 290, 2);
-        //writtenText.getFont().write(drawBatch, writtenText, 10, 410);*/
-        sheetManager.getSpriteSheet("aster").sheetTest(drawBatch);
+        testfont.fontTest(drawBatch, 10, 410, 3);
+        //testfont.write(drawBatch, "{}<>@%#&$", null, null, 10, 410, 3);
         drawBatch.end();
     }
     
@@ -171,7 +167,15 @@ public class Undertailor extends ApplicationAdapter {
     }
     
     public static void error(String tag, String message) {
+    }
+    
+    public static void error(String tag, String message, StackTraceElement[] trace) {
         Gdx.app.error("[ERRR] " + tag, message);
+        if(trace != null) {
+            for(StackTraceElement element : trace) {
+                Gdx.app.error("[ERRR] " + tag, element.toString());
+            }
+        }
     }
     
     public static void warn(String tag, String message) {
