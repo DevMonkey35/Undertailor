@@ -173,6 +173,7 @@ public class Undertailor extends ApplicationAdapter {
     }
     
     public static void error(String tag, String message) {
+        error(tag, message, null);
     }
     
     public static void error(String tag, String message, StackTraceElement[] trace) {
