@@ -18,9 +18,9 @@ public abstract class DisposableWrapper<T extends Disposable> {
         return instances;
     }
     
-    protected T disposable;
-    protected long lastAccess;
-    protected boolean alwaysAlive;
+    private T disposable;
+    private long lastAccess;
+    private boolean alwaysAlive;
     protected DisposableWrapper(T disposable) {
         this.disposable = disposable;
         
@@ -33,13 +33,15 @@ public abstract class DisposableWrapper<T extends Disposable> {
         instances.add(this);
     }
     
-    public T getReference() {
-        if(this.isDisposed()) {
-            this.newReference();
+    public final T getReference() {
+        synchronized(this) {
+            if(this.isDisposed()) {
+                disposable = this.newReference();
+            }
+            
+            this.lastAccess = TimeUtils.millis();
+            return disposable;
         }
-        
-        this.lastAccess = TimeUtils.millis();
-        return disposable;
     }
     
     public long getLastAccessTime() {
@@ -54,8 +56,11 @@ public abstract class DisposableWrapper<T extends Disposable> {
         return alwaysAlive;
     }
     
-    public void setAlwaysAlive(boolean flag) {
-        this.alwaysAlive = flag;
+    public final void setAlwaysAlive(boolean flag) {
+        synchronized(this) {
+            this.alwaysAlive = flag;
+        }
+        
         if(this.alwaysAlive) {
             getReference();
         }
@@ -65,13 +70,20 @@ public abstract class DisposableWrapper<T extends Disposable> {
         return disposable == null;
     }
     
-    public boolean dispose() {
-        disposable.dispose();
-        this.lastAccess = -1;
-        disposable = null;
+    public final boolean dispose() {
+        if(!this.isDisposed() && this.allowDispose()) {
+            synchronized(this) {
+                disposable.dispose();
+                this.lastAccess = -1;
+                disposable = null;
+                
+                return true;
+            }
+        }
         
-        return true;
+        return false;
     }
     
-    public abstract void newReference();
+    public abstract T newReference();
+    public abstract boolean allowDispose();
 }

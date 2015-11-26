@@ -2,7 +2,6 @@ package me.scarlet.undertailor.wrappers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.utils.TimeUtils;
 
 import java.io.File;
 
@@ -16,17 +15,16 @@ public class MusicWrapper extends DisposableWrapper<Music> {
     }
 
     @Override
-    public void newReference() {
-        this.disposable = Gdx.audio.newMusic(Gdx.files.absolute(fileReference.getAbsolutePath()));
-        this.lastAccess = TimeUtils.millis();
+    public Music newReference() {
+        return Gdx.audio.newMusic(Gdx.files.absolute(fileReference.getAbsolutePath()));
     }
     
     @Override
-    public boolean dispose() {
-        if(this.disposable.isPlaying()) {
-            return false;
+    public boolean allowDispose() {
+        if(!this.isDisposed()) {
+            return !this.getReference().isPlaying();
         }
         
-        return super.dispose();
+        return true;
     }
 }
