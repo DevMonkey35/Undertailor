@@ -1,6 +1,6 @@
 package me.scarlet.undertailor;
 
-import me.scarlet.undertailor.util.DisposableWrapper;
+import me.scarlet.undertailor.wrappers.DisposableWrapper;
 
 public class DisposerThread extends Thread {
     

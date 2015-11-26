@@ -62,7 +62,6 @@ public class Sprite {
         this.draw(batch, posX, posY, scaleX, scaleY, rotation, false);
     }
     
-    // assumes Batch.begin() was already called
     public void draw(Batch batch, float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX) {
         this.draw(batch, posX, posY, scaleX, scaleY, rotation, flipX, false);
     }

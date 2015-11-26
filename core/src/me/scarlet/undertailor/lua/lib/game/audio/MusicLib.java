@@ -4,7 +4,7 @@ import com.badlogic.gdx.audio.Music;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaMusic;
 import me.scarlet.undertailor.lua.LuaSound;
-import me.scarlet.undertailor.util.SoundWrapper;
+import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;

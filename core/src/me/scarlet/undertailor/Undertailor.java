@@ -46,6 +46,8 @@ import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.ui.UIController;
+import me.scarlet.undertailor.ui.UIObject;
+import me.scarlet.undertailor.ui.UITestComponent;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.JsePlatform;
@@ -100,6 +102,10 @@ public class Undertailor extends ApplicationAdapter {
         this.fontManager = new FontManager();
         
         this.uiController = new UIController();
+        UIObject test = new UIObject(false);
+        test.registerChild(new UITestComponent());
+        test.registerChild(new UITestComponent());
+        this.uiController.registerObject(test);
         
         this.uiCamera = new OrthographicCamera(640, 480);
         this.uiViewport = new FitViewport(640, 480, uiCamera);
@@ -138,7 +144,7 @@ public class Undertailor extends ApplicationAdapter {
         
         uiController.process(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //uiController.render(drawBatch);
+        uiController.render(drawBatch);
         
         drawBatch.setProjectionMatrix(uiViewport.getCamera().combined);
         drawBatch.begin();

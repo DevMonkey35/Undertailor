@@ -1,4 +1,4 @@
-package me.scarlet.undertailor.util;
+package me.scarlet.undertailor.wrappers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;

@@ -7,8 +7,8 @@ import static me.scarlet.undertailor.Undertailor.log;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.util.MusicWrapper;
-import me.scarlet.undertailor.util.SoundWrapper;
+import me.scarlet.undertailor.wrappers.MusicWrapper;
+import me.scarlet.undertailor.wrappers.SoundWrapper;
 
 import java.io.File;
 import java.util.ArrayList;

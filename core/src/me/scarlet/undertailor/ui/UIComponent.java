@@ -10,7 +10,7 @@ import me.scarlet.undertailor.ui.event.UIEvent;
 public abstract class UIComponent {
     
     /** Holding the parent {@link UIObject} that owns this UIComponent. */
-    private UIObject parent;
+    protected UIObject parent;
     /**
      * Holding the current position of this UIComponent within the positional
      * system of the parent {@link UIObject}.
@@ -30,7 +30,7 @@ public abstract class UIComponent {
     /**
      * Returns the parent {@link UIObject} that owns this {@link UIComponent}.
      * 
-     * <p>Applying changes to an unowned UIObject will not have any adverse
+     * <p>Applying changes to an unregistered UIObject will not have any adverse
      * effects outside of simply not being cared about by the system.</p>
      */
     public UIObject getParent() {
@@ -40,8 +40,6 @@ public abstract class UIComponent {
     /**
      * Returns the current position of this {@link UIComponent} within the
      * positional system of its parent {@link UIObject}.
-     * 
-     * <p>If this has no parent, it simply returns the position itself.</p>
      */
     public Vector3 getPosition() {
         return position;
@@ -52,10 +50,15 @@ public abstract class UIComponent {
      * positional system used to display any UI objects.
      * 
      * <p>This is simply returned by adding the position of this UIComponent to
-     * the position of its parent UIObject.</p>
+     * the position of its parent UIObject. If a parent object is not present,
+     * this functions similarly to {@link UIComponent#getPosition()}.</p>
      */
     public Vector3 getRealPosition() {
-        return parent.getPosition().add(position);
+        if(parent == null) {
+            return getPosition();
+        } else {
+            return parent.getPosition().add(position);
+        }
     }
     
     /**
@@ -86,6 +89,14 @@ public abstract class UIComponent {
         }
     }
     
+    public void destroyObject() {
+        if(this.parent != null) {
+            this.parent.destroy();
+        }
+    }
+    
+    public void onDestroy(boolean object) {}
+    
     /**
      * Called once every frame, if this {@link UIComponent} is considered
      * active.
@@ -114,5 +125,5 @@ public abstract class UIComponent {
      * @param parentAlpha the alpha of the parent UIObject, which should be
      *            multiplied by this object's current alpha
      */
-    public abstract void render(Batch batch, float parentAlpha);
+    public void render(Batch batch, float parentAlpha) {}
 }
