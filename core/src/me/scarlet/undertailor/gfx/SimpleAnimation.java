@@ -75,7 +75,7 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
             return;
         }
         
-        Sprite sprite = frame.getSprite();
+        Sprite sprite = this.getCurrentSpriteSet()[frame.getSpriteIndex()];
         FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
         float offX = meta.offX * meta.scaleX;
         float offY = meta.offY * meta.scaleY;

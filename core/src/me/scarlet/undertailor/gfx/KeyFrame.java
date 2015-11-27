@@ -23,21 +23,21 @@ public class KeyFrame {
     }
     
     public static class SimpleKeyFrame extends KeyFrame {
-        private Sprite sprite;
+        private int spriteIndex;
         private FrameObjectMeta meta;
         
-        public SimpleKeyFrame(Sprite sprite, long frameTime) {
-            this(sprite, frameTime, new FrameObjectMeta());
+        public SimpleKeyFrame(int spriteIndex, long frameTime) {
+            this(spriteIndex, frameTime, new FrameObjectMeta());
         }
         
-        public SimpleKeyFrame(Sprite sprite, long frameTime, FrameObjectMeta meta) {
+        public SimpleKeyFrame(int spriteIndex, long frameTime, FrameObjectMeta meta) {
             super(frameTime);
-            this.sprite = sprite;
+            this.spriteIndex = spriteIndex;
             this.meta = meta;
         }
         
-        public Sprite getSprite() {
-            return sprite;
+        public int getSpriteIndex() {
+            return spriteIndex;
         }
         
         public FrameObjectMeta getMeta() {
