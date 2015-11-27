@@ -13,10 +13,12 @@ public class LuaDisplayMeta extends LuaValue {
     public static final String TYPENAME = "tailor-displaymeta";
     public static LuaValue METATABLE;
     
-    public static void checkDisplayMeta(LuaValue value) {
+    public static LuaDisplayMeta checkDisplayMeta(LuaValue value) {
         if(!isDisplayMeta(value)) {
             throw new LuaError("bad argument: expected a " + LuaDisplayMeta.TYPENAME + "; got " + value.typename());
         }
+        
+        return (LuaDisplayMeta) value;
     }
     
     public static boolean isDisplayMeta(LuaValue value) {
