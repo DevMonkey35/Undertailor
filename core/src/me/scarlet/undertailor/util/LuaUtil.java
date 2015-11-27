@@ -1,9 +1,13 @@
 package me.scarlet.undertailor.util;
 
+import me.scarlet.undertailor.exception.LuaScriptException;
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class LuaUtil {
@@ -29,5 +33,28 @@ public class LuaUtil {
             consumer.accept(pair);
             key = pair.arg1();
         }
+    }
+    
+    public static Map<String, LuaFunction> checkImplementation(LuaValue table, String[] requiredMethods, String[] optionalMethods) throws LuaScriptException {
+        Map<String, LuaFunction> functions = new HashMap<>();
+        if(requiredMethods != null) {
+            for(String method : requiredMethods) {
+                if(table.get(method).isnil() || !table.get(method).isfunction()) {
+                    throw new LuaScriptException("failed to implement required method " + method);
+                }
+                
+                functions.put(method, table.get(method).checkfunction());
+            }
+        }
+        
+        if(optionalMethods != null) {
+            for(String method : optionalMethods) {
+                if(table.get(method).isfunction()) {
+                    functions.put(method, table.get(method).checkfunction());
+                }
+            }
+        }
+        
+        return functions;
     }
 }

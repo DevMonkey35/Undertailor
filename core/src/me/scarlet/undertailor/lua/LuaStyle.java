@@ -4,6 +4,7 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
@@ -21,6 +22,9 @@ public class LuaStyle extends LuaValue implements Style {
     public static final String IMPLMETHOD_ONNEXTTEXTRENDER = "onNextTextRender";
     public static final String IMPLMETHOD_APPLYCHARACTER = "applyCharacter";
     
+    public static final String[] REQUIRED_METHODS = new String[] {IMPLMETHOD_APPLYCHARACTER};
+    public static final String[] OPTIONAL_METHODS = new String[] {IMPLMETHOD_ONNEXTTEXTRENDER};
+    
     public static LuaStyle checkStyle(LuaValue value) {
         if(!value.typename().equals(LuaStyle.TYPENAME)) {
             throw new LuaError("bad argument: expected " + LuaStyle.TYPENAME + "; got" + value.typename());
@@ -33,22 +37,8 @@ public class LuaStyle extends LuaValue implements Style {
         return function.call(LuaValue.valueOf(charIndex), LuaValue.valueOf(textLength));
     }
     
-    public static Map<String, LuaFunction> checkImpl(LuaValue value) {
-        Map<String, LuaFunction> returned = new HashMap<>();
-        LuaValue val = value.get(IMPLMETHOD_APPLYCHARACTER);
-        if(val.isfunction()) {
-            returned.put(IMPLMETHOD_APPLYCHARACTER, val.checkfunction());
-        }
-        
-        String[] optionalFuncs = new String[] {IMPLMETHOD_ONNEXTTEXTRENDER};
-        for(String name : optionalFuncs) {
-            LuaValue optional = value.get(name);
-            if(optional.isfunction()) {
-                returned.put(name, optional.checkfunction());
-            }
-        }
-        
-        return returned;
+    public static Map<String, LuaFunction> checkImpl(LuaValue value) throws LuaScriptException {
+        return LuaUtil.checkImplementation(value, REQUIRED_METHODS, OPTIONAL_METHODS);
     }
     
     private Style style;
@@ -60,9 +50,11 @@ public class LuaStyle extends LuaValue implements Style {
         Globals globals = Undertailor.newGlobals();
         globals.loadfile(luaFile.getAbsolutePath()).invoke();
         
-        this.functions = checkImpl(globals);
-        if(functions.isEmpty() || !functions.containsKey(IMPLMETHOD_APPLYCHARACTER)) {
-            throw new LuaScriptException("lua style implementation did not implement " + IMPLMETHOD_APPLYCHARACTER);
+        try {
+            this.functions = checkImpl(globals);
+        } catch(LuaScriptException e) {
+            this.functions = new HashMap<>();
+            throw new LuaScriptException("failed to load style implementation: " + e.getMessage());
         }
     }
     
