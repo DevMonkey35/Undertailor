@@ -1,7 +1,7 @@
 package me.scarlet.undertailor.ui;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.ui.event.UIEvent;
 
 /**
@@ -15,14 +15,14 @@ public abstract class UIComponent {
      * Holding the current position of this UIComponent within the positional
      * system of the parent {@link UIObject}.
      */
-    private Vector3 position;
+    private Vector2 position;
     private boolean isAlwaysActive;
     
     public UIComponent() {
-        this(new Vector3(0, 0, 0));
+        this(new Vector2(0, 0));
     }
     
-    public UIComponent(Vector3 position) {
+    public UIComponent(Vector2 position) {
         this.position = position;
         this.isAlwaysActive = false;
     }
@@ -41,7 +41,7 @@ public abstract class UIComponent {
      * Returns the current position of this {@link UIComponent} within the
      * positional system of its parent {@link UIObject}.
      */
-    public Vector3 getPosition() {
+    public Vector2 getPosition() {
         return position;
     }
     
@@ -53,7 +53,7 @@ public abstract class UIComponent {
      * the position of its parent UIObject. If a parent object is not present,
      * this functions similarly to {@link UIComponent#getPosition()}.</p>
      */
-    public Vector3 getRealPosition() {
+    public Vector2 getRealPosition() {
         if(parent == null) {
             return getPosition();
         } else {
@@ -67,7 +67,7 @@ public abstract class UIComponent {
      * 
      * @param position the new position for this UIComponent to reside at
      */
-    public void setPosition(Vector3 position) {
+    public void setPosition(Vector2 position) {
         this.position = position;
     }
     

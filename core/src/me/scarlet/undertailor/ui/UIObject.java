@@ -3,7 +3,7 @@ package me.scarlet.undertailor.ui;
 import static me.scarlet.undertailor.Undertailor.warn;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
 
@@ -15,7 +15,7 @@ public class UIObject {
     
     protected int id;
     private float alpha;
-    private Vector3 position;
+    private Vector2 position;
     private boolean isAlwaysActive;
     private List<UIComponent> marked;
     private List<UIComponent> components;
@@ -25,7 +25,7 @@ public class UIObject {
     }
     
     public UIObject(boolean isAlwaysActive) {
-        this.position = new Vector3(0, 0, 0);
+        this.position = new Vector2(0, 0);
         this.components = new ArrayList<>();
         this.marked = new ArrayList<>();
         this.isAlwaysActive = isAlwaysActive;
@@ -39,7 +39,7 @@ public class UIObject {
         return this.isAlwaysActive;
     }
     
-    public Vector3 getPosition() {
+    public Vector2 getPosition() {
         return this.position;
     }
     
