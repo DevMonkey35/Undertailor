@@ -223,15 +223,19 @@ public class Font {
         write(batch, text.getText(), text.getStyle(), text.getColor(), posX, posY);
     }
     
-    public void write(Batch batch, String text, Style style, Color color, int posX, int posY) {
+    public void write(Batch batch, String text, Style style, Color color, float posX, float posY) {
         write(batch, text, style, color, posX, posY, 1);
     }
     
-    public void write(Batch batch, String text, Style style, Color color, int posX, int posY, int scale) {
-        write(batch, text, style, color, posX, posY, scale, 1.0F);
+    public void write(Batch batch, String text, Style style, Color color, float posX, float posY, float scale) {
+        write(batch, text, style, color, posX, posY, scale, scale);
     }
     
-    public void write(Batch batch, String text, Style style, Color color, int posX, int posY, int scale, float alpha) {
+    public void write(Batch batch, String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY) {
+        write(batch, text, style, color, posX, posY, scaleX, scaleY, 1.0F);
+    }
+    
+    public void write(Batch batch, String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
         if(text.trim().isEmpty()) {
             return;
         }
@@ -248,7 +252,7 @@ public class Font {
         for(int i = 0; i < chars.length; i++) {
             char chara = chars[i];
             if(Character.valueOf(' ').compareTo(chara) == 0) {
-                pos += (this.getFontData().getSpaceSize() * scale);
+                pos += (this.getFontData().getSpaceSize() * scaleX);
                 continue;
             }
             
@@ -267,10 +271,10 @@ public class Font {
                 }
             }
             
-            float scaleX = scale * aScaleX;
-            float scaleY = scale * aScaleY;
-            float offsetX = aX * (scaleX);
-            float offsetY = aY * (scaleY);
+            float iScaleX = scaleX * aScaleX;
+            float iScaleY = scaleY * aScaleY;
+            float offsetX = aX * (iScaleX);
+            float offsetY = aY * (iScaleY);
             float drawPosX = posX + pos + offsetX;
             float drawPosY = posY + offsetY;
             
