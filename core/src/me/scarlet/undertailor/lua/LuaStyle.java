@@ -1,6 +1,5 @@
 package me.scarlet.undertailor.lua;
 
-import com.badlogic.gdx.Gdx;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.texts.Style;
@@ -21,7 +20,6 @@ public class LuaStyle extends LuaValue implements Style {
     
     public static final String IMPLMETHOD_ONNEXTTEXTRENDER = "onNextTextRender";
     public static final String IMPLMETHOD_APPLYCHARACTER = "applyCharacter";
-    public static final String IMPLMETHOD_ONNEWTEXT = "onNewText";
     
     public static LuaStyle checkStyle(LuaValue value) {
         if(!value.typename().equals(LuaStyle.TYPENAME)) {
@@ -32,25 +30,21 @@ public class LuaStyle extends LuaValue implements Style {
     }
     
     public static LuaValue invokeStyleFunction(LuaFunction function, int charIndex, int textLength) {
-        return function.call(LuaValue.valueOf(charIndex), LuaValue.valueOf(textLength)).arg1();
+        return function.call(LuaValue.valueOf(charIndex), LuaValue.valueOf(textLength));
     }
     
     public static Map<String, LuaFunction> checkImpl(LuaValue value) {
         Map<String, LuaFunction> returned = new HashMap<>();
         LuaValue val = value.get(IMPLMETHOD_APPLYCHARACTER);
         if(val.isfunction()) {
-            if(LuaDisplayMeta.isDisplayMeta(invokeStyleFunction((LuaFunction) val, 0, 1).arg1())) {
-                returned.put(IMPLMETHOD_APPLYCHARACTER, (LuaFunction) val);
-            } else {
-                Gdx.app.error("styleman", "ignoring incorrectly implemented method \"" + IMPLMETHOD_APPLYCHARACTER + "\" (did not return a " + LuaDisplayMeta.TYPENAME + ")");
-            }
+            returned.put(IMPLMETHOD_APPLYCHARACTER, val.checkfunction());
         }
         
-        String[] optionalFuncs = new String[] {IMPLMETHOD_ONNEXTTEXTRENDER, IMPLMETHOD_ONNEWTEXT};
+        String[] optionalFuncs = new String[] {IMPLMETHOD_ONNEXTTEXTRENDER};
         for(String name : optionalFuncs) {
             LuaValue optional = value.get(name);
             if(optional.isfunction()) {
-                returned.put(name, (LuaFunction) optional);
+                returned.put(name, optional.checkfunction());
             }
         }
         
@@ -63,11 +57,12 @@ public class LuaStyle extends LuaValue implements Style {
     public LuaStyle(File luaFile) throws LuaScriptException {
         this.originFile = luaFile;
         
-        Globals impl = Undertailor.newGlobals();
-        impl.loadfile(luaFile.getAbsolutePath()).invoke();
-        this.functions = checkImpl(impl);
+        Globals globals = Undertailor.newGlobals();
+        globals.loadfile(luaFile.getAbsolutePath()).invoke();
+        
+        this.functions = checkImpl(globals);
         if(functions.isEmpty() || !functions.containsKey(IMPLMETHOD_APPLYCHARACTER)) {
-            throw new LuaScriptException("lua style implementation did not implement or incorrectly implemented method " + IMPLMETHOD_APPLYCHARACTER);
+            throw new LuaScriptException("lua style implementation did not implement " + IMPLMETHOD_APPLYCHARACTER);
         }
     }
     
@@ -95,8 +90,17 @@ public class LuaStyle extends LuaValue implements Style {
         if(style == null) {
             LuaFunction function = functions.get(IMPLMETHOD_APPLYCHARACTER);
             if(function != null) {
-                LuaDisplayMeta luameta = (LuaDisplayMeta) invokeStyleFunction(function, charIndex, textLength);
-                return luameta.getDisplayMeta();
+                try {
+                    LuaValue luameta = invokeStyleFunction(function, charIndex, textLength);
+                    if(luameta.isnil()) {
+                        return null;
+                    } else {
+                        return LuaDisplayMeta.checkDisplayMeta(luameta).getDisplayMeta();
+                    }
+                } catch(LuaError e) {
+                    Undertailor.error("lua", e.getMessage());
+                    return null;
+                }
             } else {
                 return null;
             }
