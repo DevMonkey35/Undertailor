@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.Sprite;
@@ -11,8 +13,8 @@ import me.scarlet.undertailor.gfx.Sprite.SpriteMeta;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
-import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.util.ConfigurateUtil;
+import me.scarlet.undertailor.util.MultiRenderer;
 import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.HashMap;
@@ -219,30 +221,27 @@ public class Font {
         return sheet.getSprite(data.characterList.indexOf(ch));
     }
     
-    public void write(Batch batch, Text text, int posX, int posY) {
-        write(batch, text.getText(), text.getStyle(), text.getColor(), posX, posY);
+    public int write(Batch batch, String text, Style style, Color color, float posX, float posY) {
+        return write(batch, text, style, color, posX, posY, 1);
     }
     
-    public void write(Batch batch, String text, Style style, Color color, float posX, float posY) {
-        write(batch, text, style, color, posX, posY, 1);
+    public int write(Batch batch, String text, Style style, Color color, float posX, float posY, float scale) {
+        return write(batch, text, style, color, posX, posY, scale, scale);
     }
     
-    public void write(Batch batch, String text, Style style, Color color, float posX, float posY, float scale) {
-        write(batch, text, style, color, posX, posY, scale, scale);
+    public int write(Batch batch, String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY) {
+        return write(batch, text, style, color, posX, posY, scaleX, scaleY, 1.0F);
     }
     
-    public void write(Batch batch, String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY) {
-        write(batch, text, style, color, posX, posY, scaleX, scaleY, 1.0F);
-    }
-    
-    public void write(Batch batch, String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
+    public int write(Batch batch, String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
         if(text.trim().isEmpty()) {
-            return;
+            return 0;
         }
         
         char[] chars = new char[text.length()];
         text.getChars(0, text.length(), chars, 0);
         int pos = 0;
+        int textLength = text.replaceAll(" ", "").length();
         
         //for(char chara : chars) {
         if(style != null) {
@@ -256,13 +255,12 @@ public class Font {
                 continue;
             }
             
-            Sprite sprite = this.getChar(chara);
-            Color used = color == null ? Color.WHITE : new Color(color);
+            /*Color used = color == null ? Color.WHITE : new Color(color);
             used.a = alpha;
-            batch.setColor(used);
+            batch.setColor(used);*/
             float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
             if(style != null) {
-                DisplayMeta dmeta = style.applyCharacter(i, text.replaceAll(" ", "").length());
+                DisplayMeta dmeta = style.applyCharacter(i, textLength);
                 if(dmeta != null) {
                     aX = dmeta.offX;
                     aY = dmeta.offY;
@@ -278,21 +276,65 @@ public class Font {
             float drawPosX = posX + pos + offsetX;
             float drawPosY = posY + offsetY;
             
-            sprite.draw(batch, drawPosX, drawPosY, scaleX, scaleY, 0F, false, false, true);
-            pos += ((sprite.getTextureRegion().getRegionWidth() + this.getFontData().getLetterSpacing()) * scaleX);
+            //sprite.draw(batch, drawPosX, drawPosY, scaleX, scaleY, 0F, false, false, true);
+            this.writeCharacter(batch, chara, color, drawPosX, drawPosY, iScaleX, iScaleY, alpha);
+            pos += ((this.getChar(chara).getTextureRegion().getRegionWidth() + this.getFontData().getLetterSpacing()) * scaleX);
         }
+        
+        return pos;
     }
     
-    public void sheetTest(Batch batch) {
-        sheet.sheetTest(batch);
+    public void writeCharacter(Batch batch, char character, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
+        if(Character.valueOf(' ').compareTo(character) == 0) {
+            return; // ignore spaces
+        }
+        
+        writeCharacter(batch, this.getChar(character), color, posX, posY, scaleX, scaleY, alpha);
+    }
+    
+    private void writeCharacter(Batch batch, Sprite charSprite, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
+        Color used = color == null ? Color.WHITE : color;
+        float old = used.a;
+        used.a = alpha;
+        batch.setColor(used);
+        used.a = old;
+        charSprite.draw(batch, posX, posY, scaleX, scaleY, 0F, false, false, true);
     }
     
     public void fontTest(Batch batch, int posX, int posY, int scale) {
         String charList = this.getFontData().characterList;
-        batch.enableBlending();
+        Set<Integer> yPos = new HashSet<Integer>();
+        yPos.add(posY);
+        
         for(int i = 0; i < Math.ceil(charList.length()/13) + 1; i++) {
-            int y = (i + 1) * 13;
-            this.write(batch, charList.substring(i * 13, y > charList.length() ? charList.length() : y), null, null, posX, posY - (i * 15 * scale), scale);
+            int y = posY - (i * 15 * scale);
+            yPos.add(y);
+        }
+        
+        if(batch.isDrawing()) {
+            batch.end();
+        }
+        
+        ShapeRenderer renderer = MultiRenderer.getCurrentMultiRenderer().getShapeRenderer();
+        if(renderer.isDrawing()) {
+            renderer.end();
+        }
+        
+        renderer.setProjectionMatrix(batch.getProjectionMatrix());
+        renderer.begin(ShapeType.Filled);
+        renderer.setColor(1F, 0F, 0F, 1F);
+        yPos.forEach(i -> {
+            float y = i + (scale / 2.0F);
+            renderer.rectLine(0, y, Gdx.graphics.getWidth(), y, scale);
+        });
+        
+        renderer.end();
+        
+        batch.begin();
+        for(int i = 0; i < Math.ceil(charList.length()/13) + 1; i++) {
+            int chars = (i + 1) * 13;
+            int y = posY - (i * 15 * scale);
+            this.write(batch, charList.substring(i * 13, chars > charList.length() ? charList.length() : chars), null, null, posX, y, scale);
         }
     }
 }

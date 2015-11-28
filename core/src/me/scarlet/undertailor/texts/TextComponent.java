@@ -37,7 +37,7 @@ public class TextComponent {
     
     public static class Text extends TextComponent {
         private List<TextComponent> members;
-        public Text(Font font, Style style, Color color, Sound sound, int speed, float wait, TextComponent... components) {
+        public Text(Font font, Style style, Color color, Sound sound, Integer speed, Float wait, TextComponent... components) {
             super(null, font, style, color, sound, speed, wait);
             this.members = new ArrayList<>();
             
@@ -182,8 +182,8 @@ public class TextComponent {
     private Color color;
     private Style style;
     private Font font;
-    private int speed;  // characters per second?
-    private float wait; // default 0, if there's a delay between text components, in seconds
+    private Integer speed;  // characters per second?
+    private Float wait; // delay between text components
     
     public static final int DEFAULT_SPEED = 35;
     
@@ -213,9 +213,9 @@ public class TextComponent {
     public TextComponent(String text, Font font, Style style, Color color, Sound textSound, Integer speed, Float wait) {
         this.text = text;
         this.textSound =  textSound;
-        this.color = color == null ? Color.WHITE : color;
-        this.speed = speed == null ? DEFAULT_SPEED : speed;
-        this.wait = wait == null ? 0.0F : wait;
+        this.color = color;
+        this.speed = speed;
+        this.wait = wait;
         this.style = style;
         this.font = font;
     }
@@ -225,8 +225,12 @@ public class TextComponent {
     }
     
     public Color getColor() {
-        if(color == null && parent != null) {
-            return parent.color;
+        if(color == null) {
+            if(parent != null && parent.color != null) {
+                return parent.color;
+            }
+            
+            return Color.WHITE;
         }
         
         return color;
@@ -241,8 +245,12 @@ public class TextComponent {
     }
     
     public int getSpeed() {
-        if(speed <= -1 && parent != null) {
-            return parent.speed;
+        if(speed == null) {
+            if(parent != null && parent.speed != null) {
+                return parent.speed;
+            }
+            
+            return DEFAULT_SPEED;
         }
         
         return speed;
@@ -265,6 +273,14 @@ public class TextComponent {
     }
     
     public float getDelay() {
+        if(wait == null) {
+            if(parent != null && parent.wait != null) {
+                return parent.wait;
+            }
+            
+            return 0F;
+        }
+        
         return wait;
     }
     
