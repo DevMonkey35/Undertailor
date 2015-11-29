@@ -19,6 +19,16 @@ public class MultiRenderer {
         this.renderer = new ShapeRenderer();
     }
     
+    public void setProjectionMatrix(Matrix4 matrix) {
+        this.setBatchProjectionMatrix(matrix);
+        this.setShapeProjectionMatrix(matrix);
+    }
+    
+    public void setTransformMatrix(Matrix4 matrix) {
+        this.setBatchTransformMatrix(matrix);
+        this.setShapeTransformMatrix(matrix);
+    }
+    
     public void flush() {
         if(batch.isDrawing()) {
             batch.end();
