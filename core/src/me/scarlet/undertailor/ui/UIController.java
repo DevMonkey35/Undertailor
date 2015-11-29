@@ -1,6 +1,7 @@
 package me.scarlet.undertailor.ui;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.ui.event.UIEvent;
 
 import java.util.Comparator;
@@ -14,17 +15,24 @@ public class UIController {
     /** Next ID holder for incoming generations UI objects. */
     private static int nextUID;
     
+    public static final int RENDER_WIDTH = 640;
+    public static final int RENDER_HEIGHT = 480;
+    
     static {
         UIController.nextUID = 0;
     }
     
     /** Map holding all headed UI objects. */
     private SortedMap<Integer, UIObject> uis;
+    private OrthographicCamera camera;
+    private Viewport port;
     
-    public UIController() {
+    public UIController(Viewport port) {
         this.uis = new TreeMap<>(((Comparator<Integer>) (Integer i1, Integer i2) -> {
                     return i1.compareTo(i2);
                 }));
+        this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
+        this.setViewport(port);
     }
     
     public UIObject getUIObject(int id) {
@@ -55,9 +63,9 @@ public class UIController {
         }, false);
     }
     
-    public void render(Batch batch) {
+    public void render() {
         this.processObjects(object -> {
-            object.render(batch);
+            object.render();
         }, false);
     }
     
@@ -82,5 +90,20 @@ public class UIController {
                 consumer.accept(active);
             }
         }
+    }
+    
+    public void setViewport(Viewport port) {
+        this.port = port;
+        this.port.setWorldHeight(RENDER_HEIGHT);
+        this.port.setWorldWidth(RENDER_WIDTH);
+        this.port.setCamera(camera);
+        this.camera.position.set(this.camera.viewportWidth/2.0F, this.camera.viewportHeight/2.0F, 0.0F);
+        this.camera.update();
+    }
+    
+    public void resize(int width, int height) {
+        this.port.update(width, height, false);
+        this.camera.position.set(this.camera.viewportWidth/2.0F, this.camera.viewportHeight/2.0F, 0.0F);
+        this.camera.update();
     }
 }

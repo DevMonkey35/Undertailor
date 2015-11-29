@@ -1,15 +1,14 @@
 package me.scarlet.undertailor.manager;
 
-import static me.scarlet.undertailor.Undertailor.log;
 import static me.scarlet.undertailor.Undertailor.error;
+import static me.scarlet.undertailor.Undertailor.log;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.texts.Font;
-import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.Font.FontData;
+import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.util.Pair;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
@@ -103,30 +102,30 @@ public class FontManager {
         log("fontman", "registered font " + font.getFontData().getName());
     }
     
-    public void write(Batch batch, Text text, float posX, float posY) {
-        write(batch, text, posX, posY, 1);
+    public void write(Text text, float posX, float posY) {
+        write(text, posX, posY, 1);
     }
     
-    public void write(Batch batch, Text text, float posX, float posY, float scale) {
-        write(batch, text, posX, posY, scale, scale);
+    public void write(Text text, float posX, float posY, float scale) {
+        write(text, posX, posY, scale, scale);
     }
     
-    public void write(Batch batch, Text text, float posX, float posY, float scaleX, float scaleY) {
-        write(batch, text, posX, posY, scaleX, scaleY, 1.0F);
+    public void write(Text text, float posX, float posY, float scaleX, float scaleY) {
+        write(text, posX, posY, scaleX, scaleY, 1.0F);
     }
     
-    public void write(Batch batch, Text text, float posX, float posY, float scaleX, float scaleY, float alpha) {
+    public void write(Text text, float posX, float posY, float scaleX, float scaleY, float alpha) {
         if(text.getMembers().size() < 1) {
             return; // ignore empty texts
         }
         
         if(text.getMembers().size() == 1) {
-            text.getFont().write(batch, text.getText(), text.getStyle(), text.getColor(), posX, posY, scaleX, scaleY, alpha);
+            text.getFont().write(text.getText(), text.getStyle(), text.getColor(), posX, posY, scaleX, scaleY, alpha);
         } else {
             int pos = 0;
             for(int i = 0; i < text.getMembers().size(); i++) {
                 TextComponent component = text.getMembers().get(i);
-                pos += component.getFont().write(batch, component.getText(), component.getStyle(), component.getColor(), posX + pos, posY, scaleX, scaleY, alpha);
+                pos += component.getFont().write(component.getText(), component.getStyle(), component.getColor(), posX + pos, posY, scaleX, scaleY, alpha);
             }
         }
     }

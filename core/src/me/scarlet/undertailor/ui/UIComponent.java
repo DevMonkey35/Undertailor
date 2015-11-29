@@ -1,6 +1,5 @@
 package me.scarlet.undertailor.ui;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.ui.event.UIEvent;
 
@@ -121,9 +120,10 @@ public abstract class UIComponent {
     /**
      * Renders this {@link UIComponent}.
      * 
-     * @param batch the {@link Batch} used to draw this UIComponent
      * @param parentAlpha the alpha of the parent UIObject, which should be
      *            multiplied by this object's current alpha
      */
-    public void render(Batch batch, float parentAlpha) {}
+    public void render(float parentAlpha) {}
+    
+    public abstract String getComponentTypeName();
 }

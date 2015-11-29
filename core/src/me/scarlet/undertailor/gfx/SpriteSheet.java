@@ -79,13 +79,15 @@ public class SpriteSheet {
     }
     
     private String sheetName;
+    private Texture texture;
     private Sprite[] sprites;
-    public SpriteSheet(String sheetName, Texture image, SpriteSheetMeta meta) throws TextureTilingException {
+    public SpriteSheet(String sheetName, Texture texture, SpriteSheetMeta meta) throws TextureTilingException {
+        this.texture = texture;
         this.sheetName = sheetName;
-        checkTexture(image, meta.gridX, meta.gridY);
+        checkTexture(texture, meta.gridX, meta.gridY);
         sprites = new Sprite[meta.gridX * meta.gridY];
-        int spriteHeight = (int) (image.getHeight() / meta.gridY);
-        int spriteWidth = (int) (image.getWidth() / meta.gridX);
+        int spriteHeight = (int) (texture.getHeight() / meta.gridY);
+        int spriteWidth = (int) (texture.getWidth() / meta.gridX);
         for(int iY = 0; iY < meta.gridY; iY++) {
             for(int iX = 0; iX < meta.gridX; iX++) {
                 int pos = (iY * meta.gridX) + iX;
@@ -94,7 +96,7 @@ public class SpriteSheet {
                     smeta = meta.spriteMeta[pos];
                 }
                 
-                TextureRegion region = new TextureRegion(image);
+                TextureRegion region = new TextureRegion(texture);
                 int height = spriteHeight;
                 int width = spriteWidth;
                 int wrapY = 0;
@@ -122,6 +124,10 @@ public class SpriteSheet {
         return sheetName;
     }
     
+    public Texture getTexture() {
+        return texture;
+    }
+    
     private void checkTexture(Texture image, int width, int height) throws TextureTilingException {
         if(image.getWidth() % width != 0) {
             throw new TextureTilingException("Texture width is not divisible by defined width");
@@ -137,9 +143,7 @@ public class SpriteSheet {
         int i2 = 0;
         for(Sprite sprite : sprites) {
             int y = 400 - (i2 * 35);
-            //TextureRegion region = sprite.getTextureRegion();
-            sprite.draw(batch, 20 * i + 16, y);
-            //batch.draw(region, (20 * i) + 15, y, 0, 0, region.getRegionWidth(), region.getRegionHeight(), 2.0F, 2.0F, 0F);
+            sprite.draw(20 * i + 16, y);
             i++;
             if(i == 16) {
                 i = 0;

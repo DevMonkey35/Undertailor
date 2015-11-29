@@ -3,10 +3,10 @@ package me.scarlet.undertailor.manager;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static me.scarlet.undertailor.Undertailor.log;
+import static me.scarlet.undertailor.Undertailor.warn;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.wrappers.MusicWrapper;
 import me.scarlet.undertailor.wrappers.SoundWrapper;
 
@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 public class AudioManager {
+    
+    public static final String MANAGER_TAG = "audioman";
     
     private List<Map<String, ? extends Object>> soundTables;
     private float musicVolume, soundVolume;
@@ -120,7 +122,7 @@ public class AudioManager {
         checkArgument(dir.isDirectory(), "Not a directory");
         
         Map<String, Object> mapping = (Map<String, Object>) soundTables.get(table);
-        log("audioman", "scanning directory " + dir.getAbsolutePath() + " for " + (table == 0 ? "sound" : "music"));
+        log(MANAGER_TAG, "scanning directory " + dir.getAbsolutePath() + " for " + (table == 0 ? "sound" : "music"));
         for(File file : dir.listFiles()) {
             if(file.isDirectory() && recursive) {
                 if(whitelist == null || whitelist.contains(file.getName())) {
@@ -132,23 +134,23 @@ public class AudioManager {
             
             String name = heading + file.getName().split("\\.")[0];
             if(!file.getName().endsWith(".ogg") && !file.getName().endsWith(".mp3") && !file.getName().endsWith(".wav")) {
-                Undertailor.warn("audioman", "could not register sound/music file \"" + name + "\"; we can only use .OGG, .MP3 and .WAV files");
+                warn(MANAGER_TAG, "could not register sound/music file \"" + name + "\"; we can only use .OGG, .MP3 and .WAV files");
                 exit = notAllLoaded;
                 continue;
             }
             
             if(whitelist == null || whitelist.contains(name)) {
                 if(mapping.containsKey(name)) {
-                    log("audioman", "WARN: name conflict with another sound file of another file type detected (" + name + "); old one will be replaced with new one");
+                    log(MANAGER_TAG, "WARN: name conflict with another sound file of another file type detected (" + name + "); old one will be replaced with new one");
                 }
                 
                 Object value = null;
                 if(table == 0) { // sound
                     value = new SoundWrapper(file);
-                    log("audioman", "registered sound " + name);
+                    log(MANAGER_TAG, "registered sound " + name);
                 } else {
                     value = new MusicWrapper(file);
-                    log("audioman", "registered music " + name);
+                    log(MANAGER_TAG, "registered music " + name);
                 }
                 
                 mapping.put(name, value);

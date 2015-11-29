@@ -79,6 +79,6 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
         float offX = meta.offX * meta.scaleX;
         float offY = meta.offY * meta.scaleY;
-        sprite.draw(batch, posX + offX, posY + offY, meta.scaleX * scale, meta.scaleY * scale, meta.rotation, meta.flipX, meta.flipY);
+        sprite.draw(posX + offX, posY + offY, meta.scaleX * scale, meta.scaleY * scale, meta.rotation, meta.flipX, meta.flipY);
     }
 }

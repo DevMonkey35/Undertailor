@@ -47,10 +47,10 @@ public class TextLib extends TwoArgFunction {
                 throw new LuaError("function arguments insufficient or overflowing (min 0, max 5)");
             }
             
-            float offX = args.arg(1).isnil() ? 0F : new Float(args.arg(1).checkdouble());
-            float offY = args.arg(2).isnil() ? 0F : new Float(args.arg(2).checkdouble());
-            float scaleX = args.arg(3).isnil() ? 1F : new Float(args.arg(3).checkdouble());
-            float scaleY = args.arg(4).isnil() ? 1F : new Float(args.arg(4).checkdouble());
+            float offX = new Float(args.optdouble(1, 0F));
+            float offY = new Float(args.optdouble(2, 0F));
+            float scaleX = new Float(args.optdouble(1, 1F));
+            float scaleY = new Float(args.optdouble(1, 1F));
             Color color = args.arg(5).isnil() ? Color.WHITE : LuaColor.checkcolor(args.arg(5)).getColor();
             
             if(scaleX < 0F) {
@@ -68,7 +68,7 @@ public class TextLib extends TwoArgFunction {
     static class _newText extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            if(args.narg() < 1 || args.narg() > 6 /*?*/) { // newText(fontname, stylename, color, soundname, textspeed, delay)
+            if(args.narg() < 1 || args.narg() > 6) {
                 throw new LuaError("arguments insufficient or overflowing (min 1, max 6)");
             }
             
@@ -76,8 +76,8 @@ public class TextLib extends TwoArgFunction {
             Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getStyle(args.arg(2).checkjstring());
             Color color = args.isnil(3) ? null : LuaColor.checkcolor(args.arg(3)).getColor();
             Sound sound = args.arg(4).isnil() ? null : LuaSound.checkSound(args.arg(4)).getSound();
-            int speed = args.arg(5).isnil() ? TextComponent.DEFAULT_SPEED : args.arg(5).checkint();
-            float delay = args.arg(6).isnil() ? 0F : new Float(args.arg(6).checkdouble());
+            int speed = args.optint(5, TextComponent.DEFAULT_SPEED);;
+            float delay = new Float(args.optdouble(6, 0F));
             
             return new LuaText(new Text(font, style, color, sound, speed, delay));
         }
@@ -140,6 +140,24 @@ public class TextLib extends TwoArgFunction {
             }
             
             return returned;
+        }
+    }
+    
+    static class _drawText extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            if(args.narg() < 1) {
+                throw new LuaError("arguments insufficient or overflowing (min 3, max 6)");
+            }
+            
+            Text text = LuaText.checkText(args.arg(1)).getText();
+            float posX = new Float(args.arg(2).checkdouble());
+            float posY = new Float(args.arg(3).checkdouble());
+            float scaleX = new Float(args.optdouble(4, 1.0));
+            float scaleY = new Float(args.optdouble(5, scaleX));
+            float alpha = new Float(args.optdouble(6, 1.0));
+            Undertailor.getFontManager().write(text, posX, posY, scaleX, scaleY, alpha);
+            return LuaValue.NIL;
         }
     }
 }

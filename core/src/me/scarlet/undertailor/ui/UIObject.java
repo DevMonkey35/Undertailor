@@ -2,7 +2,6 @@ package me.scarlet.undertailor.ui;
 
 import static me.scarlet.undertailor.Undertailor.warn;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
@@ -63,10 +62,10 @@ public class UIObject {
         cleanup();
     }
     
-    public void render(Batch batch) {
+    public void render() {
         this.components.forEach(component -> {;
            if(this.isComponentActive(component)) {
-               component.render(batch, alpha);
+               component.render(alpha);
            }
         });
     }

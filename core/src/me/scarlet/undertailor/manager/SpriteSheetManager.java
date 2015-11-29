@@ -17,6 +17,8 @@ import java.util.Map;
 
 public class SpriteSheetManager {
     
+    public static final String MANAGER_TAG = "sheetman";
+    
     private Map<String, SpriteSheet> sheets;
     
     public SpriteSheetManager() {
@@ -33,9 +35,10 @@ public class SpriteSheetManager {
             return;
         }
         
-        log("sheetman", "loading sprites from directory " + directory.getAbsolutePath());
+        log(MANAGER_TAG, "loading sprites from directory " + directory.getAbsolutePath());
         File spriteDef = new File(directory, "sprites.json");
         if(!spriteDef.exists()) {
+            error(MANAGER_TAG, "could not load sprites from directory: sprites.json not present");
             return;
         }
         
@@ -43,23 +46,23 @@ public class SpriteSheetManager {
             return;
         }
         
-        log("sheetman", "sprites.json found");
+        log(MANAGER_TAG, "sprites.json found");
         try {
             ConfigurationLoader<ConfigurationNode> loader = JSONConfigurationLoader.builder().setFile(spriteDef).build();
             ConfigurationNode root = loader.load();
             root.getNode("sheets").getChildrenMap().values().forEach(node -> {
                 try {
-                    log("sheetman", "loading spritesheet \"" + node.getKey().toString() + "\"");
+                    log(MANAGER_TAG, "loading spritesheet \"" + node.getKey().toString() + "\"");
                     SpriteSheet sheet = SpriteSheet.fromConfig(directory, node);
                     sheets.put(sheet.getSheetName(), sheet);
                 } catch(FileNotFoundException e) {
-                    error("sheetman", "failed to load spritesheet: defined texture file was not found");
+                    error(MANAGER_TAG, "failed to load spritesheet: defined texture file was not found");
                 } catch(TextureTilingException e) {
-                    error("sheetman", "failed to load spritesheet: texture check failed (" + e.getMessage() + ")");
+                    error(MANAGER_TAG, "failed to load spritesheet: texture check failed (" + e.getMessage() + ")");
                 }
             });
         } catch(Exception e) {
-            error("sheetman", "failed to load spritesheet: vm exception (" + e.getMessage() + ")", e.getStackTrace());
+            error(MANAGER_TAG, "failed to load spritesheet: vm exception (" + e.getMessage() + ")", e.getStackTrace());
         }
     }
     
@@ -77,7 +80,7 @@ public class SpriteSheetManager {
                 lastSize += sheet.getSprite(i).getTextureRegion().getRegionWidth() * 2;
             }
             
-            sheet.getSprite(i).draw(batch, 40 + lastSize, 35, 2.0F);
+            sheet.getSprite(i).draw(40 + lastSize, 35, 2.0F);
         }
         
         batch.end();

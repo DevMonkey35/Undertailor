@@ -3,9 +3,8 @@ package me.scarlet.undertailor.texts;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.Sprite;
@@ -221,19 +220,19 @@ public class Font {
         return sheet.getSprite(data.characterList.indexOf(ch));
     }
     
-    public int write(Batch batch, String text, Style style, Color color, float posX, float posY) {
-        return write(batch, text, style, color, posX, posY, 1);
+    public int write(String text, Style style, Color color, float posX, float posY) {
+        return write(text, style, color, posX, posY, 1);
     }
     
-    public int write(Batch batch, String text, Style style, Color color, float posX, float posY, float scale) {
-        return write(batch, text, style, color, posX, posY, scale, scale);
+    public int write(String text, Style style, Color color, float posX, float posY, float scale) {
+        return write(text, style, color, posX, posY, scale, scale);
     }
     
-    public int write(Batch batch, String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY) {
-        return write(batch, text, style, color, posX, posY, scaleX, scaleY, 1.0F);
+    public int write(String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY) {
+        return write(text, style, color, posX, posY, scaleX, scaleY, 1.0F);
     }
     
-    public int write(Batch batch, String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
+    public int write(String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
         if(text.trim().isEmpty()) {
             return 0;
         }
@@ -255,9 +254,6 @@ public class Font {
                 continue;
             }
             
-            /*Color used = color == null ? Color.WHITE : new Color(color);
-            used.a = alpha;
-            batch.setColor(used);*/
             float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
             if(style != null) {
                 DisplayMeta dmeta = style.applyCharacter(i, textLength);
@@ -276,32 +272,32 @@ public class Font {
             float drawPosX = posX + pos + offsetX;
             float drawPosY = posY + offsetY;
             
-            //sprite.draw(batch, drawPosX, drawPosY, scaleX, scaleY, 0F, false, false, true);
-            this.writeCharacter(batch, chara, color, drawPosX, drawPosY, iScaleX, iScaleY, alpha);
+            this.writeCharacter(chara, color, drawPosX, drawPosY, iScaleX, iScaleY, alpha);
             pos += ((this.getChar(chara).getTextureRegion().getRegionWidth() + this.getFontData().getLetterSpacing()) * scaleX);
         }
         
         return pos;
     }
     
-    public void writeCharacter(Batch batch, char character, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
+    public void writeCharacter(char character, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
         if(Character.valueOf(' ').compareTo(character) == 0) {
             return; // ignore spaces
         }
         
-        writeCharacter(batch, this.getChar(character), color, posX, posY, scaleX, scaleY, alpha);
+        writeCharacter(this.getChar(character), color, posX, posY, scaleX, scaleY, alpha);
     }
     
-    private void writeCharacter(Batch batch, Sprite charSprite, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
+    private void writeCharacter(Sprite charSprite, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
+        MultiRenderer renderer = Undertailor.getRenderer();
         Color used = color == null ? Color.WHITE : color;
         float old = used.a;
         used.a = alpha;
-        batch.setColor(used);
+        renderer.setBatchColor(used);
         used.a = old;
-        charSprite.draw(batch, posX, posY, scaleX, scaleY, 0F, false, false, true);
+        charSprite.draw(posX, posY, scaleX, scaleY, 0F, false, false, true);
     }
     
-    public void fontTest(Batch batch, int posX, int posY, int scale) {
+    public void fontTest(int posX, int posY, int scale) {
         String charList = this.getFontData().characterList;
         Set<Integer> yPos = new HashSet<Integer>();
         yPos.add(posY);
@@ -311,30 +307,17 @@ public class Font {
             yPos.add(y);
         }
         
-        if(batch.isDrawing()) {
-            batch.end();
-        }
-        
-        ShapeRenderer renderer = MultiRenderer.getCurrentMultiRenderer().getShapeRenderer();
-        if(renderer.isDrawing()) {
-            renderer.end();
-        }
-        
-        renderer.setProjectionMatrix(batch.getProjectionMatrix());
-        renderer.begin(ShapeType.Filled);
-        renderer.setColor(1F, 0F, 0F, 1F);
+        MultiRenderer renderer = Undertailor.getRenderer();
+        renderer.setShapeColor(new Color(1F, 0F, 0F, 1F));
         yPos.forEach(i -> {
             float y = i + (scale / 2.0F);
-            renderer.rectLine(0, y, Gdx.graphics.getWidth(), y, scale);
+            renderer.drawLine(new Vector2(0, y), new Vector2(Gdx.graphics.getWidth(), y), scale);
         });
         
-        renderer.end();
-        
-        batch.begin();
         for(int i = 0; i < Math.ceil(charList.length()/13) + 1; i++) {
             int chars = (i + 1) * 13;
             int y = posY - (i * 15 * scale);
-            this.write(batch, charList.substring(i * 13, chars > charList.length() ? charList.length() : chars), null, null, posX, y, scale);
+            this.write(charList.substring(i * 13, chars > charList.length() ? charList.length() : chars), null, null, posX, y, scale);
         }
     }
 }

@@ -1,7 +1,7 @@
 package me.scarlet.undertailor.gfx;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import me.scarlet.undertailor.Undertailor;
 
 public class Sprite {
     
@@ -46,31 +46,31 @@ public class Sprite {
         return meta;
     }
     
-    public void draw(Batch batch, float posX, float posY) {
-        this.draw(batch, posX, posY, 1.0F);
+    public void draw(float posX, float posY) {
+        this.draw(posX, posY, 1.0F);
     }
     
-    public void draw(Batch batch, float posX, float posY, float scale) {
-        this.draw(batch, posX, posY, scale, scale);
+    public void draw(float posX, float posY, float scale) {
+        this.draw(posX, posY, scale, scale);
     }
     
-    public void draw(Batch batch, float posX, float posY, float scaleX, float scaleY) {
-        this.draw(batch, posX, posY, scaleX, scaleY, 0F);
+    public void draw( float posX, float posY, float scaleX, float scaleY) {
+        this.draw(posX, posY, scaleX, scaleY, 0F);
     }
     
-    public void draw(Batch batch, float posX, float posY, float scaleX, float scaleY, float rotation) {
-        this.draw(batch, posX, posY, scaleX, scaleY, rotation, false);
+    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation) {
+        this.draw(posX, posY, scaleX, scaleY, rotation, false);
     }
     
-    public void draw(Batch batch, float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX) {
-        this.draw(batch, posX, posY, scaleX, scaleY, rotation, flipX, false);
+    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX) {
+        this.draw(posX, posY, scaleX, scaleY, rotation, flipX, false);
     }
     
-    public void draw(Batch batch, float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY) {
-        this.draw(batch, posX, posY, scaleX, scaleY, rotation, flipX, flipY, false);
+    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY) {
+        this.draw(posX, posY, scaleX, scaleY, rotation, flipX, flipY, false);
     }
     
-    public void draw(Batch batch, float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY, boolean ensureBottomLeft) { // for texts
+    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY, boolean ensureBottomLeft) { // for texts
         float originX = 0, originY = 0;
         int offX = 0, offY = 0;
         if(meta != null) {
@@ -90,6 +90,6 @@ public class Sprite {
         TextureRegion drawn = new TextureRegion(region);
         drawn.flip(flipX, flipY);
         
-        batch.draw(drawn, x, y, (originX * scaleX), (originY * scaleY), region.getRegionWidth(), region.getRegionHeight(), scaleX, scaleY, rotation);
+        Undertailor.getRenderer().draw(drawn, x, y, (originX * scaleX), (originY * scaleY), region.getRegionWidth(), region.getRegionHeight(), scaleX, scaleY, rotation);
     }
 }
