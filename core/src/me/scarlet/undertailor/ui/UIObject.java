@@ -1,45 +1,61 @@
 package me.scarlet.undertailor.ui;
 
-import static me.scarlet.undertailor.Undertailor.warn;
-
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class UIObject {
     
     protected int id;
     private float alpha;
+    private long lifetime; // <= -1 - headless, = 0 - infinitely headed, >=1 - timed headed
     private Vector2 position;
-    private boolean isAlwaysActive;
-    private List<UIComponent> marked;
+    private boolean isVisible;
+    private Set<UIComponent> markAdd;
+    private Set<UIComponent> markRemove;
     private List<UIComponent> components;
     
     public UIObject() {
-        this(false);
+        this(0);
     }
     
-    public UIObject(boolean isAlwaysActive) {
+    public UIObject(long lifetime) {
         this.position = new Vector2(0, 0);
         this.components = new ArrayList<>();
-        this.marked = new ArrayList<>();
-        this.isAlwaysActive = isAlwaysActive;
+        this.markRemove = new HashSet<>();
+        this.markAdd = new HashSet<>();
+        this.isVisible = true;
+        this.lifetime = lifetime;
     }
     
     public int getId() {
         return id;
     }
     
-    public boolean isAlwaysActive() {
-        return this.isAlwaysActive;
+    public boolean isHeadless() {
+        return lifetime < 0;
+    }
+    
+    public long getLifetime() {
+        return lifetime < 0 ? 0 : lifetime;
     }
     
     public Vector2 getPosition() {
         return this.position;
+    }
+    
+    public boolean isVisible() {
+        return isVisible;
+    }
+    
+    public void setVisible(boolean flag) {
+        this.isVisible = flag;
     }
     
     public void pushEvent(UIEvent event) {
@@ -63,6 +79,10 @@ public class UIObject {
     }
     
     public void render() {
+        if(!isVisible) {
+            return;
+        }
+        
         this.components.forEach(component -> {;
            if(this.isComponentActive(component)) {
                component.render(alpha);
@@ -82,7 +102,7 @@ public class UIObject {
         if(!component.getParent().equals(this)) {
             throw new IllegalArgumentException("Component was not a child");
         } else {
-            if(this.marked.contains(component)) {
+            if(this.markRemove.contains(component)) {
                 return false;
             } else {
                 if(this.components.isEmpty()) {
@@ -95,24 +115,32 @@ public class UIObject {
     }
     
     public void registerChild(UIComponent component) {
-        component.parent = this;
-        this.components.add(component);
+        this.markAdd.add(component);
     }
     
     public void destroyChild(UIComponent component) {
         if(component.getParent().equals(this)) {
-            this.marked.add(component);
-            component.onDestroy(false);
+            this.markRemove.add(component);
+            component.destroy();
         } else {
-            warn("ui", "request ignored to destroy non-child component");
+            Undertailor.instance.warn("ui", "request ignored to destroy non-child component");
         }
     }
     
     private void cleanup() {
-        Iterator<UIComponent> marked = this.marked.iterator();
+        Iterator<UIComponent> marked = markRemove.iterator();
         while(marked.hasNext()) {
             UIComponent component = marked.next();
+            component.parent = null;
             this.components.remove(component);
+            marked.remove();
+        }
+        
+        marked = markAdd.iterator();
+        while(marked.hasNext()) {
+            UIComponent component = marked.next();
+            component.parent = this;
+            this.components.add(component);
             marked.remove();
         }
     }

@@ -1,17 +1,14 @@
 package me.scarlet.undertailor.manager;
 
-import static me.scarlet.undertailor.Undertailor.error;
-import static me.scarlet.undertailor.Undertailor.log;
-
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import me.scarlet.undertailor.exception.TextureTilingException;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.SpriteSheet;
+import me.scarlet.undertailor.wrappers.SpriteSheetWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +16,7 @@ public class SpriteSheetManager {
     
     public static final String MANAGER_TAG = "sheetman";
     
-    private Map<String, SpriteSheet> sheets;
+    private Map<String, SpriteSheetWrapper> sheets;
     
     public SpriteSheetManager() {
         this.sheets = new HashMap<>();
@@ -35,10 +32,10 @@ public class SpriteSheetManager {
             return;
         }
         
-        log(MANAGER_TAG, "loading sprites from directory " + directory.getAbsolutePath());
+        Undertailor.instance.log(MANAGER_TAG, "loading sprites from directory " + directory.getAbsolutePath());
         File spriteDef = new File(directory, "sprites.json");
         if(!spriteDef.exists()) {
-            error(MANAGER_TAG, "could not load sprites from directory: sprites.json not present");
+            Undertailor.instance.error(MANAGER_TAG, "could not load sprites from directory: sprites.json not present");
             return;
         }
         
@@ -46,32 +43,55 @@ public class SpriteSheetManager {
             return;
         }
         
-        log(MANAGER_TAG, "sprites.json found");
+        Undertailor.instance.log(MANAGER_TAG, "sprites.json found");
         try {
             ConfigurationLoader<ConfigurationNode> loader = JSONConfigurationLoader.builder().setFile(spriteDef).build();
             ConfigurationNode root = loader.load();
             root.getNode("sheets").getChildrenMap().values().forEach(node -> {
-                try {
-                    log(MANAGER_TAG, "loading spritesheet \"" + node.getKey().toString() + "\"");
+                /*try {
+                    Undertailor.instance.log(MANAGER_TAG, "loading spritesheet \"" + node.getKey().toString() + "\"");
                     SpriteSheet sheet = SpriteSheet.fromConfig(directory, node);
                     sheets.put(sheet.getSheetName(), sheet);
                 } catch(FileNotFoundException e) {
-                    error(MANAGER_TAG, "failed to load spritesheet: defined texture file was not found");
+                    Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet: " + e.getMessage());
                 } catch(TextureTilingException e) {
-                    error(MANAGER_TAG, "failed to load spritesheet: texture check failed (" + e.getMessage() + ")");
-                }
+                    Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet: texture check failed (" + e.getMessage() + ")");
+                } catch(ConfigurationException e) {
+                    Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet: " + e.getMessage());
+                }*/
+                
+                Undertailor.instance.log(MANAGER_TAG, "loading spritesheet \"" + node.getKey().toString() + "\"");
+                SpriteSheetWrapper sheet = new SpriteSheetWrapper(directory, node);
+                sheets.put(node.getKey().toString(), sheet);
             });
         } catch(Exception e) {
-            error(MANAGER_TAG, "failed to load spritesheet: vm exception (" + e.getMessage() + ")", e.getStackTrace());
+            Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet: vm exception (" + e.getMessage() + ")", e.getStackTrace());
         }
     }
     
-    public SpriteSheet getSpriteSheet(String sheetName) {
-        return this.sheets.get(sheetName);
+    public SpriteSheetWrapper getSpriteSheet(String sheetName) {
+        if(this.sheets.containsKey(sheetName)) {
+            return this.sheets.get(sheetName);
+        }
+        
+        Undertailor.instance.warn(MANAGER_TAG, "system requested non-existing spritesheet (" + sheetName + ")");
+        return null;
+    }
+    
+    public void keepSheetLoaded(String sheetName, boolean preload) {
+        SpriteSheetWrapper wrapper = this.getSpriteSheet(sheetName);
+        if(wrapper != null) {
+            if(preload) {
+                wrapper.getReference(this);
+            } else {
+                wrapper.removeReference(this);
+            }
+        }
     }
     
     public void testSheet(String sheetName) {
-        SpriteSheet sheet = this.sheets.get(sheetName);
+        SpriteSheetWrapper sheetRef = this.sheets.get(sheetName);;
+        SpriteSheet sheet = sheetRef.getReference(this);
         SpriteBatch batch = new SpriteBatch();
         batch.begin();
         int lastSize = 0;
@@ -85,5 +105,6 @@ public class SpriteSheetManager {
         
         batch.end();
         batch.dispose();
+        sheetRef.removeReference(this);
     }
 }

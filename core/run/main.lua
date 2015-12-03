@@ -1,0 +1,5 @@
+local boxObj = ui.newObject()
+local boxComp = ui.newComponent("boxed", nil, nil, 566.0, 140.0, 6)
+boxObj:registerComponent(boxComp)
+boxObj:setPosition(38, 14)
+ui.registerObject(boxObj)

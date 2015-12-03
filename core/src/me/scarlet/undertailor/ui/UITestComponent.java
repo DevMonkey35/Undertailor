@@ -16,7 +16,7 @@ public class UITestComponent extends UIComponent {
     
     @Override
     public void onDestroy(boolean object) {
-        Undertailor.log("TESTCOMP" + objId, "destroyed " + (object ? "object" : "component"));
+        Undertailor.instance.log("TESTCOMP" + objId, "destroyed " + (object ? "object" : "component"));
     }
     
     @Override
@@ -25,9 +25,14 @@ public class UITestComponent extends UIComponent {
             time = TimeUtils.millis();
         } else if(TimeUtils.timeSinceMillis(time) > 1000) {
             this.destroy();
-            Undertailor.log("TESTCOMP" + objId, "GOT DESTROYED");
+            Undertailor.instance.log("TESTCOMP" + objId, "GOT DESTROYED");
         } else {
-            Undertailor.log("TESTCOMP" + objId, "BAD TIME SIMULATOR 2015");
+            Undertailor.instance.log("TESTCOMP" + objId, "BAD TIME SIMULATOR 2015");
         }
+    }
+
+    @Override
+    public String getComponentTypeName() {
+        return "tailor-testuicomp";
     }
 }

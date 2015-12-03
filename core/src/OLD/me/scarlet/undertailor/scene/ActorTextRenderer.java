@@ -105,6 +105,7 @@ public class ActorTextRenderer extends Actor {
         return drawn;
     }
     
+    @Override
     public void setVisible(boolean flag) {
         this.visible = flag;
     }

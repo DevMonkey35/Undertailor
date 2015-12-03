@@ -29,6 +29,14 @@ public class MultiRenderer {
         this.setShapeTransformMatrix(matrix);
     }
     
+    public SpriteBatch getSpriteBatch() {
+        return batch;
+    }
+    
+    public ShapeRenderer getShapeRenderer() {
+        return renderer;
+    }
+    
     public void flush() {
         if(batch.isDrawing()) {
             batch.end();
@@ -117,6 +125,7 @@ public class MultiRenderer {
         }
         
         if(!renderer.isDrawing()) {
+            renderer.setAutoShapeType(true);
             renderer.begin(ShapeType.Filled);
         }
     }
@@ -147,11 +156,19 @@ public class MultiRenderer {
     
     public void drawLine(Vector2 begin, Vector2 end, float thickness) {
         this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Filled) {
+            renderer.set(ShapeType.Filled);
+        }
+        
         renderer.rectLine(begin, end, thickness);
     }
     
     public void drawRectangle(Vector2 pos, float width, float height, float lineThickness) {
         this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Filled) {
+            renderer.set(ShapeType.Filled);
+        }
+        
         Vector2 bR = new Vector2(pos.x + width, pos.y);
         Vector2 tL = new Vector2(pos.x, pos.y + height);
         Vector2 tR = new Vector2(bR.x, tL.y);
@@ -163,11 +180,28 @@ public class MultiRenderer {
     
     public void drawFilledRectangle(Vector2 pos, float width, float height) {
         this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Filled) {
+            renderer.set(ShapeType.Filled);
+        }
+        
         renderer.rect(pos.x, pos.y, width, height);
     }
     
     public void drawCircle(float x, float y, float radius) {
         this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Line) {
+            renderer.set(ShapeType.Line);
+        }
+        
+        renderer.circle(x, y, radius);
+    }
+    
+    public void drawFilledCircle(float x, float y, float radius) {
+        this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Filled) {
+            renderer.set(ShapeType.Filled);
+        }
+        
         renderer.circle(x, y, radius);
     }
 }

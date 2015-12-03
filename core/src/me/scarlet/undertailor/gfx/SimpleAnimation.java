@@ -1,9 +1,13 @@
 package me.scarlet.undertailor.gfx;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.KeyFrame.FrameObjectMeta;
 import me.scarlet.undertailor.gfx.KeyFrame.SimpleKeyFrame;
+import me.scarlet.undertailor.manager.AnimationManager;
+import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.MapUtil;
+import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -11,6 +15,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class SimpleAnimation extends Animation<SimpleKeyFrame>{
+    
+    public static final int TYPE_ID = 0;
+    
+    public static SimpleAnimation fromConfig(ConfigurationNode node) {
+        Undertailor.instance.debug(AnimationManager.MANAGER_TAG, "loading simpleanimation " + node.getKey().toString());
+        float frameTime = ConfigurateUtil.processFloat(node.getNode("frameTime"), 0.5F);
+        int[] frames = ConfigurateUtil.processIntArray(node.getNode("frames"), null);
+        boolean looping = ConfigurateUtil.processBoolean(node.getNode("looping"), false);
+        SimpleKeyFrame[] keyFrames = new SimpleKeyFrame[frames.length];
+        for(int i = 0; i < frames.length; i++) {
+            keyFrames[i] = new SimpleKeyFrame(frames[i], (long) (1000.0 * frameTime));
+        }
+        
+        return new SimpleAnimation(0, looping, keyFrames);
+    }
     
     private Map<Long, SimpleKeyFrame> frames;
     public SimpleAnimation(long startTime, boolean loop, SimpleKeyFrame... frames) {
@@ -41,9 +60,7 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         if(time > last.getKey()) {
             if(this.isLooping()) {
                 time = (long) (time - (last.getKey() * (Math.floor(time / last.getKey()))));
-                System.out.println("time was set to " + time);
             } else {
-                System.out.println("returned last value");
                 return last.getValue();
             }
         }
@@ -75,7 +92,7 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
             return;
         }
         
-        Sprite sprite = this.getCurrentSpriteSet()[frame.getSpriteIndex()];
+        Sprite sprite = this.getParentSet().getCurrentSpriteset()[frame.getSpriteIndex()];
         FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
         float offX = meta.offX * meta.scaleX;
         float offY = meta.offY * meta.scaleY;

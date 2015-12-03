@@ -13,11 +13,6 @@
 					"originX": 8.5
 				}
 			}
-		},
-		"aster": {
-			"file": "aster.png",
-			"gridSizeX": 13,
-			"gridSizeY": 8
 		}
 	}
 }

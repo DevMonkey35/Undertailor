@@ -88,7 +88,7 @@ public class LuaDisplayMeta extends LuaValue {
     
     @Override
     public int type() {
-        return LuaValue.TTABLE;
+        return LuaValue.TVALUE;
     }
 
     @Override

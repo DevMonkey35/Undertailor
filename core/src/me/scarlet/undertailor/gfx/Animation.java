@@ -2,7 +2,6 @@ package me.scarlet.undertailor.gfx;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Animation<T extends KeyFrame> {
@@ -11,29 +10,20 @@ public abstract class Animation<T extends KeyFrame> {
     
     private boolean loop;
     private long startTime;
-    private String currentSet;
-    private Map<String, Sprite[]> spritesets;
+    protected AnimationSet animSet;
     public Animation(long startTime, boolean loop) {
         this.startTime = startTime;
+        this.animSet = null;
+        this.animSet = null;
         this.loop = loop;
-        this.spritesets = new HashMap<>();
-        this.currentSet = DEFAULT_SPRITESET;
     }
     
     public boolean isLooping() {
         return this.loop;
     }
     
-    public Sprite[] getCurrentSpriteSet() {
-        return spritesets.get(currentSet);
-    }
-    
-    public void setCurrentSpriteSet(String setName) {
-        this.currentSet = setName;
-    }
-    
-    public boolean hasSpriteSet(String setName) {
-        return spritesets.containsKey(setName);
+    public AnimationSet getParentSet() {
+        return animSet;
     }
     
     public long getStartTime() {

@@ -1,6 +1,5 @@
 package me.scarlet.undertailor.lua.lib;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaColor;
@@ -14,6 +13,7 @@ import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.texts.TextComponent.Text;
+import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -32,6 +32,7 @@ public class TextLib extends TwoArgFunction {
         text.set("addComponents", new _addComponents());
         text.set("addComponent", new _addComponent());
         text.set("getMembers", new _getMembers());
+        text.set("drawText", new _drawText());
         text.set("newText", new _newText());
         new TextComponentLib().call(LuaValue.valueOf(""), text);
         
@@ -68,18 +69,19 @@ public class TextLib extends TwoArgFunction {
     static class _newText extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            if(args.narg() < 1 || args.narg() > 6) {
-                throw new LuaError("arguments insufficient or overflowing (min 1, max 6)");
+            if(args.narg() < 1 || args.narg() > 7) {
+                throw new LuaError("arguments insufficient or overflowing (min 1, max 7)");
             }
             
             Font font = Undertailor.getFontManager().getFont(args.checkjstring(1));
             Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getStyle(args.arg(2).checkjstring());
             Color color = args.isnil(3) ? null : LuaColor.checkcolor(args.arg(3)).getColor();
-            Sound sound = args.arg(4).isnil() ? null : LuaSound.checkSound(args.arg(4)).getSound();
-            int speed = args.optint(5, TextComponent.DEFAULT_SPEED);;
-            float delay = new Float(args.optdouble(6, 0F));
+            SoundWrapper sound = args.arg(4).isnil() ? null : LuaSound.checkSound(args.arg(4)).getSound();
+            int speed = args.optint(5, TextComponent.DEFAULT_SPEED);
+            int segsize = args.optint(6, 1);
+            float delay = new Float(args.optdouble(7, 0F));
             
-            return new LuaText(new Text(font, style, color, sound, speed, delay));
+            return new LuaText(new Text(font, style, color, sound, speed, segsize, delay));
         }
     }
     

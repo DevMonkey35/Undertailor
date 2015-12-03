@@ -2,6 +2,7 @@ package me.scarlet.undertailor.ui;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
 
 import java.util.Comparator;
@@ -24,6 +25,7 @@ public class UIController {
     
     /** Map holding all headed UI objects. */
     private SortedMap<Integer, UIObject> uis;
+    private UIComponentLoader lualoader;
     private OrthographicCamera camera;
     private Viewport port;
     
@@ -33,10 +35,15 @@ public class UIController {
                 }));
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
         this.setViewport(port);
+        this.lualoader = new UIComponentLoader();
     }
     
     public UIObject getUIObject(int id) {
         return uis.get(id);
+    }
+    
+    public UIComponentLoader getLuaLoader() {
+        return lualoader;
     }
     
     public int registerObject(UIObject object) {
@@ -47,8 +54,8 @@ public class UIController {
         return id;
     }
     
-    public void destroyObject(int id) {
-        this.uis.remove(id);
+    public boolean destroyObject(int id) {
+        return this.uis.remove(id) != null;
     }
     
     public void pushEvent(UIEvent event) {
@@ -64,6 +71,8 @@ public class UIController {
     }
     
     public void render() {
+        port.apply();
+        Undertailor.getRenderer().setProjectionMatrix(camera.combined);
         this.processObjects(object -> {
             object.render();
         }, false);
@@ -79,7 +88,7 @@ public class UIController {
             UIObject active = null;
             for(Entry<Integer, UIObject> entry : uis.entrySet()) {
                 UIObject object = entry.getValue();
-                if(!object.isAlwaysActive() && !(object instanceof HeadlessUIObject)) {
+                if(!object.isHeadless()) {
                     active = object;
                 } else {
                     consumer.accept(object);

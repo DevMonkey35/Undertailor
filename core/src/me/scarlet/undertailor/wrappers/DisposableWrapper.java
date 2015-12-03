@@ -9,6 +9,7 @@ import java.util.Set;
 public abstract class DisposableWrapper<T extends Disposable> {
     
     private static Set<DisposableWrapper<?>> instances;
+    public static final long DEFAULT_LIFETIME = 10000; // 10s
     
     static {
         instances = new HashSet<>();
@@ -21,6 +22,7 @@ public abstract class DisposableWrapper<T extends Disposable> {
     private T disposable;
     private long lastAccess;
     private boolean alwaysAlive;
+    private Set<Object> referrers;
     protected DisposableWrapper(T disposable) {
         this.disposable = disposable;
         
@@ -31,6 +33,7 @@ public abstract class DisposableWrapper<T extends Disposable> {
         }
         
         instances.add(this);
+        this.referrers = new HashSet<>();
     }
     
     public final T getReference() {
@@ -41,6 +44,20 @@ public abstract class DisposableWrapper<T extends Disposable> {
             
             this.lastAccess = TimeUtils.millis();
             return disposable;
+        }
+    }
+    
+    public final T getReference(Object referrer) {
+        if(!referrers.contains(referrer)) {
+            referrers.add(referrer);
+        }
+        
+        return getReference();
+    }
+    
+    public void removeReference(Object referrer) {
+        if(referrers.contains(referrer)) {
+            referrers.remove(referrer);
         }
     }
     
@@ -82,6 +99,14 @@ public abstract class DisposableWrapper<T extends Disposable> {
         }
         
         return false;
+    }
+    
+    public long getMaximumLifetime() {
+        return DEFAULT_LIFETIME;
+    }
+    
+    protected Set<Object> getReferrers() {
+        return referrers;
     }
     
     public abstract T newReference();

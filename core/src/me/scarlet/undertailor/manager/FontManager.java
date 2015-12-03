@@ -1,10 +1,8 @@
 package me.scarlet.undertailor.manager;
 
-import static me.scarlet.undertailor.Undertailor.error;
-import static me.scarlet.undertailor.Undertailor.log;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Font.FontData;
@@ -21,23 +19,26 @@ import java.util.Map.Entry;
 
 public class FontManager {
     
+    public static final String MANAGER_TAG = "fontman";
+    
     private Map<String, Font> fonts;
     public FontManager() {
         fonts = new HashMap<>();
     }
     
     public void loadFonts(File dir) {
+        String dirPath = dir.getAbsolutePath();
         if(!dir.exists()) {
-            error("fontman", "could not load font directory " + dir.getAbsolutePath() + " (did not exist)");
+            Undertailor.instance.warn(MANAGER_TAG, "could not load font directory " + dirPath + " (did not exist)");
             return;
         }
         
         if(!dir.isDirectory()) {
-            error("fontman", "could not load font directory " + dir.getAbsolutePath() + " (not a directory)");
+            Undertailor.instance.warn(MANAGER_TAG, "could not load font directory " + dirPath + " (not a directory)");
             return;
         }
         
-        log("fontman", "searching for fonts in " + dir.getAbsolutePath());
+        Undertailor.instance.log(MANAGER_TAG, "searching for fonts in " + dirPath);
         Map<String, Pair<File, File>> found = new HashMap<>();
         for(File file : dir.listFiles()) {
             if(!file.getName().endsWith(".png") && !file.getName().endsWith(".underfont")) {
@@ -50,21 +51,20 @@ public class FontManager {
             }
             
             if(file.getName().endsWith(".png")) {
-                log("fontman", "found spritesheet file");
-                found.get(name).setFirstElement(file);;
+                Undertailor.instance.debug(MANAGER_TAG, "found spritesheet file");
+                found.get(name).setFirstElement(file);
             } else if(file.getName().endsWith(".underfont")) {
-                log("fontman", "found underfont file");
+                Undertailor.instance.debug(MANAGER_TAG, "found underfont file");
                 found.get(name).setSecondElement(file);
             }
         }
         
         for(Entry<String, Pair<File, File>> entry : found.entrySet()) {
             if(!entry.getValue().getFirstElement().isPresent() || !entry.getValue().getSecondElement().isPresent()) {
-                log("fontman", "no font pair");
                 continue;
             }
             
-            log("fontman", "loading font " + entry.getKey());
+            Undertailor.instance.log(MANAGER_TAG, "loading font " + entry.getKey());
             Texture spriteSheet = new Texture(Gdx.files.absolute(entry.getValue().getFirstElement().get().getAbsolutePath()));
             JSONConfigurationLoader loader = JSONConfigurationLoader.builder()
                     .setFile(entry.getValue().getSecondElement().get())
@@ -73,8 +73,7 @@ public class FontManager {
             try {
                 data = FontData.fromConfig(entry.getKey(), loader.load());
             } catch(IOException e) {
-                Gdx.app.error("fontman", "failed to load .underfont config for font " + entry.getKey());
-                e.printStackTrace();
+                Undertailor.instance.error(MANAGER_TAG, "failed to load .underfont config for font " + entry.getKey(), e.getStackTrace());
                 continue;
             }
             
@@ -83,7 +82,7 @@ public class FontManager {
                 font = new Font(spriteSheet, data);
                 this.registerFont(font);
             } catch(TextureTilingException e) {
-                error("fontman", "could not load font " + entry.getKey() + "; " + e.getMessage());
+                Undertailor.instance.error(MANAGER_TAG, "could not load font " + entry.getKey() + "; " + e.getMessage());
             }
         }
     }
@@ -93,13 +92,13 @@ public class FontManager {
             return fonts.get(name);
         }
         
-        error("fontman", "system requested a non-existing font (" + name + ")");
+        Undertailor.instance.error(MANAGER_TAG, "system requested a non-existing font (" + name + ")");
         return null;
     }
     
     public void registerFont(Font font) {
         fonts.put(font.getFontData().getName(), font);
-        log("fontman", "registered font " + font.getFontData().getName());
+        Undertailor.instance.log(MANAGER_TAG, "registered font " + font.getFontData().getName());
     }
     
     public void write(Text text, float posX, float posY) {
@@ -115,6 +114,10 @@ public class FontManager {
     }
     
     public void write(Text text, float posX, float posY, float scaleX, float scaleY, float alpha) {
+        if(text == null) {
+            return;
+        }
+        
         if(text.getMembers().size() < 1) {
             return; // ignore empty texts
         }

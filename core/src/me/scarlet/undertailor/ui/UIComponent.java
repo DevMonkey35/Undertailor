@@ -15,15 +15,27 @@ public abstract class UIComponent {
      * system of the parent {@link UIObject}.
      */
     private Vector2 position;
+    private boolean destroying;
     private boolean isAlwaysActive;
+    private boolean renderWhenInactive;
     
     public UIComponent() {
         this(new Vector2(0, 0));
     }
     
     public UIComponent(Vector2 position) {
+        this(position, false);
+    }
+    
+    public UIComponent(Vector2 position, boolean isAlwaysActive) {
+        this(position, isAlwaysActive, true);
+    }
+    
+    public UIComponent(Vector2 position, boolean isAlwaysActive, boolean renderWhenInactive) {
         this.position = position;
-        this.isAlwaysActive = false;
+        this.isAlwaysActive = isAlwaysActive;
+        this.renderWhenInactive = renderWhenInactive;
+        this.destroying = false;
     }
     
     /**
@@ -82,10 +94,30 @@ public abstract class UIComponent {
         return this.isAlwaysActive;
     }
     
+    public void setAlwaysActive(boolean flag) {
+        this.isAlwaysActive = flag;
+    }
+    
+    public boolean renderWhenInactive() {
+        return this.renderWhenInactive;
+    }
+    
+    public void setRenderWhenInactive(boolean flag) {
+        this.renderWhenInactive = flag;
+    }
+    
     public void destroy() {
+        if(destroying) {
+            throw new IllegalStateException("Cannot call destroy within onDestroy");
+        }
+        
+        this.destroying = true;
+        this.onDestroy(false);
         if(this.parent != null) {
             parent.destroyChild(this);
         }
+        
+        this.destroying = false;
     }
     
     public void destroyObject() {

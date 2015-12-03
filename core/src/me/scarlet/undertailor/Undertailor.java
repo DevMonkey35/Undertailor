@@ -27,148 +27,67 @@ package me.scarlet.undertailor;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.audio.OpenALMusic;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.HPos;
+import javafx.geometry.Orientation;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import me.scarlet.undertailor.gfx.Animation;
+import me.scarlet.undertailor.gfx.AnimationSet;
 import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.lua.lib.MathUtilLib;
 import me.scarlet.undertailor.lua.lib.TextLib;
+import me.scarlet.undertailor.lua.lib.TimeLib;
+import me.scarlet.undertailor.lua.lib.UILib;
+import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.ui.UIController;
-import me.scarlet.undertailor.ui.UIObject;
-import me.scarlet.undertailor.ui.UITestComponent;
+import me.scarlet.undertailor.util.Blocker;
+import me.scarlet.undertailor.util.JFXUtil;
 import me.scarlet.undertailor.util.MultiRenderer;
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class Undertailor extends ApplicationAdapter {
     
-    public static final boolean debug = true;
     public static Undertailor instance;
-    public static final Rectangle RENDER_AREA = new Rectangle(0, 0, 640, 480);
+    public static final Rectangle RENDER_AREA;
     
-    private long frameCap;
-    private LuaValue libs[];
-    
-    private DisposerThread disposer;
-    private MultiRenderer renderer;
-    
-    private FontManager fontManager;
-    private AudioManager audioManager;
-    private StyleManager styleManager;
-    private SpriteSheetManager sheetManager;
-    
-    private UIController uiController;
-    
-    @Override
-    public void pause() {
-        
-    }
-    
-    @Override
-    public void resume() {
-        
-    }
-    
-    @Override
-    public void create() {
-        Undertailor.instance = this;
-        Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
-            e.printStackTrace();
-            System.exit(0);
-        });
-        
-        if(debug) {
-            Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        }
-        
-        this.frameCap = 0;
-        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib()};
-        this.renderer = new MultiRenderer();
-        
-        this.sheetManager = new SpriteSheetManager();
-        this.audioManager = new AudioManager();
-        this.styleManager = new StyleManager();
-        this.fontManager = new FontManager();
-        
-        this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
-        UIObject test = new UIObject(false);
-        test.registerChild(new UITestComponent());
-        test.registerChild(new UITestComponent());
-        this.uiController.registerObject(test);
-        
-        audioManager.loadMusic(new File("music/"), null, false);
-        audioManager.loadSounds(new File("sounds/"), null, false);
-        fontManager.loadFonts(new File("fonts/"));
-        sheetManager.loadSprites(new File("sprites/"));
-        styleManager.loadStyles(new File("fonts/styles"));
-        
-        Color cc = Color.BLACK;
-        Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
-        
-        disposer = new DisposerThread();
-        disposer.start();
-    }
-    
-    @Override
-    public void render() {
-        long sleepTime = 0;
-        if(frameCap > 0) {
-            try {
-                sleepTime = (long) Math.ceil((1000.0/frameCap) - (Gdx.graphics.getDeltaTime()));
-                Thread.sleep(sleepTime);
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
-        uiController.process(Gdx.graphics.getDeltaTime());
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        uiController.render();
-        
-        Font bitop = fontManager.getFont("8bitop");
-        bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
-        bitop.fontTest(10, 420, 2);
-        renderer.flush();
-    }
-    
-    @Override
-    public void resize(int width, int height) {
-        this.uiController.resize(width, height);
-    }
-    
-    public static void debug(String tag, String message) {
-        Gdx.app.debug("[DBUG] " + tag, message);
-    }
-    
-    public static void log(String tag, String message) {
-        Gdx.app.log("[INFO] " + tag, message);
-    }
-    
-    public static void error(String tag, String message) {
-        error(tag, message, null);
-    }
-    
-    public static void error(String tag, String message, StackTraceElement[] trace) {
-        Gdx.app.error("[ERRR] " + tag, message);
-        if(trace != null) {
-            for(StackTraceElement element : trace) {
-                Gdx.app.error("[ERRR] " + tag, element.toString());
-            }
-        }
-    }
-    
-    public static void warn(String tag, String message) {
-        log("[WARN] " + tag, message);
+    static {
+        RENDER_AREA = new Rectangle(0, 0, 640, 480);
     }
     
     public static UIController getUIController() {
@@ -191,6 +110,16 @@ public class Undertailor extends ApplicationAdapter {
         return Undertailor.instance.renderer;
     }
     
+    public static SpriteSheetManager getSheetManager() {
+        return Undertailor.instance.sheetManager;
+    }
+    
+    public static void setFrameCap(int cap) {
+        int frameCap = cap < 30 ? (cap == 0 ? 0 : 30) : cap;
+        Undertailor.instance.config.backgroundFPS = frameCap;
+        Undertailor.instance.config.foregroundFPS = frameCap;
+    }
+    
     public static Globals newGlobals() {
         Globals returned = JsePlatform.standardGlobals();
         for(LuaValue lib : Undertailor.instance.libs) {
@@ -198,5 +127,347 @@ public class Undertailor extends ApplicationAdapter {
         }
         
         return returned;
+    }
+    
+    public class Output extends OutputStream {
+        
+        private TextArea console;
+        private PrintStream original;
+        public Output(PrintStream original, TextArea console) {
+            this.original = original;
+            this.console = console;
+        }
+        
+        @Override
+        public void write(int b) throws IOException {
+            if(original != null) {
+                original.print((char) b);
+            }
+            
+            Platform.runLater(() -> {
+                console.appendText("" + (char) b);
+            });
+        }
+    }
+    
+    // -----
+    
+    private short strict;
+    private boolean debug;
+    
+    private LuaValue libs[];
+    private LwjglApplicationConfiguration config;
+    
+    private Stage consoleStage;
+    private TextArea consoleOutput;
+    private DisposerThread disposer;
+    private MultiRenderer renderer;
+    
+    private FontManager fontManager;
+    private AudioManager audioManager;
+    private StyleManager styleManager;
+    private SpriteSheetManager sheetManager;
+    private AnimationManager animationManager;
+    
+    private UIController uiController;
+    
+    public Undertailor(LwjglApplicationConfiguration config) {
+        this.config = config;
+        config.foregroundFPS = 0;
+        config.backgroundFPS = 0;
+    }
+    
+    @Override
+    public void pause() {
+        
+    }
+    
+    @Override
+    public void resume() {
+        
+    }
+    
+    @Override
+    public void create() {
+        Undertailor.instance = this;
+        this.strict = 1;
+        this.debug = true;
+        Object[] console = prepareConsole();
+        this.consoleStage = (Stage) console[0];
+        this.consoleOutput = (TextArea) console[1];
+        PrintStream original = System.out;
+        System.setOut(new PrintStream(new Output(original, consoleOutput)));
+        this.showConsole();
+        
+        Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
+            if(e instanceof LuaError) {
+                this.error("lua", e.getMessage(), e.getStackTrace());
+                e.printStackTrace();
+            } else {
+                this.error("tailor", e.getClass().getSimpleName() + ": " + e.getMessage(), e.getStackTrace());
+                e.printStackTrace();
+            }
+        });
+        
+        if(debug) {
+            Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        }
+        
+        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib(), new UILib(), new TimeLib()};
+        this.renderer = new MultiRenderer();
+        
+        this.fontManager = new FontManager();
+        this.audioManager = new AudioManager();
+        this.styleManager = new StyleManager();
+        this.sheetManager = new SpriteSheetManager();
+        this.animationManager = new AnimationManager();
+        this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
+        
+        fontManager.loadFonts(new File("fonts/"));
+        audioManager.loadMusic(new File("music/"));
+        audioManager.loadSounds(new File("sounds/"));
+        styleManager.loadStyles(new File("fonts/styles/"));
+        sheetManager.loadSprites(new File("sprites/"));
+        animationManager.loadAnimations(new File("animation/"));
+        uiController.getLuaLoader().loadComponents(new File("scripts/uicomponent/"));
+        
+        Color cc = Color.BLACK;
+        Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
+        
+        OpenALMusic music = ((OpenALMusic) audioManager.getMusic("fight.mus_vsasgore").getReference());
+        music.setPitch(0.95F);
+        music.setLooping(true);
+        music.play();
+        
+        File mainFile = new File("main.lua");
+        if(mainFile.exists()) {
+            Globals globals = Undertailor.newGlobals();
+            globals.loadfile("main.lua").invoke();
+        } else {
+            error("tailor", "main.lua file not found; no start code was executed");
+        }
+        
+        disposer = new DisposerThread();
+        disposer.setDaemon(true);
+        disposer.start();
+        
+        testing();
+    }
+    
+    private AnimationSet anim;
+    private void testing() {
+        anim = animationManager.getAnimationSet("frisk").getReference(this);
+    }
+    
+    @Override
+    public void render() {
+        uiController.process(Gdx.graphics.getDeltaTime());
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        uiController.render();
+        
+        Font bitop = fontManager.getFont("8bitop");
+        bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
+        Animation<?> a = anim.getAnimation("idle_up");
+        a.drawCurrentFrame(renderer.getSpriteBatch(), TimeUtils.timeSinceMillis(a.getStartTime()), 20, 250);
+        renderer.flush();
+    }
+    
+    @Override
+    public void resize(int width, int height) {
+        this.uiController.resize(width, height);
+    }
+    
+    public void debug(String tag, String message) {
+        Gdx.app.debug("[DBUG] " + tag, message);
+    }
+    
+    public void log(String tag, String message) {
+        Gdx.app.log("[INFO] " + tag, message);
+    }
+    
+    public void error(String tag, String message) {
+        error(tag, message, null);
+    }
+    
+    public void error(String tag, String message, StackTraceElement[] trace) {
+        Gdx.app.error("[ERRR] " + tag, message);
+        if(trace != null) {
+            for(StackTraceElement element : trace) {
+                Gdx.app.error("[ERRR] " + tag, element.toString());
+            }
+        }
+        
+        if(strict >= 1) {
+            String errMessage = "[ERRR] " + tag + ": " + message;
+            errorDialog("I'm an error, weee!", errMessage, trace);
+            System.exit(0);
+        }
+    }
+    
+    public void warn(String tag, String message) {
+        Gdx.app.log("[WARN] " + tag, message);
+        
+        if(strict >= 2) {
+            String errMessage = "[WARN] " + tag + ": " + message;
+            errorDialog("I'm an error, weee!", errMessage, null);
+            System.exit(0);
+        }
+    }
+    
+    public void showConsole() {
+        Platform.runLater(() -> { 
+            this.consoleStage.show();
+        });
+    }
+    
+    private Object[] prepareConsole() {
+        Object[] window = new Object[2];
+        
+        Blocker.block(() -> {
+            Stage stage = new Stage();
+            AnchorPane pane = new AnchorPane();
+            GridPane header = new GridPane();
+            CheckBox wrap = new CheckBox("Wrap Text");
+            Label consoleTitle = new Label("Undertailor Console");
+            TextArea console = new TextArea();
+            
+            console.setEditable(false);
+            consoleTitle.setFont(new javafx.scene.text.Font(16));
+            javafx.scene.text.Font newFont = new javafx.scene.text.Font("Consolas", 12);
+            if(newFont.getName().equals("Consolas")) {
+                console.setFont(newFont);
+            }
+            
+            wrap.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if(newValue.booleanValue()) {
+                    console.setWrapText(true);
+                } else {
+                    console.setWrapText(false);
+                }
+            });
+            
+            if(!wrap.isSelected()) {
+                wrap.fire();
+            }
+            
+            GridPane.setColumnIndex(consoleTitle, 0);
+            GridPane.setColumnIndex(wrap, 1);
+            header.getColumnConstraints().add(new ColumnConstraints());
+            header.getColumnConstraints().add(new ColumnConstraints(0, wrap.getPrefWidth(), wrap.getPrefWidth(), Priority.ALWAYS, HPos.RIGHT, false));
+            
+            header.getChildren().add(consoleTitle);
+            header.getChildren().add(wrap);
+            
+            pane.getChildren().add(header);
+            pane.getChildren().add(console);
+            
+            JFXUtil.setAnchorBounds(header, 15.0, null, 20.0, 20.0);
+            JFXUtil.setAnchorBounds(console, 20.0);
+            JFXUtil.setAnchorBounds(console, 50.0, null, null, null);
+            
+            stage.setScene(new Scene(pane, 600, 400));
+            stage.setTitle("Undertailor Console");
+            window[0] = stage;
+            window[1] = console;
+        }, true);
+        
+        return window;
+    }
+    
+    private void errorDialog(String title, String message, StackTraceElement[] stacktrace) {
+        Blocker.block(() -> {
+            Stage stage = new Stage();
+            AnchorPane parent = new AnchorPane();
+            VBox vbox = new VBox(10);
+            Label titleLabel = new Label("Whoops!");
+            Separator sep = new Separator(Orientation.HORIZONTAL);
+            Label info = new Label("Uh-oh! Looks like Undertailor found a problem it didn't know how to resolve...");
+            TextArea errr = new TextArea(message.endsWith("\n") ? message : message + "\n");
+            if(stacktrace == null) {
+                errr.appendText("No stacktrace given.\n");
+            } else {
+                for(StackTraceElement element : stacktrace) {
+                    errr.appendText(element.toString() + "\n");
+                }
+            }
+            
+            Label last = new Label("If this is from game scripts, you might wanna send this to the scripts' developer(s) and help them squash it! "
+                    + "But, if you think this is Undertailor's fault, poke the developer of Undertailor about it!");
+            GridPane footer = new GridPane();
+            Label strict = new Label("Developers: strictness level was set at " + Undertailor.instance.strict);
+            Button confirm = new Button("Oh, okay :c.");
+            CheckBox wrap = new CheckBox("Wrap Text");
+            
+            JFXUtil.setAnchorBounds(vbox, 50.0, 10.0, 25.0, 25.0);
+            
+            titleLabel.setFont(new javafx.scene.text.Font(20));
+            JFXUtil.setAnchorBounds(titleLabel, 10.0, null, 15.0, null);
+            JFXUtil.setAnchorBounds(last, null, 15.0, null, null);
+            
+            errr.positionCaret(0);
+            errr.setEditable(false);
+            VBox.setVgrow(errr, Priority.ALWAYS);
+            strict.setWrapText(true);
+            info.setWrapText(true);
+            last.setWrapText(true);
+            javafx.scene.text.Font newFont = new javafx.scene.text.Font("Consolas", 12);
+            if(newFont.getName().equals("Consolas")) {
+                errr.setFont(newFont);
+            }
+            
+            footer.getChildren().add(strict);
+            footer.getChildren().add(wrap);
+            footer.getChildren().add(confirm);
+            ColumnConstraints defaultt = new ColumnConstraints();
+            defaultt.setFillWidth(true);
+            footer.getColumnConstraints().add(defaultt);
+            footer.getColumnConstraints().add(new ColumnConstraints(0, wrap.getPrefWidth(), wrap.getPrefWidth(), Priority.ALWAYS, HPos.RIGHT, false));
+            footer.getColumnConstraints().add(new ColumnConstraints(0, confirm.getPrefWidth(), confirm.getPrefWidth(), Priority.ALWAYS, HPos.RIGHT, false));
+            GridPane.setColumnIndex(strict, 0);
+            GridPane.setColumnIndex(wrap, 1);
+            GridPane.setColumnIndex(confirm, 2);
+            GridPane.setHalignment(confirm, HPos.RIGHT);
+            
+            confirm.setOnMouseReleased(event -> {
+                stage.close();
+            });
+            
+            wrap.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if(newValue.booleanValue()) {
+                    errr.setWrapText(true);
+                } else {
+                    errr.setWrapText(false);
+                }
+            });
+            
+            if(!wrap.isSelected()) {
+                wrap.fire();
+            }
+            
+            vbox.getChildren().add(sep);
+            vbox.getChildren().add(info);
+            vbox.getChildren().add(errr);
+            vbox.getChildren().add(last);
+            vbox.getChildren().add(footer);
+            parent.getChildren().add(titleLabel);
+            parent.getChildren().add(vbox);
+            
+            InputStream imageStream = Undertailor.class.getResourceAsStream("/assets/errorIcon.png");
+            if(imageStream != null) {
+                Image icon = new Image(imageStream);
+                stage.getIcons().add(icon);
+                titleLabel.setGraphic(new ImageView(icon));
+            }
+            
+            stage.setResizable(true);
+            stage.setMinHeight(350);
+            stage.setMinWidth(600);
+            stage.setTitle(title);
+            stage.centerOnScreen();
+            
+            Scene scene = new Scene(parent, stage.getMinWidth(), stage.getMinHeight());
+            stage.setScene(scene);
+            stage.showAndWait();
+        }, true);
     }
 }

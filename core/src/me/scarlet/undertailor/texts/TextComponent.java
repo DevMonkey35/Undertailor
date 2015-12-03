@@ -1,9 +1,9 @@
 package me.scarlet.undertailor.texts;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.google.common.base.Preconditions;
 import me.scarlet.undertailor.util.Pair;
+import me.scarlet.undertailor.wrappers.SoundWrapper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,8 +37,33 @@ public class TextComponent {
     
     public static class Text extends TextComponent {
         private List<TextComponent> members;
-        public Text(Font font, Style style, Color color, Sound sound, Integer speed, Float wait, TextComponent... components) {
-            super(null, font, style, color, sound, speed, wait);
+        
+        public Text(Font font) {
+            this(font, null);
+        }
+        
+        public Text(Font font, Style style) {
+            this(font, style, Color.WHITE);
+        }
+        
+        public Text(Font font, Style style, Color color) {
+            this(font, style, color, null);
+        }
+        
+        public Text(Font font, Style style, Color color, SoundWrapper sound) {
+            this(font, style, color, sound, DEFAULT_SPEED);
+        }
+        
+        public Text(Font font, Style style, Color color, SoundWrapper sound, Integer speed) {
+            this(font, style, color, sound, speed, 1);
+        }
+        
+        public Text(Font font, Style style, Color color, SoundWrapper sound, Integer speed, Integer segmentSize) {
+            this(font, style, color, sound, speed, segmentSize, 0F);
+        }
+        
+        public Text(Font font, Style style, Color color, SoundWrapper sound, Integer speed, Integer segmentSize, Float wait, TextComponent... components) {
+            super(null, font, style, color, sound, speed, segmentSize, wait);
             this.members = new ArrayList<>();
             
             for(TextComponent component : components) {
@@ -108,12 +133,12 @@ public class TextComponent {
         @Override
         public Text substring(int start, int end) {
             if(start == end) {
-                return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.wait,
-                        new TextComponent("", super.font, super.style, super.color, super.textSound, super.speed, super.wait));
+                return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.wait,
+                        new TextComponent("", super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.wait));
             }
             
             if(members.size() == 1) {
-                return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.wait, members.get(0).substring(start, end));
+                return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.wait, members.get(0).substring(start, end));
             }
             
             Map<TextComponent, Integer> compMap = new LinkedHashMap<>();
@@ -172,18 +197,19 @@ public class TextComponent {
                 processed++;
             }
             
-            return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.wait, compList.toArray(new TextComponent[compList.size()]));
+            return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.wait, compList.toArray(new TextComponent[compList.size()]));
         }
     }
     
     private TextComponent parent;
-    private Sound textSound;
+    private SoundWrapper textSound;
     private String text;
     private Color color;
     private Style style;
     private Font font;
-    private Integer speed;  // characters per second?
-    private Float wait; // delay between text components
+    private Integer speed;       // segments per second?
+    private Integer segmentSize; // how many characters to play at a time
+    private Float wait;          // delay between text components
     
     public static final int DEFAULT_SPEED = 35;
     
@@ -202,15 +228,19 @@ public class TextComponent {
         this(text, font, style, color, null);
     }
     
-    public TextComponent(String text, Font font, Style style, Color color, Sound textSound) {
+    public TextComponent(String text, Font font, Style style, Color color, SoundWrapper textSound) {
         this(text, font, style, color, textSound, DEFAULT_SPEED);
     }
     
-    public TextComponent(String text, Font font, Style style, Color color, Sound textSound, Integer speed) {
-        this(text, font, style, color, textSound, speed, 0F);
+    public TextComponent(String text, Font font, Style style, Color color, SoundWrapper textSound, Integer speed) {
+        this(text, font, style, color, textSound, speed, 1);
     }
     
-    public TextComponent(String text, Font font, Style style, Color color, Sound textSound, Integer speed, Float wait) {
+    public TextComponent(String text, Font font, Style style, Color color, SoundWrapper textSound, Integer speed, Integer segmentSize) {
+        this(text, font, style, color, textSound, speed, segmentSize, 0F);
+    }
+    
+    public TextComponent(String text, Font font, Style style, Color color, SoundWrapper textSound, Integer speed, Integer segmentSize, Float wait) {
         this.text = text;
         this.textSound =  textSound;
         this.color = color;
@@ -218,6 +248,19 @@ public class TextComponent {
         this.wait = wait;
         this.style = style;
         this.font = font;
+        this.segmentSize = segmentSize;
+        
+        if(speed != null && speed <= 0) {
+            speed = DEFAULT_SPEED;
+        }
+        
+        if(segmentSize != null && segmentSize <= 0) {
+            segmentSize = 1;
+        }
+        
+        if(wait != null && wait < 0) {
+            wait = 0F;
+        }
     }
     
     public String getText() {
@@ -236,7 +279,7 @@ public class TextComponent {
         return color;
     }
     
-    public Sound getSound() {
+    public SoundWrapper getSound() {
         if(textSound == null && parent != null) {
             return parent.textSound;
         }
@@ -284,11 +327,23 @@ public class TextComponent {
         return wait;
     }
     
+    public int getSegmentSize() {
+        if(segmentSize == null) {
+            if(parent != null && parent.segmentSize != null) {
+                return parent.segmentSize;
+            }
+            
+            return 1;
+        }
+        
+        return segmentSize;
+    }
+    
     public TextComponent substring(int start) {
         return substring(start, this.text.length());
     }
     
     public TextComponent substring(int start, int end) {
-        return new TextComponent(text.substring(start, end), font, style, color, textSound, speed, wait);
+        return new TextComponent(text.substring(start, end), font, style, color, textSound, speed, segmentSize, wait);
     }
 }

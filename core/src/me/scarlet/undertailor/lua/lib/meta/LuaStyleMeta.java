@@ -10,7 +10,7 @@ import org.luaj.vm2.lib.TwoArgFunction;
 
 public class LuaStyleMeta extends LuaTable {
     
-    static {
+    public static void prepareMetatable() {
         if(LuaStyle.METATABLE == null) {
             LuaStyle.METATABLE = LuaValue.tableOf(new LuaValue[] {INDEX, new LuaStyleMeta()});
         }

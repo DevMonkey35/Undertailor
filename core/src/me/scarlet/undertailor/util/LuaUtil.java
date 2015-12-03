@@ -1,11 +1,18 @@
 package me.scarlet.undertailor.util;
 
 import me.scarlet.undertailor.exception.LuaScriptException;
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LoadState;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
+import org.luaj.vm2.compiler.LuaC;
+import org.luaj.vm2.lib.BaseLib;
+import org.luaj.vm2.lib.jse.JseBaseLib;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -35,26 +42,52 @@ public class LuaUtil {
         }
     }
     
-    public static Map<String, LuaFunction> checkImplementation(LuaValue table, String[] requiredMethods, String[] optionalMethods) throws LuaScriptException {
-        Map<String, LuaFunction> functions = new HashMap<>();
+    public static Map<String, LuaFunction> checkImplementation(Globals table, File scriptFile, String[] requiredMethods) throws LuaScriptException {
+        Map<String, LuaFunction> functions = getScriptFunctions(table, scriptFile);
         if(requiredMethods != null) {
             for(String method : requiredMethods) {
-                if(table.get(method).isnil() || !table.get(method).isfunction()) {
+                if(!functions.containsKey(method)) {
                     throw new LuaScriptException("failed to implement required method " + method);
-                }
-                
-                functions.put(method, table.get(method).checkfunction());
-            }
-        }
-        
-        if(optionalMethods != null) {
-            for(String method : optionalMethods) {
-                if(table.get(method).isfunction()) {
-                    functions.put(method, table.get(method).checkfunction());
                 }
             }
         }
         
         return functions;
+    }
+    
+    public static Map<String, LuaFunction> getScriptFunctions(Globals globals, File scriptFile) {
+        if(!scriptFile.exists()) {
+            return null;
+        }
+        
+        if(scriptFile.isDirectory()) {
+            return null;
+        }
+        
+        Map<String, LuaFunction> functions = new HashMap<>();
+        String filepath = scriptFile.getAbsolutePath();
+        if(globals == null) {
+            globals = new Globals();
+            BaseLib base = new JseBaseLib();
+            LoadState.install(globals);
+            LuaC.install(globals);
+            globals.baselib = base;
+            globals.finder = base;
+            globals.loadfile(filepath);
+        }
+        
+        iterateTable(globals, entry -> {
+            if(entry.arg(2).tojstring().startsWith("function: @" + filepath)) {
+                functions.put(entry.arg(1).tojstring(), entry.arg(2).checkfunction());
+            }
+        });
+        
+        return functions;
+    }
+    
+    public static void checkArguments(Varargs args, int min, int max) {
+        if(args.narg() < min || (max <= 0 ? false : args.narg() > max)) {
+            throw new LuaError("arguments insufficient or overflowing (min " + min + (max <= 0 ? ")" : " max " + max + ")"));
+        }
     }
 }

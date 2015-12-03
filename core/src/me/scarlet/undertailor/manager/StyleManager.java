@@ -1,19 +1,19 @@
 package me.scarlet.undertailor.manager;
 
-import static me.scarlet.undertailor.Undertailor.error;
-import static me.scarlet.undertailor.Undertailor.log;
-
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaStyle;
 import me.scarlet.undertailor.texts.Style;
 import org.luaj.vm2.LuaError;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class StyleManager {
+    
+    public static final String MANAGER_TAG = "styleman";
     
     private Map<String, Style> styles;
     
@@ -22,6 +22,12 @@ public class StyleManager {
     }
     
     public void loadStyles(File directory) {
+        loadStyles(directory, null);
+        Undertailor.instance.log(MANAGER_TAG, styles.keySet().size() + " style(s) currently loaded");
+    }
+    
+    private void loadStyles(File directory, String heading) {
+        String dirPath = directory.getAbsolutePath();
         if(!directory.exists()) {
             return;
         }
@@ -30,18 +36,26 @@ public class StyleManager {
             return;
         }
         
-        for(File file : directory.listFiles((FilenameFilter) (File file, String string) -> {
-            return string.endsWith(".lua");
+        if(heading == null) {
+            heading = "";
+        }
+        
+        Undertailor.instance.log(MANAGER_TAG, "loading styles from directory " + dirPath);
+        for(File file : directory.listFiles((FileFilter) (File file) -> {
+            return file.getName().endsWith(".lua") || file.isDirectory();
         })) {
-            String styleName = file.getName().substring(0, file.getName().length() - 4);
-            log("styleman", "loading lua style " + styleName);
+            if(file.isDirectory()) {
+                loadStyles(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
+            }
+            
+            String styleName = heading + (heading.isEmpty() ? "" : ".") + file.getName().substring(0, file.getName().length() - 4);
+            Undertailor.instance.debug("styleman", "loading lua style " + styleName);
             try {
                 styles.put(styleName, new LuaStyle(file));
             } catch(LuaScriptException e) {
-                error("styleman", "failed to load style: " + e.getMessage());
+                Undertailor.instance.error("styleman", "failed to load style: " + e.getMessage());
             } catch(LuaError e) {
-                error("styleman", "failed to load style: lua error");
-                error("luaparser", e.getMessage());
+                Undertailor.instance.error("styleman", "failed to load style: lua error: " + e.getMessage(), e.getStackTrace());
             }
         }
     }
@@ -51,7 +65,7 @@ public class StyleManager {
             return styles.get(name).duplicate();
         }
         
-        error("styleman", "system requested a non-existing style (" + name + ")");
+        Undertailor.instance.error("styleman", "system requested a non-existing style (" + name + ")");
         return null;
     }
 }

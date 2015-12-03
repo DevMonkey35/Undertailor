@@ -1,7 +1,5 @@
 package me.scarlet.undertailor.util;
 
-import static me.scarlet.undertailor.Undertailor.debug;
-
 import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.exception.NoRecordedValueException;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -19,7 +17,6 @@ public class ConfigurateUtil {
             String str = node.getString();
             try {
                 Integer returned = Integer.parseInt(str);
-                debug("configutil", "int retrieve at " + pathFromArray(node.getPath()) + " returned " + returned);
                 return returned;
             } catch(NumberFormatException e) {
                 throw new ConfigurationException("bad value (\"" + str + "\") for node " + pathFromArray(node.getPath()));
@@ -38,7 +35,6 @@ public class ConfigurateUtil {
             String str = node.getString();
             try {
                 Float returned = Float.parseFloat(str);
-                debug("configutil", "float retrieve at " + pathFromArray(node.getPath()) + " returned " + returned);
                 return returned;
             } catch(NumberFormatException e) {
                 throw new ConfigurationException("bad value (\"" + str + "\") for node " + pathFromArray(node.getPath()));
@@ -77,7 +73,6 @@ public class ConfigurateUtil {
                     returned[i] = stringList[i].equals("-") ? null : Integer.parseInt(stringList[i]);
                 }
                 
-                debug("configutil", "integerarray retrieve at " + pathFromArray(node.getPath()) + " returned " + returned.toString());
                 return returned;
             } catch(NumberFormatException e) {
                 throw new ConfigurationException("bad value (\"" + str == null ? "null" : str + "\") for node " + pathFromArray(node.getPath()));
@@ -96,6 +91,38 @@ public class ConfigurateUtil {
         }
         
         return str;
+    }
+    
+    public static String[] processStringArray(ConfigurationNode node, String[] defaultt) {
+        if(node.isVirtual()) {
+            if(defaultt == null) {
+                throw new NoRecordedValueException("value for node " + pathFromArray(node.getPath()) + " not present");
+            } else {
+                return defaultt;
+            }
+        } else {
+            String[] stringList = node.getList(obj -> {
+                return obj.toString();
+            }).toArray(new String[0]);
+            return stringList;
+        }
+    }
+    
+    public static boolean processBoolean(ConfigurationNode node, Boolean defaultt) {
+        if(node.isVirtual()) {
+            if(defaultt == null) {
+                throw new NoRecordedValueException("value for node " + pathFromArray(node.getPath()) + " not present");
+            } else {
+                return defaultt;
+            }
+        } else {
+            String bool = node.getString(null);
+            if(bool == null) {
+                throw new NoRecordedValueException("value for node " + pathFromArray(node.getPath()) + " not present");
+            } else {
+                return Boolean.valueOf(bool);
+            }
+        }
     }
     
     public static String pathFromArray(Object[] path) {

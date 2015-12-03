@@ -1,8 +1,8 @@
 package me.scarlet.undertailor.lua.lib.game.audio;
 
-import com.badlogic.gdx.audio.Sound;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaSound;
+import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -35,7 +35,7 @@ public class SoundLib extends TwoArgFunction {
     static class _getSound extends OneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            Sound sound = Undertailor.getAudioManager().getSound(arg.checkstring().tojstring());
+            SoundWrapper sound = Undertailor.getAudioManager().getSound(arg.checkstring().tojstring());
             if(sound == null) {
                 return LuaValue.NIL;
             }
@@ -62,7 +62,7 @@ public class SoundLib extends TwoArgFunction {
     static class _play extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            Sound sound = LuaSound.checkSound(args.arg1()).getSound();
+            SoundWrapper sound = LuaSound.checkSound(args.arg1()).getSound();
             boolean loop = args.arg(2).isnil() ? false : args.arg(2).checkboolean();
             float volume = (args.arg(3).isnil() ? 1.0F : new Float(args.arg(3).checkdouble())) * Undertailor.getAudioManager().getSoundVolume();
             float pitch = args.arg(4).isnil() ? 1.0F : new Float(args.arg(4).checkdouble());
@@ -78,12 +78,12 @@ public class SoundLib extends TwoArgFunction {
             
             if(pitch < 0.5F) {
                 pitch = 0.5F;
-                Undertailor.warn("lua", LuaSound.TYPENAME + ":play() - pitch argument was set to 0.5F (was <0.5F)");
+                Undertailor.instance.warn("lua", LuaSound.TYPENAME + ":play() - pitch argument was set to 0.5F (was <0.5F)");
             }
             
             if(pitch > 2.0F) {
                 pitch = 2.0F;
-                Undertailor.warn("lua", LuaSound.TYPENAME + ":play() - pitch argument was set to 2.0F (was >2.0F)");
+                Undertailor.instance.warn("lua", LuaSound.TYPENAME + ":play() - pitch argument was set to 2.0F (was >2.0F)");
             }
             
             if(pan < -1.0F) {
@@ -95,9 +95,9 @@ public class SoundLib extends TwoArgFunction {
             }
             
             if(loop) {
-                return LuaValue.valueOf(sound.loop(volume, pitch, pan));
+                return LuaValue.valueOf(sound.getReference().loop(volume, pitch, pan));
             } else {
-                return LuaValue.valueOf(sound.play(volume, pitch, pan));
+                return LuaValue.valueOf(sound.getReference().play(volume, pitch, pan));
             }
         }
     }
@@ -105,11 +105,11 @@ public class SoundLib extends TwoArgFunction {
     static class _stop extends TwoArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Sound sound = LuaSound.checkSound(arg1).getSound();
+            SoundWrapper sound = LuaSound.checkSound(arg1).getSound();
             if(arg2.isnil()) {
-                sound.stop();
+                sound.getReference().stop();
             } else {
-                sound.stop(arg2.checklong());
+                sound.getReference().stop(arg2.checklong());
             }
             
             return LuaValue.NIL;
@@ -119,11 +119,11 @@ public class SoundLib extends TwoArgFunction {
     static class _pause extends TwoArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Sound sound = LuaSound.checkSound(arg1).getSound();
+            SoundWrapper sound = LuaSound.checkSound(arg1).getSound();
             if(arg2.isnil()) {
-                sound.pause();
+                sound.getReference().pause();
             } else {
-                sound.pause(arg2.checklong());
+                sound.getReference().pause(arg2.checklong());
             }
             
             return LuaValue.NIL;
@@ -133,11 +133,11 @@ public class SoundLib extends TwoArgFunction {
     static class _resume extends TwoArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Sound sound = LuaSound.checkSound(arg1).getSound();
+            SoundWrapper sound = LuaSound.checkSound(arg1).getSound();
             if(arg2.isnil()) {
-                sound.resume();
+                sound.getReference().resume();
             } else {
-                sound.resume(arg2.checklong());
+                sound.getReference().resume(arg2.checklong());
             }
             
             return LuaValue.NIL;

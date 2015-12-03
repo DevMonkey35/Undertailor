@@ -1,6 +1,6 @@
 package me.scarlet.undertailor.lua;
 
-import com.badlogic.gdx.audio.Music;
+import me.scarlet.undertailor.wrappers.MusicWrapper;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 
@@ -17,12 +17,12 @@ public class LuaMusic extends LuaValue {
         return (LuaMusic) value;
     }
     
-    private Music music;
-    public LuaMusic(Music music) {
+    private MusicWrapper music;
+    public LuaMusic(MusicWrapper music) {
         this.music = music;
     }
     
-    public Music getMusic() {
+    public MusicWrapper getMusic() {
         return music;
     }
     

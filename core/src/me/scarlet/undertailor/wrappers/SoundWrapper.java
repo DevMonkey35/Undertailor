@@ -7,6 +7,8 @@ import java.io.File;
 
 public class SoundWrapper extends DisposableWrapper<Sound> {
 
+    public static final long MAX_LIFETIME = 30000; // 30s
+    
     private File fileReference;
     public SoundWrapper(File fileReference) {
         super(null);
@@ -20,7 +22,16 @@ public class SoundWrapper extends DisposableWrapper<Sound> {
     }
     
     @Override
+    public long getMaximumLifetime() {
+        return MAX_LIFETIME;
+    }
+    
+    @Override
     public boolean allowDispose() {
+        if(!this.getReferrers().isEmpty()) {
+            return false;
+        }
+        
         return true;
     }
 }

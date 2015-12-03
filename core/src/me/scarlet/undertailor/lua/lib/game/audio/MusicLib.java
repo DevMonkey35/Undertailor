@@ -1,9 +1,10 @@
 package me.scarlet.undertailor.lua.lib.game.audio;
 
-import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.backends.lwjgl.audio.OpenALMusic;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaMusic;
-import me.scarlet.undertailor.lua.LuaSound;
+import me.scarlet.undertailor.util.LuaUtil;
+import me.scarlet.undertailor.wrappers.MusicWrapper;
 import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -21,6 +22,11 @@ public class MusicLib extends TwoArgFunction {
         music.set("getMusicVolume", new _getMusicVolume());
         music.set("setMusicVolume", new _setMusicVolume());
         music.set("getMusic", new _getMusic());
+        music.set("getPitch", new _getPitch());
+        music.set("setPitch", new _setPitch());
+        music.set("getVolume", new _getVolume());
+        music.set("setVolume", new _setVolume());
+        music.set("setPan", new _setPan());
         music.set("resume", new _resume());
         music.set("pause", new _pause());
         music.set("play", new _play());
@@ -52,7 +58,7 @@ public class MusicLib extends TwoArgFunction {
     static class _getMusic extends OneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            Music music = Undertailor.getAudioManager().getMusic(arg.checkstring().tojstring());
+            MusicWrapper music = Undertailor.getAudioManager().getMusic(arg.checkstring().tojstring());
             if(music == null) {
                 return LuaValue.NIL;
             }
@@ -71,7 +77,87 @@ public class MusicLib extends TwoArgFunction {
     static class _setMusicVolume extends OneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            Undertailor.getAudioManager().setMusicVolume(new Float(arg.checkdouble()));
+            float volume = new Float(arg.checkdouble());
+            if(volume > 1.0F) {
+                volume = 1.0F;
+            }
+            
+            if(volume < 0.0F) {
+                volume = 0.0F;
+            }
+            
+            Undertailor.getAudioManager().setMusicVolume(volume);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _getPitch extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            MusicWrapper music = LuaMusic.checkMusic(arg).getMusic();
+            return LuaValue.valueOf(((OpenALMusic) music.getReference()).getPitch());
+        }
+    }
+    
+    static class _setPitch extends TwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            MusicWrapper music = LuaMusic.checkMusic(arg1).getMusic();
+            float pitch = new Float(arg2.checkdouble());
+            if(pitch < 0.5F) {
+                pitch = 0.5F;
+            }
+            
+            if(pitch > 2.0F) {
+                pitch = 2.0F;
+            }
+            
+            ((OpenALMusic) music.getReference()).setPitch(pitch);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _getVolume extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            MusicWrapper music = LuaMusic.checkMusic(arg).getMusic();
+            return LuaValue.valueOf(music.getReference().getVolume());
+        }
+    }
+    
+    static class _setVolume extends TwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            MusicWrapper music = LuaMusic.checkMusic(arg1).getMusic();
+            float volume = new Float(arg2.checkdouble());
+            if(volume > 1.0F) {
+                volume = 1.0F;
+            }
+            
+            if(volume < 0.0F) {
+                volume = 0.0F;
+            }
+            
+            music.getReference().setVolume(volume * Undertailor.getAudioManager().getMusicVolume());
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _setPan extends TwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            MusicWrapper music = LuaMusic.checkMusic(arg1).getMusic();
+            float volume = music.getReference().getVolume();
+            float pan = new Float(arg2.checkdouble());
+            if(pan < -1.0F) {
+                pan = -1.0F;
+            }
+            
+            if(pan > 1.0F) {
+                pan = 1.0F;
+            }
+            
+            music.getReference().setPan(pan, volume);
             return LuaValue.NIL;
         }
     }
@@ -79,11 +165,12 @@ public class MusicLib extends TwoArgFunction {
     static class _play extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            Music music = LuaMusic.checkMusic(args.arg1()).getMusic();
+            LuaUtil.checkArguments(args, 1, 5);
+            MusicWrapper music = LuaMusic.checkMusic(args.arg1()).getMusic();
             boolean loop = args.arg(2).isnil() ? false : args.arg(2).checkboolean();
             float volume = (args.arg(3).isnil() ? 1.0F : new Float(args.arg(3).checkdouble())) * Undertailor.getAudioManager().getMusicVolume();
-            float pitch = args.arg(4).isnil() ? 1.0F : new Float(args.arg(4).checkdouble());
-            float pan = args.arg(5).isnil() ? 1.0F : new Float(args.arg(5).checkdouble());
+            float pan = args.arg(4).isnil() ? 1.0F : new Float(args.arg(4).checkdouble());
+            float pitch = args.arg(5).isnil() ? 1.0F : new Float(args.arg(5).checkdouble());
             
             if(volume > 1.0F) {
                 volume = 1.0F;
@@ -95,12 +182,10 @@ public class MusicLib extends TwoArgFunction {
             
             if(pitch < 0.5F) {
                 pitch = 0.5F;
-                Undertailor.warn("lua", LuaSound.TYPENAME + ":play() - pitch argument was set to 0.5F (was <0.5F)");
             }
             
             if(pitch > 2.0F) {
                 pitch = 2.0F;
-                Undertailor.warn("lua", LuaSound.TYPENAME + ":play() - pitch argument was set to 2.0F (was >2.0F)");
             }
             
             if(pan < -1.0F) {
@@ -111,31 +196,32 @@ public class MusicLib extends TwoArgFunction {
                 pan = 1.0F;
             }
             
-            music.setPan(pan, volume * Undertailor.getAudioManager().getMusicVolume());
+            ((OpenALMusic) music.getReference()).setPitch(pitch);
+            music.getReference().setPan(pan, volume * Undertailor.getAudioManager().getMusicVolume());
             if(loop) {
-                music.setLooping(true);
+                music.getReference().setLooping(true);
             }
             
-            music.play();
+            music.getReference().play();
             return LuaValue.NIL;
         }
     }
     
-    static class _stop extends TwoArgFunction {
+    static class _stop extends OneArgFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Music music = LuaMusic.checkMusic(arg1).getMusic();
-            music.stop();
+        public LuaValue call(LuaValue arg1) {
+            MusicWrapper music = LuaMusic.checkMusic(arg1).getMusic();
+            music.getReference().stop();
             
             return LuaValue.NIL;
         }
     }
     
-    static class _pause extends TwoArgFunction {
+    static class _pause extends OneArgFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Music music = LuaMusic.checkMusic(arg1).getMusic();
-            music.pause();
+        public LuaValue call(LuaValue arg1) {
+            MusicWrapper music = LuaMusic.checkMusic(arg1).getMusic();
+            music.getReference().pause();
             
             return LuaValue.NIL;
         }
@@ -144,8 +230,8 @@ public class MusicLib extends TwoArgFunction {
     static class _resume extends TwoArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Music music = LuaMusic.checkMusic(arg1).getMusic();
-            music.play();
+            MusicWrapper music = LuaMusic.checkMusic(arg1).getMusic();
+            music.getReference().play();
             
             return LuaValue.NIL;
         }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.exception.TextureTilingException;
@@ -15,7 +16,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class SpriteSheet {
+public class SpriteSheet implements Disposable {
     
     public static class SpriteSheetMeta {
         
@@ -32,9 +33,14 @@ public class SpriteSheet {
     public static SpriteSheet fromConfig(File folder, ConfigurationNode node) throws FileNotFoundException, TextureTilingException {
         String name = node.getKey().toString();
         SpriteSheetMeta meta = new SpriteSheetMeta();
-        FileHandle textureFile = Gdx.files.absolute(new File(folder, ConfigurateUtil.processString(node.getNode("file"), null)).getAbsolutePath());
+        String textureFilePath = ConfigurateUtil.processString(node.getNode("file"), null);
+        if(textureFilePath == null) {
+            throw new ConfigurationException("Could not find string value \"file\"");
+        }
+        
+        FileHandle textureFile = Gdx.files.absolute(new File(folder, textureFilePath).getAbsolutePath());
         if(!textureFile.exists()) {
-            throw new FileNotFoundException("Texture file didn't exist");
+            throw new FileNotFoundException("texture file " + textureFilePath + " didn't exist");
         }
         
         Texture texture = new Texture(textureFile);
@@ -64,7 +70,7 @@ public class SpriteSheet {
                                 e.printStackTrace();
                             }
                             
-                            Undertailor.debug("sheetman", "sheet " + name + " loaded sprite at index " + i + " with meta "
+                            Undertailor.instance.debug("sheetman", "sheet " + name + " loaded sprite at index " + i + " with meta "
                                     + meta.spriteMeta[i].toString());
                         }
                     }
@@ -86,8 +92,8 @@ public class SpriteSheet {
         this.sheetName = sheetName;
         checkTexture(texture, meta.gridX, meta.gridY);
         sprites = new Sprite[meta.gridX * meta.gridY];
-        int spriteHeight = (int) (texture.getHeight() / meta.gridY);
-        int spriteWidth = (int) (texture.getWidth() / meta.gridX);
+        int spriteHeight = texture.getHeight() / meta.gridY;
+        int spriteWidth = texture.getWidth() / meta.gridX;
         for(int iY = 0; iY < meta.gridY; iY++) {
             for(int iX = 0; iX < meta.gridX; iX++) {
                 int pos = (iY * meta.gridX) + iX;
@@ -150,5 +156,10 @@ public class SpriteSheet {
                 i2++;
             }
         }
+    }
+    
+    @Override
+    public void dispose() {
+        texture.dispose();
     }
 }

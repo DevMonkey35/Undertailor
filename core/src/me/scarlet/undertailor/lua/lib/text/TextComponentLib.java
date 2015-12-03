@@ -1,6 +1,5 @@
 package me.scarlet.undertailor.lua.lib.text;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaColor;
@@ -11,6 +10,7 @@ import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.util.LuaUtil;
+import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -52,23 +52,24 @@ public class TextComponentLib extends TwoArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             // text.component.newComponent(text, fontName, styleName, color, soundName, speed, waitTime)
-            if(args.narg() < 1 || args.narg() > 6) {
-                throw new LuaError("arguments insufficient or overflowing (min 1, max 7)");
+            if(args.narg() < 1 || args.narg() > 8) {
+                throw new LuaError("arguments insufficient or overflowing (min 1, max 8)");
             }
             
             String text = args.arg(1).checkstring().tojstring();
             Font font = args.arg(2).isnil() ? null : Undertailor.getFontManager().getFont(args.arg(2).checkstring().tojstring());
             Style style = args.arg(3).isnil() ? null : Undertailor.getStyleManager().getStyle(args.arg(3).checkstring().tojstring());
             Color color = args.arg(4).isnil() ? null : LuaColor.checkcolor(args.arg(4)).getColor();
-            Sound sound = args.arg(5).isnil() ? null : Undertailor.getAudioManager().getSound(args.arg(5).checkstring().tojstring());
+            SoundWrapper sound = args.arg(5).isnil() ? null : Undertailor.getAudioManager().getSound(args.arg(5).checkstring().tojstring());
             int speed = args.arg(6).isnil() ? TextComponent.DEFAULT_SPEED : args.arg(6).checkint();
-            float wait = args.arg(7).isnil() ? 0F : new Float(args.arg(7).checkdouble());
+            int segsize = args.arg(7).isnil() ? 1 : args.arg(7).checkint();
+            float wait = args.arg(8).isnil() ? 0F : new Float(args.arg(8).checkdouble());
             
             if(text.trim().isEmpty()) {
                 throw new LuaError("bad argument: text cannot be empty or only have whitespace characters");
             }
             
-            return new LuaTextComponent(new TextComponent(text, font, style, color, sound, speed, wait));
+            return new LuaTextComponent(new TextComponent(text, font, style, color, sound, speed, segsize, wait));
         }
     }
     
@@ -128,7 +129,19 @@ public class TextComponentLib extends TwoArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
             TextComponent component = LuaTextComponent.checkTextComponent(arg).getTextComponent();
+            if(component.getColor() == null) {
+                return LuaValue.NIL;
+            }
+            
             return new LuaColor(component.getColor());
+        }
+    }
+    
+    static class _getSegmentSize extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            TextComponent component = LuaTextComponent.checkTextComponent(arg).getTextComponent();
+            return LuaValue.valueOf(component.getSegmentSize());
         }
     }
     

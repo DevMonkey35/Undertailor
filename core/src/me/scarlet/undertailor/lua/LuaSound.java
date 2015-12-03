@@ -1,6 +1,6 @@
 package me.scarlet.undertailor.lua;
 
-import com.badlogic.gdx.audio.Sound;
+import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 
@@ -17,12 +17,12 @@ public class LuaSound extends LuaValue {
         return (LuaSound) value;
     }
     
-    private Sound sound;
-    public LuaSound(Sound sound) {
+    private SoundWrapper sound;
+    public LuaSound(SoundWrapper sound) {
         this.sound = sound;
     }
     
-    public Sound getSound() {
+    public SoundWrapper getSound() {
         return sound;
     }
     
