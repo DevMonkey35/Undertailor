@@ -1,6 +1,5 @@
 package me.scarlet.undertailor.gfx;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.KeyFrame.FrameObjectMeta;
 import me.scarlet.undertailor.gfx.KeyFrame.SimpleKeyFrame;
@@ -86,7 +85,7 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     }
     
     @Override
-    public void drawCurrentFrame(Batch batch, long stateTime, float posX, float posY, float scale, float rotation) {
+    public void drawCurrentFrame(long stateTime, float posX, float posY, float scale, float rotation) {
         SimpleKeyFrame frame = this.getFrame(stateTime);
         if(frame == null) {
             return;
@@ -96,6 +95,6 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
         float offX = meta.offX * meta.scaleX;
         float offY = meta.offY * meta.scaleY;
-        sprite.draw(posX + offX, posY + offY, meta.scaleX * scale, meta.scaleY * scale, meta.rotation, meta.flipX, meta.flipY);
+        sprite.draw(posX + offX, posY + offY, meta.scaleX * scale, meta.scaleY * scale, meta.rotation, meta.flipX, meta.flipY, false);
     }
 }

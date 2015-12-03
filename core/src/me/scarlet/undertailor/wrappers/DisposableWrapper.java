@@ -59,6 +59,8 @@ public abstract class DisposableWrapper<T extends Disposable> {
         if(referrers.contains(referrer)) {
             referrers.remove(referrer);
         }
+        
+        this.lastAccess = TimeUtils.millis();
     }
     
     public long getLastAccessTime() {

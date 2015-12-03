@@ -111,6 +111,26 @@ public class MultiRenderer {
         this.startDrawingSprite();
         batch.draw(texture, x, y);
     }
+
+    public void draw(TextureRegion region, float x, float y) {
+        draw(region, x, y, 0, 0);
+    }
+
+    public void draw(TextureRegion region, float x, float y, float originX, float originY) {
+        draw(region, x, y, originX, originY, region.getRegionWidth(), region.getRegionHeight());
+    }
+
+    public void draw(TextureRegion region, float x, float y, float originX, float originY, float width, float height) {
+        draw(region, x, y, originX, originY, width, height, 1F);
+    }
+
+    public void draw(TextureRegion region, float x, float y, float originX, float originY, float width, float height, float scale) {
+        draw(region, x, y, originX, originY, width, height, scale, scale);
+    }
+
+    public void draw(TextureRegion region, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY) {
+        draw(region, x, y, originX, originY, width, height, scaleX, scaleY, 0F);
+    }
     
     public void draw(TextureRegion region, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
         this.startDrawingSprite();

@@ -28,11 +28,9 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.backends.lwjgl.audio.OpenALMusic;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -52,8 +50,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import me.scarlet.undertailor.gfx.Animation;
-import me.scarlet.undertailor.gfx.AnimationSet;
 import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.lua.lib.MathUtilLib;
@@ -65,6 +61,7 @@ import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
+import me.scarlet.undertailor.overworld.OverworldController;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.ui.UIController;
 import me.scarlet.undertailor.util.Blocker;
@@ -108,6 +105,10 @@ public class Undertailor extends ApplicationAdapter {
     
     public static MultiRenderer getRenderer() {
         return Undertailor.instance.renderer;
+    }
+    
+    public static AnimationManager getAnimationManager() {
+        return Undertailor.instance.animationManager;
     }
     
     public static SpriteSheetManager getSheetManager() {
@@ -170,6 +171,7 @@ public class Undertailor extends ApplicationAdapter {
     private AnimationManager animationManager;
     
     private UIController uiController;
+    private OverworldController ovwController;
     
     public Undertailor(LwjglApplicationConfiguration config) {
         this.config = config;
@@ -221,7 +223,6 @@ public class Undertailor extends ApplicationAdapter {
         this.styleManager = new StyleManager();
         this.sheetManager = new SpriteSheetManager();
         this.animationManager = new AnimationManager();
-        this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
         
         fontManager.loadFonts(new File("fonts/"));
         audioManager.loadMusic(new File("music/"));
@@ -229,15 +230,14 @@ public class Undertailor extends ApplicationAdapter {
         styleManager.loadStyles(new File("fonts/styles/"));
         sheetManager.loadSprites(new File("sprites/"));
         animationManager.loadAnimations(new File("animation/"));
+        
+        this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
+        this.ovwController = new OverworldController(new FitViewport(0F, 0F));
+        
         uiController.getLuaLoader().loadComponents(new File("scripts/uicomponent/"));
         
         Color cc = Color.BLACK;
         Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
-        
-        OpenALMusic music = ((OpenALMusic) audioManager.getMusic("fight.mus_vsasgore").getReference());
-        music.setPitch(0.95F);
-        music.setLooping(true);
-        music.play();
         
         File mainFile = new File("main.lua");
         if(mainFile.exists()) {
@@ -250,25 +250,17 @@ public class Undertailor extends ApplicationAdapter {
         disposer = new DisposerThread();
         disposer.setDaemon(true);
         disposer.start();
-        
-        testing();
-    }
-    
-    private AnimationSet anim;
-    private void testing() {
-        anim = animationManager.getAnimationSet("frisk").getReference(this);
     }
     
     @Override
     public void render() {
         uiController.process(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        ovwController.render();
         uiController.render();
         
         Font bitop = fontManager.getFont("8bitop");
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
-        Animation<?> a = anim.getAnimation("idle_up");
-        a.drawCurrentFrame(renderer.getSpriteBatch(), TimeUtils.timeSinceMillis(a.getStartTime()), 20, 250);
         renderer.flush();
     }
     

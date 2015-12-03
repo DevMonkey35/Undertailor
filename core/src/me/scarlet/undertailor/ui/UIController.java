@@ -71,7 +71,6 @@ public class UIController {
     }
     
     public void render() {
-        port.apply();
         Undertailor.getRenderer().setProjectionMatrix(camera.combined);
         this.processObjects(object -> {
             object.render();

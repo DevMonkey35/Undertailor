@@ -1,15 +1,16 @@
 package me.scarlet.undertailor.overworld;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import me.scarlet.undertailor.gfx.Animation;
 
 public abstract class WorldObject {
     
+    private int z;
     private WorldRoom room;
     private Vector2 position;
-    private Animation animation;
     private Rectangle boundingBox;
+    private Animation<?> animation;
     private float boxOriginX, boxOriginY;
     
     public WorldObject() {
@@ -17,6 +18,16 @@ public abstract class WorldObject {
         this.boundingBox = new Rectangle(0, 0, 0, 0);
         this.boxOriginX = 0;
         this.boxOriginY = 0;
+        this.animation = null;
+        this.z = 0;
+    }
+    
+    public int getZ() {
+        return z;
+    }
+    
+    public void setZ(int z) {
+        this.z = z;
     }
     
     public WorldRoom getRoom() {
@@ -31,11 +42,16 @@ public abstract class WorldObject {
         return position;
     }
     
-    public Animation getCurrentAnimation() {
+    public void setPosition(float x, float y) {
+        position.set(x, y);
+        boundingBox.setPosition(x - boxOriginX, y - boxOriginY);
+    }
+    
+    public Animation<?> getCurrentAnimation() {
         return animation;
     }
     
-    public void setCurrentAnimation(Animation animation) {
+    public void setCurrentAnimation(Animation<?> animation) {
         this.animation = animation;
     }
     
@@ -45,6 +61,7 @@ public abstract class WorldObject {
     
     public void setBoundingBoxSize(float width, float height) {
         boundingBox.setSize(width, height);
+        boundingBox.setPosition(position.x - boxOriginX, position.y - boxOriginY);
     }
     
     public void setBoundingBoxOrigin(float x, float y) {
@@ -52,8 +69,12 @@ public abstract class WorldObject {
         this.boxOriginY = y;
     }
     
-    public void render() {
+    public void onRender() {
         
+    }
+    
+    public void render() {
+        onRender();
     }
     
     public void renderBoundingBox() {

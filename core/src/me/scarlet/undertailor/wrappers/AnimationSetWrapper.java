@@ -5,7 +5,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 
 public class AnimationSetWrapper extends DisposableWrapper<AnimationSet> {
 
-    public static final long MAX_LIFETIME = 300000; // 5 minutes 
+    public static final long MAX_LIFETIME = 120000; // 2 minutes 
     
     private ConfigurationNode node;
     public AnimationSetWrapper(ConfigurationNode node) {

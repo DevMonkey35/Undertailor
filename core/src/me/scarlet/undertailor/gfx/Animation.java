@@ -1,7 +1,5 @@
 package me.scarlet.undertailor.gfx;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
-
 import java.util.Map;
 
 public abstract class Animation<T extends KeyFrame> {
@@ -34,15 +32,15 @@ public abstract class Animation<T extends KeyFrame> {
         this.startTime = startTime;
     }
     
-    public void drawCurrentFrame(Batch batch, long stateTime, float posX, float posY) {
-        this.drawCurrentFrame(batch, stateTime, posX, posY, 1F);
+    public void drawCurrentFrame(long stateTime, float posX, float posY) {
+        this.drawCurrentFrame(stateTime, posX, posY, 1F);
     }
     
-    public void drawCurrentFrame(Batch batch, long stateTime, float posX, float posY, float scale) {
-        this.drawCurrentFrame(batch, stateTime, posX, posY, scale, 0F);
+    public void drawCurrentFrame(long stateTime, float posX, float posY, float scale) {
+        this.drawCurrentFrame(stateTime, posX, posY, scale, 0F);
     }
     
     public abstract Map<Long, T> getFrames();
     public abstract T getFrame(long stateTime);
-    public abstract void drawCurrentFrame(Batch batch, long stateTime, float posX, float posY, float scale, float rotation);
+    public abstract void drawCurrentFrame(long stateTime, float posX, float posY, float scale, float rotation);
 }

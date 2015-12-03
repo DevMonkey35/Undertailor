@@ -82,9 +82,9 @@ public class Sprite {
         
         float x = posX + (offX * scaleX);
         float y = posY + (offY * scaleY);
-        if(ensureBottomLeft) {
-            x += (originX * scaleX);
-            y += (originY * scaleY);
+        if(!ensureBottomLeft) {
+            x -= (originX * scaleX);
+            y -= (originY * scaleY);
         }
         
         TextureRegion drawn = new TextureRegion(region);
