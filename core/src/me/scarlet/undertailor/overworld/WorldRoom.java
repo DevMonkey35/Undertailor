@@ -86,6 +86,7 @@ public class WorldRoom implements Disposable {
             }
         }
         
+        @Override
         public void dispose() {
             for(TilemapWrapper wrapper : tilemaps) {
                 wrapper.removeReference(this);
@@ -173,6 +174,7 @@ public class WorldRoom implements Disposable {
         return returnSet;
     }
     
+    @Override
     public void dispose() {
         roomWrapper.removeReference(this);
     }
