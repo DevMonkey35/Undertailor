@@ -55,7 +55,6 @@ import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.lua.lib.MathUtilLib;
 import me.scarlet.undertailor.lua.lib.TextLib;
 import me.scarlet.undertailor.lua.lib.TimeLib;
-import me.scarlet.undertailor.lua.lib.UILib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
@@ -138,7 +137,7 @@ public class Undertailor extends ApplicationAdapter {
     }
     
     public static Globals newGlobals() {
-        Globals returned = JsePlatform.standardGlobals();
+        Globals returned = JsePlatform.debugGlobals();
         for(LuaValue lib : Undertailor.instance.libs) {
             returned.load(lib);
         }
@@ -234,7 +233,7 @@ public class Undertailor extends ApplicationAdapter {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
         }
         
-        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib(), new UILib(), new TimeLib()};
+        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib(), new TimeLib()};
         this.renderer = new MultiRenderer();
         
         this.fontManager = new FontManager();
@@ -245,14 +244,14 @@ public class Undertailor extends ApplicationAdapter {
         this.animationManager = new AnimationManager();
         this.roomManager = new RoomManager();
         
-        fontManager.loadFonts(new File("fonts/"));
+        fontManager.loadObjects(new File("fonts/"));
         audioManager.loadMusic(new File("music/"));
         audioManager.loadSounds(new File("sounds/"));
-        sheetManager.loadSprites(new File("sprites/"));
-        tilemapManager.loadTilemaps(new File("tilemaps/"));
-        styleManager.loadStyles(new File("fonts/styles/"));
-        animationManager.loadAnimations(new File("animation/"));
-        roomManager.loadRooms(new File("scripts/rooms/"));
+        sheetManager.loadObjects(new File("sprites/"));
+        tilemapManager.loadObjects(new File("tilemaps/"));
+        styleManager.loadObjects(new File("fonts/styles/"));
+        animationManager.loadObjects(new File("animation/"));
+        roomManager.loadObjects(new File("scripts/rooms/"));
         
         this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
         this.ovwController = new OverworldController(new FitViewport(0F, 0F));
@@ -260,6 +259,9 @@ public class Undertailor extends ApplicationAdapter {
         Gdx.input.setInputProcessor(inputRetriever);
         
         uiController.getLuaLoader().loadComponents(new File("scripts/uicomponent/"));
+        ovwController.getObjectLoader().loadObjects(new File("scripts/objects/"));
+        
+        ovwController.getCurrentRoom().registerObject(Undertailor.getOverworldController().getObjectLoader().newWorldObject("charfrisk").getWorldObject());
         
         Color cc = Color.BLACK;
         Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
@@ -287,7 +289,7 @@ public class Undertailor extends ApplicationAdapter {
         ovwController.render();
         uiController.render();
         
-        Font bitop = fontManager.getFont("8bitop");
+        Font bitop = fontManager.getObject("8bitop");
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
         renderer.flush();
     }

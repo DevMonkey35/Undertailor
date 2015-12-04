@@ -1,4 +1,4 @@
-package me.scarlet.undertailor.lua.lib;
+package me.scarlet.undertailor.lua.lib.game;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaUIObject;

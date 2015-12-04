@@ -7,15 +7,17 @@ public class AnimationSetWrapper extends DisposableWrapper<AnimationSet> {
 
     public static final long MAX_LIFETIME = 120000; // 2 minutes 
     
+    private String name;
     private ConfigurationNode node;
-    public AnimationSetWrapper(ConfigurationNode node) {
+    public AnimationSetWrapper(String name, ConfigurationNode node) {
         super(null);
+        this.name = name;
         this.node = node;
     }
     
     @Override
     public AnimationSet newReference() {
-        return AnimationSet.fromConfig(node);
+        return AnimationSet.fromConfig(name, node);
     }
     
     @Override

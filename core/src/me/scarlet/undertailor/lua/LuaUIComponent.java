@@ -42,28 +42,26 @@ public class LuaUIComponent extends LuaTable {
         return (LuaUIComponent) value;
     }
     
-    public static Map<String, LuaFunction> checkImpl(Globals value, File scriptFile) throws LuaScriptException {
-        try {
-            return LuaUtil.checkImplementation(value, scriptFile, REQUIRED_METHODS);
-        } catch(LuaScriptException e) {
-            throw new LuaScriptException("failed to load uicomponent implementation: " + e.getMessage());
-        }
-    }
-    
     public static class LuaUIComponentImpl extends UIComponent {
-        
+
+        private Varargs args;
         private String typename;
+        private LuaUIComponent parent;
         private Map<String, LuaFunction> functions;
         public LuaUIComponentImpl(LuaUIComponent parent, File luaFile, Varargs args) throws LuaScriptException {
+            this.args = args;
             this.typename = luaFile.getName().split("\\.")[0];
             Globals globals = Undertailor.newGlobals();
             globals.loadfile(luaFile.getAbsolutePath()).invoke();
-            functions = LuaUIComponent.checkImpl(globals, luaFile);
-            functions.get(LuaUIComponent.IMPLMETHOD_CREATE).invoke(parent, args);
+            functions = LuaUtil.checkImplementation(globals, luaFile, REQUIRED_METHODS);
         }
         
         public Map<String, LuaFunction> getFunctions() {
             return functions;
+        }
+        
+        public void prepare() {
+            functions.get(LuaUIComponent.IMPLMETHOD_CREATE).invoke(parent, args);
         }
         
         @Override
@@ -76,7 +74,7 @@ public class LuaUIComponent extends LuaTable {
         @Override
         public void process(float delta, InputData input) {
             if(functions.containsKey(LuaUIComponent.IMPLMETHOD_PROCESS)) {
-                functions.get(LuaUIComponent.IMPLMETHOD_PROCESS).call(LuaValue.valueOf(delta));
+                functions.get(LuaUIComponent.IMPLMETHOD_PROCESS).call(LuaValue.valueOf(delta), new LuaInputData(input));
             }
         }
         
@@ -114,6 +112,7 @@ public class LuaUIComponent extends LuaTable {
     private void prepareLuaComponent() {
         this.setmetatable(METATABLE);
         if(this.component instanceof LuaUIComponentImpl) {
+            ((LuaUIComponentImpl) this.component).prepare();
             Map<String, LuaFunction> functions = ((LuaUIComponentImpl) this.component).getFunctions();
             for(Map.Entry<String, LuaFunction> entry : functions.entrySet()) {
                 this.set(entry.getKey(), entry.getValue());

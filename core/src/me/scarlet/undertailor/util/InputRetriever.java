@@ -113,6 +113,10 @@ public class InputRetriever implements InputProcessor {
                 return 0;
             }
             
+            if(!isPressed) {
+                return holdTime;
+            }
+            
             return TimeUtils.timeSinceMillis(holdTime);
         }
         
@@ -122,7 +126,7 @@ public class InputRetriever implements InputProcessor {
         
         public void up() {
             this.isPressed = false;
-            this.holdTime = -1;
+            this.holdTime = TimeUtils.timeSinceMillis(this.holdTime);
             this.lastReleaseTime = TimeUtils.millis();
         }
         

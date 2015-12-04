@@ -73,8 +73,8 @@ public class TextLib extends TwoArgFunction {
                 throw new LuaError("arguments insufficient or overflowing (min 1, max 7)");
             }
             
-            Font font = Undertailor.getFontManager().getFont(args.checkjstring(1));
-            Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getStyle(args.arg(2).checkjstring());
+            Font font = Undertailor.getFontManager().getObject(args.checkjstring(1));
+            Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getObject(args.arg(2).checkjstring());
             Color color = args.isnil(3) ? null : LuaColor.checkcolor(args.arg(3)).getColor();
             SoundWrapper sound = args.arg(4).isnil() ? null : LuaSound.checkSound(args.arg(4)).getSound();
             int speed = args.optint(5, TextComponent.DEFAULT_SPEED);

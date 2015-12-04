@@ -11,7 +11,7 @@ import java.io.FileFilter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StyleManager {
+public class StyleManager extends Manager<Style> {
     
     public static final String MANAGER_TAG = "styleman";
     
@@ -21,7 +21,7 @@ public class StyleManager {
         this.styles = new HashMap<>();
     }
     
-    public void loadStyles(File directory) {
+    public void loadObjects(File directory) {
         loadStyles(directory, null);
         Undertailor.instance.log(MANAGER_TAG, styles.keySet().size() + " style(s) currently loaded");
     }
@@ -46,6 +46,7 @@ public class StyleManager {
         })) {
             if(file.isDirectory()) {
                 loadStyles(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
+                continue;
             }
             
             String styleName = heading + (heading.isEmpty() ? "" : ".") + file.getName().substring(0, file.getName().length() - 4);
@@ -60,7 +61,7 @@ public class StyleManager {
         }
     }
     
-    public Style getStyle(String name) {
+    public Style getObject(String name) {
         if(styles.containsKey(name)) {
             return styles.get(name).duplicate();
         }

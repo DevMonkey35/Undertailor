@@ -57,8 +57,8 @@ public class TextComponentLib extends TwoArgFunction {
             }
             
             String text = args.arg(1).checkstring().tojstring();
-            Font font = args.arg(2).isnil() ? null : Undertailor.getFontManager().getFont(args.arg(2).checkstring().tojstring());
-            Style style = args.arg(3).isnil() ? null : Undertailor.getStyleManager().getStyle(args.arg(3).checkstring().tojstring());
+            Font font = args.arg(2).isnil() ? null : Undertailor.getFontManager().getObject(args.arg(2).checkstring().tojstring());
+            Style style = args.arg(3).isnil() ? null : Undertailor.getStyleManager().getObject(args.arg(3).checkstring().tojstring());
             Color color = args.arg(4).isnil() ? null : LuaColor.checkcolor(args.arg(4)).getColor();
             SoundWrapper sound = args.arg(5).isnil() ? null : Undertailor.getAudioManager().getSound(args.arg(5).checkstring().tojstring());
             int speed = args.arg(6).isnil() ? TextComponent.DEFAULT_SPEED : args.arg(6).checkint();

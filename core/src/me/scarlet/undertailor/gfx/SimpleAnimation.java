@@ -98,8 +98,10 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         
         Sprite sprite = this.getParentSet().getCurrentSpriteset()[frame.getSpriteIndex()];
         FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
-        float offX = meta.offX * meta.scaleX;
-        float offY = meta.offY * meta.scaleY;
-        sprite.draw(posX + offX, posY + offY, meta.scaleX * scale, meta.scaleY * scale, meta.rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
+        float scaleX = meta.scaleX * scale;
+        float scaleY = meta.scaleY * scale;
+        float offX = meta.offX * scaleX;
+        float offY = meta.offY * scaleY;
+        sprite.draw(posX + (offX * scaleX), posY + (offY * scaleY), scaleX, scaleY, meta.rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
     }
 }

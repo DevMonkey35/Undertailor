@@ -28,12 +28,17 @@ public class LuaRoom extends LuaTable {
     public static String[] METHODS = new String[] {IMPLMETHOD_CREATE, IMPLMETHOD_PROCESS, IMPLMETHOD_ONRENDER, IMPLMETHOD_ONENTER, IMPLMETHOD_ONEXIT};
     
     public static class LuaRoomImpl extends WorldRoom {
+        private LuaRoom parent;
         private Map<String, LuaFunction> functions;
         public LuaRoomImpl(LuaRoom parent, RoomDataWrapper map) throws LuaScriptException {
             super(map.getRoomScript().getName().split("\\.")[0], map);
+            this.parent = parent;
             Globals globals = Undertailor.newGlobals();
             globals.loadfile(map.getRoomScript().getAbsolutePath()).invoke();
             functions = LuaUtil.checkImplementation(globals, map.getRoomScript(), REQUIRED_METHODS);
+        }
+        
+        public void prepare() {
             functions.get(IMPLMETHOD_CREATE).call(parent);
         }
         
@@ -52,7 +57,7 @@ public class LuaRoom extends LuaTable {
         @Override
         public void process(float delta, InputData input) {
             if(functions.containsKey(IMPLMETHOD_PROCESS)) {
-                functions.get(IMPLMETHOD_PROCESS).call(LuaValue.valueOf(delta));
+                functions.get(IMPLMETHOD_PROCESS).call(LuaValue.valueOf(delta), new LuaInputData(input));
             }
             
             super.process(delta, input);
@@ -73,6 +78,7 @@ public class LuaRoom extends LuaTable {
     private void prepareLuaRoom() {
         this.setmetatable(METATABLE);
         if(this.room instanceof LuaRoomImpl) {
+            ((LuaRoomImpl) this.room).prepare();
             Map<String, LuaFunction> functions = ((LuaRoomImpl) this.room).getFunctions();
             for(Map.Entry<String, LuaFunction> entry : functions.entrySet()) {
                 this.set(entry.getKey(), entry.getValue());

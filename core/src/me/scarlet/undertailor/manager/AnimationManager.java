@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnimationManager {
+public class AnimationManager extends Manager<AnimationSetWrapper> {
     
     public static final String MANAGER_TAG = "animman";
     
@@ -19,12 +19,12 @@ public class AnimationManager {
         this.animationMap = new HashMap<>();
     }
     
-    public void loadAnimations(File dir) {
-        loadAnimations(dir, null);
+    public void loadObjects(File dir) {
+        loadObjects(dir, null);
         Undertailor.instance.log(MANAGER_TAG, animationMap.keySet().size() + " animation set(s) currently loaded");
     }
     
-    private void loadAnimations(File dir, String heading) {
+    private void loadObjects(File dir, String heading) {
         String dirPath = dir.getAbsolutePath();
         if(!dir.exists()) {
             Undertailor.instance.warn(MANAGER_TAG, "could not load animation directory " + dirPath + " (did not exist)");
@@ -44,10 +44,12 @@ public class AnimationManager {
             return file.getName().endsWith(".json") || file.isDirectory();
         })) {
             if(file.isDirectory()) {
-                loadAnimations(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
+                loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
+                continue;
             }
             
             String name = file.getName().substring(0, file.getName().length() - 5);
+            String entryName = heading + (heading.isEmpty() ? "" : ".") + name;
             JSONConfigurationLoader loader = JSONConfigurationLoader.builder().setFile(file).build();
             try {
                 ConfigurationNode node = loader.load();
@@ -56,14 +58,15 @@ public class AnimationManager {
                     continue;
                 }
                 
-                animationMap.put(name, new AnimationSetWrapper(node));
+                Undertailor.instance.debug(MANAGER_TAG, "loading animation set " + entryName);
+                animationMap.put(entryName, new AnimationSetWrapper(entryName, node));
             } catch(Exception e) {
                 Undertailor.instance.error(MANAGER_TAG, "could not load animationset " + name + ": " + e.getMessage(), e.getStackTrace());
             }
         }
     }
     
-    public AnimationSetWrapper getAnimationSet(String name) {
+    public AnimationSetWrapper getObject(String name) {
         if(animationMap.containsKey(name)) {
             return animationMap.get(name);
         }

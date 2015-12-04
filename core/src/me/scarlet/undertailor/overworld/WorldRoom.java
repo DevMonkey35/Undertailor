@@ -1,6 +1,5 @@
 package me.scarlet.undertailor.overworld;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
@@ -31,7 +30,7 @@ public class WorldRoom implements Disposable {
             
             map.tilemaps = new TilemapWrapper[tilemapNames.length];
             for(int i = 0; i < map.tilemaps.length; i++) {
-                TilemapWrapper wrapper = Undertailor.getTilemapManager().getTilemap(tilemapNames[i]);
+                TilemapWrapper wrapper = Undertailor.getTilemapManager().getObject(tilemapNames[i]);
                 if(wrapper == null) {
                     Undertailor.instance.error(RoomManager.MANAGER_TAG, "failed to load room: map data referenced non-existing tilemap (" + tilemapNames[i] + ")");
                     return null;
@@ -86,6 +85,14 @@ public class WorldRoom implements Disposable {
             }
         }
         
+        public int getSizeX() {
+            return sizeX;
+        }
+        
+        public int getSizeY() {
+            return sizeY;
+        }
+        
         @Override
         public void dispose() {
             for(TilemapWrapper wrapper : tilemaps) {
@@ -100,10 +107,10 @@ public class WorldRoom implements Disposable {
         
     }
     
-    private static TreeSet<WorldObject> returnSet;
+    private static final TreeSet<WorldObject> RETURN_SET;
     
     static {
-        returnSet = new TreeSet<WorldObject>((WorldObject obj1, WorldObject obj2) -> {
+        RETURN_SET = new TreeSet<WorldObject>((WorldObject obj1, WorldObject obj2) -> {
             if(obj1.getZ() == obj2.getZ()) {
                 return Float.compare(obj1.getPosition().y, obj2.getPosition().y);
             } else {
@@ -130,6 +137,10 @@ public class WorldRoom implements Disposable {
     
     public String getId() {
         return id;
+    }
+    
+    public RoomMap getMap() {
+        return room;
     }
     
     public void registerEntrypoint(Rectangle rect) {
@@ -159,19 +170,18 @@ public class WorldRoom implements Disposable {
         for(WorldObject object : getObjectsInRenderOrder()) {
             object.render();
             if(boxes) {
-                Undertailor.getRenderer().setShapeColor(Color.WHITE);
                 object.renderBox();
             }
         }
     }
     
     private TreeSet<WorldObject> getObjectsInRenderOrder() {
-        returnSet.clear();
+        RETURN_SET.clear();
         for(WorldObject object : objects.values()) {
-            returnSet.add(object);
+            RETURN_SET.add(object);
         }
         
-        return returnSet;
+        return RETURN_SET;
     }
     
     @Override

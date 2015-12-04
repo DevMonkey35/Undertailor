@@ -87,13 +87,13 @@ public class Sprite {
         float x = posX + (offX * scaleX);
         float y = posY + (offY * scaleY);
         if(!ensureBottomLeft) {
-            x -= (originX * scaleX);
-            y -= (originY * scaleY);
+            x -= originX;
+            y -= originY;
         }
         
         TextureRegion drawn = new TextureRegion(region);
         drawn.flip(flipX, flipY);
         
-        Undertailor.getRenderer().draw(drawn, x, y, (originX * scaleX), (originY * scaleY), sizeX, sizeY, scaleX, scaleY, rotation);
+        Undertailor.getRenderer().draw(drawn, x, y, originX, originY, sizeX, sizeY, scaleX, scaleY, rotation);
     }
 }

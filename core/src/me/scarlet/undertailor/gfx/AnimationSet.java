@@ -16,7 +16,7 @@ public class AnimationSet implements Disposable {
 
     public static final String DEFAULT_SPRITESET = "default";
     
-    public static AnimationSet fromConfig(ConfigurationNode node) {
+    public static AnimationSet fromConfig(String name, ConfigurationNode node) {
         try {
             String[] sheets = ConfigurateUtil.processStringArray(node.getNode("meta", "usedSheets"), null);
             Map<String, String[]> spriteSets = new HashMap<>();
@@ -33,25 +33,27 @@ public class AnimationSet implements Disposable {
                 }
             }
             
-            return new AnimationSet(sheets, spriteSets, animations);
+            return new AnimationSet(name, sheets, spriteSets, animations);
         } catch(ConfigurationException e) {
             e.printStackTrace();
             throw e;
         }
     }
     
+    private String name;
     private String currentSpriteset;
     private Map<String, Sprite[]> spritesets;
     private Map<String, Animation<?>> animations;
     private Map<String, SpriteSheetWrapper> sheets;
-    public AnimationSet(String[] sheetNames, Map<String, String[]> spriteSets, Map<String, Animation<?>> animations) {
+    public AnimationSet(String name, String[] sheetNames, Map<String, String[]> spriteSets, Map<String, Animation<?>> animations) {
+        this.name = name;
+        this.animations = animations;
         this.sheets = new HashMap<>();
         this.spritesets = new HashMap<>();
-        this.animations = animations;
         this.currentSpriteset = DEFAULT_SPRITESET;
         
         for(String str : sheetNames) {
-            SpriteSheetWrapper sheet = Undertailor.getSheetManager().getSpriteSheet(str);
+            SpriteSheetWrapper sheet = Undertailor.getSheetManager().getObject(str);
             sheet.getReference(this);
             sheets.put(str, sheet);
         }
@@ -79,6 +81,10 @@ public class AnimationSet implements Disposable {
         for(Animation<?> animation : animations.values()) {
             animation.animSet = this;
         }
+    }
+    
+    public String getName() {
+        return name;
     }
     
     public Sprite[] getCurrentSpriteset() {

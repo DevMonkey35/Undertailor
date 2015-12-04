@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TilemapManager {
+public class TilemapManager extends Manager<TilemapWrapper> {
     
     public static final String MANAGER_TAG = "tileman";
     
@@ -21,7 +21,7 @@ public class TilemapManager {
         this.tilemaps = new HashMap<>();
     }
     
-    public void loadTilemaps(File directory) {
+    public void loadObjects(File directory) {
         loadTilemaps(directory, null);
         Undertailor.instance.log(MANAGER_TAG, tilemaps.keySet().size() + " tilemap(s) currently loaded");
     }
@@ -48,19 +48,21 @@ public class TilemapManager {
         })) {
             if(file.isDirectory()) {
                 loadTilemaps(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
+                continue;
             }
             
             String name = file.getName().substring(0, file.getName().length() - 8);
-            Undertailor.instance.debug(MANAGER_TAG, "found tilemap data for tilemap " + name);
+            String entryName = heading + (heading.isEmpty() ? "" : ".") + name;
+            Undertailor.instance.debug(MANAGER_TAG, "found tilemap data for tilemap " + entryName);
             File textureFile = new File(dir, name + ".png");
             
             if(!textureFile.exists()) {
-                Undertailor.instance.warn(MANAGER_TAG, "ignoring tilemap " + name + " (no paired texture)");
+                Undertailor.instance.warn(MANAGER_TAG, "ignoring tilemap " + entryName + " (no paired texture)");
                 continue;
             }
             
             if(!textureFile.isFile()) {
-                Undertailor.instance.warn(MANAGER_TAG, "ignoring tilemap " + name + " (bad texture file)");
+                Undertailor.instance.warn(MANAGER_TAG, "ignoring tilemap " + entryName + " (bad texture file)");
                 continue;
             }
             
@@ -68,7 +70,8 @@ public class TilemapManager {
             JSONConfigurationLoader loader = JSONConfigurationLoader.builder().setFile(file).build();
             try {
                 ConfigurationNode config = loader.load();
-                tilemaps.put(name, new TilemapWrapper(name, texture, config));
+                Undertailor.instance.debug(MANAGER_TAG, "loading tilemap " + entryName);
+                tilemaps.put(entryName, new TilemapWrapper(name, texture, config));
             } catch(IOException e) {
                 Undertailor.instance.error(MANAGER_TAG, "failed to load tilemap: " + e.getMessage(), e.getStackTrace());
                 continue;
@@ -76,7 +79,7 @@ public class TilemapManager {
         }
     }
     
-    public TilemapWrapper getTilemap(String name) {
+    public TilemapWrapper getObject(String name) {
         if(tilemaps.containsKey(name)) {
             return tilemaps.get(name);
         }

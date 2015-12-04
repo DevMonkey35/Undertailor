@@ -1,7 +1,5 @@
 package me.scarlet.undertailor.gfx;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,7 +11,6 @@ import me.scarlet.undertailor.gfx.Sprite.SpriteMeta;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 public class SpriteSheet implements Disposable {
@@ -30,20 +27,8 @@ public class SpriteSheet implements Disposable {
         }
     }
     
-    public static SpriteSheet fromConfig(File folder, ConfigurationNode node) throws FileNotFoundException, TextureTilingException {
-        String name = node.getKey().toString();
+    public static SpriteSheet fromConfig(String name, Texture texture, ConfigurationNode node) throws FileNotFoundException, TextureTilingException {
         SpriteSheetMeta meta = new SpriteSheetMeta();
-        String textureFilePath = ConfigurateUtil.processString(node.getNode("file"), null);
-        if(textureFilePath == null) {
-            throw new ConfigurationException("Could not find string value \"file\"");
-        }
-        
-        FileHandle textureFile = Gdx.files.absolute(new File(folder, textureFilePath).getAbsolutePath());
-        if(!textureFile.exists()) {
-            throw new FileNotFoundException("texture file " + textureFilePath + " didn't exist");
-        }
-        
-        Texture texture = new Texture(textureFile);
         try {
             meta.gridX = ConfigurateUtil.processInt(node.getNode("gridSizeX"), null);
             meta.gridY = ConfigurateUtil.processInt(node.getNode("gridSizeY"), null);

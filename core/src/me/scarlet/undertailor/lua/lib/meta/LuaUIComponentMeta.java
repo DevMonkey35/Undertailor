@@ -122,8 +122,14 @@ public class LuaUIComponentMeta extends LuaTable {
     static class _destroyParent extends OneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            UIComponent component = LuaUIComponent.checkUIComponent(arg).getComponent();
-            component.destroyObject();
+            try {
+                UIComponent component = LuaUIComponent.checkUIComponent(arg).getComponent();
+                component.destroyObject();
+            } catch(Exception e) {
+                e.printStackTrace();
+                System.exit(0);
+            }
+            
             return LuaValue.NIL;
         }
     }

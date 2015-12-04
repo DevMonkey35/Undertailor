@@ -1,11 +1,11 @@
-local faderObj = ui.newObject()
-local faderComp = ui.newComponent("fader", colors.presets.WHITE)
+local faderObj = game.ui.newObject()
+local faderComp = game.ui.newComponent("fader", colors.presets.WHITE)
 faderComp.onDestroy = function()
-	fadeInObj = ui.newObject()
-	fadeInComp = ui.newComponent("fader", colors.presets.WHITE, nil, true)
+	fadeInObj = game.ui.newObject()
+	fadeInComp = game.ui.newComponent("fader", colors.presets.WHITE, nil, true)
 	fadeInObj:registerComponent(fadeInComp)
-	ui.registerObject(fadeInObj)
+	game.ui.registerObject(fadeInObj)
 end
 
 faderObj:registerComponent(faderComp);
-ui.registerObject(faderObj);
+game.ui.registerObject(faderObj);

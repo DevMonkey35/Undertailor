@@ -22,6 +22,7 @@ public class DesktopLauncher extends Application {
             config.resizable = true;
             config.backgroundFPS = 60;
             config.foregroundFPS = 60;
+            config.vSyncEnabled = true;
             new LwjglApplication(new Undertailor(config), config);
         }
     }

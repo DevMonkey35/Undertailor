@@ -63,7 +63,7 @@ public class UIComponentLoader {
             }
             
             String name = heading + (heading.isEmpty() ? "" : ".") + file.getName().split("\\.")[0];
-            Undertailor.instance.log(MANAGER_TAG, "registered component " + name);
+            Undertailor.instance.debug(MANAGER_TAG, "registered component " + name);
             map.put(name, file);
         }
     }

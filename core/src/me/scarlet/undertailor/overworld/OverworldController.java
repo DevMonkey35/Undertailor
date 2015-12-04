@@ -6,38 +6,46 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaRoom;
-import me.scarlet.undertailor.test.CharacterFrisk;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.ParameterizedRunnable;
 
 public class OverworldController {
     
     public static final int RENDER_WIDTH = 320;
     public static final int RENDER_HEIGHT = 240;
     
+    private float zoom;
     private Viewport port;
     private boolean isRendering;
     private boolean isProcessing;
+    private boolean cameraFixing;
     private WorldRoom currentRoom;
     private boolean renderHitboxes;
     private OrthographicCamera camera;
-    //private ParameterizedRunnable<?> roomTransition;
+    
+    private WorldObjectLoader loader;
+    private ParameterizedRunnable<?> roomTransition;
     
     public OverworldController(Viewport port) {
+        this.loader = new WorldObjectLoader();
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
         this.setViewport(port);
         
+        this.zoom = 1.0F;
         this.isRendering = true;
         this.isProcessing = true;
+        this.cameraFixing = true;
         this.renderHitboxes = true;
         
         try {
-            this.currentRoom = new LuaRoom(Undertailor.getRoomManager().getRoom("room1")).getRoom();
+            setCurrentRoom(new LuaRoom(Undertailor.getRoomManager().getObject("room1")).getRoom());
         } catch(LuaScriptException e) {
             e.printStackTrace();
         }
-        
-        this.currentRoom.registerObject(new CharacterFrisk());
-        setCameraZoom(1.0f);
+    }
+    
+    public WorldObjectLoader getObjectLoader() {
+        return loader;
     }
     
     public OrthographicCamera getCamera() {
@@ -50,14 +58,9 @@ public class OverworldController {
     
     public void setCurrentRoom(WorldRoom room) {
         this.currentRoom = room;
-    }
-    
-    public boolean isRenderingHitboxes() {
-        return renderHitboxes;
-    }
-    
-    public void setRenderingHitboxes(boolean flag) {
-        this.renderHitboxes = flag;
+        float rmX = currentRoom.getMap().getSizeX() * 20;
+        float rmY = currentRoom.getMap().getSizeY() * 20;
+        this.setCameraPosition(rmX / 2.0F, rmY / 2.0F);
     }
     
     public Vector2 getCameraPosition() {
@@ -66,16 +69,65 @@ public class OverworldController {
     
     public void setCameraPosition(float x, float y) {
         camera.position.set(x, y, 0);
+        fixPosition();
+        System.out.println(camera.position.toString());
         camera.update();
     }
     
     public float getCameraZoom() {
-        return camera.zoom;
+        return zoom;
     }
     
     public void setCameraZoom(float zoom) {
-        camera.zoom = zoom;
+        this.zoom = zoom;
+        camera.zoom = 1 / zoom;
+        fixPosition();
         camera.update();
+    }
+    
+    private void fixPosition() {
+        if(this.currentRoom == null) {
+            return;
+        }
+        
+        if(cameraFixing) {
+            float rmX = currentRoom.getMap().getSizeX() * 20;       // room's width
+            float rmY = currentRoom.getMap().getSizeY() * 20;       // room's height
+            float cvX = camera.zoom * camera.viewportWidth / 2.0F;  // half of camera's view width
+            float cvY = camera.zoom * camera.viewportHeight / 2.0F; // half of camera's view height
+            float xPos = camera.position.x;
+            float yPos = camera.position.y;
+            
+            if(cvX >= rmX) {
+                xPos = rmX / 2.0F;
+            } else {
+                if(xPos < cvX) {
+                    xPos = cvX;
+                } else if(xPos > rmX - cvX) {
+                    xPos = rmX - cvX;
+                }
+            }
+            
+            if(cvY >= rmY) {
+                yPos = rmY / 2.0F;
+            } else {
+                if(yPos < cvY) {
+                    yPos = cvY;
+                } else if(yPos > rmY - cvY) {
+                    yPos = rmY - cvY;
+                }
+            }
+            
+            camera.position.set(xPos, yPos, 0);
+        }
+    }
+    
+    public boolean isRenderingHitboxes() {
+        return renderHitboxes;
+    }
+    
+    public void setRenderingHitboxes(boolean flag) {
+        this.renderHitboxes = flag;
     }
     
     public boolean isRendering() {
