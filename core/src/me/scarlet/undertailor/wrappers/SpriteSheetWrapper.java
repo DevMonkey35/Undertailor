@@ -11,6 +11,8 @@ import java.io.FileNotFoundException;
 
 public class SpriteSheetWrapper extends DisposableWrapper<SpriteSheet> {
 
+    public static final long MAX_LIFETIME = 60000; // 1 minute
+    
     private File configDir;
     private ConfigurationNode config;
     public SpriteSheetWrapper(File configDir, ConfigurationNode config) {
@@ -27,6 +29,11 @@ public class SpriteSheetWrapper extends DisposableWrapper<SpriteSheet> {
             Undertailor.instance.error(SpriteSheetManager.MANAGER_TAG, e.getMessage(), e.getStackTrace());
             return null;
         }
+    }
+    
+    @Override
+    public long getMaximumLifetime() {
+        return MAX_LIFETIME;
     }
 
     @Override

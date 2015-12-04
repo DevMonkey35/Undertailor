@@ -2,9 +2,13 @@ package me.scarlet.undertailor.overworld;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Animation;
 
 public abstract class WorldObject {
+    
+    public static boolean renderBoxes = true;
     
     private int z;
     private WorldRoom room;
@@ -19,6 +23,7 @@ public abstract class WorldObject {
         this.boxOriginX = 0;
         this.boxOriginY = 0;
         this.animation = null;
+        this.position = new Vector2(0, 0);
         this.z = 0;
     }
     
@@ -44,7 +49,7 @@ public abstract class WorldObject {
     
     public void setPosition(float x, float y) {
         position.set(x, y);
-        boundingBox.setPosition(x - boxOriginX, y - boxOriginY);
+        this.updateBoxPosition();
     }
     
     public Animation<?> getCurrentAnimation() {
@@ -61,23 +66,31 @@ public abstract class WorldObject {
     
     public void setBoundingBoxSize(float width, float height) {
         boundingBox.setSize(width, height);
-        boundingBox.setPosition(position.x - boxOriginX, position.y - boxOriginY);
+        this.updateBoxPosition();
     }
     
     public void setBoundingBoxOrigin(float x, float y) {
         this.boxOriginX = x;
         this.boxOriginY = y;
+        this.updateBoxPosition();
     }
     
-    public void onRender() {
-        
+    private void updateBoxPosition() {
+        boundingBox.setPosition(position.x - boxOriginX, position.y - boxOriginY);
     }
     
     public void render() {
         onRender();
+        if(renderBoxes) {
+            Undertailor.getRenderer().drawRectangle(boundingBox.getPosition(new Vector2()), boundingBox.width, boundingBox.height, 0.5F);
+        }
+        
+        if(animation != null) {
+            animation.drawCurrentFrame(TimeUtils.timeSinceMillis(animation.getStartTime()), position.x, position.y);
+        }
     }
     
-    public void renderBoundingBox() {
-        
-    }
+    public void process(float delta) {}
+    public void onRender() {}
+    public void onDestroy() {}
 }

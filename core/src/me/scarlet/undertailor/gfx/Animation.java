@@ -6,14 +6,20 @@ public abstract class Animation<T extends KeyFrame> {
     
     public static final String DEFAULT_SPRITESET = "default";
     
+    private String name;
     private boolean loop;
     private long startTime;
     protected AnimationSet animSet;
-    public Animation(long startTime, boolean loop) {
+    public Animation(String name, long startTime, boolean loop) {
         this.startTime = startTime;
         this.animSet = null;
         this.animSet = null;
         this.loop = loop;
+        this.name = name;
+    }
+    
+    public String getName() {
+        return name;
     }
     
     public boolean isLooping() {

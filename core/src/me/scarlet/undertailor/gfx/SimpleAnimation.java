@@ -18,21 +18,26 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     public static final int TYPE_ID = 0;
     
     public static SimpleAnimation fromConfig(ConfigurationNode node) {
-        Undertailor.instance.debug(AnimationManager.MANAGER_TAG, "loading simpleanimation " + node.getKey().toString());
+        String name = node.getKey().toString();
+        Undertailor.instance.debug(AnimationManager.MANAGER_TAG, "loading simpleanimation " + name);
+        
         float frameTime = ConfigurateUtil.processFloat(node.getNode("frameTime"), 0.5F);
         int[] frames = ConfigurateUtil.processIntArray(node.getNode("frames"), null);
         boolean looping = ConfigurateUtil.processBoolean(node.getNode("looping"), false);
+        
+        FrameObjectMeta meta = new FrameObjectMeta();
+        meta.flipX = ConfigurateUtil.processBoolean(node.getNode("flipX"), false);
         SimpleKeyFrame[] keyFrames = new SimpleKeyFrame[frames.length];
         for(int i = 0; i < frames.length; i++) {
-            keyFrames[i] = new SimpleKeyFrame(frames[i], (long) (1000.0 * frameTime));
+            keyFrames[i] = new SimpleKeyFrame(frames[i], (long) (1000.0 * frameTime), meta);
         }
         
-        return new SimpleAnimation(0, looping, keyFrames);
+        return new SimpleAnimation(name, 0, looping, keyFrames);
     }
     
     private Map<Long, SimpleKeyFrame> frames;
-    public SimpleAnimation(long startTime, boolean loop, SimpleKeyFrame... frames) {
-        super(startTime, loop);
+    public SimpleAnimation(String name, long startTime, boolean loop, SimpleKeyFrame... frames) {
+        super(name, startTime, loop);
         this.frames = new LinkedHashMap<>();
         long lastTime = 0;
         for(SimpleKeyFrame frame : frames) {
@@ -95,6 +100,6 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
         float offX = meta.offX * meta.scaleX;
         float offY = meta.offY * meta.scaleY;
-        sprite.draw(posX + offX, posY + offY, meta.scaleX * scale, meta.scaleY * scale, meta.rotation, meta.flipX, meta.flipY, false);
+        sprite.draw(posX + offX, posY + offY, meta.scaleX * scale, meta.scaleY * scale, meta.rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
     }
 }

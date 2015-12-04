@@ -25,7 +25,7 @@ public class LuaStyle extends LuaTable implements Style {
     public static final String IMPLMETHOD_APPLYCHARACTER = "applyCharacter";
     
     public static final String[] REQUIRED_METHODS = new String[] {IMPLMETHOD_APPLYCHARACTER};
-    public static final String[] OPTIONAL_METHODS = new String[] {IMPLMETHOD_ONNEXTTEXTRENDER};
+    public static final String[] METHODS = new String[] {IMPLMETHOD_APPLYCHARACTER, IMPLMETHOD_ONNEXTTEXTRENDER};
     
     static {
         LuaStyleMeta.prepareMetatable();
@@ -63,12 +63,19 @@ public class LuaStyle extends LuaTable implements Style {
             this.set(entry.getKey(), entry.getValue());
         }
         
-        this.setmetatable(METATABLE);
+        prepareLuaStyle();
     }
     
     public LuaStyle(Style style) {
-        this.setmetatable(METATABLE);
+        prepareLuaStyle();
         this.style = style;
+    }
+    
+    private void prepareLuaStyle() {
+        this.setmetatable(METATABLE);
+        for(Map.Entry<String, LuaFunction> entry : functions.entrySet()) {
+            this.set(entry.getKey(), entry.getValue());
+        }
     }
     
     @Override
@@ -102,6 +109,21 @@ public class LuaStyle extends LuaTable implements Style {
             }
         } else {
             return style.applyCharacter(charIndex, textLength);
+        }
+    }
+    
+    @Override
+    public void rawset(LuaValue key, LuaValue value) {
+        super.rawset(key, value);
+        if(value != LuaValue.NIL && this.style == null) {
+            if(key.isstring()) {
+                for(String method : METHODS) {
+                    if(key.tojstring().equals(method)) {
+                        functions.put(method, value.checkfunction());
+                        return;
+                    }
+                }
+            }
         }
     }
     

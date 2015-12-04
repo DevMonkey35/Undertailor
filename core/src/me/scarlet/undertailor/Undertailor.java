@@ -59,8 +59,10 @@ import me.scarlet.undertailor.lua.lib.UILib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
+import me.scarlet.undertailor.manager.RoomManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
+import me.scarlet.undertailor.manager.TilemapManager;
 import me.scarlet.undertailor.overworld.OverworldController;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.ui.UIController;
@@ -91,6 +93,10 @@ public class Undertailor extends ApplicationAdapter {
         return Undertailor.instance.uiController;
     }
     
+    public static OverworldController getOverworldController() {
+        return Undertailor.instance.ovwController;
+    }
+    
     public static FontManager getFontManager() {
         return Undertailor.instance.fontManager;
     }
@@ -103,6 +109,10 @@ public class Undertailor extends ApplicationAdapter {
         return Undertailor.instance.audioManager;
     }
     
+    public static TilemapManager getTilemapManager() {
+        return Undertailor.instance.tilemapManager;
+    }
+    
     public static MultiRenderer getRenderer() {
         return Undertailor.instance.renderer;
     }
@@ -113,6 +123,10 @@ public class Undertailor extends ApplicationAdapter {
     
     public static SpriteSheetManager getSheetManager() {
         return Undertailor.instance.sheetManager;
+    }
+    
+    public static RoomManager getRoomManager() {
+        return Undertailor.instance.roomManager;
     }
     
     public static void setFrameCap(int cap) {
@@ -167,16 +181,18 @@ public class Undertailor extends ApplicationAdapter {
     private FontManager fontManager;
     private AudioManager audioManager;
     private StyleManager styleManager;
+    private TilemapManager tilemapManager;
     private SpriteSheetManager sheetManager;
     private AnimationManager animationManager;
+    private RoomManager roomManager;
     
     private UIController uiController;
     private OverworldController ovwController;
     
     public Undertailor(LwjglApplicationConfiguration config) {
         this.config = config;
-        config.foregroundFPS = 0;
-        config.backgroundFPS = 0;
+        //config.foregroundFPS = 0;
+        //config.backgroundFPS = 0;
     }
     
     @Override
@@ -221,15 +237,19 @@ public class Undertailor extends ApplicationAdapter {
         this.fontManager = new FontManager();
         this.audioManager = new AudioManager();
         this.styleManager = new StyleManager();
+        this.tilemapManager = new TilemapManager();
         this.sheetManager = new SpriteSheetManager();
         this.animationManager = new AnimationManager();
+        this.roomManager = new RoomManager();
         
         fontManager.loadFonts(new File("fonts/"));
         audioManager.loadMusic(new File("music/"));
         audioManager.loadSounds(new File("sounds/"));
-        styleManager.loadStyles(new File("fonts/styles/"));
         sheetManager.loadSprites(new File("sprites/"));
+        tilemapManager.loadTilemaps(new File("tilemaps/"));
+        styleManager.loadStyles(new File("fonts/styles/"));
         animationManager.loadAnimations(new File("animation/"));
+        roomManager.loadRooms(new File("scripts/rooms/"));
         
         this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
         this.ovwController = new OverworldController(new FitViewport(0F, 0F));
@@ -254,7 +274,9 @@ public class Undertailor extends ApplicationAdapter {
     
     @Override
     public void render() {
-        uiController.process(Gdx.graphics.getDeltaTime());
+        float delta = Gdx.graphics.getDeltaTime();
+        ovwController.process(delta);
+        uiController.process(delta);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ovwController.render();
         uiController.render();

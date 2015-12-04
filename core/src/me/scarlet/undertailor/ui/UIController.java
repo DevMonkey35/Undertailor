@@ -1,11 +1,13 @@
 package me.scarlet.undertailor.ui;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -50,6 +52,10 @@ public class UIController {
         int id = nextUID++;
         this.uis.put(id, object);
         object.id = id;
+        if(object.isHeadless()) {
+            object.startLifetime = TimeUtils.millis();
+            System.out.println("headless obj");
+        }
         
         return id;
     }
@@ -65,9 +71,25 @@ public class UIController {
     }
     
     public void process(float delta) {
+        if(uis.entrySet().isEmpty()) {
+            System.out.println("empty proc");
+            return;
+        }
+        
+        System.out.println(uis.values().toString());
         this.processObjects(object -> {
             object.process(delta);
         }, false);
+        
+        Iterator<Entry<Integer, UIObject>> iterator = uis.entrySet().iterator();
+        while(iterator.hasNext()) {
+            UIObject obj = iterator.next().getValue();
+            if(obj.isHeadless()) {
+                if(TimeUtils.timeSinceMillis(obj.startLifetime) > obj.getLifetime()) {
+                    iterator.remove();
+                }
+            }
+        }
     }
     
     public void render() {

@@ -67,10 +67,14 @@ public class Sprite {
     }
     
     public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY) {
-        this.draw(posX, posY, scaleX, scaleY, rotation, flipX, flipY, false);
+        this.draw(posX, posY, scaleX, scaleY, rotation, flipX, flipY, region.getRegionWidth(), region.getRegionHeight());
     }
     
-    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY, boolean ensureBottomLeft) { // for texts
+    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY, int sizeX, int sizeY) {
+        this.draw(posX, posY, scaleX, scaleY, rotation, flipX, flipY, sizeX, sizeY, false);
+    }
+    
+    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY, int sizeX, int sizeY, boolean ensureBottomLeft) { // for texts
         float originX = 0, originY = 0;
         int offX = 0, offY = 0;
         if(meta != null) {
@@ -90,6 +94,6 @@ public class Sprite {
         TextureRegion drawn = new TextureRegion(region);
         drawn.flip(flipX, flipY);
         
-        Undertailor.getRenderer().draw(drawn, x, y, (originX * scaleX), (originY * scaleY), region.getRegionWidth(), region.getRegionHeight(), scaleX, scaleY, rotation);
+        Undertailor.getRenderer().draw(drawn, x, y, (originX * scaleX), (originY * scaleY), sizeX, sizeY, scaleX, scaleY, rotation);
     }
 }

@@ -27,7 +27,7 @@ public class LuaUIComponent extends LuaTable {
     public static final String IMPLMETHOD_CREATE = "create";       // create(uicomponent, args..)
     public static final String IMPLMETHOD_RENDER = "render";       // render()
     public static final String[] REQUIRED_METHODS = new String[] {IMPLMETHOD_CREATE};
-    public static final String[] OPTIONAL_METHODS = new String[] {IMPLMETHOD_ONDESTROY, IMPLMETHOD_ONEVENT, IMPLMETHOD_PROCESS, IMPLMETHOD_RENDER};
+    public static final String[] METHODS = new String[] {IMPLMETHOD_CREATE, IMPLMETHOD_ONDESTROY, IMPLMETHOD_ONEVENT, IMPLMETHOD_PROCESS, IMPLMETHOD_RENDER};
     
     static {
         LuaUIComponentMeta.prepareMetatable();
@@ -122,6 +122,22 @@ public class LuaUIComponent extends LuaTable {
     
     public UIComponent getComponent() {
         return component;
+    }
+    
+    @Override
+    public void rawset(LuaValue key, LuaValue value) {
+        super.rawset(key, value);
+        if(value != LuaValue.NIL && this.component instanceof LuaUIComponentImpl) {
+            LuaUIComponentImpl luacom = (LuaUIComponentImpl) this.component;
+            if(key.isstring()) {
+                for(String method : METHODS) {
+                    if(key.tojstring().equals(method)) {
+                        luacom.getFunctions().put(method, value.checkfunction());
+                        return;
+                    }
+                }
+            }
+        }
     }
     
     @Override

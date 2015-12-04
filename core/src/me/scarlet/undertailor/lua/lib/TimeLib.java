@@ -10,11 +10,12 @@ import org.luaj.vm2.lib.ZeroArgFunction;
 public class TimeLib extends TwoArgFunction {
 
     @Override
-    public LuaValue call(LuaValue arg1, LuaValue arg2) {
+    public LuaValue call(LuaValue modname, LuaValue env) {
         LuaTable time = new LuaTable();
         time.set("millis", new _millis());
         time.set("sinceMillis", new _sinceMillis());
         
+        env.set("time", time);
         return time;
     }
     

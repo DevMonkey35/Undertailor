@@ -13,8 +13,11 @@ import java.util.Set;
 public class UIObject {
     
     protected int id;
+    protected long startLifetime;
+    
     private float alpha;
-    private long lifetime; // <= -1 - headless, = 0 - infinitely headed, >=1 - timed headed
+    private long lifetime; //= 0 - infinitely headed, >=1 - timed headed
+    private boolean headless;
     private Vector2 position;
     private boolean isVisible;
     private Set<UIComponent> markAdd;
@@ -22,16 +25,17 @@ public class UIObject {
     private List<UIComponent> components;
     
     public UIObject() {
-        this(0);
+        this(0, false);
     }
     
-    public UIObject(long lifetime) {
+    public UIObject(long lifetime, boolean headless) {
         this.position = new Vector2(0, 0);
         this.components = new ArrayList<>();
         this.markRemove = new HashSet<>();
         this.markAdd = new HashSet<>();
         this.isVisible = true;
-        this.lifetime = lifetime;
+        this.lifetime = lifetime < 0 ? 0 : lifetime;
+        this.headless = headless;
     }
     
     public int getId() {
@@ -39,7 +43,7 @@ public class UIObject {
     }
     
     public boolean isHeadless() {
-        return lifetime < 0;
+        return headless;
     }
     
     public long getLifetime() {
@@ -121,7 +125,7 @@ public class UIObject {
     public void destroyChild(UIComponent component) {
         if(component.getParent().equals(this)) {
             this.markRemove.add(component);
-            component.destroy();
+            component.onDestroy(false);
         } else {
             Undertailor.instance.warn("ui", "request ignored to destroy non-child component");
         }
@@ -143,5 +147,15 @@ public class UIObject {
             this.components.add(component);
             marked.remove();
         }
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(id + ":");
+        for(UIComponent comp : components) {
+            sb.append(" " + comp.getComponentTypeName());
+        }
+        
+        return sb.toString().trim();
     }
 }

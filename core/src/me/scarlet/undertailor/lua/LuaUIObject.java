@@ -3,9 +3,10 @@ package me.scarlet.undertailor.lua;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIObjectMeta;
 import me.scarlet.undertailor.ui.UIObject;
 import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
-public class LuaUIObject extends LuaValue {
+public class LuaUIObject extends LuaTable {
     
     public static final String TYPENAME = "tailor-uiobject";
     public static LuaValue METATABLE;
@@ -25,10 +26,15 @@ public class LuaUIObject extends LuaValue {
     private UIObject object;
     public LuaUIObject(UIObject object) {
         this.object = object;
+        prepareLuaUIObject();
     }
     
     public UIObject getUIObject() {
         return object;
+    }
+    
+    private void prepareLuaUIObject() {
+        this.setmetatable(METATABLE);
     }
     
     @Override

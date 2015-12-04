@@ -294,7 +294,7 @@ public class Font {
         used.a = alpha;
         renderer.setBatchColor(used);
         used.a = old;
-        charSprite.draw(posX, posY, scaleX, scaleY, 0F, false, false, true);
+        charSprite.draw(posX, posY, scaleX, scaleY, 0F, false, false, charSprite.getTextureRegion().getRegionWidth(), charSprite.getTextureRegion().getRegionHeight(), true);
     }
     
     public void fontTest(int posX, int posY, int scale) {

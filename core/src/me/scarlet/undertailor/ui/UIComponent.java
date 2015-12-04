@@ -112,7 +112,6 @@ public abstract class UIComponent {
         }
         
         this.destroying = true;
-        this.onDestroy(false);
         if(this.parent != null) {
             parent.destroyChild(this);
         }

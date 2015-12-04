@@ -1,6 +1,8 @@
 package me.scarlet.undertailor.util;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -55,6 +57,7 @@ public class MultiRenderer {
         }
         
         if(!batch.isDrawing()) {
+            batch.enableBlending();
             batch.begin();
         }
     }
@@ -145,6 +148,8 @@ public class MultiRenderer {
         }
         
         if(!renderer.isDrawing()) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             renderer.setAutoShapeType(true);
             renderer.begin(ShapeType.Filled);
         }

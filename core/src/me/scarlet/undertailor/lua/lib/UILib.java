@@ -39,11 +39,12 @@ public class UILib extends TwoArgFunction {
         }
     }
     
-    static class _newObject extends OneArgFunction {
+    static class _newObject extends TwoArgFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            long lifetime = arg.isnil() ? 0 : arg.checklong();
-            return new LuaUIObject(new UIObject(lifetime));
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            long lifetime = arg1.isnil() ? 0 : arg1.checklong();
+            boolean headless = arg2.isnil() ? false : arg2.checkboolean();
+            return new LuaUIObject(new UIObject(lifetime, headless));
         }
     }
     

@@ -1,16 +1,13 @@
 package me.scarlet.undertailor.overworld;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.gfx.Animation;
-
-import java.io.File;
+import me.scarlet.undertailor.exception.LuaScriptException;
+import me.scarlet.undertailor.lua.LuaRoom;
+import me.scarlet.undertailor.test.CharacterFrisk;
+import me.scarlet.undertailor.util.ParameterizedRunnable;
 
 public class OverworldController {
     
@@ -18,23 +15,94 @@ public class OverworldController {
     public static final int RENDER_HEIGHT = 240;
     
     private Viewport port;
-    private Camera camera;
-    private Texture tmtest;
-    private Animation<?> test;
+    private OrthographicCamera camera;
+    private boolean isRendering;
+    private boolean isProcessing;
+    private WorldRoom currentRoom;
+    private ParameterizedRunnable<?> luaTransition;
     
     public OverworldController(Viewport port) {
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
         this.setViewport(port);
-        tmtest = new Texture(Gdx.files.absolute(new File("tilemaps/tmtest.png").getAbsolutePath()));
-        test = Undertailor.getAnimationManager().getAnimationSet("frisk").getReference(this).getAnimation("walk_down");
+        
+        this.isRendering = true;
+        this.isProcessing = true;
+        
+        try {
+            this.currentRoom = new LuaRoom(Undertailor.getRoomManager().getRoom("room1")).getRoom();
+        } catch(LuaScriptException e) {
+            e.printStackTrace();
+        }
+        
+        this.currentRoom.registerObject(new CharacterFrisk());
+        setCameraZoom(1.0f);
+    }
+    
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
+    
+    public WorldRoom getCurrentRoom() {
+        return currentRoom;
+    }
+    
+    public void setCurrentRoom(WorldRoom room) {
+        this.currentRoom = room;
+    }
+    
+    public Vector2 getCameraPosition() {
+        return new Vector2(camera.position.x, camera.position.y);
+    }
+    
+    public void setCameraPosition(float x, float y) {
+        camera.position.set(x, y, 0);
+        camera.update();
+    }
+    
+    public float getCameraZoom() {
+        return camera.zoom;
+    }
+    
+    public void setCameraZoom(float zoom) {
+        camera.zoom = zoom;
+        camera.update();
+    }
+    
+    public boolean isRendering() {
+        return isRendering;
+    }
+    
+    public void setRendering(boolean flag) {
+        this.isRendering = flag;
+    }
+    
+    public boolean isProcessing() {
+        return isProcessing;
+    }
+    
+    public void setProcessing(boolean flag) {
+        this.isProcessing = flag;
     }
     
     public void render() {
-        //port.apply();
-        Undertailor.getRenderer().setProjectionMatrix(camera.combined);
+        if(!isRendering) {
+            return;
+        }
         
-        Undertailor.getRenderer().draw(new TextureRegion(tmtest, tmtest.getWidth(), tmtest.getHeight()), 0, 0);
-        test.drawCurrentFrame(TimeUtils.timeSinceMillis(test.getStartTime()), 160, 120);
+        if(currentRoom != null) {
+            Undertailor.getRenderer().setProjectionMatrix(camera.combined);
+            currentRoom.render();
+        }
+    }
+    
+    public void process(float delta) {
+        if(!isProcessing) {
+            return;
+        }
+        
+        if(currentRoom != null) {
+            currentRoom.process(delta);
+        }
     }
     
     public void setViewport(Viewport port) {

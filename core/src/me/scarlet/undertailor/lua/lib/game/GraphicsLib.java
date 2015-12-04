@@ -11,12 +11,14 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.VarArgFunction;
+import org.luaj.vm2.lib.ZeroArgFunction;
 
 public class GraphicsLib extends TwoArgFunction {
     
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
         LuaTable graphics = new LuaTable();
+        graphics.set("getShapeColor", new _getShapeColor());
         graphics.set("setShapeColor", new _setShapeColor());
         graphics.set("drawLine", new _drawLine());
         graphics.set("drawRectangle", new _drawRectangle());
@@ -26,6 +28,13 @@ public class GraphicsLib extends TwoArgFunction {
         
         env.set("graphics", graphics);
         return graphics;
+    }
+    
+    static class _getShapeColor extends ZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            return new LuaColor(Undertailor.getRenderer().getShapeColor());
+        }
     }
     
     static class _setShapeColor extends OneArgFunction {

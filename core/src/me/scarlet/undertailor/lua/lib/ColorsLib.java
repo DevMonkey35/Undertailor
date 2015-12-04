@@ -3,12 +3,14 @@ package me.scarlet.undertailor.lua.lib;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Colors;
 import me.scarlet.undertailor.lua.LuaColor;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
+import org.luaj.vm2.lib.VarArgFunction;
 
 public class ColorsLib extends TwoArgFunction {
     
@@ -18,6 +20,8 @@ public class ColorsLib extends TwoArgFunction {
         LuaTable presets = new LuaTable();
         colors.set("fromHex", new _fromHex());
         colors.set("fromRGB", new _fromRGB());
+        colors.set("getRGB", new _getRGB());
+        colors.set("setRGB", new _setRGB());
         Colors.getColors().entries().forEach(entry -> {
             presets.set(entry.key.toUpperCase(), new LuaColor(entry.value));
         });
@@ -58,14 +62,46 @@ public class ColorsLib extends TwoArgFunction {
         }
     }
     
-    static class _fromRGB extends ThreeArgFunction {
+    static class _fromRGB extends VarArgFunction {
         @Override
-        public LuaValue call(LuaValue r, LuaValue g, LuaValue b) {
-            r.checkint();
-            g.checkint();
-            b.checkint();
+        public Varargs invoke(Varargs args) {
+            LuaUtil.checkArguments(args, 3, 4);
             
-            return new LuaColor(new Color(r.toint() / 255F, g.toint() / 255F, b.toint() / 255F, 255F));
+            float r = args.isnil(1) ? 0 : new Float(args.checkdouble(1));
+            float g = args.isnil(2) ? 0 : new Float(args.checkdouble(2));
+            float b = args.isnil(3) ? 0 : new Float(args.checkdouble(3));
+            float a = args.isnil(4) ? 0 : new Float(args.checkdouble(4));
+            
+            return new LuaColor(new Color(r, g, b, a));
+        }
+    }
+    
+    static class _getRGB extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            Color color = LuaColor.checkcolor(args.arg(1)).getColor();
+            return LuaValue.varargsOf(new LuaValue[] {
+                    LuaValue.valueOf(color.r),
+                    LuaValue.valueOf(color.g),
+                    LuaValue.valueOf(color.b),
+                    LuaValue.valueOf(color.a)});
+        }
+    }
+    
+    static class _setRGB extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 5); // color, r, g, b, a
+            
+            Color color = LuaColor.checkcolor(args.arg(1)).getColor();
+            float r = args.isnil(2) ? color.r : new Float(args.checkdouble(2));
+            float g = args.isnil(3) ? color.g : new Float(args.checkdouble(3));
+            float b = args.isnil(4) ? color.b : new Float(args.checkdouble(4));
+            float a = args.isnil(5) ? color.a : new Float(args.checkdouble(5));
+            color.set(r, g, b, a);
+            return LuaValue.NIL;
         }
     }
     

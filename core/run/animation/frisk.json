@@ -26,26 +26,26 @@
 		"walk_up": {
 			"type": 0,
 			"frames": [4, 3, 5, 3],
-			"frameTime": 0.5,                        # animation global attribute: time between each frame
+			"frameTime": 0.15,                        # animation global attribute: time between each frame
 			"looping": true
 		},
 		"walk_down": {
 			"type": 0,
 			"frames": [1, 0, 2, 0],
-			"frameTime": 0.5,
+			"frameTime": 0.15,
 			"looping": true
 		},
 		"walk_left": {
 			"type": 0,
 			"frames": [7, 6],
-			"frameTime": 0.5,
+			"frameTime": 0.15,
 			"looping": true
 		},
 		"walk_right": {
 			"type": 0,
 			"frames": [7, 6],
 			"flipX": true,                          # animation global attribute: flips all frames within this animation horizontally
-			"frameTime": 0.5,
+			"frameTime": 0.15,
 			"looping": true
 		}
 	}
