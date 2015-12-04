@@ -2,6 +2,7 @@ package me.scarlet.undertailor.ui;
 
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.ui.event.UIEvent;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 
 /**
  * A component of a {@link UIObject}, which may display something on-screen.
@@ -139,7 +140,7 @@ public abstract class UIComponent {
      * 
      * @param delta the time, in seconds, since the last frame
      */
-    public void process(float delta) {}
+    public void process(float delta, InputData input) {}
     
     /**
      * Called whenever this {@link UIComponent} is passed any {@link UIEvent}s.

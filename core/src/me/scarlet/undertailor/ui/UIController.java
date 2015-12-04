@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -54,7 +55,6 @@ public class UIController {
         object.id = id;
         if(object.isHeadless()) {
             object.startLifetime = TimeUtils.millis();
-            System.out.println("headless obj");
         }
         
         return id;
@@ -70,15 +70,13 @@ public class UIController {
         }, false);
     }
     
-    public void process(float delta) {
-        if(uis.entrySet().isEmpty()) {
-            System.out.println("empty proc");
+    public void process(float delta, InputData input) {
+        if(uis.keySet().isEmpty()) {
             return;
         }
         
-        System.out.println(uis.values().toString());
         this.processObjects(object -> {
-            object.process(delta);
+            object.process(delta, input);
         }, false);
         
         Iterator<Entry<Integer, UIObject>> iterator = uis.entrySet().iterator();

@@ -5,6 +5,7 @@ import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIComponentMeta;
 import me.scarlet.undertailor.ui.UIComponent;
 import me.scarlet.undertailor.ui.event.UIEvent;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
@@ -73,7 +74,7 @@ public class LuaUIComponent extends LuaTable {
         }
         
         @Override
-        public void process(float delta) {
+        public void process(float delta, InputData input) {
             if(functions.containsKey(LuaUIComponent.IMPLMETHOD_PROCESS)) {
                 functions.get(LuaUIComponent.IMPLMETHOD_PROCESS).call(LuaValue.valueOf(delta));
             }

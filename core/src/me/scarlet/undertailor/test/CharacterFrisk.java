@@ -1,11 +1,11 @@
 package me.scarlet.undertailor.test;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.AnimationSet;
 import me.scarlet.undertailor.overworld.WorldObject;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 
 public class CharacterFrisk extends WorldObject {
     
@@ -25,27 +25,29 @@ public class CharacterFrisk extends WorldObject {
     }
     
     @Override
-    public void process(float delta) {
+    public void process(float delta, InputData input) {
         float xvel = 0F;
         float yvel = 0F;
-        if(Gdx.input.isKeyPressed(Keys.UP)) {
-            direction = 0;
-            yvel = movementSpeed;
-        }
-        
-        if(Gdx.input.isKeyPressed(Keys.DOWN)) {
-            direction = 1;
-            yvel = -1 * movementSpeed;
-        }
-        
-        if(Gdx.input.isKeyPressed(Keys.LEFT)) {
-            direction = 2;
-            xvel = -1 * movementSpeed;
-        }
-        
-        if(Gdx.input.isKeyPressed(Keys.RIGHT)) {
-            direction = 3;
-            xvel = movementSpeed;
+        if(input != null && !input.isConsumed()) {
+            if(input.getPressData(Keys.UP).isPressed()) {
+                direction = 0;
+                yvel = movementSpeed;
+            }
+            
+            if(input.getPressData(Keys.DOWN).isPressed()) {
+                direction = 1;
+                yvel = -1 * movementSpeed;
+            }
+            
+            if(input.getPressData(Keys.LEFT).isPressed()) {
+                direction = 2;
+                xvel = -1 * movementSpeed;
+            }
+            
+            if(input.getPressData(Keys.RIGHT).isPressed()) {
+                direction = 3;
+                xvel = movementSpeed;
+            }
         }
         
         if(xvel == 0F && yvel == 0F) {

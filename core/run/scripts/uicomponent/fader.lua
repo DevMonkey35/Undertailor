@@ -44,11 +44,9 @@ function create(component, fillColor, fadeTime, reverse)
 	if(_reverse) then
 		_cAlpha = 1.0 -- preset it to 1.0 since nil'll flash
 	end
-	
-	print(_reverse)
 end
 
-function process(fDelta)
+function process(fDelta, input)
 	if(_startTime == nil or _startTime <= 0) then
 		_startTime = time.millis()
 	end

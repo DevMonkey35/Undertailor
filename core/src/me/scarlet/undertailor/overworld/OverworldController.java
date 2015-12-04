@@ -7,7 +7,7 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaRoom;
 import me.scarlet.undertailor.test.CharacterFrisk;
-import me.scarlet.undertailor.util.ParameterizedRunnable;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 
 public class OverworldController {
     
@@ -15,11 +15,12 @@ public class OverworldController {
     public static final int RENDER_HEIGHT = 240;
     
     private Viewport port;
-    private OrthographicCamera camera;
     private boolean isRendering;
     private boolean isProcessing;
     private WorldRoom currentRoom;
-    private ParameterizedRunnable<?> luaTransition;
+    private boolean renderHitboxes;
+    private OrthographicCamera camera;
+    //private ParameterizedRunnable<?> roomTransition;
     
     public OverworldController(Viewport port) {
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
@@ -27,6 +28,7 @@ public class OverworldController {
         
         this.isRendering = true;
         this.isProcessing = true;
+        this.renderHitboxes = true;
         
         try {
             this.currentRoom = new LuaRoom(Undertailor.getRoomManager().getRoom("room1")).getRoom();
@@ -48,6 +50,14 @@ public class OverworldController {
     
     public void setCurrentRoom(WorldRoom room) {
         this.currentRoom = room;
+    }
+    
+    public boolean isRenderingHitboxes() {
+        return renderHitboxes;
+    }
+    
+    public void setRenderingHitboxes(boolean flag) {
+        this.renderHitboxes = flag;
     }
     
     public Vector2 getCameraPosition() {
@@ -95,13 +105,13 @@ public class OverworldController {
         }
     }
     
-    public void process(float delta) {
+    public void process(float delta, InputData input) {
         if(!isProcessing) {
             return;
         }
         
         if(currentRoom != null) {
-            currentRoom.process(delta);
+            currentRoom.process(delta, input);
         }
     }
     

@@ -58,9 +58,9 @@ function create(component, borderColor, fillColor, width, height, borderThicknes
 	end
 end
 
-function onDestroy(bObject) end -- we're a box, the fuck are we gonna proc
-function onEvent(uievent) end   -- ^
-function process() end          -- ^^
+function onDestroy(bObject) end      -- we're a box, the fuck are we gonna proc
+function onEvent(uievent) end        -- ^
+function process(delta, input) end   -- ^^
 function render()
     local posX, posY = _component:getRealPosition()
 	

@@ -3,6 +3,7 @@ package me.scarlet.undertailor.ui;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ public class UIObject {
         this.isVisible = true;
         this.lifetime = lifetime < 0 ? 0 : lifetime;
         this.headless = headless;
+        this.id = -1;
     }
     
     public int getId() {
@@ -72,10 +74,10 @@ public class UIObject {
        cleanup();
     }
     
-    public void process(float delta) {
+    public void process(float delta, InputData input) {
         this.components.forEach(component -> {
             if(this.isComponentActive(component)) {
-                component.process(delta);
+                component.process(delta, input);
             }
         });
         
@@ -120,12 +122,18 @@ public class UIObject {
     
     public void registerChild(UIComponent component) {
         this.markAdd.add(component);
+        if(id <= -1) {
+            cleanup();
+        }
     }
     
     public void destroyChild(UIComponent component) {
         if(component.getParent().equals(this)) {
             this.markRemove.add(component);
             component.onDestroy(false);
+            if(id <= -1) {
+                cleanup();
+            }
         } else {
             Undertailor.instance.warn("ui", "request ignored to destroy non-child component");
         }

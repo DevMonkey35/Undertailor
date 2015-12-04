@@ -67,6 +67,8 @@ import me.scarlet.undertailor.overworld.OverworldController;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.ui.UIController;
 import me.scarlet.undertailor.util.Blocker;
+import me.scarlet.undertailor.util.InputRetriever;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.JFXUtil;
 import me.scarlet.undertailor.util.MultiRenderer;
 import org.luaj.vm2.Globals;
@@ -188,6 +190,7 @@ public class Undertailor extends ApplicationAdapter {
     
     private UIController uiController;
     private OverworldController ovwController;
+    private InputRetriever inputRetriever;
     
     public Undertailor(LwjglApplicationConfiguration config) {
         this.config = config;
@@ -253,6 +256,8 @@ public class Undertailor extends ApplicationAdapter {
         
         this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
         this.ovwController = new OverworldController(new FitViewport(0F, 0F));
+        this.inputRetriever = new InputRetriever();
+        Gdx.input.setInputProcessor(inputRetriever);
         
         uiController.getLuaLoader().loadComponents(new File("scripts/uicomponent/"));
         
@@ -274,9 +279,10 @@ public class Undertailor extends ApplicationAdapter {
     
     @Override
     public void render() {
+        InputData input = inputRetriever.getCurrentData();
         float delta = Gdx.graphics.getDeltaTime();
-        ovwController.process(delta);
-        uiController.process(delta);
+        uiController.process(delta, input);
+        ovwController.process(delta, input);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         ovwController.render();
         uiController.render();

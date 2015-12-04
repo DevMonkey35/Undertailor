@@ -18,6 +18,8 @@ public class GraphicsLib extends TwoArgFunction {
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
         LuaTable graphics = new LuaTable();
+        graphics.set("getSpriteColor", new _getSpriteColor());
+        graphics.set("setSpriteColor", new _setSpriteColor());
         graphics.set("getShapeColor", new _getShapeColor());
         graphics.set("setShapeColor", new _setShapeColor());
         graphics.set("drawLine", new _drawLine());
@@ -28,6 +30,22 @@ public class GraphicsLib extends TwoArgFunction {
         
         env.set("graphics", graphics);
         return graphics;
+    }
+    
+    static class _getSpriteColor extends ZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            return new LuaColor(Undertailor.getRenderer().getBatchColor());
+        }
+    }
+    
+    static class _setSpriteColor extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            Color color = LuaColor.checkcolor(arg).getColor();
+            Undertailor.getRenderer().setBatchColor(color);
+            return LuaValue.NIL;
+        }
     }
     
     static class _getShapeColor extends ZeroArgFunction {

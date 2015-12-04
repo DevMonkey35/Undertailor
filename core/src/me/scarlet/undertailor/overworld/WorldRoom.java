@@ -1,11 +1,13 @@
 package me.scarlet.undertailor.overworld;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.manager.RoomManager;
 import me.scarlet.undertailor.util.ConfigurateUtil;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 import me.scarlet.undertailor.wrappers.TilemapWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -144,16 +146,21 @@ public class WorldRoom implements Disposable {
         return objects.get(id);
     }
     
-    public void process(float delta) {
+    public void process(float delta, InputData input) {
         for(WorldObject object : objects.values()) {
-            object.process(delta);
+            object.process(delta, input);
         }
     }
     
     public void render() {
         room.render();
+        boolean boxes = Undertailor.getOverworldController().isRenderingHitboxes();
         for(WorldObject object : getObjectsInRenderOrder()) {
             object.render();
+            if(boxes) {
+                Undertailor.getRenderer().setShapeColor(Color.WHITE);
+                object.renderBox();
+            }
         }
     }
     

@@ -2,8 +2,8 @@ package me.scarlet.undertailor.lua;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
-import me.scarlet.undertailor.lua.LuaUIComponent.LuaUIComponentImpl;
 import me.scarlet.undertailor.overworld.WorldRoom;
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 import org.luaj.vm2.Globals;
@@ -50,12 +50,12 @@ public class LuaRoom extends LuaTable {
         }
         
         @Override
-        public void process(float delta) {
+        public void process(float delta, InputData input) {
             if(functions.containsKey(IMPLMETHOD_PROCESS)) {
                 functions.get(IMPLMETHOD_PROCESS).call(LuaValue.valueOf(delta));
             }
             
-            super.process(delta);
+            super.process(delta, input);
         }
     }
     

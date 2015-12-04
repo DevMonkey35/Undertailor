@@ -32,11 +32,13 @@ project(":desktop") {
 
     dependencies {
         compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop" 
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
+        
+        // compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        compile files("C:\\Users\\Xemiru\\Dropbox\\plugindev\\undertale-engine\\libs\\gdx-backend-lwjgl-1.7.1.jar")
     }
 }
 
@@ -50,8 +52,10 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "ninja.leaping.configurate:configurate-json:3.0"
+        
+        // compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        compile files("C:\\Users\\Xemiru\\Dropbox\\plugindev\\undertale-engine\\libs\\gdx-backend-lwjgl-1.7.1.jar")
     }
 }
 
