@@ -1,6 +1,8 @@
 -- Fader UI component
 -- Just used to cover the screen with a giant box that gradually increases or decreases in alpha to achieve a fading effect.
 
+require("scripts/varlib.lua")
+
 local _fillColor;
 local _component;
 local _startTime; -- time we compare against
@@ -11,50 +13,10 @@ local _blockInput
 
 function create(component, blockInput, fillColor, fadeTime, reverse)
 	_component = component;
-	
-	if(fillColor == nil) then
-		_fillColor = colors.presets.BLACK
-	else 
-		if(type(fillColor) ~= "gdx-color") then
-			error("bad argument #2: expected gdx-color, got "..type(fillColor))
-		end
-		
-		_fillColor = fillColor
-	end
-	
-	if(blockInput == nil) then
-		_blockInput = false
-	else
-		if(type(blockInput) ~= "boolean") then
-			error("bad argument #3: expected boolean, got"..type(blockInput))
-		end
-		
-		_blockInput = blockInput
-	end
-	
-	if(fadeTime == nil) then
-		_fadeTime = 3000.0; -- 3 seconds in ms
-	else
-		if(type(fadeTime) ~= "number") then
-			error("bad argument #4: expected number, got "..type(fadeTime))
-		end
-		
-		_fadeTime = fadeTime * 1000.0 -- convert seconds to ms
-	end
-	
-	if(reverse == nil) then
-		_reverse = false
-	else
-		if(type(reverse) ~= "boolean") then
-			error("bad argument #5: expected boolean, got"..type(reverse))
-		end
-		
-		_reverse = reverse
-	end
-	
-	if(_reverse) then
-		_cAlpha = 1.0 -- preset it to 1.0 since nil'll flash
-	end
+	_blockInput = varlib.checkarg(2, "boolean", blockInput, false)
+	_fillColor = varlib.checkarg(3, "gdx-color", fillColor, colors.presets.BLACK)
+	_fadeTime = varlib.checkarg(4, "number", fadeTime, 3000)
+	_reverse = varlib.checkarg(5, "boolean", reverse, false)
 end
 
 function process(fDelta, input)
@@ -69,7 +31,10 @@ function process(fDelta, input)
 	since = scheduler.sinceMillis(_startTime)
 	_cAlpha = since / _fadeTime
 	if(_reverse) then
-		_cAlpha = (_cAlpha * -1) + 1.0;
+		if(_cAlpha ~= 0) then
+			_cAlpha = (_cAlpha * -1) + 1.0;
+		end
+		
 		if(_cAlpha < 0.0) then
 			_component:destroyParent()
 		end

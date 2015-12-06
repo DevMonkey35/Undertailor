@@ -18,8 +18,6 @@ public class LuaInputDataMeta extends LuaTable {
 
     public LuaInputDataMeta() {
         this.set("getPressData", new _getPressData());
-        this.set("justPressed", new _justPressed());
-        this.set("justReleased", new _justReleased());
         this.set("isConsumed", new _isConsumed());
         this.set("consume", new _consume());
     }
@@ -29,22 +27,6 @@ public class LuaInputDataMeta extends LuaTable {
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
             InputData data = LuaInputData.checkInputData(arg1).getData();
             return new LuaPressData(data.getPressData(arg2.checkint()));
-        }
-    }
-    
-    static class _justPressed extends TwoArgFunction {
-        @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            InputData data = LuaInputData.checkInputData(arg1).getData();
-            return LuaValue.valueOf(data.justPressed(arg2.checkint()));
-        }
-    }
-    
-    static class _justReleased extends TwoArgFunction {
-        @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            InputData data = LuaInputData.checkInputData(arg1).getData();
-            return LuaValue.valueOf(data.justReleased(arg2.checkint()));
         }
     }
     

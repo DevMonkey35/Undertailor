@@ -29,40 +29,6 @@ public class InputRetriever implements InputProcessor {
             return PressData.BLANK;
         }
         
-        /**
-         * Returns whether or not the given key was pressed in the last frame,
-         * but is released in the current frame.
-         */
-        public boolean justReleased(int keycode) {
-            if(lastData == null) {
-                return false;
-            }
-            
-            PressData oldData = lastData.getPressData(keycode);
-            PressData newData = this.getPressData(keycode);
-            boolean oldState = oldData == null ? false : oldData.isPressed();
-            boolean newState = newData == null ? false : newData.isPressed();
-            
-            return oldState != newState && newState == false;
-        }
-        
-        /**
-         * Returns whether or not the given key was released in the last frame,
-         * but is pressed in the current frame.
-         */
-        public boolean justPressed(int keycode) {
-            if(lastData == null) {
-                return false;
-            }
-            
-            PressData oldData = lastData.getPressData(keycode);
-            PressData newData = this.getPressData(keycode);
-            boolean oldState = oldData == null ? false : oldData.isPressed();
-            boolean newState = newData == null ? false : newData.isPressed();
-            
-            return oldState != newState && newState == true;
-        }
-        
         public boolean isConsumed() {
             return isConsumed;
         }
@@ -98,6 +64,24 @@ public class InputRetriever implements InputProcessor {
             }
             
             return TimeUtils.timeSinceMillis(lastReleaseTime);
+        }
+        
+        /**
+         * Returns whether or not the given key was pressed in the last frame,
+         * but is released in the current frame.
+         */
+        public boolean justReleased(float time) {
+            long msTime = (long) (1000.0 * time);
+            return this.lastReleaseTime >= 0 && this.getLastReleaseTime() < msTime;
+        }
+        
+        /**
+         * Returns whether or not the given key was released in the last frame,
+         * but is pressed in the current frame.
+         */
+        public boolean justPressed(float time) {
+            long msTime = (long) (1000.0 * time);
+            return this.lastPressTime >= 0 && this.getLastPressTime() < msTime;
         }
         
         public long getLastPressTime() {
@@ -141,12 +125,17 @@ public class InputRetriever implements InputProcessor {
     
     public InputRetriever() {
         this.pressData = new HashMap<>();
+        lastData = new InputData(pressData);
+        currentData = new InputData(pressData);
     }
     
     public InputData getCurrentData() {
-        lastData = currentData;
-        currentData = new InputData(new HashMap<>(pressData));
         return currentData;
+    }
+    
+    public void update() {
+        lastData = currentData;
+        currentData = new InputData(pressData);
     }
     
     @Override

@@ -1,6 +1,7 @@
 package me.scarlet.undertailor.lua;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldObjectMeta;
 import me.scarlet.undertailor.overworld.WorldObject;
@@ -74,6 +75,13 @@ public class LuaWorldObject extends LuaTable {
         public String getObjectName() {
             return typename;
         }
+
+        @Override
+        public void onCollide(Collider collider) {
+            if(functions.containsKey(IMPLMETHOD_ONCOLLIDE)) {
+                functions.get(IMPLMETHOD_ONCOLLIDE).call(new LuaWorldObject((WorldObject) collider));
+            }
+        }
     }
     
     private WorldObject obj;
@@ -116,8 +124,6 @@ public class LuaWorldObject extends LuaTable {
                         return;
                     }
                 }
-                
-                System.out.println(key);
             }
         }
     }

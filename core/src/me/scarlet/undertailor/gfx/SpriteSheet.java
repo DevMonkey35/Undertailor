@@ -12,6 +12,8 @@ import me.scarlet.undertailor.util.ConfigurateUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.List;
 
 public class SpriteSheet implements Disposable {
     
@@ -38,7 +40,8 @@ public class SpriteSheet implements Disposable {
                 meta.spriteMeta = new SpriteMeta[spriteCount];
                 for(int i = 0; i < spriteCount; i++) {
                     for(ConfigurationNode metaNode : metaRoot.getChildrenMap().values()) {
-                        if(metaNode.getKey().toString().contains("" + i)) {
+                        List<String> metakeys = Arrays.asList(metaNode.getKey().toString().split(","));
+                        if(metakeys.contains("" + i)) {
                             if(meta.spriteMeta[i] == null) {
                                 meta.spriteMeta[i] = new SpriteMeta();
                             }

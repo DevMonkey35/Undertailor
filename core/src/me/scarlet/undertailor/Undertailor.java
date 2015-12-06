@@ -50,11 +50,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import me.scarlet.undertailor.lua.lib.BaseLib;
 import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.lua.lib.MathUtilLib;
 import me.scarlet.undertailor.lua.lib.SchedulerLib;
 import me.scarlet.undertailor.lua.lib.TextLib;
+import me.scarlet.undertailor.lua.lib.game.StoreLib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
@@ -72,9 +74,17 @@ import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.JFXUtil;
 import me.scarlet.undertailor.util.MultiRenderer;
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.JsePlatform;
+import org.luaj.vm2.compiler.LuaC;
+import org.luaj.vm2.lib.Bit32Lib;
+import org.luaj.vm2.lib.PackageLib;
+import org.luaj.vm2.lib.StringLib;
+import org.luaj.vm2.lib.TableLib;
+import org.luaj.vm2.lib.jse.JseBaseLib;
+import org.luaj.vm2.lib.jse.JseMathLib;
+import org.luaj.vm2.lib.jse.JseOsLib;
 
 import java.io.File;
 import java.io.IOException;
@@ -142,7 +152,18 @@ public class Undertailor extends ApplicationAdapter {
     }
     
     public static Globals newGlobals() {
-        Globals returned = JsePlatform.standardGlobals();
+        Globals returned = new Globals();
+        returned.load(new JseBaseLib());
+        returned.load(new PackageLib());
+        returned.load(new Bit32Lib());
+        returned.load(new TableLib());
+        returned.load(new StringLib());
+        returned.load(new JseMathLib());
+        returned.load(new JseOsLib());
+        returned.load(new BaseLib());
+        LoadState.install(returned);
+        LuaC.install(returned);
+        
         for(LuaValue lib : Undertailor.instance.libs) {
             returned.load(lib);
         }
@@ -199,8 +220,8 @@ public class Undertailor extends ApplicationAdapter {
     
     public Undertailor(LwjglApplicationConfiguration config) {
         this.config = config;
-        //config.foregroundFPS = 0;
-        //config.backgroundFPS = 0;
+        config.foregroundFPS = 0;
+        config.backgroundFPS = 0;
     }
     
     @Override
@@ -239,7 +260,7 @@ public class Undertailor extends ApplicationAdapter {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
         }
         
-        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib(), new SchedulerLib()};
+        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib(), new SchedulerLib(), new StoreLib()};
         this.renderer = new MultiRenderer();
         
         this.fontManager = new FontManager();
@@ -298,6 +319,7 @@ public class Undertailor extends ApplicationAdapter {
         Font bitop = fontManager.getObject("8bitop");
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
         renderer.flush();
+        inputRetriever.update();
     }
     
     @Override

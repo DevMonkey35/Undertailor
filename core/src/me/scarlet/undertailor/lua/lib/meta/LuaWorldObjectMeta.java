@@ -3,6 +3,7 @@ package me.scarlet.undertailor.lua.lib.meta;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Animation;
+import me.scarlet.undertailor.lua.LuaBoundingBox;
 import me.scarlet.undertailor.lua.LuaWorldObject;
 import me.scarlet.undertailor.lua.LuaWorldRoom;
 import me.scarlet.undertailor.overworld.WorldObject;
@@ -27,22 +28,32 @@ public class LuaWorldObjectMeta extends LuaTable {
     public LuaWorldObjectMeta() {
         this.set("getZ", new _getZ());
         this.set("setZ", new _setZ());
+        this.set("getID", new _getID());
         this.set("getPosition", new _getPosition());
         this.set("setPosition", new _setPosition());
         this.set("getAnimation", new _getAnimation());
         this.set("setAnimation", new _setAnimation());
-        this.set("getBoundingBoxSize", new _getBoundingBoxSize());
-        this.set("setBoundingBoxSize", new _setBoundingBoxSize());
-        this.set("getBoundingBoxOrigin", new _getBoundingBoxOrigin());
-        this.set("setBoundingBoxOrigin", new _setBoundingBoxOrigin());
+        this.set("getBoundingBox", new _getBoundingBox());
         this.set("getScale", new _getScale());
         this.set("setScale", new _setScale());
         this.set("canCollide", new _canCollide());
         this.set("setCanCollide", new _setCanCollide());
+        this.set("focusCollide", new _focusCollide());
+        this.set("setFocusCollide", new _setFocusCollide());
         this.set("isVisible", new _isVisible());
         this.set("setVisible", new _setVisible());
+        this.set("isSolid", new _isSolid());
+        this.set("setSolid", new _setSolid());
         this.set("getRoom", new _getRoom());
         this.set("removeFromRoom", new _removeFromRoom());
+    }
+    
+    static class _getID extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+            return LuaValue.valueOf(object.getId());
+        }
     }
     
     static class _getZ extends OneArgFunction {
@@ -120,49 +131,11 @@ public class LuaWorldObjectMeta extends LuaTable {
         }
     }
     
-    static class _getBoundingBoxSize extends VarArgFunction {
+    static class _getBoundingBox extends OneArgFunction {
         @Override
-        public Varargs invoke(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            WorldObject object = LuaWorldObject.checkWorldObject(args.arg1()).getWorldObject();
-            Vector2 boxSize = object.getBoundingBoxSize();
-            return LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(boxSize.x), LuaValue.valueOf(boxSize.y)});
-        }
-    }
-    
-    static class _setBoundingBoxSize extends ThreeArgFunction {
-        @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            Vector2 boxSize = object.getBoundingBoxSize();
-            float width = arg2.isnil() ? boxSize.x : new Float(arg2.checkdouble());
-            float height = arg3.isnil() ? boxSize.y : new Float(arg3.checkdouble());
-            
-            object.setBoundingBoxSize(width, height);
-            return LuaValue.NIL;
-        }
-    }
-    
-    static class _getBoundingBoxOrigin extends VarArgFunction {
-        @Override
-        public Varargs invoke(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            WorldObject object = LuaWorldObject.checkWorldObject(args.arg1()).getWorldObject();
-            Vector2 boxOrigin = object.getBoundingBoxOrigin();
-            return LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(boxOrigin.x), LuaValue.valueOf(boxOrigin.y)});
-        }
-    }
-    
-    static class _setBoundingBoxOrigin extends ThreeArgFunction {
-        @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            Vector2 boxOrigin = object.getBoundingBoxOrigin();
-            float x = arg2.isnil() ? boxOrigin.x : new Float(arg2.checkdouble());
-            float y = arg3.isnil() ? boxOrigin.y : new Float(arg3.checkdouble());
-            
-            object.setBoundingBoxOrigin(x, y);
-            return LuaValue.NIL;
+        public LuaValue call(LuaValue arg) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+            return new LuaBoundingBox(object.getBoundingBox());
         }
     }
     
@@ -220,6 +193,24 @@ public class LuaWorldObjectMeta extends LuaTable {
         }
     }
     
+    static class _isSolid extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+            return LuaValue.valueOf(object.isSolid());
+        }
+    }
+    
+    static class _setSolid extends TwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
+            boolean flag = arg2.checkboolean();
+            object.setSolid(flag);
+            return LuaValue.NIL;
+        }
+    }
+    
     static class _getRoom extends OneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -237,6 +228,24 @@ public class LuaWorldObjectMeta extends LuaTable {
         public LuaValue call(LuaValue arg) {
             WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
             object.removeFromRoom();
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _focusCollide extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+            return LuaValue.valueOf(object.focusCollide());
+        }
+    }
+    
+    static class _setFocusCollide extends TwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
+            boolean flag = arg2.checkboolean();
+            object.setFocusCollide(flag);
             return LuaValue.NIL;
         }
     }

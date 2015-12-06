@@ -58,7 +58,8 @@ public class WorldObjectLoader {
             return file.getName().endsWith(".lua") || file.isDirectory();
         })) {
             if(file.isDirectory()) {
-                loadObjects(file, heading + "");
+                loadObjects(file, heading.isEmpty() ? file.getName() : heading + "." + file.getName());
+                continue;
             }
             
             String name = heading + (heading.isEmpty() ? "" : ".") + file.getName().split("\\.")[0];

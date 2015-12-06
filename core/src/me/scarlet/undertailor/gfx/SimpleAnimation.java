@@ -102,6 +102,6 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         float scaleY = meta.scaleY * scale;
         float offX = meta.offX * scaleX;
         float offY = meta.offY * scaleY;
-        sprite.draw(posX + (offX * scaleX), posY + (offY * scaleY), scaleX, scaleY, meta.rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
+        sprite.draw(posX + (offX * scaleX), posY + (offY * scaleY), scaleX, scaleY, meta.rotation + rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
     }
 }

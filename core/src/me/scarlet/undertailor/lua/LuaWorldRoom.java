@@ -63,12 +63,10 @@ public class LuaWorldRoom extends LuaTable {
         }
         
         @Override
-        public void process(float delta, InputData input) {
+        public void onProcess(float delta, InputData input) {
             if(functions.containsKey(IMPLMETHOD_PROCESS)) {
                 functions.get(IMPLMETHOD_PROCESS).call(LuaValue.valueOf(delta), new LuaInputData(input));
             }
-            
-            super.process(delta, input);
         }
     }
     

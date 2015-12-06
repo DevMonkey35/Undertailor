@@ -54,7 +54,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
             
             String sheetName = file.getName().substring(0, file.getName().length() - 4);
             String entryName = heading + (heading.isEmpty() ? "" : ".") + sheetName;
-            File spriteDef = new File(dir, sheetName + ".json");
+            File spriteDef = new File(dir, sheetName + ".spritemeta");
             if(!spriteDef.exists()) {
                 Undertailor.instance.warn(MANAGER_TAG, "ignoring room " + sheetName + " (no sheet definition file)");
                 continue;

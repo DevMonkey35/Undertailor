@@ -25,9 +25,9 @@ public class LoggerLib extends TwoArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             if(args.narg() == 1) {
-                Undertailor.instance.log("luascript", args.arg1().checkjstring());
+                Undertailor.instance.log("[LUA] luascript", args.arg1().checkjstring());
             } else if(args.narg() == 2) {
-                Undertailor.instance.log(args.arg(1).checkjstring(), args.arg(2).checkjstring());
+                Undertailor.instance.log("[LUA] " + args.arg(1).checkjstring(), args.arg(2).checkjstring());
             } else {
                 throw new LuaError("arguments insufficient or overflowing (min 1, max 2)");
             }
@@ -40,9 +40,9 @@ public class LoggerLib extends TwoArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             if(args.narg() == 1) {
-                Undertailor.instance.warn("luascript", args.arg1().checkjstring());
+                Undertailor.instance.warn("[LUA] luascript", args.arg1().checkjstring());
             } else if(args.narg() == 2) {
-                Undertailor.instance.warn(args.arg(1).checkjstring(), args.arg(2).checkjstring());
+                Undertailor.instance.warn("[LUA] " + args.arg(1).checkjstring(), args.arg(2).checkjstring());
             } else {
                 throw new LuaError("arguments insufficient or overflowing (min 1, max 2)");
             }
@@ -57,10 +57,10 @@ public class LoggerLib extends TwoArgFunction {
             String tag = "";
             String message = "";
             if(args.narg() == 1) {
-                tag = "luascript";
+                tag = "[LUA] luascript";
                 message = args.arg1().checkjstring();
             } else if(args.narg() == 2) {
-                tag = args.arg(1).checkjstring();
+                tag = "[LUA]" + args.arg(1).checkjstring();
                 message = args.arg(2).checkjstring();
             } else {
                 throw new LuaError("arguments insufficient or overflowing (min 1, max 2)");

@@ -8,8 +8,11 @@ local _room;
 function create(room)        -- called when the room needs to be loaded; do everything the room needs here
 	_room = room;
 	
-	char = game.overworld.newWorldObject("charfrisk");
-	_room:registerObject(char)
+	papyrus = game.overworld.newWorldObject("npc.papyrus");
+	_room:registerObject(game.overworld.newWorldObject("character.charfrisk")); -- temporary
+	_room:registerObject(papyrus)
+	
+	papyrus:setPosition(50, 50)
 end
 
 function process(delta, input)       -- called every frame while the player is in the room

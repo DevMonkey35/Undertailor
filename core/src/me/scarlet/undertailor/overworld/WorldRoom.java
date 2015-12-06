@@ -3,6 +3,8 @@ package me.scarlet.undertailor.overworld;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.collision.Collider;
+import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.manager.RoomManager;
 import me.scarlet.undertailor.util.ConfigurateUtil;
@@ -13,8 +15,11 @@ import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class WorldRoom implements Disposable {
@@ -108,15 +113,20 @@ public class WorldRoom implements Disposable {
     }
     
     private static final TreeSet<WorldObject> RETURN_SET;
+    private static final Set<Collider> COLLIDER_SET;
+    private static final Set<Collider> TARGET_SET;
     
     static {
         RETURN_SET = new TreeSet<WorldObject>((WorldObject obj1, WorldObject obj2) -> {
             if(obj1.getZ() == obj2.getZ()) {
-                return Float.compare(obj1.getPosition().y, obj2.getPosition().y);
+                return Float.compare(obj2.getPosition().y, obj1.getPosition().y);
             } else {
                 return Integer.compare(obj1.getZ(), obj2.getZ());
             }
         });
+        
+        COLLIDER_SET = new HashSet<Collider>();
+        TARGET_SET = new HashSet<Collider>();
     }
     
     private String roomName;
@@ -124,9 +134,14 @@ public class WorldRoom implements Disposable {
     private RoomDataWrapper roomWrapper;
     private int nextObject;
     private List<Rectangle> entrypoints;
+    
+    private Set<WorldObject> removed;
+    private Map<Integer, WorldObject> added;
     private Map<Integer, WorldObject> objects;
     
     public WorldRoom(String id, RoomDataWrapper roomWrapper) {
+        this.added = new HashMap<>();
+        this.removed = new HashSet<>();
         this.entrypoints = new ArrayList<>();
         this.objects = new HashMap<>();
         this.nextObject = 0;
@@ -151,7 +166,7 @@ public class WorldRoom implements Disposable {
         int id = nextObject++;
         object.id = id;
         object.room = this;
-        objects.put(id, object);
+        added.put(id, object);
         return id;
     }
     
@@ -160,10 +175,16 @@ public class WorldRoom implements Disposable {
     }
     
     public void removeObject(int id) {
-        objects.remove(id);
+        WorldObject obj = objects.get(id);
+        if(obj.id != 1) {
+            removed.add(obj);
+        }
     }
     
-    public void process(float delta, InputData input) {
+    public void process(CollisionHandler collisionHandler, float delta, InputData input) {
+        updateMapping();
+        processCollisions(collisionHandler);
+        onProcess(delta, input);
         for(WorldObject object : objects.values()) {
             object.process(delta, input);
         }
@@ -171,13 +192,44 @@ public class WorldRoom implements Disposable {
     
     public void render() {
         room.render();
-        boolean boxes = Undertailor.getOverworldController().isRenderingHitboxes();
         for(WorldObject object : getObjectsInRenderOrder()) {
             object.render();
-            if(boxes) {
+        }
+        
+        if(Undertailor.getOverworldController().isRenderingHitboxes()) {
+            for(WorldObject object : getObjectsInRenderOrder()) {
                 object.renderBox();
             }
         }
+    }
+    
+    private void updateMapping() {
+        for(Entry<Integer, WorldObject> entry : added.entrySet()) {
+            WorldObject obj = entry.getValue();
+            obj.id = entry.getKey();
+            obj.room = this;
+            objects.put(entry.getKey(), obj);
+        }
+        
+        for(WorldObject object : removed) {
+            object.room = null;
+            objects.remove(object.id);
+        }
+    }
+    
+    private void processCollisions(CollisionHandler handler) {
+        TARGET_SET.clear();
+        COLLIDER_SET.clear();
+        for(Collider collider : objects.values()) {
+            if(collider.canCollide()) {
+                COLLIDER_SET.add(collider);
+                if(collider.focusCollide()) {
+                    TARGET_SET.add(collider);
+                }
+            }
+        }
+        
+        handler.postProcess(handler.process(TARGET_SET, COLLIDER_SET));
     }
     
     private TreeSet<WorldObject> getObjectsInRenderOrder() {
@@ -194,6 +246,7 @@ public class WorldRoom implements Disposable {
         roomWrapper.removeReference(this);
     }
     
+    public void onProcess(float delta, InputData input) {}
     public void onEnter() {}
     public void onExit() {}
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 
@@ -20,6 +21,7 @@ public class OverworldController {
     private WorldRoom currentRoom;
     private boolean renderHitboxes;
     private OrthographicCamera camera;
+    private CollisionHandler collision;
     private Task entryTransition, exitTransition;
     
     private WorldObjectLoader loader;
@@ -36,6 +38,7 @@ public class OverworldController {
         this.renderHitboxes = true;
         this.entryTransition = null;
         this.exitTransition = null;
+        this.collision = new CollisionHandler();
     }
     
     public WorldObjectLoader getObjectLoader() {
@@ -197,7 +200,7 @@ public class OverworldController {
         }
         
         if(currentRoom != null) {
-            currentRoom.process(delta, input);
+            currentRoom.process(collision, delta, input);
         }
     }
     
