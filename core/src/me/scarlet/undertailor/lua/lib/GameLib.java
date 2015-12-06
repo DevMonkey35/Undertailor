@@ -5,6 +5,7 @@ import me.scarlet.undertailor.lua.lib.game.AudioLib;
 import me.scarlet.undertailor.lua.lib.game.ControlLib;
 import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
 import me.scarlet.undertailor.lua.lib.game.LoggerLib;
+import me.scarlet.undertailor.lua.lib.game.OverworldLib;
 import me.scarlet.undertailor.lua.lib.game.UILib;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -24,6 +25,7 @@ public class GameLib extends TwoArgFunction {
         new LoggerLib().call(LuaValue.valueOf(""), game);
         new ControlLib().call(LuaValue.valueOf(""), game);
         new GraphicsLib().call(LuaValue.valueOf(""), game);
+        new OverworldLib().call(LuaValue.valueOf(""), game);
         
         Gdx.graphics.setTitle(DEFAULT_TITLE);
         env.set("game", game);

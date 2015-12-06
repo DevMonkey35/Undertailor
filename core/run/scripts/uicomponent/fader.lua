@@ -7,8 +7,9 @@ local _startTime; -- time we compare against
 local _fadeTime;  -- how long the fade should last, in milliseconds (converted from seconds)
 local _cAlpha;
 local _reverse;   -- false by default to fade out, true to fade in
+local _blockInput
 
-function create(component, fillColor, fadeTime, reverse)
+function create(component, blockInput, fillColor, fadeTime, reverse)
 	_component = component;
 	
 	if(fillColor == nil) then
@@ -21,11 +22,21 @@ function create(component, fillColor, fadeTime, reverse)
 		_fillColor = fillColor
 	end
 	
+	if(blockInput == nil) then
+		_blockInput = false
+	else
+		if(type(blockInput) ~= "boolean") then
+			error("bad argument #3: expected boolean, got"..type(blockInput))
+		end
+		
+		_blockInput = blockInput
+	end
+	
 	if(fadeTime == nil) then
 		_fadeTime = 3000.0; -- 3 seconds in ms
 	else
 		if(type(fadeTime) ~= "number") then
-			error("bad argument #3: expected number, got "..type(fadeTime))
+			error("bad argument #4: expected number, got "..type(fadeTime))
 		end
 		
 		_fadeTime = fadeTime * 1000.0 -- convert seconds to ms
@@ -35,7 +46,7 @@ function create(component, fillColor, fadeTime, reverse)
 		_reverse = false
 	else
 		if(type(reverse) ~= "boolean") then
-			error("bad argument #4: expected boolean, got"..type(reverse))
+			error("bad argument #5: expected boolean, got"..type(reverse))
 		end
 		
 		_reverse = reverse
@@ -47,11 +58,15 @@ function create(component, fillColor, fadeTime, reverse)
 end
 
 function process(fDelta, input)
-	if(_startTime == nil or _startTime <= 0) then
-		_startTime = time.millis()
+	if(_blockInput) then
+		input:consume()
 	end
 	
-	since = time.sinceMillis(_startTime)
+	if(_startTime == nil or _startTime <= 0) then
+		_startTime = scheduler.millis()
+	end
+	
+	since = scheduler.sinceMillis(_startTime)
 	_cAlpha = since / _fadeTime
 	if(_reverse) then
 		_cAlpha = (_cAlpha * -1) + 1.0;

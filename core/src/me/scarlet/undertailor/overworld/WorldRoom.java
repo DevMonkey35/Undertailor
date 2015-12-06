@@ -119,7 +119,7 @@ public class WorldRoom implements Disposable {
         });
     }
     
-    private String id;
+    private String roomName;
     private RoomMap room;
     private RoomDataWrapper roomWrapper;
     private int nextObject;
@@ -132,11 +132,11 @@ public class WorldRoom implements Disposable {
         this.nextObject = 0;
         this.roomWrapper = roomWrapper;
         this.room = roomWrapper.getReference(this);
-        this.id = id;
+        this.roomName = id;
     }
     
-    public String getId() {
-        return id;
+    public String getRoomName() {
+        return roomName;
     }
     
     public RoomMap getMap() {
@@ -149,13 +149,18 @@ public class WorldRoom implements Disposable {
     
     public int registerObject(WorldObject object) {
         int id = nextObject++;
-        object.setRoom(this);
+        object.id = id;
+        object.room = this;
         objects.put(id, object);
         return id;
     }
     
     public WorldObject getObject(int id) {
         return objects.get(id);
+    }
+    
+    public void removeObject(int id) {
+        objects.remove(id);
     }
     
     public void process(float delta, InputData input) {
@@ -188,4 +193,7 @@ public class WorldRoom implements Disposable {
     public void dispose() {
         roomWrapper.removeReference(this);
     }
+    
+    public void onEnter() {}
+    public void onExit() {}
 }

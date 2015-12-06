@@ -4,10 +4,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.exception.LuaScriptException;
-import me.scarlet.undertailor.lua.LuaRoom;
+import me.scarlet.undertailor.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
-import me.scarlet.undertailor.util.ParameterizedRunnable;
 
 public class OverworldController {
     
@@ -22,9 +20,9 @@ public class OverworldController {
     private WorldRoom currentRoom;
     private boolean renderHitboxes;
     private OrthographicCamera camera;
+    private Task entryTransition, exitTransition;
     
     private WorldObjectLoader loader;
-    private ParameterizedRunnable<?> roomTransition;
     
     public OverworldController(Viewport port) {
         this.loader = new WorldObjectLoader();
@@ -36,12 +34,8 @@ public class OverworldController {
         this.isProcessing = true;
         this.cameraFixing = true;
         this.renderHitboxes = true;
-        
-        try {
-            setCurrentRoom(new LuaRoom(Undertailor.getRoomManager().getObject("room1")).getRoom());
-        } catch(LuaScriptException e) {
-            e.printStackTrace();
-        }
+        this.entryTransition = null;
+        this.exitTransition = null;
     }
     
     public WorldObjectLoader getObjectLoader() {
@@ -56,8 +50,41 @@ public class OverworldController {
         return currentRoom;
     }
     
-    public void setCurrentRoom(WorldRoom room) {
+    public void setCurrentRoom(WorldRoom room, boolean transitions) {
+        if(transitions) {
+            if(exitTransition != null) {
+                Undertailor.getScheduler().registerTask(exitTransition, true);
+            }
+            
+            Undertailor.getScheduler().registerTask(new Task() {
+                @Override
+                public String getName() {
+                    return "tailor-setroom";
+                }
+                
+                @Override
+                public boolean process(float delta, InputData input) {
+                    setCurrentRoom(room);
+                    return true;
+                }
+
+                @Override
+                public void onFinish(boolean forced) {} // don't care
+            }, true);
+            
+            if(entryTransition != null) {
+                Undertailor.getScheduler().registerTask(entryTransition, true);
+            }
+        }
+    }
+    
+    private void setCurrentRoom(WorldRoom room) {
+        if(this.currentRoom != null) {
+            this.currentRoom.onExit();
+        }
+        
         this.currentRoom = room;
+        room.onEnter();
         float rmX = currentRoom.getMap().getSizeX() * 20;
         float rmY = currentRoom.getMap().getSizeY() * 20;
         this.setCameraPosition(rmX / 2.0F, rmY / 2.0F);
@@ -70,7 +97,6 @@ public class OverworldController {
     public void setCameraPosition(float x, float y) {
         camera.position.set(x, y, 0);
         fixPosition();
-        System.out.println(camera.position.toString());
         camera.update();
     }
     
@@ -93,12 +119,12 @@ public class OverworldController {
         if(cameraFixing) {
             float rmX = currentRoom.getMap().getSizeX() * 20;       // room's width
             float rmY = currentRoom.getMap().getSizeY() * 20;       // room's height
-            float cvX = camera.zoom * camera.viewportWidth / 2.0F;  // half of camera's view width
-            float cvY = camera.zoom * camera.viewportHeight / 2.0F; // half of camera's view height
+            float cvX = Math.abs(camera.zoom) * camera.viewportWidth / 2.0F;  // half of camera's view width
+            float cvY = Math.abs(camera.zoom) * camera.viewportHeight / 2.0F; // half of camera's view height
             float xPos = camera.position.x;
             float yPos = camera.position.y;
             
-            if(cvX >= rmX) {
+            if(cvX * 2 >= rmX) {
                 xPos = rmX / 2.0F;
             } else {
                 if(xPos < cvX) {
@@ -108,7 +134,7 @@ public class OverworldController {
                 }
             }
             
-            if(cvY >= rmY) {
+            if(cvY * 2 >= rmY) {
                 yPos = rmY / 2.0F;
             } else {
                 if(yPos < cvY) {
@@ -144,6 +170,14 @@ public class OverworldController {
     
     public void setProcessing(boolean flag) {
         this.isProcessing = flag;
+    }
+    
+    public boolean isCameraFixing() {
+        return cameraFixing;
+    }
+    
+    public void setCameraFixing(boolean flag) {
+        this.cameraFixing = flag;
     }
     
     public void render() {

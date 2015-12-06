@@ -44,10 +44,8 @@ public class LuaWorldObject extends LuaTable {
     public static class LuaWorldObjectImpl extends WorldObject {
         
         private String typename;
-        private LuaWorldObject parent;
         private Map<String, LuaFunction> functions;
         public LuaWorldObjectImpl(LuaWorldObject parent, File luaScript) throws LuaScriptException {
-            this.parent = parent;
             this.typename = luaScript.getName().split("\\.")[0];
             Globals globals = Undertailor.newGlobals();
             globals.loadfile(luaScript.getAbsolutePath()).invoke();
@@ -56,10 +54,6 @@ public class LuaWorldObject extends LuaTable {
         
         public Map<String, LuaFunction> getFunctions() {
             return functions;
-        }
-        
-        public void prepare() {
-            functions.get(IMPLMETHOD_CREATE).call(parent);
         }
         
         @Override
@@ -84,19 +78,20 @@ public class LuaWorldObject extends LuaTable {
     
     private WorldObject obj;
     public LuaWorldObject(WorldObject obj) {
+        this.setmetatable(METATABLE);
         this.obj = obj;
         prepareWorldObject();
     }
     
     public LuaWorldObject(File luaScript) throws LuaScriptException {
+        this.setmetatable(METATABLE);
         this.obj = new LuaWorldObjectImpl(this, luaScript);
+        ((LuaWorldObjectImpl) this.obj).getFunctions().get(IMPLMETHOD_CREATE).call(this);
         prepareWorldObject();
     }
     
     private void prepareWorldObject() {
-        this.setmetatable(METATABLE);
         if(this.obj instanceof LuaWorldObjectImpl) {
-            ((LuaWorldObjectImpl) this.obj).prepare();
             Map<String, LuaFunction> functions = ((LuaWorldObjectImpl) this.obj).getFunctions();
             functions.get(IMPLMETHOD_CREATE).call(this);
             for(Map.Entry<String, LuaFunction> entry : functions.entrySet()) {
@@ -121,6 +116,8 @@ public class LuaWorldObject extends LuaTable {
                         return;
                     }
                 }
+                
+                System.out.println(key);
             }
         }
     }

@@ -1,15 +1,17 @@
 package me.scarlet.undertailor.overworld;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.gfx.Animation;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 
-public abstract class WorldObject {
+public abstract class WorldObject implements Collider {
 
     public static final Color BOX_COLOR;
     public static final Color BOX_COLOR_INACTIVE;
@@ -25,25 +27,28 @@ public abstract class WorldObject {
     
     private int z;
     private float scale;
-    private WorldRoom room;
     private Vector2 position;
     private boolean isVisible;
     private boolean canCollide;
     private Rectangle boundingBox;
+    // private Polygon boundingBox;
     private AnimationSetWrapper animSet;
     private Animation<?> animation;
     private Vector2 boxOrigin;
     private Vector2 boxSize;
     
+    protected int id;
+    protected WorldRoom room;
+    
     public WorldObject() {
         this.boundingBox = new Rectangle(0, 0, 0, 0);
         this.position = new Vector2(0, 0);
+        this.boxOrigin = new Vector2(0, 0);
+        this.boxSize = new Vector2(0, 0);
         this.canCollide = true;
         this.isVisible = true;
         this.animation = null;
         this.animSet = null;
-        this.boxOrigin = new Vector2(0, 0);
-        this.boxSize = new Vector2(0, 0);
         this.room = null;
         this.scale = 1F;
         this.z = 0;
@@ -78,8 +83,8 @@ public abstract class WorldObject {
         return room;
     }
     
-    public void setRoom(WorldRoom room) {
-        this.room = room;
+    public void removeFromRoom() {
+        room.removeObject(id);
     }
     
     public boolean isVisible() {

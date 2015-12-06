@@ -44,12 +44,9 @@ public class LuaUIComponent extends LuaTable {
     
     public static class LuaUIComponentImpl extends UIComponent {
 
-        private Varargs args;
         private String typename;
-        private LuaUIComponent parent;
         private Map<String, LuaFunction> functions;
-        public LuaUIComponentImpl(LuaUIComponent parent, File luaFile, Varargs args) throws LuaScriptException {
-            this.args = args;
+        public LuaUIComponentImpl(File luaFile) throws LuaScriptException {
             this.typename = luaFile.getName().split("\\.")[0];
             Globals globals = Undertailor.newGlobals();
             globals.loadfile(luaFile.getAbsolutePath()).invoke();
@@ -58,10 +55,6 @@ public class LuaUIComponent extends LuaTable {
         
         public Map<String, LuaFunction> getFunctions() {
             return functions;
-        }
-        
-        public void prepare() {
-            functions.get(LuaUIComponent.IMPLMETHOD_CREATE).invoke(parent, args);
         }
         
         @Override
@@ -100,19 +93,20 @@ public class LuaUIComponent extends LuaTable {
     
     private UIComponent component;
     public LuaUIComponent(UIComponent component) {
+        this.setmetatable(METATABLE);
         this.component = component;
         prepareLuaComponent();
     }
     
     public LuaUIComponent(File luaFile, Varargs args) throws LuaScriptException {
-        this.component = new LuaUIComponentImpl(this, luaFile, args);
+        this.setmetatable(METATABLE);
+        this.component = new LuaUIComponentImpl(luaFile);
+        ((LuaUIComponentImpl) this.component).getFunctions().get(IMPLMETHOD_CREATE).invoke(this, args);
         prepareLuaComponent();
     }
     
     private void prepareLuaComponent() {
-        this.setmetatable(METATABLE);
         if(this.component instanceof LuaUIComponentImpl) {
-            ((LuaUIComponentImpl) this.component).prepare();
             Map<String, LuaFunction> functions = ((LuaUIComponentImpl) this.component).getFunctions();
             for(Map.Entry<String, LuaFunction> entry : functions.entrySet()) {
                 this.set(entry.getKey(), entry.getValue());

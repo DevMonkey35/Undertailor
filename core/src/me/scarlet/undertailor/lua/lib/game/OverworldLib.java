@@ -2,7 +2,10 @@ package me.scarlet.undertailor.lua.lib.game;
 
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.lua.LuaWorldRoom;
+import me.scarlet.undertailor.overworld.WorldRoom;
 import me.scarlet.undertailor.util.LuaUtil;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -16,20 +19,35 @@ public class OverworldLib extends TwoArgFunction {
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
         LuaTable overworld = new LuaTable();
-        this.set("newWorldObject", new _newWorldObject());
-        this.set("isRendering", new _isRendering());
-        this.set("setRendering", new _setRendering());
-        this.set("isProcessing", new _isProcessing());
-        this.set("setProcessing", new _setProcessing());
-        this.set("isRenderingHitboxes", new _isRenderingHitboxes());
-        this.set("setRenderingHitboxes", new _setRenderingHitboxes());
-        this.set("getCameraPosition", new _getCameraPosition());
-        this.set("setCameraPosition", new _setCameraPosition());
-        this.set("getCameraZoom", new _getCameraZoom());
-        this.set("setCameraZoom", new _setCameraZoom());
+        overworld.set("newWorldRoom", new _newWorldRoom());
+        overworld.set("newWorldObject", new _newWorldObject());
+        overworld.set("isRendering", new _isRendering());
+        overworld.set("setRendering", new _setRendering());
+        overworld.set("isProcessing", new _isProcessing());
+        overworld.set("setProcessing", new _setProcessing());
+        overworld.set("isRenderingHitboxes", new _isRenderingHitboxes());
+        overworld.set("setRenderingHitboxes", new _setRenderingHitboxes());
+        overworld.set("getCameraPosition", new _getCameraPosition());
+        overworld.set("setCameraPosition", new _setCameraPosition());
+        overworld.set("getCameraZoom", new _getCameraZoom());
+        overworld.set("setCameraZoom", new _setCameraZoom());
+        overworld.set("getCurrentRoom", new _getCurrentRoom());
+        overworld.set("setCurrentRoom", new _setCurrentRoom());
         
         env.set("overworld", overworld);
         return overworld;
+    }
+    
+    static class _newWorldRoom extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            try {
+                return new LuaWorldRoom(Undertailor.getRoomManager().getObject(arg.checkjstring()));
+            } catch(Exception e) {
+                e.printStackTrace();
+                throw new LuaError("failed to load room: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            }
+        }
     }
     
     static class _newWorldObject extends OneArgFunction {
@@ -126,5 +144,20 @@ public class OverworldLib extends TwoArgFunction {
         }
     }
     
-    // TODO setroom/getroom
+    static class _getCurrentRoom extends ZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            return new LuaWorldRoom(Undertailor.getOverworldController().getCurrentRoom());
+        }
+    }
+    
+    static class _setCurrentRoom extends TwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            WorldRoom room = LuaWorldRoom.checkWorldRoom(arg1).getRoom();
+            boolean transitions = arg2.isnil() ? true : arg2.checkboolean();
+            Undertailor.getOverworldController().setCurrentRoom(room, transitions);
+            return LuaValue.NIL;
+        }
+    }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Animation;
 import me.scarlet.undertailor.lua.LuaWorldObject;
+import me.scarlet.undertailor.lua.LuaWorldRoom;
 import me.scarlet.undertailor.overworld.WorldObject;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
@@ -40,6 +41,8 @@ public class LuaWorldObjectMeta extends LuaTable {
         this.set("setCanCollide", new _setCanCollide());
         this.set("isVisible", new _isVisible());
         this.set("setVisible", new _setVisible());
+        this.set("getRoom", new _getRoom());
+        this.set("removeFromRoom", new _removeFromRoom());
     }
     
     static class _getZ extends OneArgFunction {
@@ -66,7 +69,9 @@ public class LuaWorldObjectMeta extends LuaTable {
             LuaUtil.checkArguments(args, 1, 1);
             WorldObject object = LuaWorldObject.checkWorldObject(args.arg1()).getWorldObject();
             Vector2 pos = object.getPosition();
-            return LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(pos.x), LuaValue.valueOf(pos.y)});
+            return LuaValue.varargsOf(new LuaValue[] {
+                    LuaValue.valueOf(pos.x),
+                    LuaValue.valueOf(pos.y)});
         }
     }
     
@@ -211,6 +216,27 @@ public class LuaWorldObjectMeta extends LuaTable {
             WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
             boolean flag = arg2.checkboolean();
             object.setVisible(flag);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _getRoom extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+            if(object.getRoom() != null) {
+                return new LuaWorldRoom(object.getRoom());
+            } else {
+                return LuaValue.NIL;
+            }
+        }
+    }
+    
+    static class _removeFromRoom extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+            object.removeFromRoom();
             return LuaValue.NIL;
         }
     }

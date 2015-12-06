@@ -7,6 +7,9 @@ local _room;
 
 function create(room)        -- called when the room needs to be loaded; do everything the room needs here
 	_room = room;
+	
+	char = game.overworld.newWorldObject("charfrisk");
+	_room:registerObject(char)
 end
 
 function process(delta, input)       -- called every frame while the player is in the room

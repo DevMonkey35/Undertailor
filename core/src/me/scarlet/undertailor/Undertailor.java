@@ -53,8 +53,8 @@ import javafx.stage.Stage;
 import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.lua.lib.MathUtilLib;
+import me.scarlet.undertailor.lua.lib.SchedulerLib;
 import me.scarlet.undertailor.lua.lib.TextLib;
-import me.scarlet.undertailor.lua.lib.TimeLib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
@@ -63,6 +63,7 @@ import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.manager.TilemapManager;
 import me.scarlet.undertailor.overworld.OverworldController;
+import me.scarlet.undertailor.scheduler.Scheduler;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.ui.UIController;
 import me.scarlet.undertailor.util.Blocker;
@@ -130,6 +131,10 @@ public class Undertailor extends ApplicationAdapter {
         return Undertailor.instance.roomManager;
     }
     
+    public static Scheduler getScheduler() {
+        return Undertailor.instance.scheduler;
+    }
+    
     public static void setFrameCap(int cap) {
         int frameCap = cap < 30 ? (cap == 0 ? 0 : 30) : cap;
         Undertailor.instance.config.backgroundFPS = frameCap;
@@ -137,7 +142,7 @@ public class Undertailor extends ApplicationAdapter {
     }
     
     public static Globals newGlobals() {
-        Globals returned = JsePlatform.debugGlobals();
+        Globals returned = JsePlatform.standardGlobals();
         for(LuaValue lib : Undertailor.instance.libs) {
             returned.load(lib);
         }
@@ -190,6 +195,7 @@ public class Undertailor extends ApplicationAdapter {
     private UIController uiController;
     private OverworldController ovwController;
     private InputRetriever inputRetriever;
+    private Scheduler scheduler;
     
     public Undertailor(LwjglApplicationConfiguration config) {
         this.config = config;
@@ -233,7 +239,7 @@ public class Undertailor extends ApplicationAdapter {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
         }
         
-        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib(), new TimeLib()};
+        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib(), new SchedulerLib()};
         this.renderer = new MultiRenderer();
         
         this.fontManager = new FontManager();
@@ -256,12 +262,11 @@ public class Undertailor extends ApplicationAdapter {
         this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
         this.ovwController = new OverworldController(new FitViewport(0F, 0F));
         this.inputRetriever = new InputRetriever();
-        Gdx.input.setInputProcessor(inputRetriever);
+        this.scheduler = new Scheduler();
         
+        Gdx.input.setInputProcessor(inputRetriever);
         uiController.getLuaLoader().loadComponents(new File("scripts/uicomponent/"));
         ovwController.getObjectLoader().loadObjects(new File("scripts/objects/"));
-        
-        ovwController.getCurrentRoom().registerObject(Undertailor.getOverworldController().getObjectLoader().newWorldObject("charfrisk").getWorldObject());
         
         Color cc = Color.BLACK;
         Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
@@ -283,6 +288,7 @@ public class Undertailor extends ApplicationAdapter {
     public void render() {
         InputData input = inputRetriever.getCurrentData();
         float delta = Gdx.graphics.getDeltaTime();
+        scheduler.process(delta, input);
         uiController.process(delta, input);
         ovwController.process(delta, input);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

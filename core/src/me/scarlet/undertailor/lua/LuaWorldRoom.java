@@ -2,18 +2,20 @@ package me.scarlet.undertailor.lua;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
+import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.overworld.WorldRoom;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
 import java.util.Map;
 
-public class LuaRoom extends LuaTable {
+public class LuaWorldRoom extends LuaTable {
     
     public static final String TYPENAME = "tailor-room";
     public static LuaValue METATABLE;
@@ -27,19 +29,25 @@ public class LuaRoom extends LuaTable {
     public static String[] REQUIRED_METHODS = new String[] {IMPLMETHOD_CREATE};
     public static String[] METHODS = new String[] {IMPLMETHOD_CREATE, IMPLMETHOD_PROCESS, IMPLMETHOD_ONRENDER, IMPLMETHOD_ONENTER, IMPLMETHOD_ONEXIT};
     
+    static {
+        LuaWorldRoomMeta.prepareMetatable();
+    }
+    
+    public static LuaWorldRoom checkWorldRoom(LuaValue value) {
+        if(!value.typename().equals(TYPENAME)) {
+            throw new LuaError("bad argument: expected " + TYPENAME + ", got " + value.typename());
+        }
+        
+        return (LuaWorldRoom) value;
+    }
+    
     public static class LuaRoomImpl extends WorldRoom {
-        private LuaRoom parent;
         private Map<String, LuaFunction> functions;
-        public LuaRoomImpl(LuaRoom parent, RoomDataWrapper map) throws LuaScriptException {
+        public LuaRoomImpl(LuaWorldRoom parent, RoomDataWrapper map) throws LuaScriptException {
             super(map.getRoomScript().getName().split("\\.")[0], map);
-            this.parent = parent;
             Globals globals = Undertailor.newGlobals();
             globals.loadfile(map.getRoomScript().getAbsolutePath()).invoke();
             functions = LuaUtil.checkImplementation(globals, map.getRoomScript(), REQUIRED_METHODS);
-        }
-        
-        public void prepare() {
-            functions.get(IMPLMETHOD_CREATE).call(parent);
         }
         
         public Map<String, LuaFunction> getFunctions() {
@@ -65,20 +73,21 @@ public class LuaRoom extends LuaTable {
     }
     
     private WorldRoom room;
-    public LuaRoom(WorldRoom room) {
+    public LuaWorldRoom(WorldRoom room) {
+        this.setmetatable(METATABLE);
         this.room = room;
         prepareLuaRoom();
     }
     
-    public LuaRoom(RoomDataWrapper roomMap) throws LuaScriptException {
+    public LuaWorldRoom(RoomDataWrapper roomMap) throws LuaScriptException {
+        this.setmetatable(METATABLE);
         this.room = new LuaRoomImpl(this, roomMap);
+        ((LuaRoomImpl) this.room).getFunctions().get(IMPLMETHOD_CREATE).call(this);
         prepareLuaRoom();
     }
     
     private void prepareLuaRoom() {
-        this.setmetatable(METATABLE);
         if(this.room instanceof LuaRoomImpl) {
-            ((LuaRoomImpl) this.room).prepare();
             Map<String, LuaFunction> functions = ((LuaRoomImpl) this.room).getFunctions();
             for(Map.Entry<String, LuaFunction> entry : functions.entrySet()) {
                 this.set(entry.getKey(), entry.getValue());
