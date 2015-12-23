@@ -75,8 +75,9 @@ public class LuaUIComponentMeta extends LuaTable {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
             UIComponent component = LuaUIComponent.checkUIComponent(arg1).getComponent();
-            float x = new Float(arg2.checkdouble());
-            float y = new Float(arg3.checkdouble());
+            Vector2 pos = component.getPosition();
+            float x = new Float(arg2.optdouble(pos.x));
+            float y = new Float(arg3.optdouble(pos.y));
             
             component.setPosition(new Vector2(x, y));
             return LuaValue.NIL;

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaWorldRoom;
 import me.scarlet.undertailor.overworld.WorldRoom;
+import me.scarlet.undertailor.scheduler.LuaTask;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -33,6 +34,12 @@ public class OverworldLib extends TwoArgFunction {
         overworld.set("setCameraZoom", new _setCameraZoom());
         overworld.set("getCurrentRoom", new _getCurrentRoom());
         overworld.set("setCurrentRoom", new _setCurrentRoom());
+        overworld.set("getCharacterID", new _getCharacterID());
+        overworld.set("setCharacterID", new _setCharacterID());
+        overworld.set("setEntryTransition", new _setEntryTransition());
+        overworld.set("setExitTransition", new _setExitTransition());
+        overworld.set("isCameraFixing", new _isCameraFixing());
+        overworld.set("setCameraFixing", new _setCameraFixing());
         
         env.set("overworld", overworld);
         return overworld;
@@ -105,6 +112,22 @@ public class OverworldLib extends TwoArgFunction {
         }
     }
     
+    static class _isCameraFixing extends ZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            return LuaValue.valueOf(Undertailor.getOverworldController().isCameraFixing());
+        }
+    }
+    
+    static class _setCameraFixing extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            boolean flag = arg.checkboolean();
+            Undertailor.getOverworldController().setCameraFixing(flag);
+            return LuaValue.NIL;
+        }
+    }
+    
     static class _getCameraPosition extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
@@ -151,12 +174,49 @@ public class OverworldLib extends TwoArgFunction {
         }
     }
     
-    static class _setCurrentRoom extends TwoArgFunction {
+    static class _setCurrentRoom extends VarArgFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldRoom room = LuaWorldRoom.checkWorldRoom(arg1).getRoom();
-            boolean transitions = arg2.isnil() ? true : arg2.checkboolean();
-            Undertailor.getOverworldController().setCurrentRoom(room, transitions);
+        public Varargs invoke(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 4);
+            WorldRoom room = LuaWorldRoom.checkWorldRoom(args.arg(1)).getRoom();
+            boolean transitions = args.isnil(2) ? true : args.checkboolean(2);
+            String exitpoint = args.isnil(3) ? null : args.checkjstring(3);
+            String entrypoint = args.isnil(4) ? null : args.checkjstring(4);
+            Undertailor.getOverworldController().setCurrentRoom(room, transitions, exitpoint, entrypoint);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _getCharacterID extends ZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            return LuaValue.valueOf(Undertailor.getOverworldController().getCharacterID());
+        }
+    }
+    
+    static class _setCharacterID extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            long id = arg.checklong();
+            Undertailor.getOverworldController().setCharacterID(id);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _setEntryTransition extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            LuaTable task = arg.checktable();
+            Undertailor.getOverworldController().setEntryTransition(new LuaTask(task));
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _setExitTransition extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            LuaTable task = arg.checktable();
+            Undertailor.getOverworldController().setExitTransition(new LuaTask(task));
             return LuaValue.NIL;
         }
     }

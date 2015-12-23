@@ -29,6 +29,8 @@ public class LuaWorldObjectMeta extends LuaTable {
         this.set("getZ", new _getZ());
         this.set("setZ", new _setZ());
         this.set("getID", new _getID());
+        this.set("getVelocity", new _getVelocity());
+        this.set("setVelocity", new _setVelocity());
         this.set("getPosition", new _getPosition());
         this.set("setPosition", new _setPosition());
         this.set("getAnimation", new _getAnimation());
@@ -46,6 +48,8 @@ public class LuaWorldObjectMeta extends LuaTable {
         this.set("setSolid", new _setSolid());
         this.set("getRoom", new _getRoom());
         this.set("removeFromRoom", new _removeFromRoom());
+        this.set("isPersisting", new _isPersisting());
+        this.set("setPersisting", new _setPersisting());
     }
     
     static class _getID extends OneArgFunction {
@@ -70,6 +74,31 @@ public class LuaWorldObjectMeta extends LuaTable {
             WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
             int z = arg2.checkint();
             object.setZ(z);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _getVelocity extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            WorldObject object = LuaWorldObject.checkWorldObject(args.arg1()).getWorldObject();
+            Vector2 vel = object.getVelocity();
+            return LuaValue.varargsOf(new LuaValue[] {
+                    LuaValue.valueOf(vel.x),
+                    LuaValue.valueOf(vel.y)});
+        }
+    }
+    
+    static class _setVelocity extends ThreeArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
+            Vector2 vel = object.getVelocity();
+            float x = arg2.isnil() ? vel.x : new Float(arg2.checkdouble());
+            float y = arg3.isnil() ? vel.y : new Float(arg3.checkdouble());
+            
+            object.setVelocity(x, y);
             return LuaValue.NIL;
         }
     }
@@ -113,18 +142,21 @@ public class LuaWorldObjectMeta extends LuaTable {
         }
     }
     
-    static class _setAnimation extends ThreeArgFunction {
+    static class _setAnimation extends VarArgFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            String setName = arg2.checkjstring();
-            String animName = arg3.checkjstring();
+        public Varargs invoke(Varargs args) {
+            LuaUtil.checkArguments(args, 3, 4);
+            
+            WorldObject object = LuaWorldObject.checkWorldObject(args.arg(1)).getWorldObject();
+            String setName = args.checkjstring(2);
+            String animName = args.checkjstring(3);
+            int frame = args.isnil(4) ? 0 : args.checkint(4);
             
             if(setName == null) {
-                object.setCurrentAnimation(null, null);
+                object.setCurrentAnimation(null, null, 0);
             } else {
                 AnimationSetWrapper set = Undertailor.getAnimationManager().getObject(setName);
-                object.setCurrentAnimation(set, set.getReference().getAnimation(animName));
+                object.setCurrentAnimation(set, set.getReference().getAnimation(animName), frame);
             }
             
             return LuaValue.NIL;
@@ -246,6 +278,24 @@ public class LuaWorldObjectMeta extends LuaTable {
             WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
             boolean flag = arg2.checkboolean();
             object.setFocusCollide(flag);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _isPersisting extends OneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+            return LuaValue.valueOf(object.isPersisting());
+        }
+    }
+    
+    static class _setPersisting extends TwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
+            boolean flag = arg2.checkboolean();
+            object.setPersisting(flag);
             return LuaValue.NIL;
         }
     }

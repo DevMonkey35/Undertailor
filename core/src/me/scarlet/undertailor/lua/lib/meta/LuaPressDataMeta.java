@@ -28,7 +28,7 @@ public class LuaPressDataMeta extends LuaTable {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
             PressData data = LuaPressData.checkPressData(arg1).getData();
-            float time = arg2.isnil() ? 0.1F : new Float(arg2.checkdouble());
+            float time = arg2.isnil() ? 0.15F : new Float(arg2.checkdouble());
             return LuaValue.valueOf(data.justPressed(time));
         }
     }
@@ -37,7 +37,7 @@ public class LuaPressDataMeta extends LuaTable {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
             PressData data = LuaPressData.checkPressData(arg1).getData();
-            float time = arg2.isnil() ? 0.1F : new Float(arg2.checkdouble());
+            float time = arg2.isnil() ? 0.15F : new Float(arg2.checkdouble());
             return LuaValue.valueOf(data.justReleased(time));
         }
     }

@@ -2,8 +2,6 @@
     "font": {
         "gridSizeX": 13,
         "gridSizeY": 8,
-        "charSizeX": 8,
-        "charSizeY": 12,
         "letterSpacing": 2,
         "spaceSize": 8,
         "charList": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_?!.,:;\"|'`^()[]{}<>+~=-@%#&$*/\\",

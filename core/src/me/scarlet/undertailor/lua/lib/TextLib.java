@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaColor;
 import me.scarlet.undertailor.lua.LuaDisplayMeta;
-import me.scarlet.undertailor.lua.LuaSound;
 import me.scarlet.undertailor.lua.LuaText;
 import me.scarlet.undertailor.lua.LuaTextComponent;
 import me.scarlet.undertailor.lua.lib.text.TextComponentLib;
@@ -13,6 +12,7 @@ import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.texts.TextComponent.Text;
+import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -76,7 +76,7 @@ public class TextLib extends TwoArgFunction {
             Font font = Undertailor.getFontManager().getObject(args.checkjstring(1));
             Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getObject(args.arg(2).checkjstring());
             Color color = args.isnil(3) ? null : LuaColor.checkcolor(args.arg(3)).getColor();
-            SoundWrapper sound = args.arg(4).isnil() ? null : LuaSound.checkSound(args.arg(4)).getSound();
+            SoundWrapper sound = args.arg(4).isnil() ? null : Undertailor.getAudioManager().getSound(args.arg(4).checkstring().tojstring());
             int speed = args.optint(5, TextComponent.DEFAULT_SPEED);
             int segsize = args.optint(6, 1);
             float delay = new Float(args.optdouble(7, 0F));
@@ -92,7 +92,7 @@ public class TextLib extends TwoArgFunction {
             TextComponent added = LuaTextComponent.checkTextComponent(arg2, true).getTextComponent();
             
             text.addComponents(added);
-            return LuaValue.NIL;
+            return arg1;
         }
     }
     
@@ -110,7 +110,7 @@ public class TextLib extends TwoArgFunction {
             }
             
             text.addComponents(components);
-            return LuaValue.NIL;
+            return args.arg(1);
         }
     }
     
@@ -148,9 +148,7 @@ public class TextLib extends TwoArgFunction {
     static class _drawText extends VarArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            if(args.narg() < 1) {
-                throw new LuaError("arguments insufficient or overflowing (min 3, max 6)");
-            }
+            LuaUtil.checkArguments(args, 3, 6);
             
             Text text = LuaText.checkText(args.arg(1)).getText();
             float posX = new Float(args.arg(2).checkdouble());

@@ -53,9 +53,9 @@ import javafx.stage.Stage;
 import me.scarlet.undertailor.lua.lib.BaseLib;
 import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
-import me.scarlet.undertailor.lua.lib.MathUtilLib;
 import me.scarlet.undertailor.lua.lib.SchedulerLib;
 import me.scarlet.undertailor.lua.lib.TextLib;
+import me.scarlet.undertailor.lua.lib.UtilLib;
 import me.scarlet.undertailor.lua.lib.game.StoreLib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
@@ -67,6 +67,8 @@ import me.scarlet.undertailor.manager.TilemapManager;
 import me.scarlet.undertailor.overworld.OverworldController;
 import me.scarlet.undertailor.scheduler.Scheduler;
 import me.scarlet.undertailor.texts.Font;
+import me.scarlet.undertailor.texts.TextComponent;
+import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.ui.UIController;
 import me.scarlet.undertailor.util.Blocker;
 import me.scarlet.undertailor.util.InputRetriever;
@@ -155,12 +157,15 @@ public class Undertailor extends ApplicationAdapter {
         Globals returned = new Globals();
         returned.load(new JseBaseLib());
         returned.load(new PackageLib());
+        returned.load(new org.luaj.vm2.lib.DebugLib());
         returned.load(new Bit32Lib());
         returned.load(new TableLib());
         returned.load(new StringLib());
         returned.load(new JseMathLib());
         returned.load(new JseOsLib());
         returned.load(new BaseLib());
+        
+        returned.set("debug", LuaValue.NIL);
         LoadState.install(returned);
         LuaC.install(returned);
         
@@ -260,7 +265,7 @@ public class Undertailor extends ApplicationAdapter {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
         }
         
-        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new MathUtilLib(), new TextLib(), new SchedulerLib(), new StoreLib()};
+        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new UtilLib(), new TextLib(), new SchedulerLib(), new StoreLib()};
         this.renderer = new MultiRenderer();
         
         this.fontManager = new FontManager();
@@ -303,6 +308,23 @@ public class Undertailor extends ApplicationAdapter {
         disposer = new DisposerThread();
         disposer.setDaemon(true);
         disposer.start();
+        test();
+    }
+    
+    private void test() {
+        Font bitop = fontManager.getObject("8bitop");
+        Text text = new Text(bitop);
+        text.addComponents(new TextComponent("tits", null, null, Color.BLUE));
+        text.addComponents(new TextComponent("tits", null, null, Color.RED));
+        
+        for(int i = 0; i < text.getText().length(); i++) {
+            TextComponent comp = text.getComponentAtCharacter(i);
+            System.out.println(comp.getText() + ": " + comp.getColor().toString());
+        }
+        
+        Gdx.app.postRunnable(() -> {
+            System.out.println(Platform.isFxApplicationThread());
+        });
     }
     
     @Override
@@ -317,8 +339,11 @@ public class Undertailor extends ApplicationAdapter {
         uiController.render();
         
         Font bitop = fontManager.getObject("8bitop");
-        bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 450, 2);
+        bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 415, 2);
         renderer.flush();
+        //System.out.println("RENDER CALLS: " + renderer.getSpriteBatch().renderCalls);
+        //System.out.println("MAX SPRITES: " + renderer.getSpriteBatch().maxSpritesInBatch);
+        //System.exit(0);
         inputRetriever.update();
     }
     

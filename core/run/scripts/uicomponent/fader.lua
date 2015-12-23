@@ -47,9 +47,11 @@ end
 
 function render()
 	local oldColor = game.graphics.getShapeColor();
-	local r, g, b, a = oldColor:getRGB()
-	_fillColor:setRGB(nil, nil, nil, _cAlpha);
-	game.graphics.setShapeColor(_fillColor);
+	game.graphics.setShapeColor(_fillColor, _cAlpha);
 	game.graphics.drawFilledRectangle(0, 0, 640, 480);
 	game.graphics.setShapeColor(oldColor);
+end
+
+function onDestroy(b)
+	_startTime = nil
 end

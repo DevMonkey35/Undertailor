@@ -41,14 +41,14 @@ public class AnimationManager extends Manager<AnimationSetWrapper> {
         }
         Undertailor.instance.log(MANAGER_TAG, "searching for animations in " + dirPath);
         for(File file : dir.listFiles(file -> {
-            return file.getName().endsWith(".json") || file.isDirectory();
+            return file.getName().endsWith(".tailoranim") || file.isDirectory();
         })) {
             if(file.isDirectory()) {
                 loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
                 continue;
             }
             
-            String name = file.getName().substring(0, file.getName().length() - 5);
+            String name = file.getName().substring(0, file.getName().length() - 11);
             String entryName = heading + (heading.isEmpty() ? "" : ".") + name;
             JSONConfigurationLoader loader = JSONConfigurationLoader.builder().setFile(file).build();
             try {

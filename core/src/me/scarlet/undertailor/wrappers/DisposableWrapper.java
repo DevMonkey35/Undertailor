@@ -2,21 +2,57 @@ package me.scarlet.undertailor.wrappers;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.TimeUtils;
+import me.scarlet.undertailor.lua.LuaAnimation;
+import me.scarlet.undertailor.lua.LuaMusic;
+import me.scarlet.undertailor.lua.LuaSound;
+import org.luaj.vm2.LuaValue;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class DisposableWrapper<T extends Disposable> {
     
-    private static Set<DisposableWrapper<?>> instances;
+    public static boolean isWrapper(LuaValue value) {
+        return value instanceof LuaAnimation
+                || value instanceof LuaSound
+                || value instanceof LuaMusic;
+    }
+    
+    private static Map<Class<? extends DisposableWrapper<?>>, Set<DisposableWrapper<?>>> instances;
     public static final long DEFAULT_LIFETIME = 10000; // 10s
     
     static {
-        instances = new HashSet<>();
+        instances = new HashMap<>();
     }
     
-    public static Set<DisposableWrapper<?>> getWrappers() {
+    public static Map<Class<? extends DisposableWrapper<?>>, Set<DisposableWrapper<?>>> getAllWrappers() {
         return instances;
+    }
+    
+    public static Set<DisposableWrapper<?>> getWrappers(Class<? extends DisposableWrapper<?>> clazz) {
+        return instances.get(clazz);
+    }
+    
+    public static <T> void resetLifetime(Class<? extends DisposableWrapper<?>> clazz, T ref) {
+        if(getWrappers(clazz) != null) {
+            for(DisposableWrapper<?> wrapper : getWrappers(clazz)) {
+                if(wrapper.getRawReference().equals(ref)) {
+                    wrapper.lastAccess = TimeUtils.millis();
+                    return;
+                }
+            }
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static void registerInstance(DisposableWrapper<?> wrapper) {
+        if(!instances.containsKey(wrapper.getClass())) {
+            instances.put((Class<? extends DisposableWrapper<?>>) wrapper.getClass(), new HashSet<>());
+        }
+        
+        instances.get(wrapper.getClass()).add(wrapper);
     }
     
     private T disposable;
@@ -32,8 +68,12 @@ public abstract class DisposableWrapper<T extends Disposable> {
             this.lastAccess = -1;
         }
         
-        instances.add(this);
+        registerInstance(this);
         this.referrers = new HashSet<>();
+    }
+    
+    protected T getRawReference() {
+        return disposable;
     }
     
     public final T getReference() {

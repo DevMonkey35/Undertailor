@@ -1,22 +1,32 @@
 package me.scarlet.undertailor.overworld;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.CollisionHandler;
+import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.MultiRenderer;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class OverworldController {
     
     public static final int RENDER_WIDTH = 320;
     public static final int RENDER_HEIGHT = 240;
+    public static final String MANAGER_TAG = "overworld";
     
     private float zoom;
+    private long charId;
     private Viewport port;
+    private Rectangle scissor;
     private boolean isRendering;
-    private boolean isProcessing;
+    private boolean isProcessing, oldIsProcessing;
     private boolean cameraFixing;
     private WorldRoom currentRoom;
     private boolean renderHitboxes;
@@ -30,15 +40,19 @@ public class OverworldController {
         this.loader = new WorldObjectLoader();
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
         this.setViewport(port);
+        this.charId = -1;
         
         this.zoom = 1.0F;
         this.isRendering = true;
+        this.oldIsProcessing = true;
         this.isProcessing = true;
         this.cameraFixing = true;
         this.renderHitboxes = true;
         this.entryTransition = null;
         this.exitTransition = null;
         this.collision = new CollisionHandler();
+        this.scissor = new Rectangle();
+        ScissorStack.calculateScissors(camera, Undertailor.getRenderer().getSpriteBatch().getTransformMatrix(), Undertailor.RENDER_AREA, scissor);
     }
     
     public WorldObjectLoader getObjectLoader() {
@@ -49,11 +63,27 @@ public class OverworldController {
         return camera;
     }
     
+    public void setEntryTransition(Task transition) {
+        this.entryTransition = transition;
+    }
+    
+    public void setExitTransition(Task transition) {
+        this.exitTransition = transition;
+    }
+    
+    public long getCharacterID() {
+        return charId;
+    }
+    
+    public void setCharacterID(long id) {
+        this.charId = id;
+    }
+    
     public WorldRoom getCurrentRoom() {
         return currentRoom;
     }
     
-    public void setCurrentRoom(WorldRoom room, boolean transitions) {
+    public void setCurrentRoom(WorldRoom room, boolean transitions, String entrypointExit, String entrypointEnter) {
         if(transitions) {
             if(exitTransition != null) {
                 Undertailor.getScheduler().registerTask(exitTransition, true);
@@ -67,7 +97,7 @@ public class OverworldController {
                 
                 @Override
                 public boolean process(float delta, InputData input) {
-                    setCurrentRoom(room);
+                    setCurrentRoom(room, entrypointExit, entrypointEnter);
                     return true;
                 }
 
@@ -78,16 +108,33 @@ public class OverworldController {
             if(entryTransition != null) {
                 Undertailor.getScheduler().registerTask(entryTransition, true);
             }
+        } else {
+            setCurrentRoom(room, entrypointExit, entrypointEnter);
         }
     }
     
-    private void setCurrentRoom(WorldRoom room) {
+    private void setCurrentRoom(WorldRoom room, String entrypointExit, String entrypointEnter) {
+        Set<WorldObject> persisted = null;
         if(this.currentRoom != null) {
-            this.currentRoom.onExit();
+            persisted = this.currentRoom.prepareExit();
+            this.currentRoom.onExit(currentRoom.getEntrypoint(entrypointExit));
         }
         
         this.currentRoom = room;
-        room.onEnter();
+        Entrypoint enterpoint = room.getEntrypoint(entrypointEnter);
+        if(persisted != null && !persisted.isEmpty()) {
+            Iterator<WorldObject> iterator = persisted.iterator();
+            iterator.forEachRemaining(object -> {
+                this.currentRoom.registerPersistentObject(object);
+                try {
+                    object.onPersist(room, enterpoint);
+                } catch(Exception e) {
+                    Undertailor.instance.warn(MANAGER_TAG, "persist method for object " + object.getObjectName() + " with id " + object.getId() + " threw an error: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+                }
+            });
+        }
+        
+        room.onEnter(enterpoint);
         float rmX = currentRoom.getMap().getSizeX() * 20;
         float rmY = currentRoom.getMap().getSizeY() * 20;
         this.setCameraPosition(rmX / 2.0F, rmY / 2.0F);
@@ -172,6 +219,7 @@ public class OverworldController {
     }
     
     public void setProcessing(boolean flag) {
+        this.oldIsProcessing = isProcessing;
         this.isProcessing = flag;
     }
     
@@ -189,18 +237,26 @@ public class OverworldController {
         }
         
         if(currentRoom != null) {
+            ScissorStack.pushScissors(scissor);
             Undertailor.getRenderer().setProjectionMatrix(camera.combined);
             currentRoom.render();
+            ScissorStack.popScissors();
         }
     }
     
     public void process(float delta, InputData input) {
-        if(!isProcessing) {
-            return;
+        if(this.isProcessing != this.oldIsProcessing && currentRoom != null) {
+            this.oldIsProcessing = this.isProcessing;
+            if(isProcessing) {
+                currentRoom.resume();
+            } else {
+                currentRoom.pause();
+            }
         }
         
         if(currentRoom != null) {
-            currentRoom.process(collision, delta, input);
+            currentRoom.forceProcess();
+            if(isProcessing) currentRoom.process(collision, delta, input);
         }
     }
     

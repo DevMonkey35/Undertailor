@@ -3,6 +3,7 @@ package me.scarlet.undertailor.lua;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
+import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -13,6 +14,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,10 +41,6 @@ public class LuaStyle extends LuaTable implements Style {
         return (LuaStyle) value;
     }
     
-    public static Map<String, LuaFunction> checkImpl(Globals value, File scriptFile) throws LuaScriptException {
-        return LuaUtil.checkImplementation(value, scriptFile, REQUIRED_METHODS);
-    }
-    
     private Style style;
     private File originFile; // only for lua
     private Map<String, LuaFunction> functions; // only for lua
@@ -50,10 +48,16 @@ public class LuaStyle extends LuaTable implements Style {
         this.originFile = luaFile;
         
         Globals globals = Undertailor.newGlobals();
-        globals.loadfile(luaFile.getAbsolutePath()).invoke();
+        try {
+            LuaUtil.loadFile(globals, luaFile);
+        } catch(FileNotFoundException e) {
+            Undertailor.instance.error(StyleManager.MANAGER_TAG, "failed to load style: file " + luaFile.getAbsolutePath() + " wasn't found");
+        }
+        
+        functions = LuaUtil.checkImplementation(globals, luaFile, REQUIRED_METHODS);
         
         try {
-            this.functions = checkImpl(globals, luaFile);
+            LuaUtil.checkImplementation(globals, luaFile, REQUIRED_METHODS);
         } catch(LuaScriptException e) {
             this.functions = new HashMap<>();
             throw new LuaScriptException("failed to load style implementation: " + e.getMessage());

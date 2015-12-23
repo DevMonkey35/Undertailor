@@ -1,6 +1,7 @@
 package me.scarlet.undertailor.lua.lib;
 
 import com.badlogic.gdx.Gdx;
+import me.scarlet.undertailor.lua.lib.game.AnimationLib;
 import me.scarlet.undertailor.lua.lib.game.AudioLib;
 import me.scarlet.undertailor.lua.lib.game.ControlLib;
 import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
@@ -26,6 +27,7 @@ public class GameLib extends TwoArgFunction {
         new ControlLib().call(LuaValue.valueOf(""), game);
         new GraphicsLib().call(LuaValue.valueOf(""), game);
         new OverworldLib().call(LuaValue.valueOf(""), game);
+        new AnimationLib().call(LuaValue.valueOf(""), game);
         
         Gdx.graphics.setTitle(DEFAULT_TITLE);
         env.set("game", game);

@@ -91,14 +91,16 @@ public class DisposerThread extends Thread {
         Undertailor.instance.log("disposer", "disposer thread has been started");
         while(running) {
             if(working) {
-                DisposableWrapper.getWrappers().forEach(wrapper -> {
-                    if(!wrapper.isAlwaysAlive()) {
-                        if(!wrapper.isDisposed() && wrapper.getLastAccessTime() > wrapper.getMaximumLifetime()) {
-                            if(wrapper.dispose()) {
-                                Undertailor.instance.debug("disposer", "a reference was disposed for exceeding lifetime");
+                DisposableWrapper.getAllWrappers().entrySet().forEach(entry -> {
+                    entry.getValue().forEach(wrapper -> {
+                        if(!wrapper.isAlwaysAlive()) {
+                            if(!wrapper.isDisposed() && wrapper.getLastAccessTime() > wrapper.getMaximumLifetime()) {
+                                if(wrapper.dispose()) {
+                                    Undertailor.instance.debug("disposer", "a reference was disposed for exceeding lifetime");
+                                }
                             }
                         }
-                    }
+                    });
                 });
             }
         }

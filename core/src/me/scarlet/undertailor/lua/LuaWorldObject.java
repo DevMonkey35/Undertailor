@@ -4,7 +4,10 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldObjectMeta;
+import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.overworld.WorldObject;
+import me.scarlet.undertailor.overworld.WorldRoom;
+import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.Globals;
@@ -14,6 +17,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 public class LuaWorldObject extends LuaTable {
@@ -27,12 +31,15 @@ public class LuaWorldObject extends LuaTable {
     
     public static final String IMPLMETHOD_CREATE = "create";         // create(obj)
     public static final String IMPLMETHOD_PROCESS = "process";       // process(delta, input)
+    public static final String IMPLMETHOD_ONPAUSE = "onPause";       // onPause()
+    public static final String IMPLMETHOD_ONRESUME = "onResume";     // onResume()
     public static final String IMPLMETHOD_ONRENDER = "onRender";     // onRender()
-    public static final String IMPLMETHOD_ONCOLLIDE = "onCollide";   // TBI
-    public static final String IMPLMETHOD_ONINTERACT = "onInteract"; // TBI
+    public static final String IMPLMETHOD_ONCOLLIDE = "onCollide";   // onCollide(object)
+    public static final String IMPLMETHOD_ONPERSIST = "onPersist";   // onPersist(object)
+    public static final String IMPLMETHOD_ONINTERACT = "onInteract"; // onInteract(object)
     
     public static final String[] REQUIRED_METHODS = {IMPLMETHOD_CREATE};
-    public static final String[] METHODS = {IMPLMETHOD_CREATE, IMPLMETHOD_PROCESS, IMPLMETHOD_ONRENDER, IMPLMETHOD_ONCOLLIDE, IMPLMETHOD_ONINTERACT};
+    public static final String[] METHODS = {IMPLMETHOD_CREATE, IMPLMETHOD_PROCESS, IMPLMETHOD_ONRENDER, IMPLMETHOD_ONCOLLIDE, IMPLMETHOD_ONINTERACT, IMPLMETHOD_ONPERSIST, IMPLMETHOD_ONPAUSE, IMPLMETHOD_ONRESUME};
     
     public static LuaWorldObject checkWorldObject(LuaValue value) {
         if(!value.typename().equals(TYPENAME)) {
@@ -49,7 +56,12 @@ public class LuaWorldObject extends LuaTable {
         public LuaWorldObjectImpl(LuaWorldObject parent, File luaScript) throws LuaScriptException {
             this.typename = luaScript.getName().split("\\.")[0];
             Globals globals = Undertailor.newGlobals();
-            globals.loadfile(luaScript.getAbsolutePath()).invoke();
+            try {
+                LuaUtil.loadFile(globals, luaScript);
+            } catch(FileNotFoundException e) {
+                Undertailor.instance.error(StyleManager.MANAGER_TAG, "failed to load style: file " + luaScript.getAbsolutePath() + " wasn't found");
+            }
+            
             functions = LuaUtil.checkImplementation(globals, luaScript, REQUIRED_METHODS);
         }
         
@@ -78,8 +90,31 @@ public class LuaWorldObject extends LuaTable {
 
         @Override
         public void onCollide(Collider collider) {
-            if(functions.containsKey(IMPLMETHOD_ONCOLLIDE)) {
-                functions.get(IMPLMETHOD_ONCOLLIDE).call(new LuaWorldObject((WorldObject) collider));
+            if(collider instanceof WorldObject) {
+                if(functions.containsKey(IMPLMETHOD_ONCOLLIDE)) {
+                    functions.get(IMPLMETHOD_ONCOLLIDE).call(new LuaWorldObject((WorldObject) collider));
+                }
+            }
+        }
+        
+        @Override
+        public void onPersist(WorldRoom newRoom, Entrypoint entrypoint) {
+            if(functions.containsKey(IMPLMETHOD_ONPERSIST)) {
+                functions.get(IMPLMETHOD_ONPERSIST).call(new LuaWorldRoom(newRoom), entrypoint == null ? LuaValue.NIL : new LuaEntrypoint(entrypoint));
+            }
+        }
+        
+        @Override
+        public void onPause() {
+            if(functions.containsKey(IMPLMETHOD_ONPAUSE)) {
+                functions.get(IMPLMETHOD_ONPAUSE).call();
+            }
+        }
+        
+        @Override
+        public void onResume() {
+            if(functions.containsKey(IMPLMETHOD_ONRESUME)) {
+                functions.get(IMPLMETHOD_ONRESUME).call();
             }
         }
     }
@@ -101,7 +136,6 @@ public class LuaWorldObject extends LuaTable {
     private void prepareWorldObject() {
         if(this.obj instanceof LuaWorldObjectImpl) {
             Map<String, LuaFunction> functions = ((LuaWorldObjectImpl) this.obj).getFunctions();
-            functions.get(IMPLMETHOD_CREATE).call(this);
             for(Map.Entry<String, LuaFunction> entry : functions.entrySet()) {
                 this.set(entry.getKey(), entry.getValue());
             }
@@ -126,11 +160,6 @@ public class LuaWorldObject extends LuaTable {
                 }
             }
         }
-    }
-    
-    @Override
-    public int type() {
-        return LuaValue.TTABLE;
     }
     
     @Override

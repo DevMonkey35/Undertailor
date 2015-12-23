@@ -8,7 +8,6 @@ import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.VarArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
@@ -27,6 +26,8 @@ public class GraphicsLib extends TwoArgFunction {
         graphics.set("drawFilledRectangle", new _drawFilledRectangle());
         graphics.set("drawCircle", new _drawCircle());
         graphics.set("drawFilledCircle", new _drawFilledCircle());
+        graphics.set("drawTriangle", new _drawTriangle());
+        graphics.set("drawFilledTriangle", new _drawFilledTriangle());
         
         env.set("graphics", graphics);
         return graphics;
@@ -39,11 +40,12 @@ public class GraphicsLib extends TwoArgFunction {
         }
     }
     
-    static class _setSpriteColor extends OneArgFunction {
+    static class _setSpriteColor extends TwoArgFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            Color color = LuaColor.checkcolor(arg).getColor();
-            Undertailor.getRenderer().setBatchColor(color);
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            Color color = LuaColor.checkcolor(arg1).getColor();
+            float alpha = arg2.isnil() ? color.a : new Float(arg2.checkdouble());
+            Undertailor.getRenderer().setBatchColor(color, alpha);
             return LuaValue.NIL;
         }
     }
@@ -55,11 +57,12 @@ public class GraphicsLib extends TwoArgFunction {
         }
     }
     
-    static class _setShapeColor extends OneArgFunction {
+    static class _setShapeColor extends TwoArgFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            Color color = LuaColor.checkcolor(arg).getColor();
-            Undertailor.getRenderer().setShapeColor(color);
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            Color color = LuaColor.checkcolor(arg1).getColor();
+            float alpha = arg2.isnil() ? color.a : new Float(arg2.checkdouble());
+            Undertailor.getRenderer().setShapeColor(color, alpha);
             return LuaValue.NIL;
         }
     }
@@ -135,6 +138,47 @@ public class GraphicsLib extends TwoArgFunction {
             float radius = new Float(args.checkdouble(3));
             
             Undertailor.getRenderer().drawFilledCircle(x, y, radius);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _drawTriangle extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaUtil.checkArguments(args, 6, 7);
+            
+            Vector2 vx1 = new Vector2(0, 0);
+            Vector2 vx2 = new Vector2(0, 0);
+            Vector2 vx3 = new Vector2(0, 0);
+            vx1.x = new Float(args.checkdouble(1));
+            vx1.y = new Float(args.checkdouble(2));
+            vx2.x = new Float(args.checkdouble(3));
+            vx2.y = new Float(args.checkdouble(4));
+            vx3.x = new Float(args.checkdouble(5));
+            vx3.y = new Float(args.checkdouble(6));
+            float lineThickness = args.isnil(7) ? 1F : new Float(args.checkdouble(7));
+            
+            Undertailor.getRenderer().drawTriangle(vx1, vx2, vx3, lineThickness);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class _drawFilledTriangle extends VarArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LuaUtil.checkArguments(args, 6, 6);
+            
+            Vector2 vx1 = new Vector2(0, 0);
+            Vector2 vx2 = new Vector2(0, 0);
+            Vector2 vx3 = new Vector2(0, 0);
+            vx1.x = new Float(args.checkdouble(1));
+            vx1.y = new Float(args.checkdouble(2));
+            vx2.x = new Float(args.checkdouble(3));
+            vx2.y = new Float(args.checkdouble(4));
+            vx3.x = new Float(args.checkdouble(5));
+            vx3.y = new Float(args.checkdouble(6));
+            
+            Undertailor.getRenderer().drawFilledTriangle(vx1, vx2, vx3);
             return LuaValue.NIL;
         }
     }

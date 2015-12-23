@@ -89,10 +89,12 @@ public class UIObject {
             return;
         }
         
-        this.components.forEach(component -> {;
-           if(this.isComponentActive(component)) {
-               component.render(alpha);
-           }
+        this.components.forEach(component -> {
+            if(this.isComponentActive(component)) {
+                component.render(alpha);
+            } else {
+                if(component.renderWhenInactive()) component.render(alpha);
+            }
         });
     }
     
@@ -114,7 +116,7 @@ public class UIObject {
                 if(this.components.isEmpty()) {
                     return component.isAlwaysActive(); // weird state, but whatever
                 } else {
-                    return component.isAlwaysActive() || component.equals(this.components.get(this.components.size() - 1));
+                    return component.isAlwaysActive() || component.equals(getTopActive());
                 }
             }
         }
@@ -155,6 +157,16 @@ public class UIObject {
             this.components.add(component);
             marked.remove();
         }
+    }
+    
+    private UIComponent getTopActive() {
+        for(UIComponent component : components) {
+            if(!component.isAlwaysActive()) {
+                return component;
+            }
+        }
+        
+        return components.isEmpty() ? null : components.get(0);
     }
     
     @Override

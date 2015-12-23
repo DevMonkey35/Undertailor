@@ -11,7 +11,6 @@ import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.gfx.Sprite.SpriteMeta;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
-import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.MultiRenderer;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -103,8 +102,8 @@ public class Font {
                 return new CharMeta(set);
             }
             
-            public SpriteMeta asSpriteMeta() {
-                return new SpriteMeta(0, 0, getOffsetX(), getOffsetY(), getBoundWrapX(), getBoundWrapY());
+            public SpriteMeta asSpriteMeta(int ySize) {
+                return new SpriteMeta(0, -1 * ySize, getOffsetX(), getOffsetY() + ySize, getBoundWrapX(), getBoundWrapY());
             }
             
             @Override
@@ -201,8 +200,9 @@ public class Font {
         sheetMeta.gridX = data.x;
         sheetMeta.gridY = data.y;
         sheetMeta.spriteMeta = new SpriteMeta[data.characterList.length()];
+        int ySize = spriteSheet.getHeight() / data.y;
         for(int i = 0; i < data.characterList.length(); i++) {
-            sheetMeta.spriteMeta[i] = data.getCharacterMeta(data.characterList.charAt(i)).asSpriteMeta();
+            sheetMeta.spriteMeta[i] = data.getCharacterMeta(data.characterList.charAt(i)).asSpriteMeta(ySize);
         }
         
         try {
@@ -255,15 +255,16 @@ public class Font {
             }
             
             float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
-            if(style != null) {
+            /*if(style != null) {
                 DisplayMeta dmeta = style.applyCharacter(i, textLength);
                 if(dmeta != null) {
                     aX = dmeta.offX;
                     aY = dmeta.offY;
                     aScaleX = dmeta.scaleX;
                     aScaleY = dmeta.scaleY;
+                    System.out.println(dmeta.toString());
                 }
-            }
+            }*/
             
             float iScaleX = scaleX * aScaleX;
             float iScaleY = scaleY * aScaleY;
@@ -289,12 +290,11 @@ public class Font {
     
     private void writeCharacter(Sprite charSprite, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
         MultiRenderer renderer = Undertailor.getRenderer();
-        Color used = color == null ? Color.WHITE : color;
-        float old = used.a;
-        used.a = alpha;
-        renderer.setBatchColor(used);
-        used.a = old;
+        Color used = color == null ? Color.YELLOW : color;
+        Color old = renderer.getBatchColor();
+        renderer.setBatchColor(used, alpha);
         charSprite.draw(posX, posY, scaleX, scaleY, 0F, false, false, charSprite.getTextureRegion().getRegionWidth(), charSprite.getTextureRegion().getRegionHeight(), true);
+        renderer.setBatchColor(old, old.a);
     }
     
     public void fontTest(int posX, int posY, int scale) {
@@ -308,7 +308,7 @@ public class Font {
         }
         
         MultiRenderer renderer = Undertailor.getRenderer();
-        renderer.setShapeColor(new Color(1F, 0F, 0F, 1F));
+        renderer.setShapeColor(new Color(1F, 0F, 0F, 1F), 1F);
         yPos.forEach(i -> {
             float y = i + (scale / 2.0F);
             renderer.drawLine(new Vector2(0, y), new Vector2(Gdx.graphics.getWidth(), y), scale);

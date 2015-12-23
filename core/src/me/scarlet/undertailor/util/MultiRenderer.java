@@ -1,8 +1,6 @@
 package me.scarlet.undertailor.util;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -57,7 +55,7 @@ public class MultiRenderer {
         }
         
         if(!batch.isDrawing()) {
-            batch.enableBlending();
+            //batch.enableBlending();
             batch.begin();
         }
     }
@@ -98,7 +96,8 @@ public class MultiRenderer {
         return batch.getColor();
     }
     
-    public void setBatchColor(Color color) {
+    public void setBatchColor(Color color, float alpha) {
+        color.a = alpha;
         batch.setColor(color);
     }
     
@@ -148,8 +147,8 @@ public class MultiRenderer {
         }
         
         if(!renderer.isDrawing()) {
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            //Gdx.gl.glEnable(GL20.GL_BLEND);
+            //Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             renderer.setAutoShapeType(true);
             renderer.begin(ShapeType.Filled);
         }
@@ -175,7 +174,8 @@ public class MultiRenderer {
         return renderer.getColor();
     }
     
-    public void setShapeColor(Color color) {
+    public void setShapeColor(Color color, float alpha) {
+        color.a = alpha;
         renderer.setColor(color);
     }
     
@@ -228,5 +228,25 @@ public class MultiRenderer {
         }
         
         renderer.circle(x, y, radius);
+    }
+    
+    public void drawTriangle(Vector2 vx1, Vector2 vx2, Vector2 vx3, float lineThickness) {
+        this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Filled) {
+            renderer.set(ShapeType.Filled);
+        }
+        
+        this.drawLine(vx1, vx2, lineThickness);
+        this.drawLine(vx2, vx3, lineThickness);
+        this.drawLine(vx3, vx1, lineThickness);
+    }
+    
+    public void drawFilledTriangle(Vector2 vx1, Vector2 vx2, Vector2 vx3) {
+        this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Filled) {
+            renderer.set(ShapeType.Filled);
+        }
+        
+        renderer.triangle(vx1.x, vx1.y, vx2.x, vx2.y, vx3.x, vx3.y);
     }
 }

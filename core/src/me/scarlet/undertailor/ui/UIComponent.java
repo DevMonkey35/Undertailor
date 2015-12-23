@@ -69,7 +69,7 @@ public abstract class UIComponent {
         if(parent == null) {
             return getPosition();
         } else {
-            return parent.getPosition().add(position);
+            return new Vector2(parent.getPosition()).add(position);
         }
     }
     

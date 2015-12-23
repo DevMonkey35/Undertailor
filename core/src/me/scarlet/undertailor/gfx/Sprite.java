@@ -1,7 +1,11 @@
 package me.scarlet.undertailor.gfx;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.util.MultiRenderer;
 
 public class Sprite {
     
@@ -75,6 +79,7 @@ public class Sprite {
     }
     
     public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY, int sizeX, int sizeY, boolean ensureBottomLeft) { // for texts
+        
         float originX = 0, originY = 0;
         int offX = 0, offY = 0;
         if(meta != null) {

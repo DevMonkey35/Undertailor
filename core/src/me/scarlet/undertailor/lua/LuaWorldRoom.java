@@ -3,6 +3,7 @@ package me.scarlet.undertailor.lua;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
+import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.overworld.WorldRoom;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -13,6 +14,7 @@ import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 public class LuaWorldRoom extends LuaTable {
@@ -22,12 +24,14 @@ public class LuaWorldRoom extends LuaTable {
     
     public static final String IMPLMETHOD_CREATE = "create";
     public static final String IMPLMETHOD_PROCESS = "process";
+    public static final String IMPLMETHOD_ONPAUSE = "onPause";
+    public static final String IMPLMETHOD_ONRESUME = "onResume";
     public static final String IMPLMETHOD_ONRENDER = "onRender";
     public static final String IMPLMETHOD_ONENTER = "onEnter";
     public static final String IMPLMETHOD_ONEXIT = "onExit";
     
     public static String[] REQUIRED_METHODS = new String[] {IMPLMETHOD_CREATE};
-    public static String[] METHODS = new String[] {IMPLMETHOD_CREATE, IMPLMETHOD_PROCESS, IMPLMETHOD_ONRENDER, IMPLMETHOD_ONENTER, IMPLMETHOD_ONEXIT};
+    public static String[] METHODS = new String[] {IMPLMETHOD_CREATE, IMPLMETHOD_PROCESS, IMPLMETHOD_ONRENDER, IMPLMETHOD_ONENTER, IMPLMETHOD_ONEXIT, IMPLMETHOD_ONPAUSE, IMPLMETHOD_ONRESUME};
     
     static {
         LuaWorldRoomMeta.prepareMetatable();
@@ -46,7 +50,12 @@ public class LuaWorldRoom extends LuaTable {
         public LuaRoomImpl(LuaWorldRoom parent, RoomDataWrapper map) throws LuaScriptException {
             super(map.getRoomScript().getName().split("\\.")[0], map);
             Globals globals = Undertailor.newGlobals();
-            globals.loadfile(map.getRoomScript().getAbsolutePath()).invoke();
+            try {
+                LuaUtil.loadFile(globals, map.getRoomScript());
+            } catch(FileNotFoundException e) {
+                Undertailor.instance.error(StyleManager.MANAGER_TAG, "failed to load style: file " + map.getRoomScript().getAbsolutePath() + " wasn't found");
+            }
+            
             functions = LuaUtil.checkImplementation(globals, map.getRoomScript(), REQUIRED_METHODS);
         }
         
@@ -66,6 +75,30 @@ public class LuaWorldRoom extends LuaTable {
         public void onProcess(float delta, InputData input) {
             if(functions.containsKey(IMPLMETHOD_PROCESS)) {
                 functions.get(IMPLMETHOD_PROCESS).call(LuaValue.valueOf(delta), new LuaInputData(input));
+            }
+        }
+        
+        @Override
+        public void onEnter(Entrypoint entrypoint) {
+            // TODO entrypoint lua
+        }
+        
+        @Override
+        public void onExit(Entrypoint entrypoint) {
+            // TODO entrypoint lua
+        }
+        
+        @Override
+        public void onPause() {
+            if(functions.containsKey(IMPLMETHOD_ONPAUSE)) {
+                functions.get(IMPLMETHOD_ONPAUSE).call();
+            }
+        }
+        
+        @Override
+        public void onResume() {
+            if(functions.containsKey(IMPLMETHOD_ONRESUME)) {
+                functions.get(IMPLMETHOD_ONRESUME).call();
             }
         }
     }

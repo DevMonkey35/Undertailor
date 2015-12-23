@@ -5,9 +5,7 @@ import com.badlogic.gdx.math.Polygon;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public class CollisionHandler {
@@ -38,15 +36,5 @@ public class CollisionHandler {
         }
         
         return RETURN_MAP;
-    }
-    
-    public void postProcess(Map<Collider, Set<Collider>> collisionMap) {
-        Iterator<Entry<Collider, Set<Collider>>> iterator = collisionMap.entrySet().iterator();
-        iterator.forEachRemaining(entry -> {
-            for(Collider collider : entry.getValue()) {
-                collider.onCollide(entry.getKey());
-                entry.getKey().onCollide(collider);
-            }
-        });
     }
 }

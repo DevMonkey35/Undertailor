@@ -33,6 +33,10 @@ public class TextComponent {
             this.scaleY = scaleX;
             this.color = color;
         }
+        
+        public String toString() {
+            return "[" + offX + ", " + offY + ", " + scaleX + ", " + scaleY + "]";
+        }
     }
     
     public static class Text extends TextComponent {

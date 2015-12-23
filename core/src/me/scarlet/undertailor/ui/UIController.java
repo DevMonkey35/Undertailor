@@ -108,7 +108,9 @@ public class UIController {
             for(Entry<Integer, UIObject> entry : uis.entrySet()) {
                 UIObject object = entry.getValue();
                 if(!object.isHeadless()) {
-                    active = object;
+                    if(active == null) {
+                        active = object;
+                    }
                 } else {
                     consumer.accept(object);
                 }

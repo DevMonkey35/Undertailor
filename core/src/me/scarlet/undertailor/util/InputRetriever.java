@@ -66,19 +66,11 @@ public class InputRetriever implements InputProcessor {
             return TimeUtils.timeSinceMillis(lastReleaseTime);
         }
         
-        /**
-         * Returns whether or not the given key was pressed in the last frame,
-         * but is released in the current frame.
-         */
         public boolean justReleased(float time) {
             long msTime = (long) (1000.0 * time);
             return this.lastReleaseTime >= 0 && this.getLastReleaseTime() < msTime;
         }
         
-        /**
-         * Returns whether or not the given key was released in the last frame,
-         * but is pressed in the current frame.
-         */
         public boolean justPressed(float time) {
             long msTime = (long) (1000.0 * time);
             return this.lastPressTime >= 0 && this.getLastPressTime() < msTime;

@@ -1,6 +1,8 @@
 package me.scarlet.undertailor.util;
 
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
+import me.scarlet.undertailor.manager.StyleManager;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaError;
@@ -13,6 +15,8 @@ import org.luaj.vm2.lib.BaseLib;
 import org.luaj.vm2.lib.jse.JseBaseLib;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -65,7 +69,6 @@ public class LuaUtil {
         }
         
         Map<String, LuaFunction> functions = new HashMap<>();
-        String filepath = scriptFile.getAbsolutePath();
         if(globals == null) {
             globals = new Globals();
             BaseLib base = new JseBaseLib();
@@ -73,11 +76,15 @@ public class LuaUtil {
             LuaC.install(globals);
             globals.baselib = base;
             globals.finder = base;
-            globals.loadfile(filepath);
+            try {
+                LuaUtil.loadFile(globals, scriptFile);
+            } catch(FileNotFoundException e) {
+                Undertailor.instance.error(StyleManager.MANAGER_TAG, "failed to load style: file " + scriptFile.getAbsolutePath() + " wasn't found");
+            }
         }
         
         iterateTable(globals, entry -> {
-            if(entry.arg(2).tojstring().startsWith("function: @" + filepath)) {
+            if(entry.arg(2).tojstring().startsWith("function: @")) {
                 functions.put(entry.arg(1).tojstring(), entry.arg(2).checkfunction());
             }
         });
@@ -89,5 +96,15 @@ public class LuaUtil {
         if(args.narg() < min || (max <= 0 ? false : args.narg() > max)) {
             throw new LuaError("arguments insufficient or overflowing (min " + min + (max <= 0 ? ")" : " max " + max + ")"));
         }
+    }
+    
+    public static void loadFile(Globals loader, File scriptFile) throws FileNotFoundException {
+        InputStream stream = loader.finder.findResource(scriptFile.getAbsolutePath());
+        if(stream == null) {
+            throw new FileNotFoundException(scriptFile.getAbsolutePath());
+        }
+        
+        String chunkname = "@" + scriptFile.getName();
+        loader.load(stream, chunkname, "bt", loader).invoke();
     }
 }

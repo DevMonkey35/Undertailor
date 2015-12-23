@@ -16,4 +16,19 @@ public class MapUtil {
         //System.out.println("returned a last entry " + last);
         return last;
     }
+    
+    public static <T1, T2> Entry<T1, T2> getByIndex(Map<T1, T2> map, int index) {
+        Iterator<Entry<T1, T2>> iterator = map.entrySet().iterator();
+        int currentIndex = 0;
+        while(iterator.hasNext()) {
+            Entry<T1, T2> entry = iterator.next();
+            if(currentIndex == index) {
+                return entry;
+            }
+            
+            currentIndex++;
+        }
+        
+        return null;
+    }
 }

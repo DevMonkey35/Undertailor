@@ -3,6 +3,7 @@ package me.scarlet.undertailor.lua;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIComponentMeta;
+import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.ui.UIComponent;
 import me.scarlet.undertailor.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
@@ -15,6 +16,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 public class LuaUIComponent extends LuaTable {
@@ -49,7 +51,12 @@ public class LuaUIComponent extends LuaTable {
         public LuaUIComponentImpl(File luaFile) throws LuaScriptException {
             this.typename = luaFile.getName().split("\\.")[0];
             Globals globals = Undertailor.newGlobals();
-            globals.loadfile(luaFile.getAbsolutePath()).invoke();
+            try {
+                LuaUtil.loadFile(globals, luaFile);
+            } catch(FileNotFoundException e) {
+                Undertailor.instance.error(StyleManager.MANAGER_TAG, "failed to load style: file " + luaFile.getAbsolutePath() + " wasn't found");
+            }
+            
             functions = LuaUtil.checkImplementation(globals, luaFile, REQUIRED_METHODS);
         }
         

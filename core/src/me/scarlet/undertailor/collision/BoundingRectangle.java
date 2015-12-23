@@ -2,6 +2,7 @@ package me.scarlet.undertailor.collision;
 
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import me.scarlet.undertailor.Undertailor;
 
 public class BoundingRectangle {
     
@@ -91,5 +92,25 @@ public class BoundingRectangle {
     
     public Polygon getPolygon() {
         return poly;
+    }
+    
+    public void renderBox() {
+        float[] vertices = this.getVertices();
+        Vector2 lastVertex = null;
+        Vector2 firstVertex = null;
+        for(int i = 0; i < 4; i++) {
+            Vector2 vertex = new Vector2(vertices[i * 2], vertices[i * 2 + 1]);
+            if(firstVertex == null) {
+                firstVertex = vertex;
+            }
+            
+            if(lastVertex != null) {
+                Undertailor.getRenderer().drawLine(lastVertex, vertex, 0.5F);
+            }
+            
+            lastVertex = vertex;
+        }
+        
+        Undertailor.getRenderer().drawLine(lastVertex, firstVertex, 0.5F);
     }
 }

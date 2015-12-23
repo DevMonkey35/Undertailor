@@ -33,7 +33,7 @@ public class ActionPlayText extends Action {
     @Override
     public boolean act(float delta) {
         boolean waitTimeDone = lastTextTime == -1 || TimeUtils.timeSinceMillis(lastTextTime + waitBetween) > 0;
-        boolean lastTextDone = currentText == null || currentChar == this.getTextMax(currentText);
+        boolean lastTextDone = currentText == null || currentChar == currentText.getText().length();
         if(waitTimeDone && lastTextDone) {
             ctid++;
             if(ctid < texts.size() && texts.get(ctid) != null) {
@@ -54,7 +54,7 @@ public class ActionPlayText extends Action {
         
         if(!lastTextDone) {
             Text toDraw = currentText.substring(0, currentChar + 1);
-            if(canWriteCharacter(toDraw) && currentChar + 1 <= this.getTextMax(currentText)) {
+            if(canWriteCharacter(toDraw) && currentChar + 1 <= currentText.getText().length()) {
                 if(currentText.substring(0, currentChar).getText().endsWith(" ")) {
                     actor.getDrawn().put(ctid, currentText.substring(0, currentChar + 2));
                     currentChar += 2;
@@ -64,7 +64,7 @@ public class ActionPlayText extends Action {
                 }
                 
                 Sound sound = currentText.getComponentAtCharacter(currentChar).getSound();
-                if(sound != null && currentChar != this.getTextMax(currentText)) {
+                if(sound != null && currentChar != currentText.getText().length()) {
                     sound.play();
                 }
                 
@@ -73,10 +73,6 @@ public class ActionPlayText extends Action {
         }
         
         return false;
-    }
-    
-    public boolean isControlled() {
-        return this.controlled;
     }
     
     public boolean isWaiting() {
@@ -91,7 +87,7 @@ public class ActionPlayText extends Action {
         int lastIndex = texts.size() - 1;
         this.ctid = texts.size();
         this.currentText = texts.get(lastIndex);
-        this.currentChar = this.getTextMax(currentText);
+        this.currentChar = currentText.getText().length();
     }
     
     private boolean canWriteCharacter(Text toDraw) {
@@ -124,9 +120,5 @@ public class ActionPlayText extends Action {
         }
         
         return returned;
-    }
-    
-    private int getTextMax(Text text) {
-        return text.getText().length();
     }
 }

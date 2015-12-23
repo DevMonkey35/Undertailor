@@ -127,7 +127,7 @@ public class BaseLib extends TwoArgFunction {
                 globals.set(libName, table);
             }
             
-            globals.load(input, "@" + file.getAbsolutePath(), "bt", table).invoke();
+            globals.load(input, "@" + file.getName(), "bt", table).invoke();
             return table;
         } catch(Exception e) {
             throw e;

@@ -1,5 +1,6 @@
 package me.scarlet.undertailor.gfx;
 
+import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.KeyFrame.FrameObjectMeta;
 import me.scarlet.undertailor.gfx.KeyFrame.SimpleKeyFrame;
@@ -58,8 +59,7 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
 
     @Override
     public SimpleKeyFrame getFrame(long stateTime) {
-        long time = stateTime - this.getStartTime();
-        
+        long time = stateTime;
         Entry<Long, SimpleKeyFrame> last = MapUtil.getLastEntry(frames);
         if(time > last.getKey()) {
             if(this.isLooping()) {
@@ -90,8 +90,8 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     }
     
     @Override
-    public void drawCurrentFrame(long stateTime, float posX, float posY, float scale, float rotation) {
-        SimpleKeyFrame frame = this.getFrame(stateTime);
+    public void drawCurrentFrame(float posX, float posY, float scale, float rotation) {
+        SimpleKeyFrame frame = this.getFrame(this.getStartTime() == -1 ? 0 : TimeUtils.timeSinceMillis(this.getStartTime()));
         if(frame == null) {
             return;
         }

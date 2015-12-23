@@ -7,8 +7,14 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.BoundingRectangle;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.gfx.Animation;
+import me.scarlet.undertailor.gfx.KeyFrame;
+import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.MapUtil;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract class WorldObject implements Collider {
 
@@ -27,21 +33,24 @@ public abstract class WorldObject implements Collider {
     private int z;
     private float scale;
     private boolean isSolid;
+    private boolean persists;
     private boolean isVisible;
     private boolean canCollide;
     private boolean focusCollide;
     private Animation<?> animation;
     private AnimationSetWrapper animSet;
+    private Vector2 velocity;
     private Vector2 position;
     private float rotation;
     
     private BoundingRectangle boundingBox;
     
-    protected int id;
+    protected long id;
     protected WorldRoom room;
     
     public WorldObject() {
         this.boundingBox = new BoundingRectangle();
+        this.velocity = new Vector2();
         this.position = new Vector2();
         this.focusCollide = false;
         this.canCollide = true;
@@ -55,7 +64,7 @@ public abstract class WorldObject implements Collider {
         this.z = 0;
     }
     
-    public int getId() {
+    public long getId() {
         return id;
     }
     
@@ -76,6 +85,15 @@ public abstract class WorldObject implements Collider {
         this.boundingBox.setScale(scale);
     }
     
+    public boolean isPersisting() {
+        return persists;
+    }
+    
+    public void setPersisting(boolean flag) {
+        this.persists = flag;
+    }
+    
+    @Override
     public boolean isSolid() {
         return isSolid;
     }
@@ -84,6 +102,7 @@ public abstract class WorldObject implements Collider {
         this.isSolid = flag;
     }
     
+    @Override
     public boolean focusCollide() {
         return focusCollide;
     }
@@ -92,6 +111,7 @@ public abstract class WorldObject implements Collider {
         this.focusCollide = flag;
     }
     
+    @Override
     public boolean canCollide() {
         return canCollide;
     }
@@ -116,6 +136,14 @@ public abstract class WorldObject implements Collider {
         this.isVisible = flag;
     }
     
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+    
+    public void setVelocity(float x, float y) {
+        this.velocity.set(x, y);
+    }
+    
     public Vector2 getPosition() {
         return position;
     }
@@ -129,7 +157,7 @@ public abstract class WorldObject implements Collider {
         return animation;
     }
     
-    public void setCurrentAnimation(AnimationSetWrapper set, Animation<?> animation) {
+    public void setCurrentAnimation(AnimationSetWrapper set, Animation<?> animation, int startFrame) {
         if(!set.equals(animSet)) {
             if(this.animSet != null) {
                 this.animSet.removeReference(this);
@@ -142,8 +170,18 @@ public abstract class WorldObject implements Collider {
         }
         
         this.animation = animation;
+        if(animation != null) {
+            if(startFrame != 0 && startFrame > 0) {
+                Map<Long, ? extends KeyFrame> frames = animation.getFrames();
+                Entry<Long, ? extends KeyFrame> entry = MapUtil.getByIndex(frames, startFrame > frames.size() - 1 ? frames.size() - 1 : startFrame);
+                animation.start(TimeUtils.millis() - entry.getKey() + entry.getValue().getFrameTime() - 1);
+            } else {
+                animation.start(TimeUtils.millis());
+            }
+        }
     }
     
+    @Override
     public BoundingRectangle getBoundingBox() {
         return boundingBox;
     }
@@ -160,40 +198,26 @@ public abstract class WorldObject implements Collider {
     public void render() {
         onRender();
         if(animation != null && isVisible) {
-            long stateTime = TimeUtils.timeSinceMillis(animation.getStartTime());
-            animation.drawCurrentFrame(stateTime, position.x, position.y, scale, rotation);
+            animation.drawCurrentFrame(position.x, position.y, scale, rotation);
         }
     }
     
     public void renderBox() {
         if(canCollide) {
-            Undertailor.getRenderer().setShapeColor(BOX_COLOR);
+            Undertailor.getRenderer().setShapeColor(BOX_COLOR, 1F);
         } else {
-            Undertailor.getRenderer().setShapeColor(BOX_COLOR_INACTIVE);
+            Undertailor.getRenderer().setShapeColor(BOX_COLOR_INACTIVE, 1F);
         }
         
-        float[] vertices = boundingBox.getVertices();
-        Vector2 lastVertex = null;
-        Vector2 firstVertex = null;
-        for(int i = 0; i < 4; i++) {
-            Vector2 vertex = new Vector2(vertices[i * 2], vertices[i * 2 + 1]);
-            if(firstVertex == null) {
-                firstVertex = vertex;
-            }
-            
-            if(lastVertex != null) {
-                Undertailor.getRenderer().drawLine(lastVertex, vertex, 0.5F);
-            }
-            
-            lastVertex = vertex;
-        }
-        
-        Undertailor.getRenderer().drawLine(lastVertex, firstVertex, 0.5F);
+        this.boundingBox.renderBox();
     }
     
+    public void onPause() {}
+    public void onResume() {}
     public void onRender() {}
     public void onDestroy() {}
+    public void onPersist(WorldRoom newRoom, Entrypoint entrypoint) {}
     public void process(float delta, InputData input) {}
-    public void onCollide(Collider collider) {}
+    @Override public void onCollide(Collider collider) {}
     public abstract String getObjectName();
 }

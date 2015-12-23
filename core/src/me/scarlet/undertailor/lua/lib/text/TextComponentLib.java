@@ -5,10 +5,12 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaColor;
 import me.scarlet.undertailor.lua.LuaSound;
 import me.scarlet.undertailor.lua.LuaStyle;
+import me.scarlet.undertailor.lua.LuaText;
 import me.scarlet.undertailor.lua.LuaTextComponent;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent;
+import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaError;
@@ -52,7 +54,7 @@ public class TextComponentLib extends TwoArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             // text.component.newComponent(text, fontName, styleName, color, soundName, speed, waitTime)
-            if(args.narg() < 1 || args.narg() > 8) {
+            if(args.narg() < 1 || args.narg() > 7) {
                 throw new LuaError("arguments insufficient or overflowing (min 1, max 8)");
             }
             
@@ -151,11 +153,18 @@ public class TextComponentLib extends TwoArgFunction {
             LuaTextComponent component = LuaTextComponent.checkTextComponent(arg1);
             int bound1 = arg2.checkint();
             int bound2 = arg3.isnil() ? -1 : arg3.checkint();
+            TextComponent returned;
             
             if(bound2 > 0) {
-                return new LuaTextComponent(component.getTextComponent().substring(bound1, bound2));
+                returned = component.getTextComponent().substring(bound1, bound2);
             } else {
-                return new LuaTextComponent(component.getTextComponent().substring(bound1));
+                returned = component.getTextComponent().substring(bound1);
+            }
+            
+            if(returned instanceof Text) {
+                return new LuaText((Text) returned);
+            } else {
+                return new LuaTextComponent(returned);
             }
         }
     }
