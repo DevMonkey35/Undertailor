@@ -74,7 +74,9 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     @Override
     public void setPitch(float pitch) {
         this.pitch = NumberUtil.boundFloat(pitch, 0.5F, 2.0F);
-        AL10.alSourcef(((OpenALMusic) this.getReference()).getSourceId(), AL10.AL_PITCH, this.pitch);
+        if(this.getReference().isPlaying()) {
+            AL10.alSourcef(((OpenALMusic) this.getReference()).getSourceId(), AL10.AL_PITCH, this.pitch);
+        }
     }
     
     @Override
@@ -130,8 +132,9 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
             this.getReference().setOnCompletionListener(null);
         } else {
             this.getReference().setOnCompletionListener(music -> {
-                music.setPosition(loopPoint);
                 music.play();
+                music.setPosition(loopPoint);
+                AL10.alSourcef(((OpenALMusic) music).getSourceId(), AL10.AL_PITCH, this.pitch);
             });
         }
     }
