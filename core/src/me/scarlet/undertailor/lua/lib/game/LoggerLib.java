@@ -2,6 +2,7 @@ package me.scarlet.undertailor.lua.lib.game;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
@@ -9,11 +10,14 @@ import org.luaj.vm2.Varargs;
 
 public class LoggerLib extends LuaLibrary {
     
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new log(),
+            new warn(),
+            new error()
+    };
+    
     public LoggerLib() {
-        super("logger",
-                new log(),
-                new warn(),
-                new error());
+        super("logger", COMPONENTS);
     }
     
     static class log extends LibraryFunction {

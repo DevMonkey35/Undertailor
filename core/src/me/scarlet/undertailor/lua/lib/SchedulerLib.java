@@ -3,6 +3,7 @@ package me.scarlet.undertailor.lua.lib;
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.scheduler.LuaTask;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaTable;
@@ -11,12 +12,15 @@ import org.luaj.vm2.Varargs;
 
 public class SchedulerLib extends LuaLibrary {
     
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new registerTask(),
+            new cancelTask(),
+            new millis(),
+            new sinceMillis()
+    }; 
+    
     public SchedulerLib() {
-        super("scheduler",
-                new registerTask(),
-                new cancelTask(),
-                new millis(),
-                new sinceMillis());
+        super("scheduler", COMPONENTS);
     }
     
     static class registerTask extends LibraryFunction {

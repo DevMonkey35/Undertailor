@@ -3,6 +3,7 @@ package me.scarlet.undertailor.lua.lib.game;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.manager.ScriptManager;
@@ -16,28 +17,31 @@ import org.luaj.vm2.Varargs;
 
 public class OverworldLib extends LuaLibrary {
     
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new newWorldRoom(),
+            new newWorldObject(),
+            new isRendering(),
+            new setRendering(),
+            new isProcessing(),
+            new setProcessing(),
+            new isRenderingHitboxes(),
+            new setRenderingHitboxes(),
+            new getCameraPosition(),
+            new setCameraPosition(),
+            new getCameraZoom(),
+            new setCameraZoom(),
+            new getCurrentRoom(),
+            new setCurrentRoom(),
+            new getCharacterID(),
+            new setCharacterID(),
+            new setEntryTransition(),
+            new setExitTransition(),
+            new isCameraFixing(),
+            new setCameraFixing()
+    };
+    
     public OverworldLib() {
-        super("overworld",
-                new newWorldRoom(),
-                new newWorldObject(),
-                new isRendering(),
-                new setRendering(),
-                new isProcessing(),
-                new setProcessing(),
-                new isRenderingHitboxes(),
-                new setRenderingHitboxes(),
-                new getCameraPosition(),
-                new setCameraPosition(),
-                new getCameraZoom(),
-                new setCameraZoom(),
-                new getCurrentRoom(),
-                new setCurrentRoom(),
-                new getCharacterID(),
-                new setCharacterID(),
-                new setEntryTransition(),
-                new setExitTransition(),
-                new isCameraFixing(),
-                new setCameraFixing());
+        super("overworld", COMPONENTS);
     }
     
     static class newWorldRoom extends LibraryFunction {

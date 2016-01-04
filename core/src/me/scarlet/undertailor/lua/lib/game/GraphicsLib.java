@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.util.NumberUtil;
@@ -12,19 +13,22 @@ import org.luaj.vm2.Varargs;
 
 public class GraphicsLib extends LuaLibrary {
     
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new getSpriteColor(),
+            new setSpriteColor(),
+            new getShapeColor(),
+            new setShapeColor(),
+            new drawLine(),
+            new drawRectangle(),
+            new drawFilledRectangle(),
+            new drawCircle(),
+            new drawFilledCircle(),
+            new drawTriangle(),
+            new drawFilledTriangle()
+    };
+    
     public GraphicsLib() {
-        super("graphics",
-                new getSpriteColor(),
-                new setSpriteColor(),
-                new getShapeColor(),
-                new setShapeColor(),
-                new drawLine(),
-                new drawRectangle(),
-                new drawFilledRectangle(),
-                new drawCircle(),
-                new drawFilledCircle(),
-                new drawTriangle(),
-                new drawFilledTriangle());
+        super("graphics", COMPONENTS);
     }
     
     static class getSpriteColor extends LibraryFunction {

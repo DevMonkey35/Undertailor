@@ -1,6 +1,7 @@
 package me.scarlet.undertailor.lua.lib;
 
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -9,10 +10,13 @@ import java.util.Random;
 
 public class UtilLib extends LuaLibrary {
     
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new randomDouble(),
+            new trim()
+    };
+    
     public UtilLib() {
-        super("util",
-                new randomDouble(),
-                new trim());
+        super("util", COMPONENTS);
     }
     
     static class randomDouble extends LibraryFunction { // temporary for a script test

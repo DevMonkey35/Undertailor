@@ -2,6 +2,7 @@ package me.scarlet.undertailor.lua.lib.game;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIObjectMeta;
 import me.scarlet.undertailor.ui.UIObject;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -11,13 +12,16 @@ import org.luaj.vm2.Varargs;
 
 public class UILib extends LuaLibrary {
     
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new newComponent(),
+            new newObject(),
+            new registerObject(),
+            new getObject(),
+            new destroyObject()
+    };
+    
     public UILib() {
-        super("ui",
-                new newComponent(),
-                new newObject(),
-                new registerObject(),
-                new getObject(),
-                new destroyObject());
+        super("ui", COMPONENTS);
     }
     
     static class newComponent extends LibraryFunction {
