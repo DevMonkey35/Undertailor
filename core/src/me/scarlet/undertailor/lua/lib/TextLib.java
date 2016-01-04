@@ -7,6 +7,7 @@ import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
 import me.scarlet.undertailor.lua.lib.text.TextComponentLib;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Style;
@@ -51,9 +52,9 @@ public class TextLib extends LuaLibrary {
             
             float offX = new Float(args.optdouble(1, 0F));
             float offY = new Float(args.optdouble(2, 0F));
-            float scaleX = new Float(args.optdouble(1, 1F));
-            float scaleY = new Float(args.optdouble(1, 1F));
-            Color color = args.arg(5).isnil() ? Color.WHITE : ColorsLib.check(args.arg(5)).getObject();
+            float scaleX = new Float(args.optdouble(3, 1F));
+            float scaleY = new Float(args.optdouble(4, 1F));
+            Color color = args.arg(5).isnil() ? null : ColorsLib.check(args.arg(5)).getObject();
             
             if(scaleX < 0F) {
                 scaleX = 0F;
@@ -63,7 +64,7 @@ public class TextLib extends LuaLibrary {
                 scaleY = 0F;
             }
             
-            return LuaObjectValue.of(new DisplayMeta(offX, offY, scaleX, scaleY, color), Lua.TYPENAME_DISPLAYMETA);
+            return LuaStyleMeta.createDisplayMeta(new DisplayMeta(offX, offY, scaleX, scaleY, color));
         }
     }
     
@@ -72,8 +73,8 @@ public class TextLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 7);
             
-            Font font = Undertailor.getFontManager().getRoomObject(args.checkjstring(1));
-            Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getRoomObject(args.arg(2).checkjstring());
+            Font font = Undertailor.getFontManager().getStyle(args.checkjstring(1));
+            Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getStyle(args.arg(2).checkjstring());
             Color color = args.isnil(3) ? null : ColorsLib.check(args.arg(3)).getObject();
             SoundWrapper sound = args.arg(4).isnil() ? null : Undertailor.getAudioManager().getSoundManager().getResource(args.arg(4).checkstring().tojstring());
             int speed = args.optint(5, TextComponent.DEFAULT_SPEED);

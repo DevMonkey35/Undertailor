@@ -1,6 +1,8 @@
 package me.scarlet.undertailor.manager;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.exception.LuaScriptException;
+import me.scarlet.undertailor.lua.impl.StyleImplementable;
 import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.util.LuaUtil;
 
@@ -50,15 +52,16 @@ public class StyleManager extends Manager<Style> {
             String styleName = heading + (heading.isEmpty() ? "" : ".") + file.getName().substring(0, file.getName().length() - 4);
             Undertailor.instance.debug("styleman", "loading lua style " + styleName);
             try {
-                //styles.put(styleName, new LuaStyle(file));
+                styles.put(styleName, Undertailor.getScriptManager().generateImplementation(StyleImplementable.class, file));
+            } catch(LuaScriptException e) {
+                Undertailor.instance.error("styleman", "failed to load style: lua error: ", e);
             } catch(Exception e) {
-                Undertailor.instance.error("styleman", "failed to load style: " + e.getMessage());
-                Undertailor.instance.error("styleman", "failed to load style: lua error: " + LuaUtil.formatJavaException(e), e);
+                Undertailor.instance.error("styleman", "failed to load style: " + LuaUtil.formatJavaException(e), e);
             }
         }
     }
     
-    public Style getRoomObject(String name) {
+    public Style getStyle(String name) {
         if(styles.containsKey(name)) {
             return styles.get(name).duplicate();
         }

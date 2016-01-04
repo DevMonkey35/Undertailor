@@ -67,8 +67,8 @@ public class TextComponentLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 7);
             
             String text = args.arg(1).checkstring().tojstring();
-            Font font = args.arg(2).isnil() ? null : Undertailor.getFontManager().getRoomObject(args.arg(2).checkstring().tojstring());
-            Style style = args.arg(3).isnil() ? null : Undertailor.getStyleManager().getRoomObject(args.arg(3).checkstring().tojstring());
+            Font font = args.arg(2).isnil() ? null : Undertailor.getFontManager().getStyle(args.arg(2).checkstring().tojstring());
+            Style style = args.arg(3).isnil() ? null : Undertailor.getStyleManager().getStyle(args.arg(3).checkstring().tojstring());
             Color color = args.arg(4).isnil() ? null : ColorsLib.check(args.arg(4)).getObject();
             SoundWrapper sound = args.arg(5).isnil() ? null : Undertailor.getAudioManager().getSoundManager().getResource(args.arg(5).checkstring().tojstring());
             int speed = args.arg(6).isnil() ? TextComponent.DEFAULT_SPEED : args.arg(6).checkint();

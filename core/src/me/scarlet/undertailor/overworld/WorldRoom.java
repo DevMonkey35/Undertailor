@@ -86,7 +86,7 @@ public class WorldRoom implements Disposable {
                         String entrypoint = targetRoom.length > 1 ? targetRoom[1] : null;
                         try {
                             ScriptManager scriptMan = Undertailor.getScriptManager();
-                            WorldRoom room = scriptMan.getImplementable(WorldRoomImplementable.class).load(Undertailor.getRoomManager().getRoomObject(targetRoom[0]), scriptMan.generateGlobals());
+                            WorldRoom room = scriptMan.getImplementable(WorldRoomImplementable.class).load(Undertailor.getRoomManager().getStyle(targetRoom[0]), scriptMan.generateGlobals());
                             Undertailor.getOverworldController().setCurrentRoom(room, true, id, entrypoint);
                         } catch(LuaScriptException e) {
                             Undertailor.instance.error("overworld", "entrypoint with id " + id + " failed to process room switch: could not load target room " + targetRoom[0]);

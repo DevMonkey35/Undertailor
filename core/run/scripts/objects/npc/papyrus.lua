@@ -40,7 +40,7 @@ function dialog(count)
 	texts = {}
 	if(count == 1) then
 		texts[1] = {
-			text.newText("8bitop", nil, nil, "ds_ovw"):addComponents(
+			text.newText("8bitop", "swimmyworm", nil, "ds_ovw"):addComponents(
 				text.component.newComponent("*WHAT IF SANS IS GASTER"))
 		}
 		

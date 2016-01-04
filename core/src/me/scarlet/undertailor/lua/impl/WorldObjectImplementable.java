@@ -24,14 +24,14 @@ import java.util.Map;
 
 public class WorldObjectImplementable implements LuaImplementable<File, WorldObjectImplementation> {
     
-    public static final String IMPLFUNCTION_CREATE = "create";         // create(obj, ...)
-    public static final String IMPLFUNCTION_PROCESS = "process";       // process(delta, input)
-    public static final String IMPLFUNCTION_ONPAUSE = "onPause";       // onPause()
-    public static final String IMPLFUNCTION_ONRESUME = "onResume";     // onResume()
-    public static final String IMPLFUNCTION_ONRENDER = "onRender";     // onRender()
-    public static final String IMPLFUNCTION_ONPERSIST = "onPersist";   // onPersist()
-    public static final String IMPLFUNCTION_ONCOLLIDE = "onCollide";   // onCollide(object)
-    public static final String IMPLFUNCTION_ONINTERACT = "onInteract"; // onInteract(object)
+    public static final String IMPLFUNCTION_CREATE = "create";         // create(self, ...)
+    public static final String IMPLFUNCTION_PROCESS = "process";       // process(self, delta, input)
+    public static final String IMPLFUNCTION_ONPAUSE = "onPause";       // onPause(self)
+    public static final String IMPLFUNCTION_ONRESUME = "onResume";     // onResume(self)
+    public static final String IMPLFUNCTION_ONRENDER = "onRender";     // onRender(self)
+    public static final String IMPLFUNCTION_ONPERSIST = "onPersist";   // onPersist(self)
+    public static final String IMPLFUNCTION_ONCOLLIDE = "onCollide";   // onCollide(self, object)
+    public static final String IMPLFUNCTION_ONINTERACT = "onInteract"; // onInteract(self, object)
     
     public static final String[] REQUIRED_FUNCTIONS = {IMPLFUNCTION_CREATE};
     public static final String[] FUNCTIONS = {IMPLFUNCTION_CREATE, IMPLFUNCTION_PROCESS, IMPLFUNCTION_ONRENDER, IMPLFUNCTION_ONCOLLIDE, IMPLFUNCTION_ONINTERACT, IMPLFUNCTION_ONPERSIST, IMPLFUNCTION_ONPAUSE, IMPLFUNCTION_ONRESUME};

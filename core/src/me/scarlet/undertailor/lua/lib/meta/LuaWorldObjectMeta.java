@@ -170,7 +170,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             if(setName == null) {
                 object.setCurrentAnimation(null, null, 0);
             } else {
-                AnimationSetWrapper set = Undertailor.getAnimationManager().getRoomObject(setName);
+                AnimationSetWrapper set = Undertailor.getAnimationManager().getStyle(setName);
                 object.setCurrentAnimation(set, set.getReference().getAnimation(animName), frame);
             }
             

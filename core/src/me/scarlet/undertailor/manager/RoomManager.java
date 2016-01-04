@@ -72,7 +72,7 @@ public class RoomManager extends Manager<RoomDataWrapper> {
         }
     }
     
-    public RoomDataWrapper getRoomObject(String name) {
+    public RoomDataWrapper getStyle(String name) {
         if(rooms.containsKey(name)) {
             return rooms.get(name);
         }

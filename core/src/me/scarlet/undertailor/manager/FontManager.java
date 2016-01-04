@@ -94,7 +94,7 @@ public class FontManager extends Manager<Font> {
         }
     }
     
-    public Font getRoomObject(String name) {
+    public Font getStyle(String name) {
         if(fonts.containsKey(name)) {
             return fonts.get(name);
         }

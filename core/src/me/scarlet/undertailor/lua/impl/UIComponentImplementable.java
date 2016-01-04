@@ -103,14 +103,13 @@ public class UIComponentImplementable implements LuaImplementable<LoadData, UICo
             UIComponentImplementation impl = LuaImplementable.loadFile(this, loaded.scriptFile, globals, new UIComponentImplementation());
             this.onLoad(loaded, impl);
             return impl;
+        } catch(LuaScriptException e) {
+            throw e;
         } catch(Exception e) {
-            Exception thrown = e;
-            if(!(e instanceof LuaScriptException)) {
-                thrown = new LuaScriptException("internal error");
-                thrown.initCause(e);
-            }
+            LuaScriptException thrown = new LuaScriptException("internal error");
+            thrown.initCause(e);
             
-            throw (LuaScriptException) thrown;
+            throw thrown;
         }
     }
 }

@@ -80,7 +80,7 @@ public class TilemapManager extends Manager<TilemapWrapper> {
         }
     }
     
-    public TilemapWrapper getRoomObject(String name) {
+    public TilemapWrapper getStyle(String name) {
         if(tilemaps.containsKey(name)) {
             return tilemaps.get(name);
         }

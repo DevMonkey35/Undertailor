@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.audio.OpenALMusic;
 import me.scarlet.undertailor.util.NumberUtil;
 import me.scarlet.undertailor.wrappers.DisposableWrapper;
+import org.lwjgl.openal.AL10;
 
 import java.io.File;
 
@@ -67,10 +68,15 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     public float getPan() { return pan; }
     public void setPan(float pan) { this.pan = NumberUtil.boundFloat(pan, -1.0F, 1.0F); }
     public float getPitch() { return pitch; }
-    public void setPitch(float pitch) { this.pitch = NumberUtil.boundFloat(pitch, 0.5F, 2.0F); }
     public boolean isLooping() { return loopPoint >= 0; }
     public void setLoopPoint(float loopPoint) { this.loopPoint = loopPoint; }
 
+    @Override
+    public void setPitch(float pitch) {
+        this.pitch = NumberUtil.boundFloat(pitch, 0.5F, 2.0F);
+        AL10.alSourcef(((OpenALMusic) this.getReference()).getSourceId(), AL10.AL_PITCH, this.pitch);
+    }
+    
     @Override
     public float getPosition() {
         return this.getReference().getPosition();
@@ -102,10 +108,10 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     @Override
     public String play() {
         this.getReference().setPan(pan, getAffectedVolume());
-        ((OpenALMusic) this.getReference()).setPitch(pitch);
         updateLoop();
         
         this.getReference().play();
+        this.setPitch(this.pitch); // set after
         return id;
     }
 

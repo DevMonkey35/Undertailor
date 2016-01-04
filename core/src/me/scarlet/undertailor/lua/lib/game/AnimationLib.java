@@ -41,7 +41,7 @@ public class AnimationLib extends LuaLibrary {
             
             String setName = args.checkjstring(1);
             String animName = args.checkjstring(2);
-            AnimationSetWrapper wrapper = Undertailor.getAnimationManager().getRoomObject(setName);
+            AnimationSetWrapper wrapper = Undertailor.getAnimationManager().getStyle(setName);
             if(wrapper == null) {
                 return LuaValue.NIL;
             }
@@ -61,7 +61,7 @@ public class AnimationLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             Animation<?> animation = check(args.arg(1)).getObject();
-            Undertailor.getAnimationManager().getRoomObject(animation.getParentSet().getName()).getReference();
+            Undertailor.getAnimationManager().getStyle(animation.getParentSet().getName()).getReference();
             return LuaValue.valueOf(animation.getStartTime());
         }
     }
@@ -72,7 +72,7 @@ public class AnimationLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 2);
             
             Animation<?> animation = check(args.arg(1)).getObject();
-            Undertailor.getAnimationManager().getRoomObject(animation.getParentSet().getName()).getReference();
+            Undertailor.getAnimationManager().getStyle(animation.getParentSet().getName()).getReference();
             long startTime = args.isnil(2) ? TimeUtils.millis() : args.checklong(2);
             animation.start(startTime);
             return LuaValue.NIL;
@@ -85,7 +85,7 @@ public class AnimationLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             Animation<?> animation = check(args.arg(1)).getObject();
-            Undertailor.getAnimationManager().getRoomObject(animation.getParentSet().getName()).getReference();
+            Undertailor.getAnimationManager().getStyle(animation.getParentSet().getName()).getReference();
             animation.stop();
             return LuaValue.NIL;
         }
@@ -97,7 +97,7 @@ public class AnimationLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 3, 5);
             
             Animation<?> animation = check(args.arg(1)).getObject();
-            Undertailor.getAnimationManager().getRoomObject(animation.getParentSet().getName()).getReference();
+            Undertailor.getAnimationManager().getStyle(animation.getParentSet().getName()).getReference();
             float posX = new Float(args.checkdouble(2));
             float posY = new Float(args.checkdouble(3));
             System.out.println(posX + ", " + posY);

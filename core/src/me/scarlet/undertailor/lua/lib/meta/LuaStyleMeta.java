@@ -5,6 +5,7 @@ import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.texts.Style;
+import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -17,6 +18,10 @@ public class LuaStyleMeta extends LuaLibrary {
     
     public static LuaObjectValue<Style> create(Style style) {
         return LuaObjectValue.of(style, Lua.TYPENAME_STYLE, Lua.META_STYLE);
+    }
+    
+    public static LuaObjectValue<DisplayMeta> createDisplayMeta(DisplayMeta value) {
+        return LuaObjectValue.of(value, Lua.TYPENAME_DISPLAYMETA);
     }
     
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
@@ -37,7 +42,7 @@ public class LuaStyleMeta extends LuaLibrary {
             int charIndex = args.checkint(2);
             int textLength = args.checkint(3);
             
-            return LuaObjectValue.of(style.applyCharacter(charIndex, textLength), Lua.TYPENAME_DISPLAYMETA);
+            return createDisplayMeta(style.applyCharacter(charIndex, textLength));
         }
     }
     

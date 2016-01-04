@@ -67,7 +67,7 @@ public class AnimationManager extends Manager<AnimationSetWrapper> {
         }
     }
     
-    public AnimationSetWrapper getRoomObject(String name) {
+    public AnimationSetWrapper getStyle(String name) {
         if(animationMap.containsKey(name)) {
             return animationMap.get(name);
         }

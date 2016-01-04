@@ -95,6 +95,8 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
             WorldRoomImplementation impl = LuaImplementable.loadFile(this, scriptFile, globals, new WorldRoomImplementation(loaded));
             this.onLoad(loaded, impl);
             return impl;
+        } catch(LuaScriptException e) {
+            throw e;
         } catch(Exception e) {
             LuaScriptException thrown = new LuaScriptException("internal error");
             thrown.initCause(e);

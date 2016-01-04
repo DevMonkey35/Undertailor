@@ -23,7 +23,7 @@ public class TextComponent {
         public Color color;
         
         public DisplayMeta() {
-            this(0, 0, 1.0F, 1.0F, Color.WHITE);
+            this(0, 0, 1.0F, 1.0F, null);
         }
         
         public DisplayMeta(float offX, float offY, float scaleX, float scaleY, Color color) {

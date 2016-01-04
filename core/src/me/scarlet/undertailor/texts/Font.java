@@ -11,6 +11,7 @@ import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.gfx.Sprite.SpriteMeta;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
+import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.MultiRenderer;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -255,16 +256,17 @@ public class Font {
             }
             
             float aX = 0F, aY = 0F, aScaleX = 1.0F, aScaleY = 1.0F;
-            /*if(style != null) {
+            Color usedColor = color;
+            if(style != null) {
                 DisplayMeta dmeta = style.applyCharacter(i, textLength);
                 if(dmeta != null) {
                     aX = dmeta.offX;
                     aY = dmeta.offY;
                     aScaleX = dmeta.scaleX;
                     aScaleY = dmeta.scaleY;
-                    System.out.println(dmeta.toString());
+                    usedColor = dmeta.color == null ? color : dmeta.color;
                 }
-            }*/
+            }
             
             float iScaleX = scaleX * aScaleX;
             float iScaleY = scaleY * aScaleY;
@@ -273,7 +275,7 @@ public class Font {
             float drawPosX = posX + pos + offsetX;
             float drawPosY = posY + offsetY;
             
-            this.writeCharacter(chara, color, drawPosX, drawPosY, iScaleX, iScaleY, alpha);
+            this.writeCharacter(chara, usedColor, drawPosX, drawPosY, iScaleX, iScaleY, alpha);
             pos += ((this.getChar(chara).getTextureRegion().getRegionWidth() + this.getFontData().getLetterSpacing()) * scaleX);
         }
         

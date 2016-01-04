@@ -78,7 +78,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
         }
     }
     
-    public SpriteSheetWrapper getRoomObject(String sheetName) {
+    public SpriteSheetWrapper getStyle(String sheetName) {
         if(this.sheets.containsKey(sheetName)) {
             return this.sheets.get(sheetName);
         }
@@ -88,7 +88,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
     }
     
     public void keepSheetLoaded(String sheetName, boolean preload) {
-        SpriteSheetWrapper wrapper = this.getRoomObject(sheetName);
+        SpriteSheetWrapper wrapper = this.getStyle(sheetName);
         if(wrapper != null) {
             if(preload) {
                 wrapper.getReference(this);

@@ -53,6 +53,7 @@ import javafx.stage.Stage;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.impl.StyleImplementable;
 import me.scarlet.undertailor.lua.impl.UIComponentImplementable;
 import me.scarlet.undertailor.lua.impl.WorldObjectImplementable;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
@@ -99,6 +100,7 @@ public class Undertailor extends ApplicationAdapter {
     
     @SuppressWarnings("rawtypes")
     public static final LuaImplementable[] IMPLS = new LuaImplementable[] {
+            new StyleImplementable(),
             new UIComponentImplementable(),
             new WorldObjectImplementable(),
             new WorldRoomImplementable()
@@ -211,8 +213,8 @@ public class Undertailor extends ApplicationAdapter {
     
     public Undertailor(LwjglApplicationConfiguration config) {
         this.config = config;
-        config.foregroundFPS = 0;
-        config.backgroundFPS = 0;
+        config.foregroundFPS = 60;
+        config.backgroundFPS = 60;
     }
     
     @Override
@@ -308,7 +310,7 @@ public class Undertailor extends ApplicationAdapter {
         ovwController.render();
         uiController.render();
         
-        Font bitop = fontManager.getRoomObject("8bitop");
+        Font bitop = fontManager.getStyle("8bitop");
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 415, 2);
         renderer.flush();
         //System.out.println("RENDER CALLS: " + renderer.getSpriteBatch().renderCalls);
