@@ -2,7 +2,11 @@ package me.scarlet.undertailor.ui;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
-import me.scarlet.undertailor.lua.LuaUIComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.impl.UIComponentImplementable;
+import me.scarlet.undertailor.lua.lib.meta.LuaUIComponentMeta;
+import me.scarlet.undertailor.manager.ScriptManager;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.Varargs;
 
 import java.io.File;
@@ -20,12 +24,15 @@ public class UIComponentLoader {
         this.map = new HashMap<>();
     }
     
-    public LuaUIComponent newLuaComponent(String componentName, Varargs args) {
+    public LuaObjectValue<UIComponent> newLuaComponent(String componentName, Varargs args) {
         if(map.containsKey(componentName)) {
             try {
-                return new LuaUIComponent(map.get(componentName), args);
+                ScriptManager scriptMan = Undertailor.getScriptManager();
+                return LuaUIComponentMeta.create(scriptMan.generateImplementation(UIComponentImplementable.class, new UIComponentImplementable.LoadData(map.get(componentName), args)));
             } catch(LuaScriptException e) {
-                Undertailor.instance.error(MANAGER_TAG, "could not retrieve uicomponent " + componentName + ":" + e.getMessage(), e.getStackTrace());
+                RuntimeException thrown = new RuntimeException("could not retrieve uicomponent " + componentName + ":" + LuaUtil.formatJavaException(e));
+                thrown.initCause(e);
+                throw thrown;
             }
         }
         

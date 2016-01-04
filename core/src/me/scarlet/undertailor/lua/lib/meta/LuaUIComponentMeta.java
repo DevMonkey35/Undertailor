@@ -1,115 +1,128 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
-import me.scarlet.undertailor.lua.LuaUIComponent;
-import me.scarlet.undertailor.lua.LuaUIObject;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.ui.UIComponent;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.ThreeArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class LuaUIComponentMeta extends LuaTable {
+public class LuaUIComponentMeta extends LuaLibrary {
     
-    public static void prepareMetatable() {
-        if(LuaUIComponent.METATABLE == null) {
-            LuaUIComponent.METATABLE = LuaValue.tableOf(new LuaValue[] {INDEX, new LuaUIComponentMeta()});
-        }
+    public static LuaObjectValue<UIComponent> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_UICOMPONENT);
     }
+    
+    public static LuaObjectValue<UIComponent> create(UIComponent value) {
+        return LuaObjectValue.of(value, Lua.TYPENAME_UICOMPONENT, Lua.META_UICOMPONENT);
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
+            new getParent(),
+            new getRealPosition(),
+            new getPosition(),
+            new setPosition(),
+            new setAlwaysActive(),
+            new setRenderWhenInactive(),
+            new destroy(),
+            new destroyParent(),
+            new getComponentTypeName()
+    };
     
     public LuaUIComponentMeta() {
-        this.set("getParent", new _getParent());
-        this.set("getRealPosition", new _getRealPosition());
-        this.set("getPosition", new _getPosition());
-        this.set("setPosition", new _setPosition());
-        this.set("setAlwaysActive", new _setAlwaysActive());
-        this.set("setRenderWhenInactive", new _setRenderWhenInactive());
-        this.set("destroy", new _destroy());
-        this.set("destroyParent", new _destroyParent());
-        this.set("getComponentTypeName", new _getComponentTypeName());
+        super(null, COMPONENTS);
     }
     
-    static class _getParent extends OneArgFunction {
+    static class getParent extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            UIComponent component = LuaUIComponent.checkUIComponent(arg).getComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
             
+            UIComponent component = check(args.arg1()).getObject();
             if(component.getParent() == null) {
                 return LuaValue.NIL;
             } else {
-                return new LuaUIObject(component.getParent());
+                return LuaUIObjectMeta.create(component.getParent());
             }
         }
     }
     
-    static class _getRealPosition extends VarArgFunction {
+    static class getRealPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            UIComponent component = LuaUIComponent.checkUIComponent(args.arg1()).getComponent();
+            UIComponent component = check(args.arg1()).getObject();
             Vector2 pos = component.getRealPosition();
             
             return LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(pos.x), LuaValue.valueOf(pos.y)});
         }
     }
     
-    static class _getPosition extends VarArgFunction {
+    static class getPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            UIComponent component = LuaUIComponent.checkUIComponent(args.arg1()).getComponent();
+            UIComponent component = check(args.arg1()).getObject();
             Vector2 pos = component.getPosition();
             
             return LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(pos.x), LuaValue.valueOf(pos.y)});
         }
     }
     
-    static class _setPosition extends ThreeArgFunction {
+    static class setPosition extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            UIComponent component = LuaUIComponent.checkUIComponent(arg1).getComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            UIComponent component = check(args.arg1()).getObject();
             Vector2 pos = component.getPosition();
-            float x = new Float(arg2.optdouble(pos.x));
-            float y = new Float(arg3.optdouble(pos.y));
+            float x = new Float(args.optdouble(2, pos.x));
+            float y = new Float(args.optdouble(3, pos.y));
             
             component.setPosition(new Vector2(x, y));
             return LuaValue.NIL;
         }
     }
     
-    static class _setAlwaysActive extends TwoArgFunction {
+    static class setAlwaysActive extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            UIComponent component = LuaUIComponent.checkUIComponent(arg1).getComponent();
-            boolean flag = arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            UIComponent component = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
             
             component.setAlwaysActive(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _setRenderWhenInactive extends TwoArgFunction {
+    static class setRenderWhenInactive extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            UIComponent component = LuaUIComponent.checkUIComponent(arg1).getComponent();
-            boolean flag = arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            UIComponent component = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
             
             component.setRenderWhenInactive(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _destroy extends OneArgFunction {
+    static class destroy extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            UIComponent component = LuaUIComponent.checkUIComponent(arg).getComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            UIComponent component = check(args.arg1()).getObject();
+            
             try {
                 component.destroy();
             } catch(Exception e) {
@@ -120,25 +133,28 @@ public class LuaUIComponentMeta extends LuaTable {
         }
     }
     
-    static class _destroyParent extends OneArgFunction {
+    static class destroyParent extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
             try {
-                UIComponent component = LuaUIComponent.checkUIComponent(arg).getComponent();
+                UIComponent component = check(args.arg1()).getObject();
                 component.destroyObject();
-            } catch(Exception e) {
-                e.printStackTrace();
-                System.exit(0);
+            } catch(IllegalArgumentException e) {
+                throw new LuaError(e.getMessage());
             }
             
             return LuaValue.NIL;
         }
     }
     
-    static class _getComponentTypeName extends OneArgFunction {
+    static class getComponentTypeName extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            UIComponent component = LuaUIComponent.checkUIComponent(arg).getComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            UIComponent component = check(args.arg1()).getObject();
             return LuaValue.valueOf(component.getComponentTypeName());
         }
     }

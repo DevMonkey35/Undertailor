@@ -2,8 +2,8 @@ package me.scarlet.undertailor.texts;
 
 import com.badlogic.gdx.graphics.Color;
 import com.google.common.base.Preconditions;
+import me.scarlet.undertailor.audio.SoundWrapper;
 import me.scarlet.undertailor.util.Pair;
-import me.scarlet.undertailor.wrappers.SoundWrapper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

@@ -3,86 +3,95 @@ package me.scarlet.undertailor.lua.lib.meta;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Animation;
-import me.scarlet.undertailor.lua.LuaBoundingBox;
-import me.scarlet.undertailor.lua.LuaWorldObject;
-import me.scarlet.undertailor.lua.LuaWorldRoom;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.overworld.WorldObject;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.ThreeArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class LuaWorldObjectMeta extends LuaTable {
+public class LuaWorldObjectMeta extends LuaLibrary {
     
-    public static void prepareMetatable() {
-        if(LuaWorldObject.METATABLE == null) {
-            LuaWorldObject.METATABLE = LuaValue.tableOf(new LuaValue[] {INDEX, new LuaWorldObjectMeta()});
-        }
+    public static LuaObjectValue<WorldObject> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_WORLDOBJECT);
     }
+    
+    public static LuaObjectValue<WorldObject> create(WorldObject value) {
+        return LuaObjectValue.of(value, Lua.TYPENAME_WORLDOBJECT, Lua.META_WORLDOBJECT);
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new getID(),
+            new getZ(),
+            new setZ(),
+            new getVelocity(),
+            new setVelocity(),
+            new getPosition(),
+            new setPosition(),
+            new getAnimation(),
+            new setAnimation(),
+            new getBoundingBox(),
+            new getScale(),
+            new setScale(),
+            new canCollide(),
+            new setCanCollide(),
+            new isVisible(),
+            new setVisible(),
+            new isSolid(),
+            new setSolid(),
+            new getRoom(),
+            new removeFromRoom(),
+            new isFocusCollide(),
+            new setFocusCollide(),
+            new isPersisting(),
+            new setPersisting()
+    };
     
     public LuaWorldObjectMeta() {
-        this.set("getZ", new _getZ());
-        this.set("setZ", new _setZ());
-        this.set("getID", new _getID());
-        this.set("getVelocity", new _getVelocity());
-        this.set("setVelocity", new _setVelocity());
-        this.set("getPosition", new _getPosition());
-        this.set("setPosition", new _setPosition());
-        this.set("getAnimation", new _getAnimation());
-        this.set("setAnimation", new _setAnimation());
-        this.set("getBoundingBox", new _getBoundingBox());
-        this.set("getScale", new _getScale());
-        this.set("setScale", new _setScale());
-        this.set("canCollide", new _canCollide());
-        this.set("setCanCollide", new _setCanCollide());
-        this.set("focusCollide", new _focusCollide());
-        this.set("setFocusCollide", new _setFocusCollide());
-        this.set("isVisible", new _isVisible());
-        this.set("setVisible", new _setVisible());
-        this.set("isSolid", new _isSolid());
-        this.set("setSolid", new _setSolid());
-        this.set("getRoom", new _getRoom());
-        this.set("removeFromRoom", new _removeFromRoom());
-        this.set("isPersisting", new _isPersisting());
-        this.set("setPersisting", new _setPersisting());
+        super(null, COMPONENTS);
     }
     
-    static class _getID extends OneArgFunction {
+    static class getID extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.getId());
         }
     }
     
-    static class _getZ extends OneArgFunction {
+    static class getZ extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.getZ());
         }
     }
     
-    static class _setZ extends TwoArgFunction {
+    static class setZ extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            int z = arg2.checkint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            int z = args.checkint(2);
             object.setZ(z);
             return LuaValue.NIL;
         }
     }
     
-    static class _getVelocity extends VarArgFunction {
+    static class getVelocity extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
-            WorldObject object = LuaWorldObject.checkWorldObject(args.arg1()).getWorldObject();
+            
+            WorldObject object = check(args.arg1()).getObject();
             Vector2 vel = object.getVelocity();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(vel.x),
@@ -90,24 +99,27 @@ public class LuaWorldObjectMeta extends LuaTable {
         }
     }
     
-    static class _setVelocity extends ThreeArgFunction {
+    static class setVelocity extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            WorldObject object = check(args.arg(1)).getObject();
             Vector2 vel = object.getVelocity();
-            float x = arg2.isnil() ? vel.x : new Float(arg2.checkdouble());
-            float y = arg3.isnil() ? vel.y : new Float(arg3.checkdouble());
+            float x = new Float(args.optdouble(2, vel.x));
+            float y = new Float(args.optdouble(3, vel.y));
             
             object.setVelocity(x, y);
             return LuaValue.NIL;
         }
     }
     
-    static class _getPosition extends VarArgFunction {
+    static class getPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
-            WorldObject object = LuaWorldObject.checkWorldObject(args.arg1()).getWorldObject();
+            
+            WorldObject object = check(args.arg1()).getObject();
             Vector2 pos = object.getPosition();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(pos.x),
@@ -115,39 +127,42 @@ public class LuaWorldObjectMeta extends LuaTable {
         }
     }
     
-    static class _setPosition extends ThreeArgFunction {
+    static class setPosition extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            WorldObject object = check(args.arg1()).getObject();
             Vector2 pos = object.getPosition();
-            float x = arg2.isnil() ? pos.x : new Float(arg2.checkdouble());
-            float y = arg3.isnil() ? pos.y : new Float(arg3.checkdouble());
+            float x = new Float(args.optdouble(2, pos.x));
+            float y = new Float(args.optdouble(3, pos.y));
             
             object.setPosition(x, y);
             return LuaValue.NIL;
         }
     }
     
-    static class _getAnimation extends VarArgFunction {
+    static class getAnimation extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
-            WorldObject object = LuaWorldObject.checkWorldObject(args.arg1()).getWorldObject();
+            
+            WorldObject object = check(args.arg1()).getObject();
             Animation<?> anim = object.getCurrentAnimation();
             if(anim == null) {
                 return LuaValue.NIL;
             } else {
-                return LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(anim.getParentSet().getName()), LuaValue.valueOf(anim.getName())});
+                return LuaUtil.asVarargs(LuaValue.valueOf(anim.getParentSet().getName()), LuaValue.valueOf(anim.getName()));
             }
         }
     }
     
-    static class _setAnimation extends VarArgFunction {
+    static class setAnimation extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 3, 4);
             
-            WorldObject object = LuaWorldObject.checkWorldObject(args.arg(1)).getWorldObject();
+            WorldObject object = check(args.arg(1)).getObject();
             String setName = args.checkjstring(2);
             String animName = args.checkjstring(3);
             int frame = args.isnil(4) ? 0 : args.checkint(4);
@@ -155,7 +170,7 @@ public class LuaWorldObjectMeta extends LuaTable {
             if(setName == null) {
                 object.setCurrentAnimation(null, null, 0);
             } else {
-                AnimationSetWrapper set = Undertailor.getAnimationManager().getObject(setName);
+                AnimationSetWrapper set = Undertailor.getAnimationManager().getRoomObject(setName);
                 object.setCurrentAnimation(set, set.getReference().getAnimation(animName), frame);
             }
             
@@ -163,138 +178,168 @@ public class LuaWorldObjectMeta extends LuaTable {
         }
     }
     
-    static class _getBoundingBox extends OneArgFunction {
+    static class getBoundingBox extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
-            return new LuaBoundingBox(object.getBoundingBox());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            return LuaBoundingBoxMeta.create(object.getBoundingBox());
         }
     }
     
-    static class _getScale extends OneArgFunction {
+    static class getScale extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.getScale());
         }
     }
     
-    static class _setScale extends TwoArgFunction {
+    static class setScale extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            float scale = new Float(arg2.checkdouble());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            float scale = new Float(args.checkdouble(2));
             object.setScale(scale);
             return LuaValue.NIL;
         }
     }
     
-    static class _canCollide extends OneArgFunction {
+    static class canCollide extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.canCollide());
         }
     }
     
-    static class _setCanCollide extends TwoArgFunction {
+    static class setCanCollide extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            boolean flag = arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
             object.setCanCollide(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _isVisible extends OneArgFunction {
+    static class isVisible extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.isVisible());
         }
     }
     
-    static class _setVisible extends TwoArgFunction {
+    static class setVisible extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            boolean flag = arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
             object.setVisible(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _isSolid extends OneArgFunction {
+    static class isSolid extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.isSolid());
         }
     }
     
-    static class _setSolid extends TwoArgFunction {
+    static class setSolid extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            boolean flag = arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
             object.setSolid(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _getRoom extends OneArgFunction {
+    static class getRoom extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             if(object.getRoom() != null) {
-                return new LuaWorldRoom(object.getRoom());
+                return LuaWorldRoomMeta.create(object.getRoom());
             } else {
                 return LuaValue.NIL;
             }
         }
     }
     
-    static class _removeFromRoom extends OneArgFunction {
+    static class removeFromRoom extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             object.removeFromRoom();
             return LuaValue.NIL;
         }
     }
     
-    static class _focusCollide extends OneArgFunction {
+    static class isFocusCollide extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.focusCollide());
         }
     }
     
-    static class _setFocusCollide extends TwoArgFunction {
+    static class setFocusCollide extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            boolean flag = arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
             object.setFocusCollide(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _isPersisting extends OneArgFunction {
+    static class isPersisting extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.isPersisting());
         }
     }
     
-    static class _setPersisting extends TwoArgFunction {
+    static class setPersisting extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldObject object = LuaWorldObject.checkWorldObject(arg1).getWorldObject();
-            boolean flag = arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
             object.setPersisting(flag);
             return LuaValue.NIL;
         }

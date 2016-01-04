@@ -1,86 +1,100 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
-import me.scarlet.undertailor.lua.LuaUIComponent;
-import me.scarlet.undertailor.lua.LuaUIObject;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.ui.UIComponent;
 import me.scarlet.undertailor.ui.UIObject;
 import me.scarlet.undertailor.util.LuaUtil;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class LuaUIObjectMeta extends LuaTable {
+public class LuaUIObjectMeta extends LuaLibrary {
     
-    public static void prepareMetatable() {
-        if(LuaUIObject.METATABLE == null) {
-            LuaUIObject.METATABLE = LuaValue.tableOf(new LuaValue[] {INDEX, new LuaUIObjectMeta()});
-        }
+    public static LuaObjectValue<UIObject> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_UIOBJECT);
     }
+    
+    public static LuaObjectValue<UIObject> create(UIObject value) {
+        return LuaObjectValue.of(value, Lua.TYPENAME_UIOBJECT, Lua.META_UIOBJECT);
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
+            new getId(),
+            new isHeadless(),
+            new getLifetime(),
+            new isVisible(),
+            new setVisible(),
+            new getPosition(),
+            new setPosition(),
+            new registerComponent(),
+            new destroy()
+    };
     
     public LuaUIObjectMeta() {
-        this.set("getId", new _getId());
-        this.set("isHeadless", new _isHeadless());
-        this.set("getLifetime", new _getLifetime());
-        this.set("isVisible", new _isVisible());
-        this.set("setVisible", new _setVisible());
-        this.set("getPosition", new _getPosition());
-        this.set("setPosition", new _setPosition());
-        this.set("destroy", new _destroy());
-        this.set("registerComponent", new _registerComponent());
+        super(null, COMPONENTS);
     }
     
-    static class _getId extends OneArgFunction {
+    static class getId extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            UIObject obj = LuaUIObject.checkUIObject(arg).getUIObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            UIObject obj = check(args.arg1()).getObject();
             return LuaValue.valueOf(obj.getId());
         }
     }
     
-    static class _isHeadless extends OneArgFunction {
+    static class isHeadless extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            UIObject obj = LuaUIObject.checkUIObject(arg).getUIObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            UIObject obj = check(args.arg1()).getObject();
             return LuaValue.valueOf(obj.isHeadless());
         }
     }
     
-    static class _getLifetime extends OneArgFunction {
+    static class getLifetime extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            UIObject obj = LuaUIObject.checkUIObject(arg).getUIObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            UIObject obj = check(args.arg1()).getObject();
             return LuaValue.valueOf(obj.getLifetime());
         }
     }
     
-    static class _isVisible extends OneArgFunction {
+    static class isVisible extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            UIObject obj = LuaUIObject.checkUIObject(arg).getUIObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            UIObject obj = check(args.arg1()).getObject();
             return LuaValue.valueOf(obj.isVisible());
         }
     }
     
-    static class _setVisible extends TwoArgFunction {
+    static class setVisible extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            UIObject obj = LuaUIObject.checkUIObject(arg1).getUIObject();
-            boolean flag = arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            UIObject obj = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
             obj.setVisible(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _getPosition extends VarArgFunction {
+    static class getPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            UIObject obj = LuaUIObject.checkUIObject(args.arg(1)).getUIObject();
+            UIObject obj = check(args.arg(1)).getObject();
             Vector2 pos = obj.getPosition();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(pos.x),
@@ -88,12 +102,12 @@ public class LuaUIObjectMeta extends LuaTable {
         }
     }
     
-    static class _setPosition extends VarArgFunction {
+    static class setPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 3);
             
-            UIObject obj = LuaUIObject.checkUIObject(args.arg(1)).getUIObject();
+            UIObject obj = check(args.arg(1)).getObject();
             float x = new Float(args.arg(2).checkdouble());
             float y = new Float(args.arg(3).checkdouble());
             
@@ -103,20 +117,22 @@ public class LuaUIObjectMeta extends LuaTable {
         }
     }
     
-    static class _destroy extends OneArgFunction {
+    static class destroy extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            UIObject obj = LuaUIObject.checkUIObject(arg).getUIObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            UIObject obj = check(args.arg1()).getObject();
             obj.destroy();
             return LuaValue.NIL;
         }
     }
     
-    static class _registerComponent extends TwoArgFunction {
+    static class registerComponent extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            UIObject obj = LuaUIObject.checkUIObject(arg1).getUIObject();
-            UIComponent component = LuaUIComponent.checkUIComponent(arg2).getComponent();
+        public Varargs execute(Varargs args) {
+            UIObject obj = check(args.arg1()).getObject();
+            UIComponent component = LuaUIComponentMeta.check(args.arg(2)).getObject();
             
             obj.registerChild(component);
             return LuaValue.NIL;

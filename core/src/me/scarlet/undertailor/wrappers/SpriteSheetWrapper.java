@@ -5,6 +5,7 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
+import me.scarlet.undertailor.util.LuaUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
 import java.io.FileNotFoundException;
@@ -28,7 +29,7 @@ public class SpriteSheetWrapper extends DisposableWrapper<SpriteSheet> {
         try {
             return SpriteSheet.fromConfig(name, texture, config);
         } catch(FileNotFoundException | TextureTilingException e) {
-            Undertailor.instance.error(SpriteSheetManager.MANAGER_TAG, e.getMessage(), e.getStackTrace());
+            Undertailor.instance.error(SpriteSheetManager.MANAGER_TAG, LuaUtil.formatJavaException(e), e);
             return null;
         }
     }

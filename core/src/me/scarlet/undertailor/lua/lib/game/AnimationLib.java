@@ -3,42 +3,45 @@ package me.scarlet.undertailor.lua.lib.game;
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Animation;
-import me.scarlet.undertailor.lua.LuaAnimation;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class AnimationLib extends TwoArgFunction {
+public class AnimationLib extends LuaLibrary {
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable animation = new LuaTable();
-        
-        animation.set("getAnimation", new _getAnimation());
-        animation.set("getStartTime", new _getStartTime());
-        animation.set("play", new _play());
-        animation.set("stop", new _stop());
-        animation.set("drawCurrentFrame", new _drawCurrentFrame());
-        
-        if(LuaAnimation.METATABLE == null) {
-            LuaAnimation.METATABLE = LuaValue.tableOf(new LuaValue[] { INDEX, animation });
-        }
-        
-        env.set("animation", animation);
-        return animation;
+    public static LuaObjectValue<Animation<?>> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_ANIMATION);
     }
     
-    static class _getAnimation extends TwoArgFunction {
+    public static LuaObjectValue<Animation<?>> create(Animation<?> value) {
+        return LuaObjectValue.of(value, Lua.TYPENAME_ANIMATION, LuaLibrary.asMetatable(Lua.LIB_ANIMATION));
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new getAnimation(),
+            new getStartTime(),
+            new play(),
+            new stop(),
+            new drawCurrentFrame()
+    };
+    
+    public AnimationLib() {
+        super("animation", COMPONENTS);
+    }
+    
+    static class getAnimation extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            String setName = arg1.checkjstring();
-            String animName = arg2.checkjstring();
-            AnimationSetWrapper wrapper = Undertailor.getAnimationManager().getObject(setName);
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            String setName = args.checkjstring(1);
+            String animName = args.checkjstring(2);
+            AnimationSetWrapper wrapper = Undertailor.getAnimationManager().getRoomObject(setName);
             if(wrapper == null) {
                 return LuaValue.NIL;
             }
@@ -48,47 +51,53 @@ public class AnimationLib extends TwoArgFunction {
                 return LuaValue.NIL;
             }
             
-            return new LuaAnimation(anim);
+            return create(anim);
         }
     }
     
-    static class _getStartTime extends OneArgFunction {
+    static class getStartTime extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            Animation<?> animation = LuaAnimation.checkAnimation(arg).getAnimation();
-            Undertailor.getAnimationManager().getObject(animation.getParentSet().getName()).getReference();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            Animation<?> animation = check(args.arg(1)).getObject();
+            Undertailor.getAnimationManager().getRoomObject(animation.getParentSet().getName()).getReference();
             return LuaValue.valueOf(animation.getStartTime());
         }
     }
     
-    static class _play extends TwoArgFunction {
+    static class play extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Animation<?> animation = LuaAnimation.checkAnimation(arg1).getAnimation();
-            Undertailor.getAnimationManager().getObject(animation.getParentSet().getName()).getReference();
-            long startTime = arg2.isnil() ? TimeUtils.millis() : arg2.checklong();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
+            
+            Animation<?> animation = check(args.arg(1)).getObject();
+            Undertailor.getAnimationManager().getRoomObject(animation.getParentSet().getName()).getReference();
+            long startTime = args.isnil(2) ? TimeUtils.millis() : args.checklong(2);
             animation.start(startTime);
             return LuaValue.NIL;
         }
     }
     
-    static class _stop extends OneArgFunction {
+    static class stop extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1) {
-            Animation<?> animation = LuaAnimation.checkAnimation(arg1).getAnimation();
-            Undertailor.getAnimationManager().getObject(animation.getParentSet().getName()).getReference();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            Animation<?> animation = check(args.arg(1)).getObject();
+            Undertailor.getAnimationManager().getRoomObject(animation.getParentSet().getName()).getReference();
             animation.stop();
             return LuaValue.NIL;
         }
     }
     
-    static class _drawCurrentFrame extends VarArgFunction {
+    static class drawCurrentFrame extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 3, 5);
             
-            Animation<?> animation = LuaAnimation.checkAnimation(args.arg(1)).getAnimation();
-            Undertailor.getAnimationManager().getObject(animation.getParentSet().getName()).getReference();
+            Animation<?> animation = check(args.arg(1)).getObject();
+            Undertailor.getAnimationManager().getRoomObject(animation.getParentSet().getName()).getReference();
             float posX = new Float(args.checkdouble(2));
             float posY = new Float(args.checkdouble(3));
             System.out.println(posX + ", " + posY);

@@ -2,10 +2,6 @@ package me.scarlet.undertailor.wrappers;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.TimeUtils;
-import me.scarlet.undertailor.lua.LuaAnimation;
-import me.scarlet.undertailor.lua.LuaMusic;
-import me.scarlet.undertailor.lua.LuaSound;
-import org.luaj.vm2.LuaValue;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,11 +10,11 @@ import java.util.Set;
 
 public abstract class DisposableWrapper<T extends Disposable> {
     
-    public static boolean isWrapper(LuaValue value) {
+    /*public static boolean isWrapper(LuaValue value) {
         return value instanceof LuaAnimation
                 || value instanceof LuaSound
                 || value instanceof LuaMusic;
-    }
+    }*/
     
     private static Map<Class<? extends DisposableWrapper<?>>, Set<DisposableWrapper<?>>> instances;
     public static final long DEFAULT_LIFETIME = 10000; // 10s

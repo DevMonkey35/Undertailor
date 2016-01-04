@@ -1,75 +1,95 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
-import me.scarlet.undertailor.lua.LuaPressData;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.util.InputRetriever.PressData;
-import org.luaj.vm2.LuaTable;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
+import org.luaj.vm2.Varargs;
 
-public class LuaPressDataMeta extends LuaTable {
+public class LuaPressDataMeta extends LuaLibrary {
     
-    public static void prepareMetatable() {
-        if(LuaPressData.METATABLE == null) {
-            LuaPressData.METATABLE = LuaValue.tableOf(new LuaValue[] {INDEX, new LuaPressDataMeta()});
-        }
+    public static LuaObjectValue<PressData> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_PRESSDATA);
     }
-
+    
+    public static LuaObjectValue<PressData> create(PressData data) {
+        return LuaObjectValue.of(data, Lua.TYPENAME_PRESSDATA, Lua.META_PRESSDATA);
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new justPressed(),
+            new justReleased(),
+            new isPressed(),
+            new getHoldTime(),
+            new getLastPressTime(),
+            new getLastReleaseTime()
+    };
+    
     public LuaPressDataMeta() {
-        this.set("isPressed", new _isPressed());
-        this.set("getHoldTime", new _getHoldTime());
-        this.set("getLastPressTime", new _getLastPressTime());
-        this.set("getLastReleaseTime", new _getLastReleaseTime());
-        this.set("justReleased", new _justReleased());
-        this.set("justPressed", new _justPressed());
+        super(null, COMPONENTS);
     }
     
-    static class _justPressed extends TwoArgFunction {
+    static class justPressed extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            PressData data = LuaPressData.checkPressData(arg1).getData();
-            float time = arg2.isnil() ? 0.15F : new Float(arg2.checkdouble());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
+            
+            PressData data = check(args.arg1()).getObject();
+            float time = new Float(args.optdouble(2, 0.15));
             return LuaValue.valueOf(data.justPressed(time));
         }
     }
     
-    static class _justReleased extends TwoArgFunction {
+    static class justReleased extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            PressData data = LuaPressData.checkPressData(arg1).getData();
-            float time = arg2.isnil() ? 0.15F : new Float(arg2.checkdouble());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
+            
+            PressData data = check(args.arg1()).getObject();
+            float time = new Float(args.optdouble(2, 0.15));
             return LuaValue.valueOf(data.justReleased(time));
         }
     }
     
-    static class _isPressed extends OneArgFunction {
+    static class isPressed extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            PressData data = LuaPressData.checkPressData(arg).getData();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            PressData data = check(args.arg1()).getObject();
             return LuaValue.valueOf(data.isPressed());
         }
     }
     
-    static class _getHoldTime extends OneArgFunction {
+    static class getHoldTime extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            PressData data = LuaPressData.checkPressData(arg).getData();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            PressData data = check(args.arg1()).getObject();
             return LuaValue.valueOf(data.getHoldTime());
         }
     }
     
-    static class _getLastPressTime extends OneArgFunction {
+    static class getLastPressTime extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            PressData data = LuaPressData.checkPressData(arg).getData();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            PressData data = check(args.arg1()).getObject();
             return LuaValue.valueOf(data.getLastPressTime());
         }
     }
     
-    static class _getLastReleaseTime extends OneArgFunction {
+    static class getLastReleaseTime extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            PressData data = LuaPressData.checkPressData(arg).getData();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            PressData data = check(args.arg1()).getObject();
             return LuaValue.valueOf(data.getLastReleaseTime());
         }
     }

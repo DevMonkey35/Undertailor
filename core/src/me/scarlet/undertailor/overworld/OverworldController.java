@@ -10,7 +10,6 @@ import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
-import me.scarlet.undertailor.util.MultiRenderer;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -92,7 +91,7 @@ public class OverworldController {
             Undertailor.getScheduler().registerTask(new Task() {
                 @Override
                 public String getName() {
-                    return "tailor-setroom";
+                    return "_tailor-setroom";
                 }
                 
                 @Override

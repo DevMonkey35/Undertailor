@@ -1,4 +1,4 @@
-require("scripts/mathhelper.lua")
+local mathhelper = load("scripts/mathhelper.lua")
 
 function snapOnCollide(blocker, collider)
 	local blockerX, blockerY = blocker:getPosition()

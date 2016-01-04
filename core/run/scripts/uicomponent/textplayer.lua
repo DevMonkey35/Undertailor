@@ -2,8 +2,8 @@
 -- Plays the text given to it.
 -- You probably want it to render on top, so register it last.
 
-require("scripts/varlib.lua")
-require("scripts/stringhelper.lua")
+local varlib = load("scripts/varlib.lua")
+local stringhelper = load("scripts/stringhelper.lua")
 
 local strEndsWith = stringhelper.endsWith
 

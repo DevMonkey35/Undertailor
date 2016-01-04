@@ -8,14 +8,10 @@ import me.scarlet.undertailor.collision.BoundingRectangle;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.exception.LuaScriptException;
-import me.scarlet.undertailor.gfx.Sprite;
-import me.scarlet.undertailor.lua.LuaWorldRoom;
-import me.scarlet.undertailor.manager.RoomManager;
-import me.scarlet.undertailor.util.ConfigurateUtil;
+import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
+import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
-import me.scarlet.undertailor.wrappers.TilemapWrapper;
-import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,88 +22,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class WorldRoom implements Disposable {
-    
-    public static class RoomMap implements Disposable {
-        
-        public static RoomMap fromConfig(ConfigurationNode node) {
-            RoomMap map = new RoomMap();
-            map.sizeX = ConfigurateUtil.processInt(node.getNode("sizeX"), null);
-            map.sizeY = ConfigurateUtil.processInt(node.getNode("sizeY"), null);
-            String[] tilemapNames = ConfigurateUtil.processStringArray(node.getNode("tilemaps"), null);
-            String[] stringMapping = ConfigurateUtil.processStringArray(node.getNode("mapping"), null);
-            
-            map.tilemaps = new TilemapWrapper[tilemapNames.length];
-            for(int i = 0; i < map.tilemaps.length; i++) {
-                TilemapWrapper wrapper = Undertailor.getTilemapManager().getObject(tilemapNames[i]);
-                if(wrapper == null) {
-                    Undertailor.instance.error(RoomManager.MANAGER_TAG, "failed to load room: map data referenced non-existing tilemap (" + tilemapNames[i] + ")");
-                    return null;
-                }
-                
-                map.tilemaps[i] = wrapper;
-            }
-            
-            map.mapping = new Sprite[map.sizeY][map.sizeX];
-            try {
-                for(int y = 0; y < map.sizeY; y++) {
-                    String xMapping = stringMapping[y];
-                    if(xMapping == null) {
-                        map.mapping[y] = null;
-                    } else {
-                        String[] xTiles = xMapping.split(",");
-                        for(int x = 0; x < map.sizeX; x++) {
-                            if(xTiles[x] == null || xTiles[x].equalsIgnoreCase("-")) {
-                                map.mapping[y][x] = null;
-                            } else {
-                                String[] tile = xTiles[x].split(":");
-                                int tilemap = Integer.parseInt(tile[0]);
-                                int spriteIndex = Integer.parseInt(tile[1]);
-                                map.mapping[y][x] = map.tilemaps[tilemap].getReference(map).getSprite(spriteIndex);
-                            }
-                        }
-                    }
-                }
-            } catch(Exception e) {
-                Undertailor.instance.error("roomman", "failed to load room mapping: bad map data");
-                return null;
-            }
-            
-            return map;
-        }
-        
-        private int sizeX;
-        private int sizeY;
-        private Sprite[][] mapping;
-        private TilemapWrapper[] tilemaps;
-        
-        public void render() {
-            for(int y = 0; y < sizeY; y++) {
-                for(int x = 0; x < sizeX; x++) {
-                    Sprite tile = mapping[y][x];
-                    if(tile != null) {
-                        float xPos = x * 20F;
-                        float yPos = y * 20F;
-                        tile.draw(xPos, yPos, 1F, 1F, 0F, false, false, 20, 20, true);
-                    }
-                }
-            }
-        }
-        
-        public int getSizeX() {
-            return sizeX;
-        }
-        
-        public int getSizeY() {
-            return sizeY;
-        }
-        
-        @Override
-        public void dispose() {
-            for(TilemapWrapper wrapper : tilemaps) {
-                wrapper.removeReference(this);
-            }
-        }
-    }
     
     public static class Entrypoint implements Collider {
         
@@ -171,7 +85,8 @@ public class WorldRoom implements Disposable {
                         String[] targetRoom = roomTarget.split(":");
                         String entrypoint = targetRoom.length > 1 ? targetRoom[1] : null;
                         try {
-                            WorldRoom room = new LuaWorldRoom(Undertailor.getRoomManager().getObject(targetRoom[0])).getRoom();
+                            ScriptManager scriptMan = Undertailor.getScriptManager();
+                            WorldRoom room = scriptMan.getImplementable(WorldRoomImplementable.class).load(Undertailor.getRoomManager().getRoomObject(targetRoom[0]), scriptMan.generateGlobals());
                             Undertailor.getOverworldController().setCurrentRoom(room, true, id, entrypoint);
                         } catch(LuaScriptException e) {
                             Undertailor.instance.error("overworld", "entrypoint with id " + id + " failed to process room switch: could not load target room " + targetRoom[0]);
@@ -225,14 +140,14 @@ public class WorldRoom implements Disposable {
     private Map<Long, WorldObject> added;
     private Map<Long, WorldObject> objects;
     
-    public WorldRoom(String id, RoomDataWrapper roomWrapper) {
+    public WorldRoom(RoomDataWrapper roomWrapper) {
         this.added = new HashMap<>();
         this.removed = new HashSet<>();
         this.entrypoints = new HashMap<>();
         this.objects = new HashMap<>();
         this.roomWrapper = roomWrapper;
         this.room = roomWrapper.getReference(this);
-        this.roomName = id;
+        this.roomName = roomWrapper.getRoomScript().getName().split("\\.")[0];
     }
     
     public String getRoomName() {
@@ -362,9 +277,9 @@ public class WorldRoom implements Disposable {
             if(obj.isPersisting()) {
                 set.add(obj);
             } else {
+                obj.onDestroy();
                 obj.id = -1;
                 obj.room = null;
-                obj.onDestroy();
             }
         });
         

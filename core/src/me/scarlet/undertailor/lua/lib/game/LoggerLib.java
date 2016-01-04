@@ -1,72 +1,85 @@
 package me.scarlet.undertailor.lua.lib.game;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class LoggerLib extends TwoArgFunction {
+public class LoggerLib extends LuaLibrary {
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable logger = new LuaTable();
-        logger.set("log", new _log());
-        logger.set("warn", new _warn());
-        logger.set("error", new _error());
-        
-        env.set("logger", logger);
-        return logger;
+    public LoggerLib() {
+        super("logger",
+                new log(),
+                new warn(),
+                new error());
     }
     
-    static class _log extends VarArgFunction {
+    static class log extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
-            if(args.narg() == 1) {
-                Undertailor.instance.log("[LUA] luascript", args.arg1().checkjstring());
-            } else if(args.narg() == 2) {
-                Undertailor.instance.log("[LUA] " + args.arg(1).checkjstring(), args.arg(2).checkjstring());
-            } else {
-                throw new LuaError("arguments insufficient or overflowing (min 1, max 2)");
-            }
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
             
+            String tag = args.narg() == 2 ? args.checkjstring(1) : null;
+            String message = args.narg() == 2 ? args.checkjstring(2) : args.checkjstring(1);
+            ((LoggerLib) this.getLibraryInstance()).log(0, tag, message, 1);
             return LuaValue.NIL;
         }
     }
     
-    static class _warn extends VarArgFunction {
+    static class warn extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
-            if(args.narg() == 1) {
-                Undertailor.instance.warn("[LUA] luascript", args.arg1().checkjstring());
-            } else if(args.narg() == 2) {
-                Undertailor.instance.warn("[LUA] " + args.arg(1).checkjstring(), args.arg(2).checkjstring());
-            } else {
-                throw new LuaError("arguments insufficient or overflowing (min 1, max 2)");
-            }
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
             
+            String tag = args.narg() == 2 ? args.checkjstring(1) : null;
+            String message = args.narg() == 2 ? args.checkjstring(2) : args.checkjstring(1);
+            ((LoggerLib) this.getLibraryInstance()).log(1, tag, message, 1);
             return LuaValue.NIL;
         }
     }
     
-    static class _error extends VarArgFunction {
+    static class error extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
-            String tag = "";
-            String message = "";
-            if(args.narg() == 1) {
-                tag = "[LUA] luascript";
-                message = args.arg1().checkjstring();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 3);
+            
+            String tag = null, message;
+            int level = 1;
+            
+            if(args.narg() == 1) { // error(message)
+                message = args.checkjstring(1);
             } else if(args.narg() == 2) {
-                tag = "[LUA]" + args.arg(1).checkjstring();
-                message = args.arg(2).checkjstring();
-            } else {
-                throw new LuaError("arguments insufficient or overflowing (min 1, max 2)");
+                if(args.type(2) == LuaValue.TSTRING) { // error(tag, message), use type() since isnumber/isstring accepts both numbers/strings
+                    tag = args.checkjstring(1);
+                    message = args.checkjstring(2);
+                } else { // error(message, level)
+                    message = args.checkjstring(1);
+                    level = args.checkint(2);
+                }
+            } else { // error(tag, message, level)
+                tag = args.checkjstring(1);
+                message = args.checkjstring(2);
+                level = args.checkint(3);
             }
             
-            throw new LuaError("[" + tag + "]: " + message);
+            ((LoggerLib) this.getLibraryInstance()).log(2, tag, message, level);
+            return LuaValue.NIL;
+        }
+    }
+    
+    public void log(int type, String tag, String message, int level) {
+        switch(type) {
+            default:
+            case 0:
+                Undertailor.instance.log(tag, message);
+                break;
+            case 1:
+                Undertailor.instance.warn(tag, message);
+                break;
+            case 2:
+                throw new LuaError("[" + tag + "] " + message, level);
         }
     }
 }

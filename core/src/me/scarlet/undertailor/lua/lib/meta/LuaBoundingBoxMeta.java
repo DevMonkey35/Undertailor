@@ -2,37 +2,44 @@ package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.collision.BoundingRectangle;
-import me.scarlet.undertailor.lua.LuaBoundingBox;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.util.LuaUtil;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.ThreeArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class LuaBoundingBoxMeta extends LuaTable {
+public class LuaBoundingBoxMeta extends LuaLibrary {
     
-    public static void prepareMetatable() {
-        if(LuaBoundingBox.METATABLE == null) {
-            LuaBoundingBox.METATABLE = LuaValue.tableOf(new LuaValue[] {INDEX, new LuaBoundingBoxMeta()});
-        }
+    public static LuaObjectValue<BoundingRectangle> create(BoundingRectangle rectangle) {
+        return LuaObjectValue.of(rectangle, Lua.TYPENAME_BOUNDINGBOX, Lua.META_BOUNDINGBOX);
     }
+    
+    public static LuaObjectValue<BoundingRectangle> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_BOUNDINGBOX);
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
+            new getPositionOffset(),
+            new setPositionOffset(),
+            new getDimensions(),
+            new setDimensions(),
+            new getOrigin(),
+            new setOrigin(),
+            new getVertices()
+    };
     
     public LuaBoundingBoxMeta() {
-        this.set("getPositionOffset", new _getPositionOffset());
-        this.set("setPositionOffset", new _setPositionOffset());
-        this.set("getDimensions", new _getDimensions());
-        this.set("setDimensions", new _setDimensions());
-        this.set("getOrigin", new _getOrigin());
-        this.set("setOrigin", new _setOrigin());
-        this.set("getVertices", new _getVertices());
+        super(null, COMPONENTS);
     }
     
-    static class _getPositionOffset extends VarArgFunction {
+    static class getPositionOffset extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
-            BoundingRectangle box = LuaBoundingBox.checkBoundingBox(args.arg(1)).getBoundingBox();
+            
+            BoundingRectangle box = check(args.arg(1)).getObject();
             Vector2 pos = box.getPositionOffset();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(pos.x),
@@ -41,23 +48,26 @@ public class LuaBoundingBoxMeta extends LuaTable {
         }
     }
     
-    static class _setPositionOffset extends ThreeArgFunction {
+    static class setPositionOffset extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            BoundingRectangle box = LuaBoundingBox.checkBoundingBox(arg1).getBoundingBox();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            BoundingRectangle box = check(args.arg1()).getObject();
             Vector2 pos = box.getPositionOffset();
-            float x = arg2.isnil() ? pos.x : new Float(arg2.checkdouble());
-            float y = arg3.isnil() ? pos.y : new Float(arg3.checkdouble());
+            float x = new Float(args.optdouble(2, pos.x));
+            float y = new Float(args.optdouble(3, pos.y));
             box.setPositionOffset(x, y);
             return LuaValue.NIL;
         }
     }
     
-    static class _getDimensions extends VarArgFunction {
+    static class getDimensions extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
-            BoundingRectangle box = LuaBoundingBox.checkBoundingBox(args.arg(1)).getBoundingBox();
+            
+            BoundingRectangle box = check(args.arg(1)).getObject();
             Vector2 dimensions = box.getDimensions();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(dimensions.x),
@@ -66,23 +76,26 @@ public class LuaBoundingBoxMeta extends LuaTable {
         }
     }
     
-    static class _setDimensions extends ThreeArgFunction {
+    static class setDimensions extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            BoundingRectangle box = LuaBoundingBox.checkBoundingBox(arg1).getBoundingBox();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            BoundingRectangle box = check(args.arg1()).getObject();
             Vector2 dimensions = box.getDimensions();
-            float width = arg2.isnil() ? dimensions.x : new Float(arg2.checkdouble());
-            float height = arg3.isnil() ? dimensions.y : new Float(arg3.checkdouble());
+            float width = new Float(args.optdouble(2, dimensions.x));
+            float height = new Float(args.optdouble(3, dimensions.y));
             box.setDimensions(width, height);
             return LuaValue.NIL;
         }
     }
     
-    static class _getOrigin extends VarArgFunction {
+    static class getOrigin extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
-            BoundingRectangle box = LuaBoundingBox.checkBoundingBox(args.arg(1)).getBoundingBox();
+            
+            BoundingRectangle box = check(args.arg(1)).getObject();
             Vector2 origin = box.getOrigin();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(origin.x),
@@ -91,23 +104,26 @@ public class LuaBoundingBoxMeta extends LuaTable {
         }
     }
     
-    static class _setOrigin extends ThreeArgFunction {
+    static class setOrigin extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            BoundingRectangle box = LuaBoundingBox.checkBoundingBox(arg1).getBoundingBox();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            BoundingRectangle box = check(args.arg1()).getObject();
             Vector2 origin = box.getOrigin();
-            float x = arg2.isnil() ? origin.x : new Float(arg2.checkdouble());
-            float y = arg3.isnil() ? origin.y : new Float(arg3.checkdouble());
+            float x = new Float(args.optdouble(2, origin.x));
+            float y = new Float(args.optdouble(3, origin.y));
             box.setOrigin(x, y);
             return LuaValue.NIL;
         }
     }
     
-    static class _getVertices extends VarArgFunction {
+    static class getVertices extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
-            BoundingRectangle box = LuaBoundingBox.checkBoundingBox(args.arg(1)).getBoundingBox();
+            
+            BoundingRectangle box = check(args.arg(1)).getObject();
             float[] vertices = box.getVertices();
             LuaValue[][] returned = new LuaValue[vertices.length / 2][2];
             for(int i = 0; i < vertices.length; i++) {
@@ -115,12 +131,11 @@ public class LuaBoundingBoxMeta extends LuaTable {
                 returned[i][1] = LuaValue.valueOf(vertices[i * 2 + 1]);
             }
             
-            return LuaValue.varargsOf(new LuaValue[] {
+            return LuaUtil.asVarargs(
                     LuaValue.tableOf(returned[0]),
                     LuaValue.tableOf(returned[1]),
                     LuaValue.tableOf(returned[2]),
-                    LuaValue.tableOf(returned[3])
-            });
+                    LuaValue.tableOf(returned[3]));
         }
     }
 }

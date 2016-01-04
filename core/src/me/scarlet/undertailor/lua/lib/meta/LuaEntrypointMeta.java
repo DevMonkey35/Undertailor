@@ -1,42 +1,45 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
-import me.scarlet.undertailor.lua.LuaBoundingBox;
-import me.scarlet.undertailor.lua.LuaEntrypoint;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.LuaUtil;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.ThreeArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class LuaEntrypointMeta extends LuaTable {
+public class LuaEntrypointMeta extends LuaLibrary {
     
-    public static void prepareMetatable() {
-        if(LuaEntrypoint.METATABLE == null) {
-            LuaEntrypoint.METATABLE = LuaValue.tableOf(new LuaValue[] { INDEX, new LuaEntrypointMeta() });
-        }
+    public static LuaObjectValue<Entrypoint> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_ENTRYPOINT);
     }
+    
+    public static LuaObjectValue<Entrypoint> create(Entrypoint value) {
+        return LuaObjectValue.of(value, Lua.TYPENAME_ENTRYPOINT, Lua.META_ENTRYPOINT);
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
+            new getBoundingBox(),
+            new getSpawnPosition(),
+            new setSpawnPosition(),
+            new getRoomTarget(),
+            new setRoomTarget(),
+            new getPosition(),
+            new setPosition()
+    };
     
     public LuaEntrypointMeta() {
-        this.set("getBoundingBox", new _getBoundingBox());
-        this.set("getSpawnPosition", new _getSpawnPosition());
-        this.set("setSpawnPosition", new _setSpawnPosition());
-        this.set("getRoomTarget", new _getRoomTarget());
-        this.set("setRoomTarget", new _setRoomTarget());
-        this.set("getPosition", new _getPosition());
-        this.set("setPosition", new _setPosition());
+        super(null, COMPONENTS);
     }
     
-    static class _getSpawnPosition extends VarArgFunction {
+    static class getSpawnPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            Entrypoint entrypoint = LuaEntrypoint.checkEntrypoint(args.arg(1)).getEntrypoint();
+            Entrypoint entrypoint = check(args.arg(1)).getObject();
             Vector2 spawnpos = entrypoint.getSpawnPosition();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(spawnpos.x),
@@ -45,25 +48,27 @@ public class LuaEntrypointMeta extends LuaTable {
         }
     }
     
-    static class _setSpawnPosition extends ThreeArgFunction {
+    static class setSpawnPosition extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            Entrypoint entrypoint = LuaEntrypoint.checkEntrypoint(arg1).getEntrypoint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            Entrypoint entrypoint = check(args.arg1()).getObject();
             Vector2 spawnpos = entrypoint.getSpawnPosition();
-            float x = arg2.isnil() ? spawnpos.x : new Float(arg2.checkdouble());
-            float y = arg3.isnil() ? spawnpos.x : new Float(arg3.checkdouble());
+            float x = new Float(args.optdouble(2, spawnpos.x));
+            float y = new Float(args.optdouble(3, spawnpos.y));
             
             entrypoint.setSpawnPosition(x, y);
             return LuaValue.NIL;
         }
     }
     
-    static class _getPosition extends VarArgFunction {
+    static class getPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            Entrypoint entrypoint = LuaEntrypoint.checkEntrypoint(args.arg(1)).getEntrypoint();
+            Entrypoint entrypoint = check(args.arg(1)).getObject();
             Vector2 pos = entrypoint.getPosition();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(pos.x),
@@ -72,45 +77,51 @@ public class LuaEntrypointMeta extends LuaTable {
         }
     }
     
-    static class _setPosition extends ThreeArgFunction {
+    static class setPosition extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            Entrypoint entrypoint = LuaEntrypoint.checkEntrypoint(arg1).getEntrypoint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            Entrypoint entrypoint = check(args.arg1()).getObject();
             Vector2 pos = entrypoint.getPosition();
-            float x = arg2.isnil() ? pos.x : new Float(arg2.checkdouble());
-            float y = arg3.isnil() ? pos.x : new Float(arg3.checkdouble());
+            float x = new Float(args.optdouble(2, pos.x));
+            float y = new Float(args.optdouble(3, pos.y));
             
             entrypoint.setPosition(x, y);
             return LuaValue.NIL;
         }
     }
     
-    static class _getRoomTarget extends OneArgFunction {
+    static class getRoomTarget extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            Entrypoint entrypoint = LuaEntrypoint.checkEntrypoint(arg).getEntrypoint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
             
+            Entrypoint entrypoint = check(args.arg1()).getObject();
             return LuaValue.valueOf(entrypoint.getRoomTarget());
         }
     }
     
-    static class _setRoomTarget extends TwoArgFunction {
+    static class setRoomTarget extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Entrypoint entrypoint = LuaEntrypoint.checkEntrypoint(arg1).getEntrypoint();
-            String target = arg2.checkjstring();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            Entrypoint entrypoint = check(args.arg1()).getObject();
+            String target = args.checkjstring(2);
             
             entrypoint.setRoomTarget(target);
             return LuaValue.NIL;
         }
     }
     
-    static class _getBoundingBox extends OneArgFunction {
+    static class getBoundingBox extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            Entrypoint entrypoint = LuaEntrypoint.checkEntrypoint(arg).getEntrypoint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
             
-            return new LuaBoundingBox(entrypoint.getBoundingBox());
+            Entrypoint entrypoint = check(args.arg1()).getObject();
+            return LuaBoundingBoxMeta.create(entrypoint.getBoundingBox());
         }
     }
 }

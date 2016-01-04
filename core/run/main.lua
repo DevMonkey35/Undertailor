@@ -1,4 +1,4 @@
-require("scripts/scenelib.lua")
+local scenelib = load("scripts/scenelib.lua")
 
 local room = game.overworld.newWorldRoom("room1");
 local character = game.overworld.newWorldObject("character.charfrisk");

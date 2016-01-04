@@ -1,42 +1,41 @@
 package me.scarlet.undertailor.lua.lib;
 
-import org.luaj.vm2.LuaTable;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.ZeroArgFunction;
+import org.luaj.vm2.Varargs;
 
 import java.util.Random;
 
-public class UtilLib extends TwoArgFunction {
-
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable util = new LuaTable();
-        util.set("randomDouble", new _randomDouble());
-        util.set("trim", new _trim());
-        
-        env.set("util", util);
-        return util;
+public class UtilLib extends LuaLibrary {
+    
+    public UtilLib() {
+        super("util",
+                new randomDouble(),
+                new trim());
     }
     
-    static class _randomDouble extends ZeroArgFunction { // temporary for a script test
+    static class randomDouble extends LibraryFunction { // temporary for a script test
         private Random random;
         
-        public _randomDouble() {
+        public randomDouble() {
             this.random = new Random();
         }
         
         @Override
-        public LuaValue call() {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
             return LuaValue.valueOf(random.nextDouble());
         }
     }
     
-    static class _trim extends OneArgFunction {
+    static class trim extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            return LuaValue.valueOf(arg.checkjstring().trim());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            return LuaValue.valueOf(args.checkjstring(1).trim());
         }
     }
 }

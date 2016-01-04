@@ -1,18 +1,10 @@
 package me.scarlet.undertailor.lua.lib.game;
 
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.TwoArgFunction;
+import me.scarlet.undertailor.lua.LuaLibrary;
 
-public class ControlLib extends TwoArgFunction {
-
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable control = new LuaTable();
-        
-        env.set("control", control);
-        return control;
+public class ControlLib extends LuaLibrary {
+    
+    public ControlLib() {
+        super("control");
     }
-    
-    
 }

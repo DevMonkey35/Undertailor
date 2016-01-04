@@ -3,117 +3,53 @@ package me.scarlet.undertailor.manager;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.wrappers.DisposableWrapper;
-import me.scarlet.undertailor.wrappers.MusicWrapper;
-import me.scarlet.undertailor.wrappers.SoundWrapper;
+import me.scarlet.undertailor.audio.Audio;
+import me.scarlet.undertailor.audio.AudioResourceManager;
+import me.scarlet.undertailor.audio.MusicWrapper;
+import me.scarlet.undertailor.audio.SoundWrapper;
+import me.scarlet.undertailor.util.NumberUtil;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 public class AudioManager {
     
     public static final String MANAGER_TAG = "audioman";
     
-    private float musicVolume, soundVolume;
-    private Map<String, SoundWrapper> soundFx;
-    private Map<String, MusicWrapper> music;
+    private float masterVolume;
+    private AudioResourceManager<MusicWrapper> musicMan;
+    private AudioResourceManager<SoundWrapper> soundMan;
     
     public AudioManager() {
-        soundFx = new HashMap<>();
-        music = new HashMap<>();
-        soundVolume = 1.0F;
-        musicVolume = 1.0F;
+        soundMan = new AudioResourceManager<>(this, MANAGER_TAG, "sound");
+        musicMan = new AudioResourceManager<>(this, MANAGER_TAG, "music");
+        this.masterVolume = 1.0F;
     }
     
     public void loadSounds(File soundsDir) {
         load(0, soundsDir, null);
-        Undertailor.instance.log(MANAGER_TAG, soundFx.entrySet().size() + " sound(s) currently loaded");
+        Undertailor.instance.log(MANAGER_TAG, soundMan.getTotalLoaded() + " sound(s) currently loaded");
     }
     
     public void loadMusic(File musicDir) {
         load(1, musicDir, null);
-        Undertailor.instance.log(MANAGER_TAG, music.entrySet().size() + " music track(s) currently loaded");
+        Undertailor.instance.log(MANAGER_TAG, musicMan.getTotalLoaded() + " music track(s) currently loaded");
     }
     
-    public float getMusicVolume() {
-        return musicVolume;
+    public float getVolume() {
+        return masterVolume;
     }
     
-    public void setMusicVolume(float volume) {
-        this.musicVolume = volume;
-        if(this.musicVolume > 1.0F) {
-            this.musicVolume = 1.0F;
-        }
-        
-        if(this.musicVolume < 0.0F) {
-            this.musicVolume = 0F;
-        }
+    public void setVolume(float volume) {
+        this.masterVolume = NumberUtil.boundFloat(volume, 0.0F, 1.0F);
     }
     
-    public float getSoundVolume() {
-        return soundVolume;
+    public AudioResourceManager<MusicWrapper> getMusicManager() {
+        return musicMan;
     }
     
-    public void setSoundVolume(float volume) {
-        this.soundVolume = volume;
-        if(this.soundVolume > 1.0F) {
-            this.soundVolume = 1.0F;
-        }
-        
-        if(this.soundVolume < 0.0F) {
-            this.soundVolume = 0F;
-        }
-    }
-    
-    public SoundWrapper getSound(String name) {
-        SoundWrapper wrapper = this.getSoundWrapper(name);
-        if(wrapper != null) {
-            return wrapper;
-        }
-        
-        Undertailor.instance.warn(MANAGER_TAG, "system requested non-existing sound (" + name + ")");
-        return null;
-    }
-    
-    public MusicWrapper getMusic(String name) {
-        MusicWrapper wrapper = this.getMusicWrapper(name);
-        if(wrapper != null) {
-            return wrapper;
-        }
-        
-        Undertailor.instance.warn(MANAGER_TAG, "system requested non-existing music (" + name + ")");
-        return null;
-    }
-    
-    public SoundWrapper getSoundWrapper(String name) {
-        return soundFx.get(name);
-    }
-    
-    public MusicWrapper getMusicWrapper(String name) {
-        return music.get(name);
-    }
-    
-    public void keepSoundLoaded(String name, boolean preload) {
-        SoundWrapper wrapper = this.getSound(name);
-        if(wrapper != null) {
-            if(preload) {
-                wrapper.getReference(this);
-            } else {
-                wrapper.removeReference(this);
-            }
-        }
-    }
-    
-    public void keepMusicLoaded(String name, boolean preload) {
-        MusicWrapper wrapper = this.getMusic(name);
-        if(wrapper != null) {
-            if(preload) {
-                wrapper.getReference(this);
-            } else {
-                wrapper.removeReference(this);
-            }
-        }
+    public AudioResourceManager<SoundWrapper> getSoundManager() {
+        return soundMan;
     }
     
     @SuppressWarnings("unchecked")
@@ -135,7 +71,7 @@ public class AudioManager {
             return;
         }
         
-        Map<String, DisposableWrapper<?>> mapping = (Map<String, DisposableWrapper<?>>) (table == 0 ? soundFx : music);
+        Map<String, Audio<?>> mapping = (Map<String, Audio<?>>) (table == 0 ? soundMan.getResourceMapping() : musicMan.getResourceMapping());
         Undertailor.instance.log(MANAGER_TAG, "scanning directory " + dirPath + " for " + (table == 0 ? "sound" : "music"));
         for(File file : dir.listFiles()) {
             if(file.isDirectory()) {
@@ -153,12 +89,12 @@ public class AudioManager {
                 Undertailor.instance.log(MANAGER_TAG, "WARN: name conflict with another sound/music file of another file type detected (" + name + "); old one will be replaced with new one");
             }
             
-            DisposableWrapper<?> value = null;
+            Audio<?> value = null;
             if(table == 0) { // sound
-                value = new SoundWrapper(file);
+                value = new SoundWrapper(soundMan, file);
                 Undertailor.instance.debug(MANAGER_TAG, "registered sound " + name);
             } else {
-                value = new MusicWrapper(file);
+                value = new MusicWrapper(name, musicMan, file);
                 Undertailor.instance.debug(MANAGER_TAG, "registered music " + name);
             }
             

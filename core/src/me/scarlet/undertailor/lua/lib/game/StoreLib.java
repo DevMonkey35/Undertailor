@@ -1,46 +1,48 @@
 package me.scarlet.undertailor.lua.lib.game;
 
-import org.luaj.vm2.LuaError;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
+import org.luaj.vm2.Varargs;
 
-public class StoreLib extends TwoArgFunction {
+import java.util.HashMap;
+import java.util.Map;
+
+public class StoreLib extends LuaLibrary {
     
-    private LuaTable table;
+    private Map<String, LuaTable> tables;
     public StoreLib() {
-        table = new LuaTable();
+        super("store",
+                new get(),
+                new set());
+        
+        tables = new HashMap<>();
     }
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable store = new LuaTable();
-        
-        store.set("get", new _get());
-        store.set("set", new _set());
-        
-        env.set("store", store);
-        return store;
-    }
-    
-    final class _get extends OneArgFunction {
+    static class get extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            return table.get(arg);
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            String tableName = args.checkjstring(1);
+            LuaValue key = args.checknotnil(2);
+            return ((StoreLib) this.getLibraryInstance()).tables.get(tableName).get(key);
         }
     }
     
-    final class _set extends TwoArgFunction {
+    static class set extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            try {
-                table.set(arg1, arg2);
-            } catch(Exception e) {
-                throw new LuaError(e.getClass().getSimpleName() + " - " + e.getMessage());
-            }
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 3, 3);
             
+            String tableName = args.checkjstring(1);
+            LuaValue key = args.checknotnil(2);
+            LuaValue value = args.arg(3);
+            ((StoreLib) this.getLibraryInstance()).tables.get(tableName).set(key, value);
             return LuaValue.NIL;
         }
     }
+    
+    // TODO save/load from file
 }

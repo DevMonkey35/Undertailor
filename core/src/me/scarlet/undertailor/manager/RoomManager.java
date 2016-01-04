@@ -1,6 +1,7 @@
 package me.scarlet.undertailor.manager;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 
@@ -66,12 +67,12 @@ public class RoomManager extends Manager<RoomDataWrapper> {
                 Undertailor.instance.debug(MANAGER_TAG, "loading room " + entryName);
                 rooms.put(entryName, new RoomDataWrapper(file, loader.load()));
             } catch(Exception e) {
-                Undertailor.instance.error(MANAGER_TAG, "could not load room " + entryName + ": " + e.getMessage(), e.getStackTrace());
+                Undertailor.instance.error(MANAGER_TAG, "could not load room " + entryName + ": " + LuaUtil.formatJavaException(e), e);
             }
         }
     }
     
-    public RoomDataWrapper getObject(String name) {
+    public RoomDataWrapper getRoomObject(String name) {
         if(rooms.containsKey(name)) {
             return rooms.get(name);
         }

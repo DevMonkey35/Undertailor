@@ -1,50 +1,46 @@
 package me.scarlet.undertailor.lua.lib;
 
 import com.badlogic.gdx.Gdx;
-import me.scarlet.undertailor.lua.lib.game.AnimationLib;
-import me.scarlet.undertailor.lua.lib.game.AudioLib;
-import me.scarlet.undertailor.lua.lib.game.ControlLib;
-import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
-import me.scarlet.undertailor.lua.lib.game.LoggerLib;
-import me.scarlet.undertailor.lua.lib.game.OverworldLib;
-import me.scarlet.undertailor.lua.lib.game.UILib;
-import org.luaj.vm2.LuaTable;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
+import org.luaj.vm2.Varargs;
 
-public class GameLib extends TwoArgFunction {
+public class GameLib extends LuaLibrary {
     
     public static final String DEFAULT_TITLE = "UNDERTAILOR";
+    public static boolean defset = false;
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable game = new LuaTable();
-        game.set("setWindowTitle", new _setWindowTitle());
-        new UILib().call(LuaValue.valueOf(""), game);
-        new AudioLib().call(LuaValue.valueOf(""), game);
-        new LoggerLib().call(LuaValue.valueOf(""), game);
-        new ControlLib().call(LuaValue.valueOf(""), game);
-        new GraphicsLib().call(LuaValue.valueOf(""), game);
-        new OverworldLib().call(LuaValue.valueOf(""), game);
-        new AnimationLib().call(LuaValue.valueOf(""), game);
-        
-        Gdx.graphics.setTitle(DEFAULT_TITLE);
-        env.set("game", game);
-        return game;
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new setWindowTitle(),
+            
+            Lua.LIB_UI,
+            Lua.LIB_AUDIO,
+            Lua.LIB_LOGGER,
+            Lua.LIB_GRAPHICS,
+            Lua.LIB_OVERWORLD,
+            Lua.LIB_ANIMATION
+    };
+    
+    public GameLib() {
+        super("game", COMPONENTS);
     }
     
-    static class _setWindowTitle extends OneArgFunction {
+    @Override
+    public void postinit(LuaValue env, LuaValue game) {
+        if(!defset) {
+            Gdx.graphics.setTitle(DEFAULT_TITLE);
+            defset = true;
+        }
+    }
+    
+    static class setWindowTitle extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            String title;
-            if(arg.isnil()) {
-                title = DEFAULT_TITLE;
-            } else {
-                title = arg.checkjstring();
-            }
-            
-            Gdx.graphics.setTitle(title);
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 1);
+            Gdx.graphics.setTitle(args.optjstring(1, DEFAULT_TITLE));
             return LuaValue.NIL;
         }
     }

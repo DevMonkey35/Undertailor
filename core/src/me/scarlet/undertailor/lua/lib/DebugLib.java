@@ -1,26 +1,28 @@
 package me.scarlet.undertailor.lua.lib;
 
 import me.scarlet.undertailor.Undertailor;
-import org.luaj.vm2.LuaTable;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
+import org.luaj.vm2.Varargs;
 
-public class DebugLib extends TwoArgFunction {
+public class DebugLib extends LuaLibrary {
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable debug = new LuaTable();
-        debug.set("setFrameCap", new _setFrameCap());
-        
-        env.set("debug", debug);
-        return debug;
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new setFrameCap()
+    };
+    
+    public DebugLib() {
+        super("debug", COMPONENTS);
     }
     
-    static class _setFrameCap extends OneArgFunction {
+    static class setFrameCap extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            Undertailor.setFrameCap(arg.checkint());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            Undertailor.setFrameCap(args.checkint(1));
             return LuaValue.NIL;
         }
     }

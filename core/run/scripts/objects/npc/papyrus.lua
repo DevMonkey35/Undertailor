@@ -1,7 +1,7 @@
 -- NPC Papyrus
 
-require("scripts/colliderlib.lua")
-require("scripts/scenelib.lua")
+local colliderlib = load("scripts/colliderlib.lua")
+local scenelib = load("scripts/scenelib.lua")
 
 local count = 0
 local C_ANIM_SET = "papyrus";
@@ -48,7 +48,7 @@ function dialog(count)
 			text.newText("8bitop", nil, nil, "ds_ovw"):addComponents(
 				text.component.newComponent("*You could say he's having a")),
 			text.newText("8bitop", nil, nil, "ds_ovw"):addComponents(
-				text.component.newComponent(" bad time", nil, nil, colors.presets.BLUE),
+				text.component.newComponent(" bad time", nil, nil, colors.fromHex("0000FF")),
 				text.component.newComponent("."))
 		}
 	elseif(count == 2) then
@@ -106,6 +106,7 @@ function dialog(count)
 		}
 	end
 	
+	print(tostring(scenelib))
 	for k,v in ipairs(texts) do
 		scenelib.textbox(v, 0)
 	end

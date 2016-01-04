@@ -1,91 +1,107 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
-import me.scarlet.undertailor.lua.LuaEntrypoint;
-import me.scarlet.undertailor.lua.LuaWorldObject;
-import me.scarlet.undertailor.lua.LuaWorldRoom;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.overworld.WorldObject;
 import me.scarlet.undertailor.overworld.WorldRoom;
 import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
-import org.luaj.vm2.LuaTable;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.ThreeArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.ZeroArgFunction;
+import org.luaj.vm2.Varargs;
 
-public class LuaWorldRoomMeta extends LuaTable {
+public class LuaWorldRoomMeta extends LuaLibrary {
     
-    public static void prepareMetatable() {
-        if(LuaWorldRoom.METATABLE == null) {
-            LuaWorldRoom.METATABLE = LuaValue.tableOf(new LuaValue[] {INDEX, new LuaWorldRoomMeta()});
-        }
+    public static LuaObjectValue<WorldRoom> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_WORLDROOM);
     }
+    
+    public static LuaObjectValue<WorldRoom> create(WorldRoom room) {
+        return LuaObjectValue.of(room, Lua.TYPENAME_WORLDROOM, Lua.META_WORLDROOM);
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new getRoomName(),
+            new registerObject(),
+            new getObject(),
+            new removeObject(),
+            new newEntrypoint(),
+            new registerEntrypoint()
+    };
     
     public LuaWorldRoomMeta() {
-        this.set("getRoomName", new _getRoomName());
-        this.set("registerObject", new _registerObject());
-        this.set("getObject", new _getObject());
-        this.set("removeObject", new _removeObject());
-        this.set("newEntrypoint", new _newEntrypoint());
-        this.set("registerEntrypoint", new _registerEntrypoint());
+        super(null, COMPONENTS);
     }
     
-    static class _getRoomName extends OneArgFunction {
+    static class getRoomName extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            WorldRoom room = LuaWorldRoom.checkWorldRoom(arg).getRoom();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldRoom room = check(args.arg1()).getObject();
             return LuaValue.valueOf(room.getRoomName());
         }
     }
     
-    static class _registerObject extends TwoArgFunction {
+    static class registerObject extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldRoom room = LuaWorldRoom.checkWorldRoom(arg1).getRoom();
-            WorldObject object = LuaWorldObject.checkWorldObject(arg2).getWorldObject();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldRoom room = check(args.arg1()).getObject();
+            WorldObject object = LuaWorldObjectMeta.check(args.arg(2)).getObject();
             return LuaValue.valueOf(room.registerObject(object));
         }
     }
     
-    static class _getObject extends TwoArgFunction {
+    static class getObject extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldRoom room = LuaWorldRoom.checkWorldRoom(arg1).getRoom();
-            int id = arg2.checkint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldRoom room = check(args.arg1()).getObject();
+            int id = args.checkint(2);
             if(room.getObject(id) != null) {
-                return new LuaWorldObject(room.getObject(id));
+                return LuaWorldObjectMeta.create(room.getObject(id));
             } else {
                 return LuaValue.NIL;
             }
         }
     }
     
-    static class _registerEntrypoint extends ThreeArgFunction {
+    static class registerEntrypoint extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            WorldRoom room = LuaWorldRoom.checkWorldRoom(arg1).getRoom();
-            String id = arg2.checkjstring();
-            Entrypoint entrypoint = LuaEntrypoint.checkEntrypoint(arg3).getEntrypoint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 3, 3);
+            
+            WorldRoom room = check(args.arg1()).getObject();
+            String id = args.checkjstring(2);
+            Entrypoint entrypoint = LuaEntrypointMeta.check(args.arg(3)).getObject();
             
             room.registerEntrypoint(id, entrypoint);
             return LuaValue.NIL;
         }
     }
     
-    static class _removeObject extends TwoArgFunction {
+    static class removeObject extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            WorldRoom room = LuaWorldRoom.checkWorldRoom(arg1).getRoom();
-            int id = arg2.checkint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldRoom room = check(args.arg1()).getObject();
+            int id = args.checkint(2);
             room.removeObject(id);
             return LuaValue.NIL;
         }
     }
     
-    static class _newEntrypoint extends ZeroArgFunction {
+    static class newEntrypoint extends LibraryFunction {
         @Override
-        public LuaValue call() {
-            return new LuaEntrypoint(new Entrypoint());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
+            return LuaEntrypointMeta.create(new Entrypoint());
         }
     }
     

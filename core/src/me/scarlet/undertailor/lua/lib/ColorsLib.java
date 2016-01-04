@@ -1,43 +1,47 @@
 package me.scarlet.undertailor.lua.lib;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Colors;
-import me.scarlet.undertailor.lua.LuaColor;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class ColorsLib extends TwoArgFunction {
+public class ColorsLib extends LuaLibrary {
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable colors = new LuaTable();
-        LuaTable presets = new LuaTable();
-        colors.set("fromHex", new _fromHex());
-        colors.set("fromRGB", new _fromRGB());
-        colors.set("getRGB", new _getRGB());
-        colors.set("setRGB", new _setRGB());
-        Colors.getColors().entries().forEach(entry -> {
-            presets.set(entry.key.toUpperCase(), new LuaColor(entry.value));
-        });
-        
-        colors.set("presets", presets);
-        
-        if(LuaColor.METATABLE == null) LuaColor.METATABLE = LuaValue.tableOf(new LuaValue[] {LuaValue.INDEX, colors});
-        env.set("colors", colors);
-        return colors;
+    public static final LuaObjectValue<Color> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_COLOR);
     }
     
-    static class _fromHex extends OneArgFunction {
+    public static final LuaObjectValue<Color> create(Color color) {
+        return LuaObjectValue.of(color, Lua.TYPENAME_COLOR, LuaLibrary.asMetatable(Lua.LIB_COLORS));
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new fromHex(),
+            new fromRGB(),
+            new getRGB(),
+            new setRGB(),
+            new printColor()
+    };
+    
+    public ColorsLib() {
+        super("colors", COMPONENTS);
+    }
+    
+    // ##########################
+    // #   Library functions.   #
+    // ##########################
+    
+    static class fromHex extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue hexstring) {
-            hexstring.checkstring();
-            String string = hexstring.toString();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            String string = args.checkjstring(1);
             string = string.charAt(0) == '#' ? string.substring(1) : string;
             if(string.length() < 6) {
                 throw new LuaError("bad argument: invalid hex string; must be in the format RRGGBB or RRGGBBAA");
@@ -58,13 +62,13 @@ public class ColorsLib extends TwoArgFunction {
                 throw new LuaError("error: bad hex value");
             }
             
-            return new LuaColor(color);
+            return create(color);
         }
     }
     
-    static class _fromRGB extends VarArgFunction {
+    static class fromRGB extends LibraryFunction  {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 3, 4);
             
             float r = args.isnil(1) ? 0 : new Float(args.checkdouble(1));
@@ -72,30 +76,30 @@ public class ColorsLib extends TwoArgFunction {
             float b = args.isnil(3) ? 0 : new Float(args.checkdouble(3));
             float a = args.isnil(4) ? 0 : new Float(args.checkdouble(4));
             
-            return new LuaColor(new Color(r, g, b, a));
+            return create(new Color(r, g, b, a));
         }
     }
     
-    static class _getRGB extends VarArgFunction {
+    static class getRGB extends LibraryFunction  {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            Color color = LuaColor.checkcolor(args.arg(1)).getColor();
-            return LuaValue.varargsOf(new LuaValue[] {
+            Color color = check(args.arg(1)).getObject();
+            return LuaUtil.asVarargs(
                     LuaValue.valueOf(color.r),
                     LuaValue.valueOf(color.g),
                     LuaValue.valueOf(color.b),
-                    LuaValue.valueOf(color.a)});
+                    LuaValue.valueOf(color.a));
         }
     }
     
-    static class _setRGB extends VarArgFunction {
+    static class setRGB extends LibraryFunction  {
         @Override
-        public Varargs invoke(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 5); // color, r, g, b, a
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 5); // color, r, g, b, a
             
-            Color color = LuaColor.checkcolor(args.arg(1)).getColor();
+            Color color = check(args.arg(1)).getObject();
             float r = args.isnil(2) ? color.r : new Float(args.checkdouble(2));
             float g = args.isnil(3) ? color.g : new Float(args.checkdouble(3));
             float b = args.isnil(4) ? color.b : new Float(args.checkdouble(4));
@@ -105,12 +109,12 @@ public class ColorsLib extends TwoArgFunction {
         }
     }
     
-    static class _printColor extends OneArgFunction {
+    static class printColor extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue color) {
-            LuaColor.checkcolor(color);
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
             
-            Color c = ((LuaColor) color).getColor();
+            Color c = check(args.arg1()).getObject();
             System.out.println(c.toString());
             return LuaValue.NIL;
         }

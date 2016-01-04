@@ -76,11 +76,12 @@ public class LuaUtil {
             LuaC.install(globals);
             globals.baselib = base;
             globals.finder = base;
-            try {
-                LuaUtil.loadFile(globals, scriptFile);
-            } catch(FileNotFoundException e) {
-                Undertailor.instance.error(StyleManager.MANAGER_TAG, "failed to load style: file " + scriptFile.getAbsolutePath() + " wasn't found");
-            }
+        }
+        
+        try {
+            LuaUtil.loadFile(globals, scriptFile);
+        } catch(FileNotFoundException e) {
+            Undertailor.instance.error(StyleManager.MANAGER_TAG, "failed to load style: file " + scriptFile.getAbsolutePath() + " wasn't found");
         }
         
         iterateTable(globals, entry -> {
@@ -96,6 +97,67 @@ public class LuaUtil {
         if(args.narg() < min || (max <= 0 ? false : args.narg() > max)) {
             throw new LuaError("arguments insufficient or overflowing (min " + min + (max <= 0 ? ")" : " max " + max + ")"));
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T extends LuaValue> T checkType(LuaValue value, String typename) {
+        if(!isOfType(value, typename)) {
+            throw new LuaError("expected " + typename + ", got " + value.typename());
+        }
+        
+        return (T) value;
+    }
+    
+    public static boolean isOfType(LuaValue value, String typename) {
+        if(value.typename().equals(typename)) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public static LuaValue toMetatable(LuaValue functionTable) {
+        return asPairTable(LuaValue.INDEX, functionTable);
+    }
+    
+    public static Varargs asVarargs(LuaValue... values) {
+        if(values.length <= 0) {
+            return LuaValue.NIL;
+        }
+        
+        return LuaValue.varargsOf(values);
+    }
+    
+    public static LuaValue asTable(LuaValue... values) {
+        if(values.length <= 0) {
+            return LuaValue.NIL;
+        }
+        
+        return LuaValue.listOf(values);
+    }
+    
+    public static LuaValue asPairTable(LuaValue... values) {
+        if(values.length <= 0) {
+            return LuaValue.NIL;
+        }
+        
+        return LuaValue.tableOf(values);
+    }
+    
+    public static Varargs invokeNonNull(LuaFunction func, Varargs args) {
+        if(func != null) {
+            return func.invoke(args);
+        }
+        
+        return null;
+    }
+    
+    public static Varargs invokeNonNull(LuaFunction func, LuaValue... args) {
+        return invokeNonNull(func, asVarargs(args));
+    }
+    
+    public static String formatJavaException(Exception e) {
+        return e.getClass().getSimpleName() + " - " + e.getMessage();
     }
     
     public static void loadFile(Globals loader, File scriptFile) throws FileNotFoundException {

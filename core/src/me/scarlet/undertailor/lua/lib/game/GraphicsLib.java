@@ -3,73 +3,73 @@ package me.scarlet.undertailor.lua.lib.game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.lua.LuaColor;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.util.LuaUtil;
-import org.luaj.vm2.LuaTable;
+import me.scarlet.undertailor.util.NumberUtil;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
-import org.luaj.vm2.lib.ZeroArgFunction;
 
-public class GraphicsLib extends TwoArgFunction {
+public class GraphicsLib extends LuaLibrary {
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable graphics = new LuaTable();
-        graphics.set("getSpriteColor", new _getSpriteColor());
-        graphics.set("setSpriteColor", new _setSpriteColor());
-        graphics.set("getShapeColor", new _getShapeColor());
-        graphics.set("setShapeColor", new _setShapeColor());
-        graphics.set("drawLine", new _drawLine());
-        graphics.set("drawRectangle", new _drawRectangle());
-        graphics.set("drawFilledRectangle", new _drawFilledRectangle());
-        graphics.set("drawCircle", new _drawCircle());
-        graphics.set("drawFilledCircle", new _drawFilledCircle());
-        graphics.set("drawTriangle", new _drawTriangle());
-        graphics.set("drawFilledTriangle", new _drawFilledTriangle());
-        
-        env.set("graphics", graphics);
-        return graphics;
+    public GraphicsLib() {
+        super("graphics",
+                new getSpriteColor(),
+                new setSpriteColor(),
+                new getShapeColor(),
+                new setShapeColor(),
+                new drawLine(),
+                new drawRectangle(),
+                new drawFilledRectangle(),
+                new drawCircle(),
+                new drawFilledCircle(),
+                new drawTriangle(),
+                new drawFilledTriangle());
     }
     
-    static class _getSpriteColor extends ZeroArgFunction {
+    static class getSpriteColor extends LibraryFunction {
         @Override
-        public LuaValue call() {
-            return new LuaColor(Undertailor.getRenderer().getBatchColor());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            return ColorsLib.create(Undertailor.getRenderer().getBatchColor());
         }
     }
     
-    static class _setSpriteColor extends TwoArgFunction {
+    static class setSpriteColor extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Color color = LuaColor.checkcolor(arg1).getColor();
-            float alpha = arg2.isnil() ? color.a : new Float(arg2.checkdouble());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
+            
+            Color color = ColorsLib.check(args.arg(1)).getObject();
+            float alpha = new Float(args.optdouble(2, color.a));
             Undertailor.getRenderer().setBatchColor(color, alpha);
             return LuaValue.NIL;
         }
     }
     
-    static class _getShapeColor extends ZeroArgFunction {
+    static class getShapeColor extends LibraryFunction {
         @Override
-        public LuaValue call() {
-            return new LuaColor(Undertailor.getRenderer().getShapeColor());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            return ColorsLib.create(Undertailor.getRenderer().getShapeColor());
         }
     }
     
-    static class _setShapeColor extends TwoArgFunction {
+    static class setShapeColor extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            Color color = LuaColor.checkcolor(arg1).getColor();
-            float alpha = arg2.isnil() ? color.a : new Float(arg2.checkdouble());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
+            
+            Color color = ColorsLib.check(args.arg(1)).getObject();
+            float alpha = new Float(args.optdouble(2, color.a));
             Undertailor.getRenderer().setShapeColor(color, alpha);
             return LuaValue.NIL;
         }
     }
     
-    static class _drawLine extends VarArgFunction {
+    static class drawLine extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 4, 5);
             
             Vector2 a = new Vector2(new Float(args.checkdouble(1)),
@@ -83,9 +83,9 @@ public class GraphicsLib extends TwoArgFunction {
         }
     }
     
-    static class _drawRectangle extends VarArgFunction {
+    static class drawRectangle extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 4, 5);
             
             Vector2 pos = new Vector2(new Float(args.checkdouble(1)),
@@ -99,9 +99,9 @@ public class GraphicsLib extends TwoArgFunction {
         }
     }
     
-    static class _drawFilledRectangle extends VarArgFunction {
+    static class drawFilledRectangle extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 4, 4);
             
             Vector2 pos = new Vector2(new Float(args.checkdouble(1)),
@@ -114,9 +114,9 @@ public class GraphicsLib extends TwoArgFunction {
         }
     }
     
-    static class _drawCircle extends VarArgFunction {
+    static class drawCircle extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 3, 3);
             
             float x = new Float(args.checkdouble(1));
@@ -128,9 +128,9 @@ public class GraphicsLib extends TwoArgFunction {
         }
     }
     
-    static class _drawFilledCircle extends VarArgFunction {
+    static class drawFilledCircle extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 3, 3);
             
             float x = new Float(args.checkdouble(1));
@@ -142,9 +142,9 @@ public class GraphicsLib extends TwoArgFunction {
         }
     }
     
-    static class _drawTriangle extends VarArgFunction {
+    static class drawTriangle extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 6, 7);
             
             Vector2 vx1 = new Vector2(0, 0);
@@ -156,16 +156,16 @@ public class GraphicsLib extends TwoArgFunction {
             vx2.y = new Float(args.checkdouble(4));
             vx3.x = new Float(args.checkdouble(5));
             vx3.y = new Float(args.checkdouble(6));
-            float lineThickness = args.isnil(7) ? 1F : new Float(args.checkdouble(7));
+            float lineThickness = NumberUtil.boundFloat(new Float(args.optdouble(7, 1F)), 0.0F);
             
             Undertailor.getRenderer().drawTriangle(vx1, vx2, vx3, lineThickness);
             return LuaValue.NIL;
         }
     }
     
-    static class _drawFilledTriangle extends VarArgFunction {
+    static class drawFilledTriangle extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 6, 6);
             
             Vector2 vx1 = new Vector2(0, 0);

@@ -8,6 +8,7 @@ import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Font.FontData;
 import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.TextComponent.Text;
+import me.scarlet.undertailor.util.LuaUtil;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 
 import java.io.File;
@@ -79,7 +80,7 @@ public class FontManager extends Manager<Font> {
             try {
                 data = FontData.fromConfig(name, loader.load());
             } catch(IOException e) {
-                Undertailor.instance.error(MANAGER_TAG, "failed to load .underfont config for font " + entryName, e.getStackTrace());
+                Undertailor.instance.error(MANAGER_TAG, "failed to load .underfont config for font " + entryName + ": " + LuaUtil.formatJavaException(e), e);
                 continue;
             }
             
@@ -93,7 +94,7 @@ public class FontManager extends Manager<Font> {
         }
     }
     
-    public Font getObject(String name) {
+    public Font getRoomObject(String name) {
         if(fonts.containsKey(name)) {
             return fonts.get(name);
         }

@@ -1,7 +1,7 @@
 -- Fader UI component
 -- Just used to cover the screen with a giant box that gradually increases or decreases in alpha to achieve a fading effect.
 
-require("scripts/varlib.lua")
+local varlib = load("scripts/varlib.lua")
 
 local _fillColor;
 local _component;
@@ -14,7 +14,7 @@ local _blockInput
 function create(component, blockInput, fillColor, fadeTime, reverse)
 	_component = component;
 	_blockInput = varlib.checkarg(2, "boolean", blockInput, false)
-	_fillColor = varlib.checkarg(3, "gdx-color", fillColor, colors.presets.BLACK)
+	_fillColor = varlib.checkarg(3, "gdx-color", fillColor, colors.fromHex("000000"))
 	_fadeTime = varlib.checkarg(4, "number", fadeTime, 3000)
 	_reverse = varlib.checkarg(5, "boolean", reverse, false)
 end

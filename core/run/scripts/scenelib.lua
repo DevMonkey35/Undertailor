@@ -1,5 +1,5 @@
 -- scene lib
-require("scripts/varlib.lua")
+local varlib = load("scripts/varlib.lua")
 
 local function textbox_genanimtask(player, anim)
 	local task = {}

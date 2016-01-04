@@ -1,6 +1,6 @@
 package me.scarlet.undertailor.wrappers;
 
-import me.scarlet.undertailor.overworld.WorldRoom.RoomMap;
+import me.scarlet.undertailor.overworld.RoomMap;
 import ninja.leaping.configurate.ConfigurationNode;
 
 import java.io.File;

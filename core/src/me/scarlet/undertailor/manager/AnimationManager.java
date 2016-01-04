@@ -1,6 +1,7 @@
 package me.scarlet.undertailor.manager;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
@@ -61,12 +62,12 @@ public class AnimationManager extends Manager<AnimationSetWrapper> {
                 Undertailor.instance.debug(MANAGER_TAG, "loading animation set " + entryName);
                 animationMap.put(entryName, new AnimationSetWrapper(entryName, node));
             } catch(Exception e) {
-                Undertailor.instance.error(MANAGER_TAG, "could not load animationset " + name + ": " + e.getMessage(), e.getStackTrace());
+                Undertailor.instance.error(MANAGER_TAG, "could not load animationset " + name + ": " + LuaUtil.formatJavaException(e), e);
             }
         }
     }
     
-    public AnimationSetWrapper getObject(String name) {
+    public AnimationSetWrapper getRoomObject(String name) {
         if(animationMap.containsKey(name)) {
             return animationMap.get(name);
         }

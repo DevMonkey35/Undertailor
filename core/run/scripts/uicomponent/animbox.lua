@@ -1,4 +1,4 @@
-require("scripts/varlib.lua")
+local varlib = load("scripts/varlib.lua")
 
 local _component
 local _anim

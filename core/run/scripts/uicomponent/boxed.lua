@@ -2,7 +2,7 @@
 -- Simply just renders an outline box with a black background to surround the component.
 -- This component should be registered first in order to ensure it stands as a background for the rest of the components applied to the parent object.
 
-require("scripts/varlib.lua")
+local varlib = load("scripts/varlib.lua")
 
 local _fillColor;
 local _borderColor;
@@ -16,8 +16,8 @@ function create(component, borderColor, fillColor, width, height, borderThicknes
 	
 	_component:setAlwaysActive(true)
 	
-	_borderColor = varlib.checkarg(2, "gdx-color", borderColor, colors.presets.WHITE)
-	_fillColor = varlib.checkarg(3, "gdx-color", fillColor, colors.presets.BLACK)
+	_borderColor = varlib.checkarg(2, "gdx-color", borderColor, colors.fromHex("FFFFFF"))
+	_fillColor = varlib.checkarg(3, "gdx-color", fillColor, colors.fromHex("000000"))
 	_width = varlib.checkarg(4, "number", width)
 	_height = varlib.checkarg(5, "number", height)
 	_borderThickness = varlib.checkarg(6, "number", borderThickness, 3.0)

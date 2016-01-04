@@ -2,60 +2,63 @@ package me.scarlet.undertailor.lua.lib;
 
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.scheduler.LuaTask;
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.ZeroArgFunction;
+import org.luaj.vm2.Varargs;
 
-public class SchedulerLib extends TwoArgFunction {
+public class SchedulerLib extends LuaLibrary {
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable scheduler = new LuaTable();
-        
-        scheduler.set("registerTask", new _registerTask());
-        scheduler.set("cancelTask", new _cancelTask());
-        scheduler.set("millis", new _millis());
-        scheduler.set("sinceMillis", new _sinceMillis());
-        
-        env.set("scheduler", scheduler);
-        return scheduler;
+    public SchedulerLib() {
+        super("scheduler",
+                new registerTask(),
+                new cancelTask(),
+                new millis(),
+                new sinceMillis());
     }
     
-    static class _registerTask extends TwoArgFunction {
+    static class registerTask extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2) {
-            LuaTable impl = arg1.checktable();
-            boolean active = arg2.isnil() ? false : arg2.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
+            
+            LuaTable impl = args.checktable(1);
+            boolean active = args.isnil(2) ? false : args.checkboolean(2);
             
             LuaTask task = new LuaTask(impl);
             return LuaValue.valueOf(Undertailor.getScheduler().registerTask(task, active));
         }
     }
     
-    static class _cancelTask extends OneArgFunction {
+    static class cancelTask extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1) {
-            int id = arg1.checkint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            int id = args.checkint(1);
             
             Undertailor.getScheduler().cancelTask(id);
             return LuaValue.NIL;
         }
     }
     
-    static class _millis extends ZeroArgFunction {
+    static class millis extends LibraryFunction {
         @Override
-        public LuaValue call() {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
             return LuaValue.valueOf(TimeUtils.millis());
         }
     }
     
-    static class _sinceMillis extends OneArgFunction {
+    static class sinceMillis extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            long millis = arg.checklong();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            long millis = args.checklong(1);
             return LuaValue.valueOf(TimeUtils.timeSinceMillis(millis));
         }
     }

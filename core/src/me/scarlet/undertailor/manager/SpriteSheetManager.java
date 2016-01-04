@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.SpriteSheet;
+import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.SpriteSheetWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
@@ -72,12 +73,12 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
                 SpriteSheetWrapper sheet = new SpriteSheetWrapper(entryName, texture, root);
                 sheets.put(entryName, sheet);
             } catch(Exception e) {
-                Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet: vm exception (" + e.getMessage() + ")", e.getStackTrace());
+                Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet: vm exception (" + LuaUtil.formatJavaException(e) + ")", e);
             }
         }
     }
     
-    public SpriteSheetWrapper getObject(String sheetName) {
+    public SpriteSheetWrapper getRoomObject(String sheetName) {
         if(this.sheets.containsKey(sheetName)) {
             return this.sheets.get(sheetName);
         }
@@ -87,7 +88,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
     }
     
     public void keepSheetLoaded(String sheetName, boolean preload) {
-        SpriteSheetWrapper wrapper = this.getObject(sheetName);
+        SpriteSheetWrapper wrapper = this.getRoomObject(sheetName);
         if(wrapper != null) {
             if(preload) {
                 wrapper.getReference(this);

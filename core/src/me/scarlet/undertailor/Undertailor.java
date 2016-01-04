@@ -50,43 +50,33 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaImplementable;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.impl.UIComponentImplementable;
+import me.scarlet.undertailor.lua.impl.WorldObjectImplementable;
+import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.lua.lib.BaseLib;
-import me.scarlet.undertailor.lua.lib.ColorsLib;
-import me.scarlet.undertailor.lua.lib.GameLib;
-import me.scarlet.undertailor.lua.lib.SchedulerLib;
-import me.scarlet.undertailor.lua.lib.TextLib;
-import me.scarlet.undertailor.lua.lib.UtilLib;
-import me.scarlet.undertailor.lua.lib.game.StoreLib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.manager.RoomManager;
+import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.manager.TilemapManager;
 import me.scarlet.undertailor.overworld.OverworldController;
 import me.scarlet.undertailor.scheduler.Scheduler;
 import me.scarlet.undertailor.texts.Font;
-import me.scarlet.undertailor.texts.TextComponent;
-import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.ui.UIController;
 import me.scarlet.undertailor.util.Blocker;
 import me.scarlet.undertailor.util.InputRetriever;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.JFXUtil;
+import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.util.MultiRenderer;
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.Bit32Lib;
-import org.luaj.vm2.lib.PackageLib;
-import org.luaj.vm2.lib.StringLib;
-import org.luaj.vm2.lib.TableLib;
-import org.luaj.vm2.lib.jse.JseBaseLib;
-import org.luaj.vm2.lib.jse.JseMathLib;
-import org.luaj.vm2.lib.jse.JseOsLib;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +88,21 @@ public class Undertailor extends ApplicationAdapter {
     
     public static Undertailor instance;
     public static final Rectangle RENDER_AREA;
+    public static final LuaLibrary[] LIBS = new LuaLibrary[] {
+            new BaseLib(),
+            Lua.LIB_COLORS,
+            Lua.LIB_DEBUG,
+            Lua.LIB_GAME,
+            Lua.LIB_SCHEDULER,
+            Lua.LIB_TEXT,
+            Lua.LIB_UTIL };
+    
+    @SuppressWarnings("rawtypes")
+    public static final LuaImplementable[] IMPLS = new LuaImplementable[] {
+            new UIComponentImplementable(),
+            new WorldObjectImplementable(),
+            new WorldRoomImplementable()
+    };
     
     static {
         RENDER_AREA = new Rectangle(0, 0, 640, 480);
@@ -147,33 +152,14 @@ public class Undertailor extends ApplicationAdapter {
         return Undertailor.instance.scheduler;
     }
     
+    public static ScriptManager getScriptManager() {
+        return Undertailor.instance.scriptManager;
+    }
+    
     public static void setFrameCap(int cap) {
         int frameCap = cap < 30 ? (cap == 0 ? 0 : 30) : cap;
         Undertailor.instance.config.backgroundFPS = frameCap;
         Undertailor.instance.config.foregroundFPS = frameCap;
-    }
-    
-    public static Globals newGlobals() {
-        Globals returned = new Globals();
-        returned.load(new JseBaseLib());
-        returned.load(new PackageLib());
-        returned.load(new org.luaj.vm2.lib.DebugLib());
-        returned.load(new Bit32Lib());
-        returned.load(new TableLib());
-        returned.load(new StringLib());
-        returned.load(new JseMathLib());
-        returned.load(new JseOsLib());
-        returned.load(new BaseLib());
-        
-        returned.set("debug", LuaValue.NIL);
-        LoadState.install(returned);
-        LuaC.install(returned);
-        
-        for(LuaValue lib : Undertailor.instance.libs) {
-            returned.load(lib);
-        }
-        
-        return returned;
     }
     
     public class Output extends OutputStream {
@@ -202,7 +188,6 @@ public class Undertailor extends ApplicationAdapter {
     private short strict;
     private boolean debug;
     
-    private LuaValue libs[];
     private LwjglApplicationConfiguration config;
     
     private Stage consoleStage;
@@ -210,6 +195,7 @@ public class Undertailor extends ApplicationAdapter {
     private DisposerThread disposer;
     private MultiRenderer renderer;
     
+    private ScriptManager scriptManager;
     private FontManager fontManager;
     private AudioManager audioManager;
     private StyleManager styleManager;
@@ -253,11 +239,9 @@ public class Undertailor extends ApplicationAdapter {
         
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
             if(e instanceof LuaError) {
-                this.error("lua", e.getMessage(), e.getStackTrace());
-                e.printStackTrace();
+                this.error("lua", e.getMessage(), (Exception) e);
             } else {
-                this.error("tailor", e.getClass().getSimpleName() + ": " + e.getMessage(), e.getStackTrace());
-                e.printStackTrace();
+                this.error("tailor", LuaUtil.formatJavaException((Exception) e), (Exception) e);
             }
         });
         
@@ -265,8 +249,11 @@ public class Undertailor extends ApplicationAdapter {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
         }
         
-        this.libs = new LuaValue[] {new ColorsLib(), new GameLib(), new UtilLib(), new TextLib(), new SchedulerLib(), new StoreLib()};
         this.renderer = new MultiRenderer();
+        
+        this.scriptManager = new ScriptManager();
+        this.scriptManager.registerLibraries(LIBS);
+        this.scriptManager.registerImplementables(IMPLS);
         
         this.fontManager = new FontManager();
         this.audioManager = new AudioManager();
@@ -299,7 +286,7 @@ public class Undertailor extends ApplicationAdapter {
         
         File mainFile = new File("main.lua");
         if(mainFile.exists()) {
-            Globals globals = Undertailor.newGlobals();
+            Globals globals = scriptManager.generateGlobals(true);
             globals.loadfile("main.lua").invoke();
         } else {
             error("tailor", "main.lua file not found; no start code was executed");
@@ -308,23 +295,6 @@ public class Undertailor extends ApplicationAdapter {
         disposer = new DisposerThread();
         disposer.setDaemon(true);
         disposer.start();
-        test();
-    }
-    
-    private void test() {
-        Font bitop = fontManager.getObject("8bitop");
-        Text text = new Text(bitop);
-        text.addComponents(new TextComponent("tits", null, null, Color.BLUE));
-        text.addComponents(new TextComponent("tits", null, null, Color.RED));
-        
-        for(int i = 0; i < text.getText().length(); i++) {
-            TextComponent comp = text.getComponentAtCharacter(i);
-            System.out.println(comp.getText() + ": " + comp.getColor().toString());
-        }
-        
-        Gdx.app.postRunnable(() -> {
-            System.out.println(Platform.isFxApplicationThread());
-        });
     }
     
     @Override
@@ -338,7 +308,7 @@ public class Undertailor extends ApplicationAdapter {
         ovwController.render();
         uiController.render();
         
-        Font bitop = fontManager.getObject("8bitop");
+        Font bitop = fontManager.getRoomObject("8bitop");
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 415, 2);
         renderer.flush();
         //System.out.println("RENDER CALLS: " + renderer.getSpriteBatch().renderCalls);
@@ -364,13 +334,14 @@ public class Undertailor extends ApplicationAdapter {
         error(tag, message, null);
     }
     
-    public void error(String tag, String message, StackTraceElement[] trace) {
-        Gdx.app.error("[ERRR] " + tag, message);
-        if(trace != null) {
-            for(StackTraceElement element : trace) {
-                Gdx.app.error("[ERRR] " + tag, element.toString());
-            }
+    public void error(String tag, String message, Exception e) {
+        
+        String trace = null;
+        if(e != null) {
+            e.printStackTrace();
         }
+        
+        Gdx.app.error("[ERRR] " + tag, message + (trace == null ? "" : "\n\t" + trace.trim()));
         
         if(strict >= 1) {
             String errMessage = "[ERRR] " + tag + ": " + message;
@@ -449,7 +420,7 @@ public class Undertailor extends ApplicationAdapter {
         return window;
     }
     
-    private void errorDialog(String title, String message, StackTraceElement[] stacktrace) {
+    private void errorDialog(String title, String message, String stacktrace) {
         Blocker.block(() -> {
             Stage stage = new Stage();
             AnchorPane parent = new AnchorPane();
@@ -459,11 +430,9 @@ public class Undertailor extends ApplicationAdapter {
             Label info = new Label("Uh-oh! Looks like Undertailor found a problem it didn't know how to resolve...");
             TextArea errr = new TextArea(message.endsWith("\n") ? message : message + "\n");
             if(stacktrace == null) {
-                errr.appendText("No stacktrace given.\n");
+                errr.appendText("No Java stacktrace given.\n");
             } else {
-                for(StackTraceElement element : stacktrace) {
-                    errr.appendText(element.toString() + "\n");
-                }
+                errr.appendText(stacktrace + "\n");
             }
             
             Label last = new Label("If this is from game scripts, you might wanna send this to the scripts' developer(s) and help them squash it! "

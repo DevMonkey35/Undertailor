@@ -2,67 +2,75 @@ package me.scarlet.undertailor.lua.lib.text;
 
 import com.badlogic.gdx.graphics.Color;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.lua.LuaColor;
-import me.scarlet.undertailor.lua.LuaSound;
-import me.scarlet.undertailor.lua.LuaStyle;
-import me.scarlet.undertailor.lua.LuaText;
-import me.scarlet.undertailor.lua.LuaTextComponent;
+import me.scarlet.undertailor.audio.SoundWrapper;
+import me.scarlet.undertailor.lua.Lua;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.lib.ColorsLib;
+import me.scarlet.undertailor.lua.lib.TextLib;
+import me.scarlet.undertailor.lua.lib.game.AudioLib;
+import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.TextComponent.Text;
 import me.scarlet.undertailor.util.LuaUtil;
-import me.scarlet.undertailor.wrappers.SoundWrapper;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.ThreeArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
 
-public class TextComponentLib extends TwoArgFunction {
-
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable component = new LuaTable();
-        component.set("newComponent", new _newComponent());
-        component.set("substring", new _substring());
-        component.set("getDelay", new _getDelay());
-        component.set("getSound", new _getSound());
-        component.set("getSpeed", new _getSpeed());
-        component.set("getStyle", new _getStyle());
-        component.set("getColor", new _getColor());
-        component.set("getText", new _getText());
-        
-        if(LuaTextComponent.METATABLE == null) {
-            LuaTextComponent.METATABLE = LuaValue.tableOf(new LuaValue[] {INDEX, component});
+public class TextComponentLib extends LuaLibrary {
+    
+    @SuppressWarnings("unchecked")
+    public static LuaObjectValue<TextComponent> check(LuaValue value) {
+        if(LuaUtil.isOfType(value, Lua.TYPENAME_TEXTCOMPONENT) || LuaUtil.isOfType(value, Lua.TYPENAME_TEXT)) {
+            return (LuaObjectValue<TextComponent>) value;
         }
         
-        LuaUtil.iterateTable(component, args -> {
-            if(!args.arg(1).toString().equals("newComponent")) {
-                env.set(args.arg(1), args.arg(2));
-            }
-        });
-        
-        env.set("component", component);
-        return component;
+        throw new LuaError("expected " + Lua.TYPENAME_TEXTCOMPONENT + " or " + Lua.TYPENAME_TEXT + ", got " + value.typename());
     }
     
-    static class _newComponent extends VarArgFunction {
+    public static LuaObjectValue<TextComponent> create(TextComponent value) {
+        return LuaObjectValue.of(value, Lua.TYPENAME_TEXTCOMPONENT, LuaLibrary.asMetatable(Lua.LIB_TEXTCOMPONENT));
+    }
+    
+    public static final LuaLibraryComponent[] COMPONENTS = {
+            new getColor(),
+            new getDelay(),
+            new getSegmentSize(),
+            new getSound(),
+            new getSpeed(),
+            new getStyle(),
+            new getText(),
+            new newComponent(),
+            new substring()
+    };
+    
+    public TextComponentLib() {
+        super("component", COMPONENTS);
+    }
+    
+    @Override
+    public void postinit(LuaValue env, LuaValue table) {
+        LuaUtil.iterateTable((LuaTable) table, args -> {
+            env.set(args.arg1(), args.arg(2)); // dupe the funcs
+        });
+        
+        env.set("component", table);
+    }
+    
+    static class newComponent extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
-            // text.component.newComponent(text, fontName, styleName, color, soundName, speed, waitTime)
-            if(args.narg() < 1 || args.narg() > 7) {
-                throw new LuaError("arguments insufficient or overflowing (min 1, max 8)");
-            }
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 7);
             
             String text = args.arg(1).checkstring().tojstring();
-            Font font = args.arg(2).isnil() ? null : Undertailor.getFontManager().getObject(args.arg(2).checkstring().tojstring());
-            Style style = args.arg(3).isnil() ? null : Undertailor.getStyleManager().getObject(args.arg(3).checkstring().tojstring());
-            Color color = args.arg(4).isnil() ? null : LuaColor.checkcolor(args.arg(4)).getColor();
-            SoundWrapper sound = args.arg(5).isnil() ? null : Undertailor.getAudioManager().getSound(args.arg(5).checkstring().tojstring());
+            Font font = args.arg(2).isnil() ? null : Undertailor.getFontManager().getRoomObject(args.arg(2).checkstring().tojstring());
+            Style style = args.arg(3).isnil() ? null : Undertailor.getStyleManager().getRoomObject(args.arg(3).checkstring().tojstring());
+            Color color = args.arg(4).isnil() ? null : ColorsLib.check(args.arg(4)).getObject();
+            SoundWrapper sound = args.arg(5).isnil() ? null : Undertailor.getAudioManager().getSoundManager().getResource(args.arg(5).checkstring().tojstring());
             int speed = args.arg(6).isnil() ? TextComponent.DEFAULT_SPEED : args.arg(6).checkint();
             int segsize = args.arg(7).isnil() ? 1 : args.arg(7).checkint();
             float wait = args.arg(8).isnil() ? 0F : new Float(args.arg(8).checkdouble());
@@ -71,14 +79,16 @@ public class TextComponentLib extends TwoArgFunction {
                 throw new LuaError("bad argument: text cannot be empty or only have whitespace characters");
             }
             
-            return new LuaTextComponent(new TextComponent(text, font, style, color, sound, speed, segsize, wait));
+            return create(new TextComponent(text, font, style, color, sound, speed, segsize, wait));
         }
     }
     
-    static class _getText extends OneArgFunction {
+    static class getText extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            String text = LuaTextComponent.checkTextComponent(arg).getTextComponent().getText();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            String text = check(args.arg1()).getObject().getText();
             if(text == null) {
                 return LuaValue.NIL;
             }
@@ -87,84 +97,97 @@ public class TextComponentLib extends TwoArgFunction {
         }
     }
     
-    static class _getSound extends OneArgFunction {
+    static class getSound extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            TextComponent component = LuaTextComponent.checkTextComponent(arg).getTextComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            TextComponent component = check(args.arg1()).getObject();
             if(component.getSound() == null) {
                 return LuaValue.NIL;
             }
             
-            return new LuaSound(component.getSound());
+            return AudioLib.createSound(component.getSound());
         }
     }
     
-    static class _getSpeed extends OneArgFunction {
+    static class getSpeed extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            TextComponent component = LuaTextComponent.checkTextComponent(arg).getTextComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            TextComponent component = check(args.arg1()).getObject();
             return LuaValue.valueOf(component.getSpeed());
         }
     }
     
-    static class _getDelay extends OneArgFunction {
+    static class getDelay extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            TextComponent component = LuaTextComponent.checkTextComponent(arg).getTextComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            TextComponent component = check(args.arg1()).getObject();
             return LuaValue.valueOf(component.getDelay());
         }
     }
     
-    static class _getStyle extends OneArgFunction {
+    static class getStyle extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            TextComponent component = LuaTextComponent.checkTextComponent(arg).getTextComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            TextComponent component = check(args.arg1()).getObject();
             if(component.getStyle() == null) {
                 return LuaValue.NIL;
             }
             
-            return component.getStyle() instanceof LuaStyle ? (LuaStyle) component.getStyle() : new LuaStyle(component.getStyle());
+            return LuaStyleMeta.create(component.getStyle());
         }
     }
     
-    static class _getColor extends OneArgFunction {
+    static class getColor extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            TextComponent component = LuaTextComponent.checkTextComponent(arg).getTextComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            TextComponent component = check(args.arg1()).getObject();
             if(component.getColor() == null) {
                 return LuaValue.NIL;
             }
             
-            return new LuaColor(component.getColor());
+            return ColorsLib.create(component.getColor());
         }
     }
     
-    static class _getSegmentSize extends OneArgFunction {
+    static class getSegmentSize extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            TextComponent component = LuaTextComponent.checkTextComponent(arg).getTextComponent();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            TextComponent component = check(args.arg1()).getObject();
             return LuaValue.valueOf(component.getSegmentSize());
         }
     }
     
-    static class _substring extends ThreeArgFunction {
+    static class substring extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
-            LuaTextComponent component = LuaTextComponent.checkTextComponent(arg1);
-            int bound1 = arg2.checkint();
-            int bound2 = arg3.isnil() ? -1 : arg3.checkint();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            TextComponent component = check(args.arg1()).getObject();
+            int bound1 = args.checkint(2);
+            int bound2 = args.optint(3, -1);
             TextComponent returned;
             
             if(bound2 > 0) {
-                returned = component.getTextComponent().substring(bound1, bound2);
+                returned = component.substring(bound1, bound2);
             } else {
-                returned = component.getTextComponent().substring(bound1);
+                returned = component.substring(bound1);
             }
             
             if(returned instanceof Text) {
-                return new LuaText((Text) returned);
+                return TextLib.create((Text) returned);
             } else {
-                return new LuaTextComponent(returned);
+                return create(returned);
             }
         }
     }

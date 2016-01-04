@@ -2,7 +2,10 @@ package me.scarlet.undertailor.lua.lib.game;
 
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.lua.LuaWorldRoom;
+import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
+import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
+import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.overworld.WorldRoom;
 import me.scarlet.undertailor.scheduler.LuaTask;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -10,136 +13,149 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
-import org.luaj.vm2.lib.ZeroArgFunction;
 
-public class OverworldLib extends TwoArgFunction {
+public class OverworldLib extends LuaLibrary {
     
-    @Override
-    public LuaValue call(LuaValue modname, LuaValue env) {
-        LuaTable overworld = new LuaTable();
-        overworld.set("newWorldRoom", new _newWorldRoom());
-        overworld.set("newWorldObject", new _newWorldObject());
-        overworld.set("isRendering", new _isRendering());
-        overworld.set("setRendering", new _setRendering());
-        overworld.set("isProcessing", new _isProcessing());
-        overworld.set("setProcessing", new _setProcessing());
-        overworld.set("isRenderingHitboxes", new _isRenderingHitboxes());
-        overworld.set("setRenderingHitboxes", new _setRenderingHitboxes());
-        overworld.set("getCameraPosition", new _getCameraPosition());
-        overworld.set("setCameraPosition", new _setCameraPosition());
-        overworld.set("getCameraZoom", new _getCameraZoom());
-        overworld.set("setCameraZoom", new _setCameraZoom());
-        overworld.set("getCurrentRoom", new _getCurrentRoom());
-        overworld.set("setCurrentRoom", new _setCurrentRoom());
-        overworld.set("getCharacterID", new _getCharacterID());
-        overworld.set("setCharacterID", new _setCharacterID());
-        overworld.set("setEntryTransition", new _setEntryTransition());
-        overworld.set("setExitTransition", new _setExitTransition());
-        overworld.set("isCameraFixing", new _isCameraFixing());
-        overworld.set("setCameraFixing", new _setCameraFixing());
-        
-        env.set("overworld", overworld);
-        return overworld;
+    public OverworldLib() {
+        super("overworld",
+                new newWorldRoom(),
+                new newWorldObject(),
+                new isRendering(),
+                new setRendering(),
+                new isProcessing(),
+                new setProcessing(),
+                new isRenderingHitboxes(),
+                new setRenderingHitboxes(),
+                new getCameraPosition(),
+                new setCameraPosition(),
+                new getCameraZoom(),
+                new setCameraZoom(),
+                new getCurrentRoom(),
+                new setCurrentRoom(),
+                new getCharacterID(),
+                new setCharacterID(),
+                new setEntryTransition(),
+                new setExitTransition(),
+                new isCameraFixing(),
+                new setCameraFixing());
     }
     
-    static class _newWorldRoom extends OneArgFunction {
+    static class newWorldRoom extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);;
+            
             try {
-                return new LuaWorldRoom(Undertailor.getRoomManager().getObject(arg.checkjstring()));
+                ScriptManager scriptMan = Undertailor.getScriptManager();
+                return LuaWorldRoomMeta.create(scriptMan.generateImplementation(WorldRoomImplementable.class, Undertailor.getRoomManager().getRoomObject(args.checkjstring(1))));
             } catch(Exception e) {
+                LuaError thrown = new LuaError("failed to load room: " + LuaUtil.formatJavaException(e));
                 e.printStackTrace();
-                throw new LuaError("failed to load room: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+                thrown.initCause(e);
+                throw thrown;
             }
         }
     }
     
-    static class _newWorldObject extends OneArgFunction {
+    static class newWorldObject extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            return Undertailor.getOverworldController().getObjectLoader().newWorldObject(arg.tojstring());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            return Undertailor.getOverworldController().getObjectLoader().newWorldObject(args.checkjstring(1));
         }
     }
     
-    static class _isRendering extends ZeroArgFunction {
+    static class isRendering extends LibraryFunction {
         @Override
-        public LuaValue call() {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
             return LuaValue.valueOf(Undertailor.getOverworldController().isRendering());
         }
     }
     
-    static class _setRendering extends OneArgFunction {
+    static class setRendering extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            boolean flag = arg.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            boolean flag = args.checkboolean(1);
             Undertailor.getOverworldController().setRendering(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _isProcessing extends ZeroArgFunction {
+    static class isProcessing extends LibraryFunction {
         @Override
-        public LuaValue call() {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
             return LuaValue.valueOf(Undertailor.getOverworldController().isProcessing());
         }
     }
     
-    static class _setProcessing extends OneArgFunction {
+    static class setProcessing extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            boolean flag = arg.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            boolean flag = args.checkboolean(1);
             Undertailor.getOverworldController().setProcessing(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _isRenderingHitboxes extends ZeroArgFunction {
+    static class isRenderingHitboxes extends LibraryFunction {
         @Override
-        public LuaValue call() {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
             return LuaValue.valueOf(Undertailor.getOverworldController().isRenderingHitboxes());
         }
     }
     
-    static class _setRenderingHitboxes extends OneArgFunction {
+    static class setRenderingHitboxes extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            boolean flag = arg.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            boolean flag = args.checkboolean(1);
             Undertailor.getOverworldController().setRenderingHitboxes(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _isCameraFixing extends ZeroArgFunction {
+    static class isCameraFixing extends LibraryFunction {
         @Override
-        public LuaValue call() {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
             return LuaValue.valueOf(Undertailor.getOverworldController().isCameraFixing());
         }
     }
     
-    static class _setCameraFixing extends OneArgFunction {
+    static class setCameraFixing extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            boolean flag = arg.checkboolean();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            boolean flag = args.checkboolean(1);
             Undertailor.getOverworldController().setCameraFixing(flag);
             return LuaValue.NIL;
         }
     }
     
-    static class _getCameraPosition extends VarArgFunction {
+    static class getCameraPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 0, 0);
             Vector2 position = Undertailor.getOverworldController().getCameraPosition();
-            return LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(position.x), LuaValue.valueOf(position.y)});
+            return LuaUtil.asVarargs(LuaValue.valueOf(position.x), LuaValue.valueOf(position.y));
         }
     }
     
-    static class _setCameraPosition extends VarArgFunction {
+    static class setCameraPosition extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 2);
             
             Vector2 position = Undertailor.getOverworldController().getCameraPosition();
@@ -151,34 +167,39 @@ public class OverworldLib extends TwoArgFunction {
         }
     }
     
-    static class _getCameraZoom extends ZeroArgFunction {
+    static class getCameraZoom extends LibraryFunction {
         @Override
-        public LuaValue call() {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
             return LuaValue.valueOf(Undertailor.getOverworldController().getCameraZoom());
         }
     }
     
-    static class _setCameraZoom extends OneArgFunction {
+    static class setCameraZoom extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            float zoom = new Float(arg.checkdouble());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            float zoom = new Float(args.checkdouble(1));
             Undertailor.getOverworldController().setCameraZoom(zoom);
             return LuaValue.NIL;
         }
     }
     
-    static class _getCurrentRoom extends ZeroArgFunction {
+    static class getCurrentRoom extends LibraryFunction {
         @Override
-        public LuaValue call() {
-            return new LuaWorldRoom(Undertailor.getOverworldController().getCurrentRoom());
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            return LuaWorldRoomMeta.create(Undertailor.getOverworldController().getCurrentRoom());
         }
     }
     
-    static class _setCurrentRoom extends VarArgFunction {
+    static class setCurrentRoom extends LibraryFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 4);
-            WorldRoom room = LuaWorldRoom.checkWorldRoom(args.arg(1)).getRoom();
+            
+            WorldRoom room = LuaWorldRoomMeta.check(args.arg(1)).getObject();
             boolean transitions = args.isnil(2) ? true : args.checkboolean(2);
             String exitpoint = args.isnil(3) ? null : args.checkjstring(3);
             String entrypoint = args.isnil(4) ? null : args.checkjstring(4);
@@ -187,35 +208,40 @@ public class OverworldLib extends TwoArgFunction {
         }
     }
     
-    static class _getCharacterID extends ZeroArgFunction {
+    static class getCharacterID extends LibraryFunction {
         @Override
-        public LuaValue call() {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
             return LuaValue.valueOf(Undertailor.getOverworldController().getCharacterID());
         }
     }
     
-    static class _setCharacterID extends OneArgFunction {
+    static class setCharacterID extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            long id = arg.checklong();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            long id = args.checklong(1);
             Undertailor.getOverworldController().setCharacterID(id);
             return LuaValue.NIL;
         }
     }
     
-    static class _setEntryTransition extends OneArgFunction {
+    static class setEntryTransition extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            LuaTable task = arg.checktable();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            LuaTable task = args.checktable(1);
             Undertailor.getOverworldController().setEntryTransition(new LuaTask(task));
             return LuaValue.NIL;
         }
     }
     
-    static class _setExitTransition extends OneArgFunction {
+    static class setExitTransition extends LibraryFunction {
         @Override
-        public LuaValue call(LuaValue arg) {
-            LuaTable task = arg.checktable();
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            LuaTable task = args.checktable(1);
             Undertailor.getOverworldController().setExitTransition(new LuaTask(task));
             return LuaValue.NIL;
         }

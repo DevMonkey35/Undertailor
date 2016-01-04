@@ -1,7 +1,7 @@
 package me.scarlet.undertailor.scheduler;
 
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.lua.LuaInputData;
+import me.scarlet.undertailor.lua.lib.meta.LuaInputDataMeta;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -34,7 +34,7 @@ public class LuaTask implements Task {
     
     @Override
     public boolean process(float delta, InputData input) {
-        LuaValue returned = taskImpl.get(IMPLMETHOD_PROCESS).call(taskImpl, LuaValue.valueOf(delta), new LuaInputData(input));
+        LuaValue returned = taskImpl.get(IMPLMETHOD_PROCESS).call(taskImpl, LuaValue.valueOf(delta), LuaInputDataMeta.create(input));
         if(!returned.isboolean()) {
             Undertailor.instance.warn(Scheduler.MANAGER_TAG, "lua task was preemptively ended; task implementation returned invalid value (expected boolean)");
             return false;

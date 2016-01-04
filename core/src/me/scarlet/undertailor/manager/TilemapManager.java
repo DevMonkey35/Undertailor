@@ -3,6 +3,7 @@ package me.scarlet.undertailor.manager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.TilemapWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
@@ -73,13 +74,13 @@ public class TilemapManager extends Manager<TilemapWrapper> {
                 Undertailor.instance.debug(MANAGER_TAG, "loading tilemap " + entryName);
                 tilemaps.put(entryName, new TilemapWrapper(name, texture, config));
             } catch(IOException e) {
-                Undertailor.instance.error(MANAGER_TAG, "failed to load tilemap: " + e.getMessage(), e.getStackTrace());
+                Undertailor.instance.error(MANAGER_TAG, "failed to load tilemap: " + LuaUtil.formatJavaException(e), e);
                 continue;
             }
         }
     }
     
-    public TilemapWrapper getObject(String name) {
+    public TilemapWrapper getRoomObject(String name) {
         if(tilemaps.containsKey(name)) {
             return tilemaps.get(name);
         }
