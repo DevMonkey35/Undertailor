@@ -166,9 +166,9 @@ public class Undertailor extends ApplicationAdapter {
     
     public class Output extends OutputStream {
         
-        private TextArea console;
+        private ConsoleThread console;
         private PrintStream original;
-        public Output(PrintStream original, TextArea console) {
+        public Output(PrintStream original, ConsoleThread console) {
             this.original = original;
             this.console = console;
         }
@@ -179,9 +179,7 @@ public class Undertailor extends ApplicationAdapter {
                 original.print((char) b);
             }
             
-            Platform.runLater(() -> {
-                console.appendText("" + (char) b);
-            });
+            console.append(b);
         }
     }
     
@@ -195,6 +193,7 @@ public class Undertailor extends ApplicationAdapter {
     private Stage consoleStage;
     private TextArea consoleOutput;
     private DisposerThread disposer;
+    private ConsoleThread consoleThread;
     private MultiRenderer renderer;
     
     private ScriptManager scriptManager;
@@ -218,14 +217,10 @@ public class Undertailor extends ApplicationAdapter {
     }
     
     @Override
-    public void pause() {
-        
-    }
+    public void pause() {}
     
     @Override
-    public void resume() {
-        
-    }
+    public void resume() {}
     
     @Override
     public void create() {
@@ -235,8 +230,10 @@ public class Undertailor extends ApplicationAdapter {
         Object[] console = prepareConsole();
         this.consoleStage = (Stage) console[0];
         this.consoleOutput = (TextArea) console[1];
+        this.consoleThread = new ConsoleThread(consoleOutput);
         PrintStream original = System.out;
-        System.setOut(new PrintStream(new Output(original, consoleOutput)));
+        System.setOut(new PrintStream(new Output(original, consoleThread)));
+        consoleThread.start();
         this.showConsole();
         
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
