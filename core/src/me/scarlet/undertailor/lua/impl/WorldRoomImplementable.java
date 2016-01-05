@@ -12,6 +12,7 @@ import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
@@ -95,8 +96,8 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
             WorldRoomImplementation impl = LuaImplementable.loadFile(this, scriptFile, globals, new WorldRoomImplementation(loaded));
             this.onLoad(loaded, impl);
             return impl;
-        } catch(LuaScriptException e) {
-            throw e;
+        } catch(LuaScriptException | LuaError e) {
+            throw new LuaError("\n\t" + e.getMessage());
         } catch(Exception e) {
             LuaScriptException thrown = new LuaScriptException("internal error");
             thrown.initCause(e);
