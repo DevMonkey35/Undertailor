@@ -1,8 +1,10 @@
 package me.scarlet.undertailor.desktop;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import me.scarlet.undertailor.Undertailor;
 
@@ -23,6 +25,8 @@ public class DesktopLauncher extends Application {
             config.backgroundFPS = 60;
             config.foregroundFPS = 60;
             config.vSyncEnabled = true;
+            config.addIcon("assets/defaultIcon_small.png", Files.FileType.Classpath);
+            config.addIcon("assets/defaultIcon.png", Files.FileType.Classpath);
             new LwjglApplication(new Undertailor(config), config);
         }
     }
@@ -47,5 +51,7 @@ public class DesktopLauncher extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {}
+    public void start(Stage primaryStage) throws Exception {
+        Platform.setImplicitExit(false); // we don't ever open primary stage; once we call hide on any other stages we make (console), jfx kills itself if this is true
+    }
 }

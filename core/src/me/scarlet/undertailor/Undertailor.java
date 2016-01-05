@@ -33,7 +33,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Orientation;
@@ -81,15 +80,13 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 
 public class Undertailor extends ApplicationAdapter {
     
     public static Undertailor instance;
     public static final Rectangle RENDER_AREA;
+    public static final String MANAGER_TAG = "tailor";
     public static final LuaLibrary[] LIBS = new LuaLibrary[] {
             new BaseLib(),
             Lua.LIB_COLORS,
@@ -164,25 +161,6 @@ public class Undertailor extends ApplicationAdapter {
         Undertailor.instance.config.foregroundFPS = frameCap;
     }
     
-    public class Output extends OutputStream {
-        
-        private ConsoleThread console;
-        private PrintStream original;
-        public Output(PrintStream original, ConsoleThread console) {
-            this.original = original;
-            this.console = console;
-        }
-        
-        @Override
-        public void write(int b) throws IOException {
-            if(original != null) {
-                original.print((char) b);
-            }
-            
-            console.append(b);
-        }
-    }
-    
     // -----
     
     private short strict;
@@ -190,11 +168,9 @@ public class Undertailor extends ApplicationAdapter {
     
     private LwjglApplicationConfiguration config;
     
-    private Stage consoleStage;
-    private TextArea consoleOutput;
     private DisposerThread disposer;
-    private ConsoleThread consoleThread;
     private MultiRenderer renderer;
+    private Console console;
     
     private ScriptManager scriptManager;
     private FontManager fontManager;
@@ -227,13 +203,7 @@ public class Undertailor extends ApplicationAdapter {
         Undertailor.instance = this;
         this.strict = 1;
         this.debug = true;
-        Object[] console = prepareConsole();
-        this.consoleStage = (Stage) console[0];
-        this.consoleOutput = (TextArea) console[1];
-        this.consoleThread = new ConsoleThread(consoleOutput);
-        PrintStream original = System.out;
-        System.setOut(new PrintStream(new Output(original, consoleThread)));
-        consoleThread.start();
+        this.console = new Console();
         
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
             if(e instanceof LuaError) {
@@ -313,8 +283,8 @@ public class Undertailor extends ApplicationAdapter {
         //System.out.println("MAX SPRITES: " + renderer.getSpriteBatch().maxSpritesInBatch);
         //System.exit(0);
         
-        if(Gdx.input.isKeyPressed(Keys.F3)) {
-            showConsole();
+        if(input.getPressData(Keys.F3).justPressed(0.001F)) {
+            this.console.show();
         }
             
         inputRetriever.update();
@@ -361,68 +331,6 @@ public class Undertailor extends ApplicationAdapter {
             errorDialog("I'm an error, weee!", errMessage, null);
             System.exit(0);
         }
-    }
-    
-    public void showConsole() {
-        if(!this.consoleStage.isShowing()) {
-            Platform.runLater(() -> { 
-                this.consoleStage.show();
-            });
-        }
-    }
-    
-    private Object[] prepareConsole() {
-        Object[] window = new Object[2];
-        
-        Blocker.block(() -> {
-            Stage stage = new Stage();
-            AnchorPane pane = new AnchorPane();
-            GridPane header = new GridPane();
-            CheckBox wrap = new CheckBox("Wrap Text");
-            Label consoleTitle = new Label("Undertailor Console");
-            TextArea console = new TextArea();
-            
-            console.setEditable(false);
-            consoleTitle.setFont(new javafx.scene.text.Font(16));
-            javafx.scene.text.Font newFont = new javafx.scene.text.Font("Consolas", 12);
-            if(newFont.getName().equals("Consolas")) {
-                console.setFont(newFont);
-            }
-            
-            wrap.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                if(newValue.booleanValue()) {
-                    console.setWrapText(true);
-                } else {
-                    console.setWrapText(false);
-                }
-            });
-            
-            if(!wrap.isSelected()) {
-                wrap.fire();
-            }
-            
-            GridPane.setColumnIndex(consoleTitle, 0);
-            GridPane.setColumnIndex(wrap, 1);
-            header.getColumnConstraints().add(new ColumnConstraints());
-            header.getColumnConstraints().add(new ColumnConstraints(0, wrap.getPrefWidth(), wrap.getPrefWidth(), Priority.ALWAYS, HPos.RIGHT, false));
-            
-            header.getChildren().add(consoleTitle);
-            header.getChildren().add(wrap);
-            
-            pane.getChildren().add(header);
-            pane.getChildren().add(console);
-            
-            JFXUtil.setAnchorBounds(header, 15.0, null, 20.0, 20.0);
-            JFXUtil.setAnchorBounds(console, 20.0);
-            JFXUtil.setAnchorBounds(console, 50.0, null, null, null);
-            
-            stage.setScene(new Scene(pane, 600, 400));
-            stage.setTitle("Undertailor Console");
-            window[0] = stage;
-            window[1] = console;
-        }, true);
-        
-        return window;
     }
     
     private void errorDialog(String title, String message, String stacktrace) {
@@ -500,7 +408,9 @@ public class Undertailor extends ApplicationAdapter {
             vbox.getChildren().add(footer);
             parent.getChildren().add(titleLabel);
             parent.getChildren().add(vbox);
-            
+
+            JFXUtil.loadIcon(stage, "errorIcon_small.png");
+            JFXUtil.loadIcon(stage, "errorIcon.png");
             InputStream imageStream = Undertailor.class.getResourceAsStream("/assets/errorIcon.png");
             if(imageStream != null) {
                 Image icon = new Image(imageStream);
