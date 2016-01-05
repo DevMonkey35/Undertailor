@@ -37,6 +37,8 @@ Check out this project's issue tracker! You can send me your suggestions, ideas,
 
 Just some casual with dreams.
 
+No contact information yet.
+
 ## Building
 
 TODO: build instructions
