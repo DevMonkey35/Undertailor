@@ -9,9 +9,13 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.VarArgFunction;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Extended base library.
@@ -28,16 +32,17 @@ import java.io.InputStream;
  */
 public class BaseLib extends LuaLibrary {
     
-    public static final LuaLibraryComponent[] COMPONENTS = {
-            new load(),
-            new execute(),
-            new print()
-    };
+    public static final String PARENT_GLOBAL_KEY = "_TLR_PARENTGLOBAL";
+    
+    public static final LuaLibraryComponent[] COMPONENTS = {}; // not a shareable library; we don't use this
     
     private Globals globals;
     
     public BaseLib() {
-        super(null, COMPONENTS);
+        super(null, 
+                new load(),
+                new execute(),
+                new print());
     }
     
     /**
@@ -49,17 +54,21 @@ public class BaseLib extends LuaLibrary {
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
         globals = env.checkglobals();
+        globals.package_.setLuaPath(System.getProperty("user.dir") + File.separatorChar);
         
         // removals
         globals.set("load", LuaValue.NIL);
         globals.set("dofile", LuaValue.NIL);
         globals.set("loadfile", LuaValue.NIL);
+        globals.set("package", LuaValue.NIL);
         globals.set("collectgarbage", LuaValue.NIL);
         
         globals.get("os").set("exit", LuaValue.NIL);
         globals.get("os").set("rename", LuaValue.NIL);
         globals.get("os").set("remove", LuaValue.NIL);
         globals.get("os").set("setlocale", LuaValue.NIL);
+        
+        globals.set(PARENT_GLOBAL_KEY, LuaValue.NIL);
         
         super.call(modname, env);
         
@@ -76,7 +85,8 @@ public class BaseLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             String path = args.checkjstring(1);
-            return ((BaseLib) this.getLibraryInstance()).loadFile(path);
+            BaseLib lib = ((BaseLib) this.getLibraryInstance());
+            return lib.loadFile(path);
         }
     }
     
@@ -86,7 +96,8 @@ public class BaseLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             String path = args.checkjstring(1);
-            ((BaseLib) this.getLibraryInstance()).loadFile(path);
+            BaseLib lib = ((BaseLib) this.getLibraryInstance());
+            lib.loadFile(path);
             return LuaValue.NIL;
         }
     }
@@ -105,6 +116,22 @@ public class BaseLib extends LuaLibrary {
             return LuaValue.NIL;
         }
     }
+    
+    /*static final class error extends LibraryFunction {
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 2);
+            
+            BaseLib lib = ((BaseLib) this.getLibraryInstance());
+            LuaValue parentGlobals = lib.globals.get(PARENT_GLOBAL_KEY);
+            if(parentGlobals.isnil()) {
+                throw args.isnil(1)? new LuaError(null, args.optint(2, 1)): 
+                    args.isstring(1)? new LuaError(args.tojstring(1), args.optint(2,1)): 
+                        new LuaError(args.arg1());
+            } else {
+                return parentGlobals.get("error").invoke(args);
+            }
+        }
+    }*/
     
     // ########################
     // #   Class methods.   #
@@ -127,7 +154,29 @@ public class BaseLib extends LuaLibrary {
             throw new LuaError("file at " + file.getAbsolutePath() + " was not found");
         try {
             Globals table = Undertailor.getScriptManager().generateGlobals();
-            table.load(input, "@" + file.getName(), "bt", table).invoke();
+            globals.load(input, "@" + file.getName(), "bt", table).invoke();
+            table.set(PARENT_GLOBAL_KEY, this.globals);
+            
+            Map<String, LuaValue> replaceQueue = new HashMap<>();
+            LuaUtil.iterateTable(table, args -> {
+                if(args.arg(1).isstring() && args.arg(2).tojstring().startsWith("function: @" + file.getName())) {
+                    replaceQueue.put(args.arg1().tojstring(), args.arg(2));
+                }
+            });
+            
+            for(Entry<String, LuaValue> entry : replaceQueue.entrySet()) {
+                table.set(entry.getKey(), new VarArgFunction() {
+                    @Override
+                    public Varargs invoke(Varargs args) {
+                        try {
+                            return entry.getValue().invoke(args);
+                        } catch(LuaError e) {
+                            throw new LuaError("\n\t" + e.getMessage());
+                        }
+                    }
+                });
+            }
+            
             return table;
         } catch(Exception e) {
             throw e;
