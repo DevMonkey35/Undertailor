@@ -1,7 +1,6 @@
 package me.scarlet.undertailor.lua;
 
 import me.scarlet.undertailor.lua.lib.ColorsLib;
-import me.scarlet.undertailor.lua.lib.DebugLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.lua.lib.SchedulerLib;
 import me.scarlet.undertailor.lua.lib.TextLib;
@@ -71,7 +70,6 @@ public class Lua {
     // shared libs -- non-parental top-level
     public static final SchedulerLib LIB_SCHEDULER = new SchedulerLib();
     public static final ColorsLib LIB_COLORS = new ColorsLib();
-    public static final DebugLib LIB_DEBUG = new DebugLib();
     public static final UtilLib LIB_UTIL = new UtilLib();
     
     // shared libs -- text children

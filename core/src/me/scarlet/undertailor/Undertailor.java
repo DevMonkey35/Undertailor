@@ -93,7 +93,6 @@ public class Undertailor extends ApplicationAdapter {
     public static final LuaLibrary[] LIBS = new LuaLibrary[] {
             new BaseLib(),
             Lua.LIB_COLORS,
-            Lua.LIB_DEBUG,
             Lua.LIB_GAME,
             Lua.LIB_SCHEDULER,
             Lua.LIB_TEXT,

@@ -1,6 +1,7 @@
 package me.scarlet.undertailor.lua.lib;
 
 import com.badlogic.gdx.Gdx;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
@@ -15,6 +16,7 @@ public class GameLib extends LuaLibrary {
     
     public static final LuaLibraryComponent[] COMPONENTS = {
             new setWindowTitle(),
+            new setFrameCap(),
             
             Lua.LIB_UI,
             Lua.LIB_AUDIO,
@@ -41,6 +43,16 @@ public class GameLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 0, 1);
             Gdx.graphics.setTitle(args.optjstring(1, DEFAULT_TITLE));
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class setFrameCap extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            Undertailor.setFrameCap(args.checkint(1));
             return LuaValue.NIL;
         }
     }
