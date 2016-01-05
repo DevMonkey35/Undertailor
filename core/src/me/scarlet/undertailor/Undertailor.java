@@ -27,6 +27,7 @@ package me.scarlet.undertailor;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -234,7 +235,6 @@ public class Undertailor extends ApplicationAdapter {
         PrintStream original = System.out;
         System.setOut(new PrintStream(new Output(original, consoleThread)));
         consoleThread.start();
-        this.showConsole();
         
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
             if(e instanceof LuaError) {
@@ -313,6 +313,11 @@ public class Undertailor extends ApplicationAdapter {
         //System.out.println("RENDER CALLS: " + renderer.getSpriteBatch().renderCalls);
         //System.out.println("MAX SPRITES: " + renderer.getSpriteBatch().maxSpritesInBatch);
         //System.exit(0);
+        
+        if(Gdx.input.isKeyPressed(Keys.F3)) {
+            showConsole();
+        }
+            
         inputRetriever.update();
     }
     
@@ -360,9 +365,11 @@ public class Undertailor extends ApplicationAdapter {
     }
     
     public void showConsole() {
-        Platform.runLater(() -> { 
-            this.consoleStage.show();
-        });
+        if(!this.consoleStage.isShowing()) {
+            Platform.runLater(() -> { 
+                this.consoleStage.show();
+            });
+        }
     }
     
     private Object[] prepareConsole() {
