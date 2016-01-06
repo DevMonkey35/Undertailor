@@ -32,11 +32,11 @@ import java.util.Map;
 
 public class InputRetriever implements InputProcessor {
     
-    public static InputData lastData;
     public static InputData currentData;
     
     public static class InputData {
-        
+
+        private long currentTick;
         private boolean isConsumed;
         private Map<Integer, PressData> pressData;
         
@@ -46,11 +46,11 @@ public class InputRetriever implements InputProcessor {
         }
         
         public PressData getPressData(int keycode) {
-            if(pressData.containsKey(keycode)) {
-                return pressData.get(keycode);
+            if(!pressData.containsKey(keycode)) {
+                pressData.put(keycode, new PressData(this));
             }
             
-            return PressData.BLANK;
+            return pressData.get(keycode);
         }
         
         public boolean isConsumed() {
@@ -64,22 +64,22 @@ public class InputRetriever implements InputProcessor {
     
     public static class PressData {
         
-        public static final PressData BLANK;
-        
-        static {
-            BLANK = new PressData();
-        }
-        
         private long holdTime;
+        private InputData parent;
         private boolean isPressed;
+        private long lastPressTick;
         private long lastPressTime;
+        private long lastReleaseTick;
         private long lastReleaseTime;
         
-        public PressData() {
+        public PressData(InputData parent) {
             this.isPressed = false;
+            this.parent = parent;
             this.holdTime = -1;
             this.lastPressTime = -1;
             this.lastReleaseTime = -1;
+            this.lastReleaseTick = -1;
+            this.lastPressTick = -1;
         }
         
         public long getLastReleaseTime() {
@@ -91,11 +91,19 @@ public class InputRetriever implements InputProcessor {
         }
         
         public boolean justReleased(float time) {
+            if(time <= 0)  {
+                return this.lastReleaseTick == parent.currentTick;
+            }
+            
             long msTime = (long) (1000.0 * time);
             return this.lastReleaseTime >= 0 && this.getLastReleaseTime() < msTime;
         }
         
         public boolean justPressed(float time) {
+            if(time <= 0)  {
+                return this.lastPressTick == parent.currentTick;
+            }
+            
             long msTime = (long) (1000.0 * time);
             return this.lastPressTime >= 0 && this.getLastPressTime() < msTime;
         }
@@ -127,21 +135,24 @@ public class InputRetriever implements InputProcessor {
         public void up() {
             this.isPressed = false;
             this.holdTime = TimeUtils.timeSinceMillis(this.holdTime);
+            this.lastReleaseTick = parent.currentTick;
             this.lastReleaseTime = TimeUtils.millis();
         }
         
         public void down() {
             this.isPressed = true;
             this.holdTime = TimeUtils.millis();
+            this.lastPressTick = parent.currentTick;
             this.lastPressTime = TimeUtils.millis();
         }
     }
     
+    private long tick;
     private Map<Integer, PressData> pressData;
     
     public InputRetriever() {
+        this.tick = 0;
         this.pressData = new HashMap<>();
-        lastData = new InputData(pressData);
         currentData = new InputData(pressData);
     }
     
@@ -150,14 +161,15 @@ public class InputRetriever implements InputProcessor {
     }
     
     public void update() {
-        lastData = currentData;
-        currentData = new InputData(pressData);
+        tick++;
+        currentData.isConsumed = false;
+        currentData.currentTick = tick;
     }
     
     @Override
     public boolean keyDown(int keycode) {
         if(!pressData.containsKey(keycode)) {
-            pressData.put(keycode, new PressData());
+            pressData.put(keycode, new PressData(currentData));
         }
         
         pressData.get(keycode).down();
@@ -167,17 +179,17 @@ public class InputRetriever implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         if(!pressData.containsKey(keycode)) {
-            pressData.put(keycode, new PressData());
+            pressData.put(keycode, new PressData(currentData));
         }
         
         pressData.get(keycode).up();
         return true;
     }
     
-    @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
+    @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean scrolled(int amount) { return false; }
 }

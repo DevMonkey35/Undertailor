@@ -283,7 +283,7 @@ public class Undertailor extends ApplicationAdapter {
         //System.out.println("MAX SPRITES: " + renderer.getSpriteBatch().maxSpritesInBatch);
         //System.exit(0);
         
-        if(input.getPressData(Keys.F3).justPressed(0.001F)) {
+        if(input.getPressData(Keys.F3).justPressed(0F)) {
             this.console.show();
         }
             
