@@ -276,7 +276,7 @@ public class Undertailor extends ApplicationAdapter {
         ovwController.render();
         uiController.render();
         
-        Font bitop = fontManager.getStyle("8bitop");
+        Font bitop = fontManager.getFont("8bitop");
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 415, 2);
         renderer.flush();
         //System.out.println("RENDER CALLS: " + renderer.getSpriteBatch().renderCalls);

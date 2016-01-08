@@ -97,7 +97,7 @@ public class TextLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 7);
             
-            Font font = Undertailor.getFontManager().getStyle(args.checkjstring(1));
+            Font font = Undertailor.getFontManager().getFont(args.checkjstring(1));
             Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getStyle(args.arg(2).checkjstring());
             Color color = args.isnil(3) ? null : ColorsLib.check(args.arg(3)).getObject();
             SoundWrapper sound = args.arg(4).isnil() ? null : Undertailor.getAudioManager().getSoundManager().getResource(args.arg(4).checkstring().tojstring());

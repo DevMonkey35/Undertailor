@@ -104,7 +104,7 @@ public class TilemapManager extends Manager<TilemapWrapper> {
         }
     }
     
-    public TilemapWrapper getStyle(String name) {
+    public TilemapWrapper getTilemap(String name) {
         if(tilemaps.containsKey(name)) {
             return tilemaps.get(name);
         }

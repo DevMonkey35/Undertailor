@@ -46,7 +46,7 @@ public class RoomMap implements Disposable {
         
         map.tilemaps = new TilemapWrapper[tilemapNames.length];
         for(int i = 0; i < map.tilemaps.length; i++) {
-            TilemapWrapper wrapper = Undertailor.getTilemapManager().getStyle(tilemapNames[i]);
+            TilemapWrapper wrapper = Undertailor.getTilemapManager().getTilemap(tilemapNames[i]);
             if(wrapper == null) {
                 Undertailor.instance.error(RoomManager.MANAGER_TAG, "failed to load room: map data referenced non-existing tilemap (" + tilemapNames[i] + ")");
                 return null;

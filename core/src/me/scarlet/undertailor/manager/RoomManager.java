@@ -96,7 +96,7 @@ public class RoomManager extends Manager<RoomDataWrapper> {
         }
     }
     
-    public RoomDataWrapper getStyle(String name) {
+    public RoomDataWrapper getRoom(String name) {
         if(rooms.containsKey(name)) {
             return rooms.get(name);
         }

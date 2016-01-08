@@ -118,7 +118,7 @@ public class FontManager extends Manager<Font> {
         }
     }
     
-    public Font getStyle(String name) {
+    public Font getFont(String name) {
         if(fonts.containsKey(name)) {
             return fonts.get(name);
         }

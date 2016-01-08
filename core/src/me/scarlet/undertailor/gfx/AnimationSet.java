@@ -77,7 +77,7 @@ public class AnimationSet implements Disposable {
         this.currentSpriteset = DEFAULT_SPRITESET;
         
         for(String str : sheetNames) {
-            SpriteSheetWrapper sheet = Undertailor.getSheetManager().getStyle(str);
+            SpriteSheetWrapper sheet = Undertailor.getSheetManager().getSheet(str);
             sheet.getReference(this);
             sheets.put(str, sheet);
         }

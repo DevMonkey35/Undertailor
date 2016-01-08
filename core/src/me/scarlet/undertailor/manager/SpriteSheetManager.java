@@ -102,7 +102,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
         }
     }
     
-    public SpriteSheetWrapper getStyle(String sheetName) {
+    public SpriteSheetWrapper getSheet(String sheetName) {
         if(this.sheets.containsKey(sheetName)) {
             return this.sheets.get(sheetName);
         }
@@ -112,7 +112,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
     }
     
     public void keepSheetLoaded(String sheetName, boolean preload) {
-        SpriteSheetWrapper wrapper = this.getStyle(sheetName);
+        SpriteSheetWrapper wrapper = this.getSheet(sheetName);
         if(wrapper != null) {
             if(preload) {
                 wrapper.getReference(this);
