@@ -40,6 +40,7 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -147,7 +148,7 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
     }
     
     @Override
-    public WorldRoomImplementation load(String scriptId) throws LuaScriptException {
+    public WorldRoomImplementation load(String scriptId, Varargs args) throws LuaScriptException {
         if(loadedWrappers.containsKey(scriptId) && loadedMapping.containsKey(scriptId)) {
             WorldRoomImplementation impl = new WorldRoomImplementation(loadedWrappers.get(scriptId));
             impl.setImplementable(this);

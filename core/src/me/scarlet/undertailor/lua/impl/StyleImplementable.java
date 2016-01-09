@@ -40,6 +40,7 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -148,7 +149,7 @@ public class StyleImplementable implements LuaImplementable<File, StyleImplement
     }
 
     @Override
-    public StyleImplementation load(String scriptId) throws LuaScriptException {
+    public StyleImplementation load(String scriptId, Varargs args) throws LuaScriptException {
         if(loadedMapping.containsKey(scriptId) && loadedFiles.containsKey(scriptId)) {
             StyleImplementation impl = new StyleImplementation();
             impl.setFunctions(loadedMapping.get(scriptId));

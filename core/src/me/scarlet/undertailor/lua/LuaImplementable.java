@@ -32,6 +32,7 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,7 +46,7 @@ import java.util.Map;
  *            {@link LuaImplementable}'s
  *            {@link #loadFunctions(String, Object, Globals, boolean)} method.
  * @param <T> the type of the resulting {@link LuaImplementation} received from
- *            this LuaImplementable's {@link #load(String)} method.
+ *            this LuaImplementable's {@link #load(String, LuaValue...)} method.
  */
 public interface LuaImplementable<R, T extends LuaImplementation> {
     
@@ -177,9 +178,9 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * 
      * <p>Script files are to be fed to this method in order to use them for
      * generating the target implementation type of this
-     * {@link LuaImplementable}. Calling {@link #load(String)} with an ID fed to
-     * this method will generate a new {@link LuaImplementation} containing the
-     * functions assigned to said ID, loaded from the given
+     * {@link LuaImplementable}. Calling {@link #load(String, LuaValue...)} with
+     * an ID fed to this method will generate a new {@link LuaImplementation}
+     * containing the functions assigned to said ID, loaded from the given
      * <code>scriptFile</code>.</p>
      * 
      * @param scriptId the ID to assign the loaded functions
@@ -205,7 +206,11 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * @throws LuaScriptException if the data given is marked invalid for
      *             injection into the target type of implementation object
      */
-    public T load(String scriptId) throws LuaScriptException;
+    public default T load(String scriptId, LuaValue... args) throws LuaScriptException {
+        return load(scriptId, LuaUtil.asVarargs(args));
+    };
+    
+    public T load(String scriptId, Varargs args) throws LuaScriptException;
     
     /**
      * Loads function data tagged with the given ID into a
@@ -232,8 +237,12 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * @throws LuaScriptException if the data given is marked invalid for
      *             injection into the target type of implementation object
      */
-    public default T load(String scriptId, R loaded) throws LuaScriptException {
+    public default T load(String scriptId, R loaded, LuaValue... args) throws LuaScriptException {
+        return load(scriptId, loaded, LuaUtil.asVarargs(args));
+    }
+    
+    public default T load(String scriptId, R loaded, Varargs args) throws LuaScriptException {
         this.loadFunctions(scriptId, loaded);
-        return load(scriptId);
+        return load(scriptId, args);
     }
 }

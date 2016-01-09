@@ -53,7 +53,7 @@ public class UIComponentLoader {
             try {
                 ScriptManager scriptMan = Undertailor.getScriptManager();
                 UIComponentImplementable impl = scriptMan.getImplementable(UIComponentImplementable.class);
-                return (LuaObjectValue<UIComponent>) impl.load(componentName, new UIComponentImplementable.LoadData(map.get(componentName), args)).getObjectValue();
+                return (LuaObjectValue<UIComponent>) impl.load(componentName, map.get(componentName), args).getObjectValue();
             } catch(LuaScriptException e) {
                 RuntimeException thrown = new RuntimeException("could not retrieve uicomponent " + componentName + ":" + LuaUtil.formatJavaException(e));
                 thrown.initCause(e);
