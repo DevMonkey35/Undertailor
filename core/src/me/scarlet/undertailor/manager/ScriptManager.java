@@ -24,9 +24,7 @@
 
 package me.scarlet.undertailor.manager;
 
-import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaImplementable;
-import me.scarlet.undertailor.lua.LuaImplementation;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
@@ -202,7 +200,7 @@ public class ScriptManager {
         return null;
     }
     
-    /**
+    /*
      * A quick shortcut method for accessing a registered
      * {@link LuaImplementable} to generate an implementation.
      * 
@@ -219,9 +217,9 @@ public class ScriptManager {
      *         implementable type
      *         
      * @throws LuaScriptException
-     */
+     *
     @SuppressWarnings("unchecked")
     public <R, T extends LuaImplementation> T generateImplementation(Class<? extends LuaImplementable<R, T>> type, R loaded) throws LuaScriptException {
         return ((LuaImplementable<R, T>) this.implementables.get(type)).load(loaded, generateGlobals(true));
-    }
+    }*/
 }

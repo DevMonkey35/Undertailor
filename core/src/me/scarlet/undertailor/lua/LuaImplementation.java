@@ -84,12 +84,31 @@ public interface LuaImplementation {
      * <p>This replaces all functions within this implementation with the given
      * map of functions. While it can be used for other purposes, this method is
      * intended to be used by the
-     * {@link LuaImplementable#load(Object, Globals)}
+     * {@link LuaImplementable#loadFunctions(String, Object, Globals, boolean)}
      * method to load a script's functions into an implementation.</p>
      * 
      * @param functions
      */
     void setFunctions(Map<String, LuaFunction> functions);
+    
+    /**
+     * Returns the object value that contains this {@link LuaImplementation}.
+     */
+    public LuaObjectValue<?> getObjectValue();
+    
+    /**
+     * Sets the object value that contains this {@link LuaImplementation}.
+     * 
+     * <p>Upon being set upon this LuaImplementation, the implementation is
+     * expected to set its default functions (denoted by the
+     * {@link LuaImplementable#getFunctions()} method of its parent
+     * implementable) upon the object value. This means any values within the
+     * object value of the same name will be overwritten. Changing these values
+     * will not be prohibited by the implementation.</p>
+     * 
+     * @param obj the object value to set
+     */
+    public void setObjectValue(LuaObjectValue<?> obj);
     
     /**
      * Changes a function within this implementation.
@@ -107,7 +126,7 @@ public interface LuaImplementation {
      * 
      * @param name the name of the function to change
      * @param function the new function, or null to remove
-     */
+     
     public default void changeFunction(String name, LuaFunction function) {
         if(this.getImplementable().onFunctionChange(this, name, function)) {
             this.setFunction(name, function);
@@ -123,6 +142,6 @@ public interface LuaImplementation {
      * 
      * @param name the name of the function to replace
      * @param function the new function, or null to remove
-     */
-    public void setFunction(String name, LuaFunction function);
+     
+    public void setFunction(String name, LuaFunction function);*/
 }

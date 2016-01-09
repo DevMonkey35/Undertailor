@@ -76,7 +76,8 @@ public class StyleManager extends Manager<Style> {
             String styleName = heading + (heading.isEmpty() ? "" : ".") + file.getName().substring(0, file.getName().length() - 4);
             Undertailor.instance.debug("styleman", "loading lua style " + styleName);
             try {
-                styles.put(styleName, Undertailor.getScriptManager().generateImplementation(StyleImplementable.class, file));
+                StyleImplementable impl = Undertailor.getScriptManager().getImplementable(StyleImplementable.class);
+                styles.put(styleName, impl.load(styleName, file));
             } catch(LuaScriptException e) {
                 Undertailor.instance.error("styleman", "failed to load style: lua error: ", e);
             } catch(Exception e) {

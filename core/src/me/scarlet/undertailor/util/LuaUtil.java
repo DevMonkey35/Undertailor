@@ -168,6 +168,18 @@ public class LuaUtil {
         return LuaValue.tableOf(values);
     }
     
+    public static Varargs invokeNonNull(LuaValue source, String functionName, Varargs args) {
+        if(!source.get(functionName).isnil()) {
+            return source.get(functionName).invoke(args);
+        }
+        
+        return null;
+    }
+    
+    public static Varargs invokeNonNull(LuaValue source, String functionName, LuaValue... args) {
+        return invokeNonNull(source, functionName, asVarargs(args));
+    }
+    
     public static Varargs invokeNonNull(LuaFunction func, Varargs args) {
         if(func != null) {
             return func.invoke(args);

@@ -27,8 +27,10 @@ package me.scarlet.undertailor.lua.impl;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaImplementation;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.impl.UIComponentImplementable.LoadData;
 import me.scarlet.undertailor.lua.impl.UIComponentImplementable.UIComponentImplementation;
+import me.scarlet.undertailor.lua.impl.WorldRoomImplementable.WorldRoomImplementation;
 import me.scarlet.undertailor.lua.lib.meta.LuaInputDataMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIComponentMeta;
 import me.scarlet.undertailor.ui.UIComponent;
@@ -36,11 +38,13 @@ import me.scarlet.undertailor.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +63,7 @@ public class UIComponentImplementable implements LuaImplementable<LoadData, UICo
         // implementable will replace these variables
         private LuaImplementable<?, ?> impl;
         private Map<String, LuaFunction> functions;
+        private WeakReference<LuaObjectValue<?>> obj;
         private String objName;
         
         // generic impl of LuaImplementation; screw readability they're one-liners
@@ -66,7 +71,20 @@ public class UIComponentImplementable implements LuaImplementable<LoadData, UICo
         @Override public void setImplementable(LuaImplementable<?, ?> impl) { this.impl = impl; }
         @Override public Map<String, LuaFunction> getFunctions() { return new HashMap<String, LuaFunction>(functions); }
         @Override public void setFunctions(Map<String, LuaFunction> functions) { this.functions = functions; }
-        @Override public void setFunction(String name, LuaFunction function) { this.functions.put(name, function); }
+        
+        @Override public LuaObjectValue<?> getObjectValue() { return obj.get(); }
+        @Override public void setObjectValue(LuaObjectValue<?> obj) {
+            if((obj.getObject() instanceof WorldRoomImplementation)) {
+                throw new IllegalArgumentException("cannot accept object value (mismatching value)");
+            }
+            
+            this.obj = new WeakReference<>(obj);
+            for(String key : functions.keySet()) {
+                if(functions.containsKey(key)) {
+                    obj.set(key, functions.get(key));
+                }
+            }
+        }
 
         @Override
         public String getComponentTypeName() {
@@ -75,17 +93,17 @@ public class UIComponentImplementable implements LuaImplementable<LoadData, UICo
         
         @Override
         public void onDestroy(boolean object) {
-            LuaUtil.invokeNonNull(functions.get(IMPLFUNCTION_ONDESTROY), LuaValue.valueOf(object));
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONDESTROY, obj.get(), LuaValue.valueOf(object));
         }
         
         @Override
         public void process(float delta, InputData input) {
-            LuaUtil.invokeNonNull(functions.get(IMPLFUNCTION_PROCESS), LuaValue.valueOf(delta), LuaInputDataMeta.create(input));
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_PROCESS, obj.get(), LuaValue.valueOf(delta), LuaInputDataMeta.create(input));
         }
         
         @Override
         public void render(float parentAlpha) {
-            LuaUtil.invokeNonNull(functions.get(IMPLFUNCTION_RENDER), LuaValue.valueOf(parentAlpha));
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_RENDER, obj.get(), LuaValue.valueOf(parentAlpha));
         }
         
         @Override
@@ -104,6 +122,14 @@ public class UIComponentImplementable implements LuaImplementable<LoadData, UICo
             this.createArgs = createArgs;
         }
     }
+    
+    private Map<String, LoadData> loadedData;
+    private Map<String, Map<String, LuaFunction>> loadedMapping;
+    
+    public UIComponentImplementable() {
+        this.loadedData = new HashMap<>();
+        this.loadedMapping = new HashMap<>();
+    }
 
     @Override
     public String[] getRequiredFunctions() {
@@ -116,24 +142,35 @@ public class UIComponentImplementable implements LuaImplementable<LoadData, UICo
     }
 
     @Override
-    public void onLoad(LoadData loaded, UIComponentImplementation baseObject) {
-        baseObject.objName = loaded.scriptFile.getName().split("\\.")[0];
-        LuaUtil.invokeNonNull(baseObject.getFunctions().get(IMPLFUNCTION_CREATE), LuaValue.varargsOf(LuaUIComponentMeta.create(baseObject), loaded.createArgs));
+    public void loadFunctions(String scriptId, LoadData loaded, Globals globals, boolean replace) throws LuaScriptException {
+        if(!this.loadedMapping.containsKey(scriptId) || replace) {
+            try {
+                loadedMapping.put(scriptId, LuaImplementable.loadFile(this, loaded.scriptFile, globals));
+                loadedData.put(scriptId, loaded);
+            } catch(LuaScriptException | LuaError e) {
+                throw new LuaError("\n\t" + e.getMessage());
+            } catch(Exception e) {
+                LuaScriptException thrown = new LuaScriptException("internal error");
+                thrown.initCause(e);
+                throw thrown;
+            }
+        }
     }
 
     @Override
-    public UIComponentImplementation load(LoadData loaded, Globals globals) throws LuaScriptException {
-        try {
-            UIComponentImplementation impl = LuaImplementable.loadFile(this, loaded.scriptFile, globals, new UIComponentImplementation());
-            this.onLoad(loaded, impl);
-            return impl;
-        } catch(LuaScriptException e) {
-            throw e;
-        } catch(Exception e) {
-            LuaScriptException thrown = new LuaScriptException("internal error");
-            thrown.initCause(e);
+    public UIComponentImplementation load(String scriptId) throws LuaScriptException {
+        if(loadedMapping.containsKey(scriptId) && loadedData.containsKey(scriptId)) {
+            UIComponentImplementation impl = new UIComponentImplementation();
+            impl.setFunctions(loadedMapping.get(scriptId));
+            impl.setImplementable(this);
+            impl.setObjectValue(LuaUIComponentMeta.create(impl));
             
-            throw thrown;
+            LoadData loadData = loadedData.get(scriptId);
+            impl.objName = loadData.scriptFile.getName().split("\\.")[0];
+            impl.getFunctions().get(IMPLFUNCTION_CREATE).invoke(impl.getObjectValue(), loadData.createArgs);
+            return impl;
         }
+        
+        return null;
     }
 }

@@ -27,6 +27,7 @@ package me.scarlet.undertailor.lua.impl;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaImplementation;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable.WorldRoomImplementation;
 import me.scarlet.undertailor.lua.lib.meta.LuaEntrypointMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaInputDataMeta;
@@ -41,17 +42,18 @@ import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper, WorldRoomImplementation> {
     
-    public static final String IMPLFUNCTION_CREATE = "create";
-    public static final String IMPLFUNCTION_PROCESS = "process";
-    public static final String IMPLFUNCTION_ONPAUSE = "onPause";
-    public static final String IMPLFUNCTION_ONRESUME = "onResume";
-    public static final String IMPLFUNCTION_ONENTER = "onEnter";
-    public static final String IMPLFUNCTION_ONEXIT = "onExit";
+    public static final String IMPLFUNCTION_CREATE = "create";     // create(self)
+    public static final String IMPLFUNCTION_PROCESS = "process";   // process(self, delta, input)
+    public static final String IMPLFUNCTION_ONPAUSE = "onPause";   // onPause(self)
+    public static final String IMPLFUNCTION_ONRESUME = "onResume"; // onResume(self)
+    public static final String IMPLFUNCTION_ONENTER = "onEnter";   // onEnter(self, entrypoint)
+    public static final String IMPLFUNCTION_ONEXIT = "onExit";     // onExit(self, exitpoint)
     
     public static String[] REQUIRED_FUNCTIONS = new String[] {IMPLFUNCTION_CREATE};
     public static String[] FUNCTIONS = new String[] {IMPLFUNCTION_CREATE, IMPLFUNCTION_PROCESS, IMPLFUNCTION_ONENTER, IMPLFUNCTION_ONEXIT, IMPLFUNCTION_ONPAUSE, IMPLFUNCTION_ONRESUME};
@@ -60,6 +62,7 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
         
         private LuaImplementable<?, ?> impl;
         private Map<String, LuaFunction> functions;
+        private WeakReference<LuaObjectValue<?>> obj;
         
         public WorldRoomImplementation(RoomDataWrapper roomWrapper) {
             super(roomWrapper);
@@ -70,32 +73,49 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
         @Override public void setImplementable(LuaImplementable<?, ?> impl) { this.impl = impl; }
         @Override public Map<String, LuaFunction> getFunctions() { return new HashMap<String, LuaFunction>(functions); }
         @Override public void setFunctions(Map<String, LuaFunction> functions) { this.functions = functions; }
-        @Override public void setFunction(String name, LuaFunction function) { this.functions.put(name, function); }
+        
+        @Override public LuaObjectValue<?> getObjectValue() { return obj.get(); }
+        @Override public void setObjectValue(LuaObjectValue<?> obj) {
+            this.obj = new WeakReference<>(obj);
+            for(String key : functions.keySet()) {
+                if(functions.containsKey(key)) {
+                    obj.set(key, functions.get(key));
+                }
+            }
+        }
         
         @Override
         public void onEnter(Entrypoint entrypoint) {
-            LuaUtil.invokeNonNull(functions.get(IMPLFUNCTION_ONENTER), LuaEntrypointMeta.create(entrypoint));
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONENTER, obj.get(), LuaEntrypointMeta.create(entrypoint));
         }
         
         @Override
         public void onExit(Entrypoint exitpoint) {
-            LuaUtil.invokeNonNull(functions.get(IMPLFUNCTION_ONEXIT), LuaEntrypointMeta.create(exitpoint));
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONEXIT, obj.get(), LuaEntrypointMeta.create(exitpoint));
         }
         
         @Override
         public void onPause() {
-            LuaUtil.invokeNonNull(functions.get(IMPLFUNCTION_ONPAUSE));
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONPAUSE, obj.get());
         }
         
         @Override
         public void onResume() {
-            LuaUtil.invokeNonNull(functions.get(IMPLFUNCTION_ONRESUME));
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONRESUME, obj.get());
         }
         
         @Override
         public void onProcess(float delta, InputData input) {
-            LuaUtil.invokeNonNull(functions.get(IMPLFUNCTION_PROCESS), LuaValue.valueOf(delta), LuaInputDataMeta.create(input));
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_PROCESS, obj.get(), LuaValue.valueOf(delta), LuaInputDataMeta.create(input));
         }
+    }
+    
+    private Map<String, RoomDataWrapper> loadedWrappers;
+    private Map<String, Map<String, LuaFunction>> loadedMapping;
+    
+    public WorldRoomImplementable() {
+        this.loadedMapping = new HashMap<>();
+        this.loadedWrappers = new HashMap<>();
     }
 
     @Override
@@ -107,25 +127,37 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
     public String[] getFunctions() {
         return FUNCTIONS;
     }
-
+    
     @Override
-    public void onLoad(RoomDataWrapper loaded, WorldRoomImplementation baseObject) {
-        baseObject.getFunctions().get(IMPLFUNCTION_CREATE).call(LuaWorldRoomMeta.create(baseObject));
-    }
-
-    @Override
-    public WorldRoomImplementation load(RoomDataWrapper loaded, Globals globals) throws LuaScriptException {
-        try {
-            File scriptFile = loaded.getRoomScript();
-            WorldRoomImplementation impl = LuaImplementable.loadFile(this, scriptFile, globals, new WorldRoomImplementation(loaded));
-            this.onLoad(loaded, impl);
-            return impl;
-        } catch(LuaScriptException | LuaError e) {
-            throw new LuaError("\n\t" + e.getMessage());
-        } catch(Exception e) {
-            LuaScriptException thrown = new LuaScriptException("internal error");
-            thrown.initCause(e);
-            throw thrown;
+    public void loadFunctions(String scriptId, RoomDataWrapper loaded, Globals globals, boolean replace) throws LuaScriptException {
+        if(!this.loadedMapping.containsKey(scriptId) // not registered?
+                || (this.loadedMapping.containsKey(scriptId) && replace)) { // registered, but replace flag is true?
+            try {
+                File scriptFile = loaded.getRoomScript();
+                loadedMapping.put(scriptId, LuaImplementable.loadFile(this, scriptFile, globals));
+                loadedWrappers.put(scriptId, loaded); // after so its not registered if script loading fails
+            } catch(LuaScriptException | LuaError e) {
+                throw new LuaError("\n\t" + e.getMessage());
+            } catch(Exception e) {
+                LuaScriptException thrown = new LuaScriptException("internal error");
+                thrown.initCause(e);
+                throw thrown;
+            }
         }
+    }
+    
+    @Override
+    public WorldRoomImplementation load(String scriptId) throws LuaScriptException {
+        if(loadedWrappers.containsKey(scriptId) && loadedMapping.containsKey(scriptId)) {
+            WorldRoomImplementation impl = new WorldRoomImplementation(loadedWrappers.get(scriptId));
+            impl.setImplementable(this);
+            impl.setFunctions(loadedMapping.get(scriptId));
+            impl.setObjectValue(LuaWorldRoomMeta.create(impl));
+            
+            impl.getFunctions().get(IMPLFUNCTION_CREATE).call(impl.getObjectValue());
+            return impl;
+        }
+        
+        return null;
     }
 }

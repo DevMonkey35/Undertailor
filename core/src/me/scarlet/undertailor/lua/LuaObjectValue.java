@@ -38,8 +38,8 @@ import java.util.WeakHashMap;
  * <p>If the given type is an instance of {@link LuaImplementation}, this object
  * will automagically register the implementation's functions into the script as
  * well as call its
- * {@link LuaImplementation#changeFunction(String, LuaFunction)} should any
- * recognized functions be changed.</p>
+ * {@link LuaImplementable#onFunctionChange(LuaImplementation, String, LuaValue)}
+ * should any recognized functions be changed.</p>
  * 
  * @param <T> the type of the object to contain
  */
@@ -110,6 +110,7 @@ public class LuaObjectValue<T> extends LuaTable {
     LuaObjectValue(T object, String typename, LuaValue metatable) {
         if(object instanceof LuaImplementation) {
             LuaImplementation impl = (LuaImplementation) object;
+            impl.setObjectValue(this);
             for(String key : impl.getFunctions().keySet()) {
                 this.set(key, impl.getFunctions().get(key));
             }
@@ -139,7 +140,7 @@ public class LuaObjectValue<T> extends LuaTable {
             for(String func : impl.getImplementable().getFunctions()) {
                 if(key.tojstring().equals(func)) {
                     if(value.isfunction()) {
-                        impl.changeFunction(key.tojstring(), (LuaFunction) value);
+                        impl.getImplementable().onFunctionChange(impl, key.tojstring(), (LuaFunction) value);
                         break;
                     } else { // can't be nil here so it has to be anything but a func
                         throw new LuaError("cannot change variable " + func + " to contain a non-functional value (implemented script function)");

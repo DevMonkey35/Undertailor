@@ -75,7 +75,8 @@ public class OverworldLib extends LuaLibrary {
             
             try {
                 ScriptManager scriptMan = Undertailor.getScriptManager();
-                return LuaWorldRoomMeta.create(scriptMan.generateImplementation(WorldRoomImplementable.class, Undertailor.getRoomManager().getRoom(args.checkjstring(1))));
+                WorldRoomImplementable impl = scriptMan.getImplementable(WorldRoomImplementable.class);
+                return impl.load(args.checkjstring(1), Undertailor.getRoomManager().getRoom(args.checkjstring(1))).getObjectValue();
             } catch(Exception e) {
                 LuaError thrown = new LuaError("failed to load room: " + LuaUtil.formatJavaException(e));
                 e.printStackTrace();

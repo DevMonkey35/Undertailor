@@ -28,7 +28,6 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.impl.WorldObjectImplementable;
-import me.scarlet.undertailor.lua.lib.meta.LuaWorldObjectMeta;
 import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.util.LuaUtil;
 
@@ -47,11 +46,13 @@ public class WorldObjectLoader {
         this.map = new HashMap<>();
     }
     
+    @SuppressWarnings("unchecked")
     public LuaObjectValue<WorldObject> newWorldObject(String objectName) {
         if(map.containsKey(objectName)) {
             try {
                 ScriptManager scriptMan = Undertailor.getScriptManager();
-                return LuaWorldObjectMeta.create(scriptMan.generateImplementation(WorldObjectImplementable.class, map.get(objectName)));
+                WorldObjectImplementable impl = scriptMan.getImplementable(WorldObjectImplementable.class);
+                return (LuaObjectValue<WorldObject>) impl.load(objectName, map.get(objectName)).getObjectValue();
             } catch(LuaScriptException e) {
                 RuntimeException thrown = new RuntimeException("could not retrieve object " + objectName + ": " + LuaUtil.formatJavaException(e));
                 thrown.initCause(e);
