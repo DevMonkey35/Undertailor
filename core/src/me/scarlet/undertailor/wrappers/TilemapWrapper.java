@@ -28,26 +28,26 @@ import com.badlogic.gdx.graphics.Texture;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
-import me.scarlet.undertailor.util.ConfigurateUtil;
-import ninja.leaping.configurate.ConfigurationNode;
 
 public class TilemapWrapper extends DisposableWrapper<SpriteSheet> {
 
     private Texture texture;
     private String tilemapName;
-    private ConfigurationNode tilemapData;
-    public TilemapWrapper(String tilemapName, Texture texture, ConfigurationNode tilemapData) {
+    public TilemapWrapper(String tilemapName, Texture texture) throws TextureTilingException {
         super(null);
         this.texture = texture;
         this.tilemapName = tilemapName;
-        this.tilemapData = tilemapData;
+        
+        if(texture.getWidth() % 20 != 0 || texture.getHeight() % 20 != 0) {
+            throw new TextureTilingException("tilemap texture does not contain 20x20 sprites");
+        }
     }
 
     @Override
     public SpriteSheet newReference() {
         SpriteSheetMeta meta = new SpriteSheetMeta();
-        meta.gridX = ConfigurateUtil.processInt(tilemapData.getNode("sizeX"), null);
-        meta.gridY = ConfigurateUtil.processInt(tilemapData.getNode("sizeY"), null);
+        meta.gridX = texture.getWidth() / 20;
+        meta.gridY = texture.getHeight() / 20;
         
         try {
             return new SpriteSheet(tilemapName, texture, meta);
