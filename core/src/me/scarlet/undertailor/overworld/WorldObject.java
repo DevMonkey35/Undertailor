@@ -34,13 +34,14 @@ import me.scarlet.undertailor.gfx.Animation;
 import me.scarlet.undertailor.gfx.KeyFrame;
 import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.util.MapUtil;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
-public abstract class WorldObject implements Collider {
+public abstract class WorldObject implements Collider, Layerable {
 
     public static final Color BOX_COLOR;
     public static final Color BOX_COLOR_INACTIVE;
@@ -88,16 +89,18 @@ public abstract class WorldObject implements Collider {
         this.z = 0;
     }
     
-    public long getId() {
-        return id;
-    }
-    
+    @Override
     public int getZ() {
         return z;
     }
     
+    @Override
     public void setZ(int z) {
         this.z = z;
+    }
+    
+    public long getId() {
+        return id;
     }
     
     public float getScale() {
