@@ -30,6 +30,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.impl.WorldObjectImplementable;
 import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.util.LuaUtil;
+import org.luaj.vm2.Varargs;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -47,12 +48,12 @@ public class WorldObjectLoader {
     }
     
     @SuppressWarnings("unchecked")
-    public LuaObjectValue<WorldObject> newWorldObject(String objectName) {
+    public LuaObjectValue<WorldObject> newWorldObject(String objectName, Varargs args) {
         if(map.containsKey(objectName)) {
             try {
                 ScriptManager scriptMan = Undertailor.getScriptManager();
                 WorldObjectImplementable impl = scriptMan.getImplementable(WorldObjectImplementable.class);
-                return (LuaObjectValue<WorldObject>) impl.load(objectName, map.get(objectName)).getObjectValue();
+                return (LuaObjectValue<WorldObject>) impl.load(objectName, map.get(objectName), args).getObjectValue();
             } catch(LuaScriptException e) {
                 RuntimeException thrown = new RuntimeException("could not retrieve object " + objectName + ": " + LuaUtil.formatJavaException(e));
                 thrown.initCause(e);

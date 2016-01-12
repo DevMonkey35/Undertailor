@@ -89,9 +89,9 @@ public class OverworldLib extends LuaLibrary {
     static class newWorldObject extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
+            LuaUtil.checkArguments(args, 1, -1);
             
-            return Undertailor.getOverworldController().getObjectLoader().newWorldObject(args.checkjstring(1));
+            return Undertailor.getOverworldController().getObjectLoader().newWorldObject(args.checkjstring(1), args.subargs(2));
         }
     }
     
