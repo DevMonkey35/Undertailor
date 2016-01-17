@@ -32,6 +32,7 @@ import me.scarlet.undertailor.overworld.WorldObject;
 import me.scarlet.undertailor.overworld.WorldRoom;
 import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.LuaUtil;
+import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
@@ -49,6 +50,7 @@ public class LuaWorldRoomMeta extends LuaLibrary {
             new getRoomName(),
             new registerObject(),
             new getObject(),
+            new setMap(),
             new removeObject(),
             new newEntrypoint(),
             new registerEntrypoint()
@@ -56,6 +58,19 @@ public class LuaWorldRoomMeta extends LuaLibrary {
     
     public LuaWorldRoomMeta() {
         super(null, COMPONENTS);
+    }
+    
+    static class setMap extends LibraryFunction {
+        @Override
+        @SuppressWarnings("unchecked")
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldRoom room = check(args.arg1()).getObject();
+            LuaValue map = LuaUtil.checkType(args.arg(2), Lua.TYPENAME_WORLDMAP); // TODO fix after map meta
+            room.setMap(((LuaObjectValue<RoomDataWrapper>) map).getObject());
+            return LuaValue.NIL;
+        }
     }
     
     static class getRoomName extends LibraryFunction {

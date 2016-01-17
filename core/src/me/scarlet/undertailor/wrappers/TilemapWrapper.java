@@ -24,34 +24,28 @@
 
 package me.scarlet.undertailor.wrappers;
 
-import com.badlogic.gdx.graphics.Texture;
 import me.scarlet.undertailor.exception.TextureTilingException;
-import me.scarlet.undertailor.gfx.SpriteSheet;
-import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
+import me.scarlet.undertailor.overworld.map.Tilemap;
 
-public class TilemapWrapper extends DisposableWrapper<SpriteSheet> {
+import java.io.File;
 
-    private Texture texture;
+public class TilemapWrapper extends DisposableWrapper<Tilemap> {
+
+    private File meta;
+    private File texture;
     private String tilemapName;
-    public TilemapWrapper(String tilemapName, Texture texture) throws TextureTilingException {
+    public TilemapWrapper(String tilemapName, File texture, File meta) throws TextureTilingException {
         super(null);
+        this.meta = meta;
         this.texture = texture;
         this.tilemapName = tilemapName;
-        
-        if(texture.getWidth() % 20 != 0 || texture.getHeight() % 20 != 0) {
-            throw new TextureTilingException("tilemap texture does not contain 20x20 sprites");
-        }
     }
 
     @Override
-    public SpriteSheet newReference() {
-        SpriteSheetMeta meta = new SpriteSheetMeta();
-        meta.gridX = texture.getWidth() / 20;
-        meta.gridY = texture.getHeight() / 20;
-        
+    public Tilemap newReference() {
         try {
-            return new SpriteSheet(tilemapName, texture, meta);
-        } catch(TextureTilingException e) {
+            return new Tilemap(tilemapName, texture, meta);
+        } catch(Exception e) {
             e.printStackTrace();
             return null;
         }

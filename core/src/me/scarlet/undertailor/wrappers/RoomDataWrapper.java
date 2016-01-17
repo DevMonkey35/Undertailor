@@ -24,25 +24,17 @@
 
 package me.scarlet.undertailor.wrappers;
 
-import me.scarlet.undertailor.overworld.RoomMap;
+import me.scarlet.undertailor.overworld.map.RoomMap;
 import ninja.leaping.configurate.ConfigurationNode;
-
-import java.io.File;
 
 public class RoomDataWrapper extends DisposableWrapper<RoomMap> {
 
     public static final long MAX_LIFETIME = 60000; // 1min
     
-    private File roomScript;
     private ConfigurationNode mapData;
-    public RoomDataWrapper(File roomScript, ConfigurationNode mapData) {
+    public RoomDataWrapper(ConfigurationNode mapData) {
         super(null);
         this.mapData = mapData;
-        this.roomScript = roomScript;
-    }
-    
-    public File getRoomScript() {
-        return roomScript;
     }
     
     @Override

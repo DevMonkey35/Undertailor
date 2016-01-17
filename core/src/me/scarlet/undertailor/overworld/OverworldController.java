@@ -32,6 +32,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
+import me.scarlet.undertailor.overworld.map.RoomLoader;
+import me.scarlet.undertailor.overworld.map.RoomMap;
 import me.scarlet.undertailor.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 
@@ -57,10 +59,13 @@ public class OverworldController {
     private CollisionHandler collision;
     private Task entryTransition, exitTransition;
     
-    private WorldObjectLoader loader;
+    private WorldObjectLoader objLoader;
+    private RoomLoader roomLoader;
     
     public OverworldController(Viewport port) {
-        this.loader = new WorldObjectLoader();
+        this.objLoader = new WorldObjectLoader();
+        this.roomLoader = new RoomLoader();
+        
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
         this.setViewport(port);
         this.charId = -1;
@@ -79,7 +84,11 @@ public class OverworldController {
     }
     
     public WorldObjectLoader getObjectLoader() {
-        return loader;
+        return objLoader;
+    }
+    
+    public RoomLoader getRoomLoader() {
+        return roomLoader;
     }
     
     public OrthographicCamera getCamera() {
@@ -158,8 +167,8 @@ public class OverworldController {
         }
         
         room.onEnter(enterpoint);
-        float rmX = currentRoom.getMap().getSizeX() * 20;
-        float rmY = currentRoom.getMap().getSizeY() * 20;
+        float rmX = currentRoom.getMap().getReference().getSizeX() * 20;
+        float rmY = currentRoom.getMap().getReference().getSizeY() * 20;
         this.setCameraPosition(rmX / 2.0F, rmY / 2.0F);
     }
     
@@ -190,8 +199,9 @@ public class OverworldController {
         }
         
         if(cameraFixing) {
-            float rmX = currentRoom.getMap().getSizeX() * 20;       // room's width
-            float rmY = currentRoom.getMap().getSizeY() * 20;       // room's height
+            RoomMap map = currentRoom.getMap().getReference();
+            float rmX = map.getSizeX() * 20;       // room's width
+            float rmY = map.getSizeY() * 20;       // room's height
             float cvX = Math.abs(camera.zoom) * camera.viewportWidth / 2.0F;  // half of camera's view width
             float cvY = Math.abs(camera.zoom) * camera.viewportHeight / 2.0F; // half of camera's view height
             float xPos = camera.position.x;

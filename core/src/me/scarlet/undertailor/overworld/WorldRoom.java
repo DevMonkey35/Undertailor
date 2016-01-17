@@ -34,7 +34,9 @@ import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.manager.ScriptManager;
+import me.scarlet.undertailor.overworld.map.RoomMapLayer;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 
 import java.util.HashMap;
@@ -111,7 +113,7 @@ public class WorldRoom implements Disposable {
                         try {
                             ScriptManager scriptMan = Undertailor.getScriptManager();
                             WorldRoomImplementable impl = scriptMan.getImplementable(WorldRoomImplementable.class);
-                            WorldRoom room = impl.load(targetRoom[0], Undertailor.getRoomManager().getRoom(targetRoom[0]));
+                            WorldRoom room = impl.load(targetRoom[0]);
                             Undertailor.getOverworldController().setCurrentRoom(room, true, id, entrypoint);
                         } catch(LuaScriptException e) {
                             Undertailor.instance.error("overworld", "entrypoint with id " + id + " failed to process room switch: could not load target room " + targetRoom[0]);
@@ -137,15 +139,19 @@ public class WorldRoom implements Disposable {
         
     }
     
-    private static final TreeSet<WorldObject> RETURN_SET;
+    private static final TreeSet<Layerable> RETURN_SET;
     private static final Set<Collider> COLLIDER_SET;
     private static final Set<Collider> TARGET_SET;
     private static long nextId;
     
     static {
-        RETURN_SET = new TreeSet<WorldObject>((WorldObject obj1, WorldObject obj2) -> {
-            if(obj1.getZ() == obj2.getZ()) {
-                return Float.compare(obj2.getPosition().y, obj1.getPosition().y);
+        RETURN_SET = new TreeSet<Layerable>((Layerable obj1, Layerable obj2) -> {
+            if((obj1.getZ() == obj2.getZ())
+                    && obj1 instanceof WorldObject
+                    && obj2 instanceof WorldObject) {
+                WorldObject wobj1 = (WorldObject) obj1;
+                WorldObject wobj2 = (WorldObject) obj2;
+                return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
             } else {
                 return Integer.compare(obj1.getZ(), obj2.getZ());
             }
@@ -157,7 +163,6 @@ public class WorldRoom implements Disposable {
     }
     
     private String roomName;
-    private RoomMap room;
     private RoomDataWrapper roomWrapper;
     private Map<String, Entrypoint> entrypoints;
     
@@ -165,22 +170,25 @@ public class WorldRoom implements Disposable {
     private Map<Long, WorldObject> added;
     private Map<Long, WorldObject> objects;
     
-    public WorldRoom(RoomDataWrapper roomWrapper) {
+    public WorldRoom() {
         this.added = new HashMap<>();
         this.removed = new HashSet<>();
         this.entrypoints = new HashMap<>();
         this.objects = new HashMap<>();
-        this.roomWrapper = roomWrapper;
-        this.room = roomWrapper.getReference(this);
-        this.roomName = roomWrapper.getRoomScript().getName().split("\\.")[0];
+        this.roomWrapper = null;
     }
     
     public String getRoomName() {
         return roomName;
     }
     
-    public RoomMap getMap() {
-        return room;
+    public RoomDataWrapper getMap() {
+        return roomWrapper;
+    }
+    
+    public void setMap(RoomDataWrapper wrapper) {
+        this.dispose();
+        this.roomWrapper = wrapper;
     }
     
     public Entrypoint getEntrypoint(String name) {
@@ -237,14 +245,23 @@ public class WorldRoom implements Disposable {
     }
     
     public void render() {
-        room.render();
-        for(WorldObject object : getObjectsInRenderOrder()) {
-            object.render();
+        // room.render();
+        Set<Layerable> renderOrder = getObjectsInRenderOrder();
+        for(Layerable object : renderOrder) {
+            if(object instanceof WorldObject) {
+                ((WorldObject) object).render();
+            }
+            
+            if(object instanceof RoomMapLayer) {
+                ((RoomMapLayer) object).render();
+            }
         }
         
         if(Undertailor.getOverworldController().isRenderingHitboxes()) {
-            for(WorldObject object : getObjectsInRenderOrder()) {
-                object.renderBox();
+            for(Layerable object : renderOrder) {
+                if(object instanceof WorldObject) {
+                    ((WorldObject) object).renderBox();
+                }
             }
             
             for(Entrypoint entrypoint : entrypoints.values()) {
@@ -325,8 +342,15 @@ public class WorldRoom implements Disposable {
         }
     }
     
-    private TreeSet<WorldObject> getObjectsInRenderOrder() {
+    private TreeSet<Layerable> getObjectsInRenderOrder() {
         RETURN_SET.clear();
+        
+        if(this.roomWrapper != null) {
+            for(RoomMapLayer layer : roomWrapper.getReference().getLayers()) {
+                RETURN_SET.add(layer);
+            }
+        }
+        
         for(WorldObject object : objects.values()) {
             RETURN_SET.add(object);
         }
@@ -336,7 +360,9 @@ public class WorldRoom implements Disposable {
     
     @Override
     public void dispose() {
-        roomWrapper.removeReference(this);
+        if(roomWrapper != null) {
+            roomWrapper.removeReference(this);
+        }
     }
     
     public void onPause() {}

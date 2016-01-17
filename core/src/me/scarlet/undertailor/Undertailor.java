@@ -61,7 +61,6 @@ import me.scarlet.undertailor.lua.lib.BaseLib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.FontManager;
-import me.scarlet.undertailor.manager.RoomManager;
 import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
@@ -143,10 +142,6 @@ public class Undertailor extends ApplicationAdapter {
         return Undertailor.instance.sheetManager;
     }
     
-    public static RoomManager getRoomManager() {
-        return Undertailor.instance.roomManager;
-    }
-    
     public static Scheduler getScheduler() {
         return Undertailor.instance.scheduler;
     }
@@ -179,7 +174,6 @@ public class Undertailor extends ApplicationAdapter {
     private TilemapManager tilemapManager;
     private SpriteSheetManager sheetManager;
     private AnimationManager animationManager;
-    private RoomManager roomManager;
     
     private UIController uiController;
     private OverworldController ovwController;
@@ -229,7 +223,6 @@ public class Undertailor extends ApplicationAdapter {
         this.tilemapManager = new TilemapManager();
         this.sheetManager = new SpriteSheetManager();
         this.animationManager = new AnimationManager();
-        this.roomManager = new RoomManager();
         
         fontManager.loadObjects(new File("fonts/"));
         audioManager.loadMusic(new File("music/"));
@@ -238,7 +231,6 @@ public class Undertailor extends ApplicationAdapter {
         tilemapManager.loadObjects(new File("tilemaps/"));
         styleManager.loadObjects(new File("fonts/styles/"));
         animationManager.loadObjects(new File("animation/"));
-        roomManager.loadObjects(new File("scripts/rooms/"));
         
         this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
         this.ovwController = new OverworldController(new FitViewport(0F, 0F));
@@ -247,6 +239,8 @@ public class Undertailor extends ApplicationAdapter {
         
         Gdx.input.setInputProcessor(inputRetriever);
         uiController.getLuaLoader().loadComponents(new File("scripts/uicomponent/"));
+        ovwController.getRoomLoader().loadObjects(new File("rooms/"));
+        ovwController.getRoomLoader().loadScripts(new File("scripts/rooms/"));
         ovwController.getObjectLoader().loadObjects(new File("scripts/objects/"));
         
         Color cc = Color.BLACK;

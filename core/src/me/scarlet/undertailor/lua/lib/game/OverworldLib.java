@@ -26,8 +26,10 @@ package me.scarlet.undertailor.lua.lib.game;
 
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.manager.ScriptManager;
@@ -44,6 +46,7 @@ public class OverworldLib extends LuaLibrary {
     public static final LuaLibraryComponent[] COMPONENTS = {
             new newWorldRoom(),
             new newWorldObject(),
+            new newWorldMap(),
             new isRendering(),
             new setRendering(),
             new isProcessing(),
@@ -71,18 +74,29 @@ public class OverworldLib extends LuaLibrary {
     static class newWorldRoom extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);;
+            LuaUtil.checkArguments(args, 1, 1);
             
             try {
                 ScriptManager scriptMan = Undertailor.getScriptManager();
                 WorldRoomImplementable impl = scriptMan.getImplementable(WorldRoomImplementable.class);
-                return impl.load(args.checkjstring(1), Undertailor.getRoomManager().getRoom(args.checkjstring(1))).getObjectValue();
+                return impl.load(args.checkjstring(1), Undertailor.getOverworldController().getRoomLoader().getRoomScript(args.checkjstring(1))).getObjectValue();
             } catch(Exception e) {
                 LuaError thrown = new LuaError("failed to load room: " + LuaUtil.formatJavaException(e));
                 e.printStackTrace();
                 thrown.initCause(e);
                 throw thrown;
             }
+        }
+    }
+    
+    static class newWorldMap extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            // TODO world map meta
+            System.out.println("CALLED");
+            return LuaObjectValue.of(Undertailor.getOverworldController().getRoomLoader().getRoom(args.checkjstring(1)), Lua.TYPENAME_WORLDMAP);
         }
     }
     

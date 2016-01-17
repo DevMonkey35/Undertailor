@@ -45,6 +45,7 @@ public class DisposerThread extends Thread {
      * tasks as soon as {@link Thread#start()} is called.</p>
      */
     public DisposerThread() {
+        this.setName("Tailor Disposal Thread");
         this.running = false;
         this.working = true;
     }

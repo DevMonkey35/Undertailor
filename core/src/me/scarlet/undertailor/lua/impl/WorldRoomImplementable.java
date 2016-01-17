@@ -35,7 +35,6 @@ import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.overworld.WorldRoom;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
-import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
@@ -47,7 +46,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper, WorldRoomImplementation> {
+public class WorldRoomImplementable implements LuaImplementable<File, WorldRoomImplementation> {
     
     public static final String IMPLFUNCTION_CREATE = "create";     // create(self)
     public static final String IMPLFUNCTION_PROCESS = "process";   // process(self, delta, input)
@@ -64,10 +63,6 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
         private LuaImplementable<?, ?> impl;
         private Map<String, LuaFunction> functions;
         private WeakReference<LuaObjectValue<?>> obj;
-        
-        public WorldRoomImplementation(RoomDataWrapper roomWrapper) {
-            super(roomWrapper);
-        }
         
         // generic impl of LuaImplementation; screw readability they're one-liners
         @Override public LuaImplementable<?, ?> getImplementable() { return impl; }
@@ -111,12 +106,12 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
         }
     }
     
-    private Map<String, RoomDataWrapper> loadedWrappers;
+    private Map<String, File> loadedFiles;
     private Map<String, Map<String, LuaFunction>> loadedMapping;
     
     public WorldRoomImplementable() {
         this.loadedMapping = new HashMap<>();
-        this.loadedWrappers = new HashMap<>();
+        this.loadedFiles = new HashMap<>();
     }
 
     @Override
@@ -130,13 +125,12 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
     }
     
     @Override
-    public void loadFunctions(String scriptId, RoomDataWrapper loaded, Globals globals, boolean replace) throws LuaScriptException {
+    public void loadFunctions(String scriptId, File loaded, Globals globals, boolean replace) throws LuaScriptException {
         if(!this.loadedMapping.containsKey(scriptId) // not registered?
                 || (this.loadedMapping.containsKey(scriptId) && replace)) { // registered, but replace flag is true?
             try {
-                File scriptFile = loaded.getRoomScript();
-                loadedMapping.put(scriptId, LuaImplementable.loadFile(this, scriptFile, globals));
-                loadedWrappers.put(scriptId, loaded); // after so its not registered if script loading fails
+                loadedMapping.put(scriptId, LuaImplementable.loadFile(this, loaded, globals));
+                loadedFiles.put(scriptId, loaded); // after so its not registered if script loading fails
             } catch(LuaScriptException | LuaError e) {
                 throw new LuaError("\n\t" + e.getMessage());
             } catch(Exception e) {
@@ -149,8 +143,8 @@ public class WorldRoomImplementable implements LuaImplementable<RoomDataWrapper,
     
     @Override
     public WorldRoomImplementation load(String scriptId, Varargs args) throws LuaScriptException {
-        if(loadedWrappers.containsKey(scriptId) && loadedMapping.containsKey(scriptId)) {
-            WorldRoomImplementation impl = new WorldRoomImplementation(loadedWrappers.get(scriptId));
+        if(loadedFiles.containsKey(scriptId) && loadedMapping.containsKey(scriptId)) {
+            WorldRoomImplementation impl = new WorldRoomImplementation();
             impl.setImplementable(this);
             impl.setFunctions(loadedMapping.get(scriptId));
             impl.setObjectValue(LuaWorldRoomMeta.create(impl));

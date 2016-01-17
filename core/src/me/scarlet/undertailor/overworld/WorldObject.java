@@ -99,6 +99,11 @@ public abstract class WorldObject implements Collider, Layerable {
         this.z = z;
     }
     
+    @Override
+    public int getPriority() {
+        return 1;
+    }
+    
     public long getId() {
         return id;
     }

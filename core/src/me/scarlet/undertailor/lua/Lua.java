@@ -60,6 +60,9 @@ import org.luaj.vm2.LuaValue;
  */
 public class Lua {
     
+    // temp
+    public static final String TYPENAME_WORLDMAP = "tailor-roommap";
+    
     // typenames of objects without non-library metatables
     public static final String TYPENAME_TEXTCOMPONENT = "tailor-textcomponent";
     public static final String TYPENAME_DISPLAYMETA = "tailor-displaymeta";

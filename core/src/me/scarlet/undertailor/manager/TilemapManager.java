@@ -24,8 +24,6 @@
 
 package me.scarlet.undertailor.manager;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -76,11 +74,15 @@ public class TilemapManager extends Manager<TilemapWrapper> {
             
             String name = file.getName().substring(0, file.getName().length() - 4);
             String entryName = heading + (heading.isEmpty() ? "" : ".") + name;
-            Texture texture = new Texture(Gdx.files.absolute(file.getAbsolutePath()));
+            File metaFile = new File(file.getParentFile(), name + ".tilemap");
+            if(!metaFile.exists()) {
+                Undertailor.instance.debug(MANAGER_TAG, "meta file not found for tilesheet " + entryName);
+                continue;
+            }
             
             try {
                 Undertailor.instance.debug(MANAGER_TAG, "loading tilemap " + entryName);
-                tilemaps.put(entryName, new TilemapWrapper(name, texture));
+                tilemaps.put(entryName, new TilemapWrapper(entryName, file, metaFile));
             } catch(TextureTilingException e) {
                 Undertailor.instance.error(MANAGER_TAG, "failed to load tilemap: " + LuaUtil.formatJavaException(e), e);
                 continue;

@@ -32,5 +32,6 @@ public interface Layerable {
     
     public int getZ();
     public void setZ(int z);
+    public int getPriority(); // floors should be 0; everything else should be 1
     
 }
