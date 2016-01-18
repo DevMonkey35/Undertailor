@@ -26,11 +26,10 @@ package me.scarlet.undertailor.lua.lib.game;
 
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
-import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
+import me.scarlet.undertailor.lua.lib.meta.LuaRoomMapMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.overworld.WorldRoom;
@@ -94,9 +93,8 @@ public class OverworldLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            // TODO world map meta
             System.out.println("CALLED");
-            return LuaObjectValue.of(Undertailor.getOverworldController().getRoomLoader().getRoom(args.checkjstring(1)), Lua.TYPENAME_WORLDMAP);
+            return LuaRoomMapMeta.create(Undertailor.getOverworldController().getRoomLoader().getRoom(args.checkjstring(1)));
         }
     }
     

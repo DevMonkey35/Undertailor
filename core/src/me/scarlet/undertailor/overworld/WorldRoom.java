@@ -362,6 +362,7 @@ public class WorldRoom implements Disposable {
     public void dispose() {
         if(roomWrapper != null) {
             roomWrapper.removeReference(this);
+            roomWrapper.dispose();
         }
     }
     

@@ -40,6 +40,7 @@ import me.scarlet.undertailor.lua.lib.meta.LuaBoundingBoxMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaEntrypointMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaInputDataMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaPressDataMeta;
+import me.scarlet.undertailor.lua.lib.meta.LuaRoomMapMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIComponentMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIObjectMeta;
@@ -60,9 +61,6 @@ import org.luaj.vm2.LuaValue;
  */
 public class Lua {
     
-    // temp
-    public static final String TYPENAME_WORLDMAP = "tailor-roommap";
-    
     // typenames of objects without non-library metatables
     public static final String TYPENAME_TEXTCOMPONENT = "tailor-textcomponent";
     public static final String TYPENAME_DISPLAYMETA = "tailor-displaymeta";
@@ -82,6 +80,7 @@ public class Lua {
     public static final String TYPENAME_INPUTDATA = "tailor-inputdata";
     public static final String TYPENAME_STYLE = "tailor-textstyle";
     public static final String TYPENAME_UIOBJECT = "tailor-uiobj";
+    public static final String TYPENAME_WORLDMAP = "tailor-roommap";
     
     // metatables
     public static final LuaValue META_WORLDOBJECT = LuaLibrary.asMetatable(new LuaWorldObjectMeta());
@@ -93,6 +92,7 @@ public class Lua {
     public static final LuaValue META_PRESSDATA = LuaLibrary.asMetatable(new LuaPressDataMeta());
     public static final LuaValue META_STYLE = LuaLibrary.asMetatable(new LuaStyleMeta());
     public static final LuaValue META_UIOBJECT = LuaLibrary.asMetatable(new LuaUIObjectMeta());
+    public static final LuaValue META_WORLDMAP = LuaLibrary.asMetatable(new LuaRoomMapMeta());
     
     // shared libs -- non-parental top-level
     public static final SchedulerLib LIB_SCHEDULER = new SchedulerLib();
