@@ -24,9 +24,12 @@
 
 package me.scarlet.undertailor.overworld.map;
 
+import com.badlogic.gdx.graphics.Color;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.BadConfigurationException;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.Layerable;
+import me.scarlet.undertailor.util.NumberUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class RoomMapLayer implements Layerable, Cloneable {
@@ -36,7 +39,7 @@ public class RoomMapLayer implements Layerable, Cloneable {
     private int priority;
     private RoomMap parent;
     private Tile[][] mapping;
-    private boolean visible;
+    private float opacity;
     
     private RoomMapLayer() {} // for clones;
     
@@ -46,7 +49,7 @@ public class RoomMapLayer implements Layerable, Cloneable {
         this.priority = ConfigurateUtil.processBoolean(layerData.getNode("wallLayer"), false) ? 1 : 0;
         this.name = layerData.getKey().toString();
         this.mapping = new Tile[parent.getSizeY()][parent.getSizeX()];
-        this.visible = true;
+        this.opacity = 1.0F;
         
         this.z = ConfigurateUtil.processInt(layerData.getNode("z"), 0);
         
@@ -74,12 +77,12 @@ public class RoomMapLayer implements Layerable, Cloneable {
         return priority;
     }
     
-    public boolean isVisible() {
-        return visible;
+    public float getOpacity() {
+        return opacity;
     }
     
-    public void setVisible(boolean flag) {
-        this.visible = flag;
+    public void setOpacity(float opacity) {
+        this.opacity = NumberUtil.boundFloat(opacity, 0.0F, 1.0F);
     }
     
     public String getName() {
@@ -100,7 +103,7 @@ public class RoomMapLayer implements Layerable, Cloneable {
         clone.name = this.name;
         clone.parent = this.parent;
         clone.priority = this.priority;
-        clone.visible = true;
+        clone.opacity = 1.0F;
         clone.mapping = new Tile[parent.getSizeY()][parent.getSizeX()];
         
         for(int y = 0; y < parent.getSizeY(); y++) {
@@ -113,7 +116,9 @@ public class RoomMapLayer implements Layerable, Cloneable {
     }
     
     public void render() {
-        if(visible) {
+        if(opacity > 0.0F) { // not invisible
+            Color oldColor = Undertailor.getRenderer().getBatchColor();
+            Undertailor.getRenderer().setBatchColor(oldColor, opacity);
             for(int x = 0; x < parent.getSizeX(); x++) {
                 for(int y = 0; y < parent.getSizeY(); y++) {
                     Tile tile = mapping[y][x];
@@ -124,6 +129,8 @@ public class RoomMapLayer implements Layerable, Cloneable {
                     }
                 }
             }
+            
+            Undertailor.getRenderer().setBatchColor(oldColor, oldColor.a);
         }
     }
     
