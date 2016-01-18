@@ -27,11 +27,12 @@ package me.scarlet.undertailor.ui;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.Renderable;
 
 /**
  * A component of a {@link UIObject}, which may display something on-screen.
  */
-public abstract class UIComponent {
+public abstract class UIComponent implements Renderable {
     
     /** Holding the parent {@link UIObject} that owns this UIComponent. */
     protected UIObject parent;

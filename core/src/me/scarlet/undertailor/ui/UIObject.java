@@ -28,6 +28,7 @@ import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.Renderable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class UIObject {
+public class UIObject implements Renderable {
     
     protected int id;
     protected long startLifetime;

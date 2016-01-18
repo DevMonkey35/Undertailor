@@ -30,6 +30,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.Renderable;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -38,7 +39,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-public class UIController {
+public class UIController implements Renderable {
     
     /** Next ID holder for incoming generations UI objects. */
     private static int nextUID;

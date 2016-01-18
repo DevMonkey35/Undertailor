@@ -30,9 +30,10 @@ import me.scarlet.undertailor.exception.BadConfigurationException;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.util.NumberUtil;
+import me.scarlet.undertailor.util.Renderable;
 import ninja.leaping.configurate.ConfigurationNode;
 
-public class RoomMapLayer implements Layerable, Cloneable {
+public class RoomMapLayer implements Layerable, Cloneable, Renderable {
     
     private int z;
     private String name;

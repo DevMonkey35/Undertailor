@@ -36,11 +36,12 @@ import me.scarlet.undertailor.overworld.map.RoomLoader;
 import me.scarlet.undertailor.overworld.map.RoomMap;
 import me.scarlet.undertailor.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.util.Renderable;
 
 import java.util.Iterator;
 import java.util.Set;
 
-public class OverworldController {
+public class OverworldController implements Renderable {
     
     public static final int RENDER_WIDTH = 320;
     public static final int RENDER_HEIGHT = 240;
