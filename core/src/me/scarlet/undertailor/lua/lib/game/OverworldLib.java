@@ -28,10 +28,12 @@ import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.lua.lib.meta.LuaRoomMapMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.manager.ScriptManager;
+import me.scarlet.undertailor.overworld.WorldObject;
 import me.scarlet.undertailor.overworld.WorldRoom;
 import me.scarlet.undertailor.scheduler.LuaTask;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -101,9 +103,11 @@ public class OverworldLib extends LuaLibrary {
     static class newWorldObject extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, -1);
+            LuaUtil.checkArguments(args, 2, -1);
             
-            return Undertailor.getOverworldController().getObjectLoader().newWorldObject(args.checkjstring(1), args.subargs(2));
+            LuaObjectValue<WorldObject> obj = Undertailor.getOverworldController().getObjectLoader().newWorldObject(args.checkjstring(1), args.subargs(3));
+            obj.getObject().setZ(args.optint(2, obj.getObject().getZ()));
+            return obj;
         }
     }
     
