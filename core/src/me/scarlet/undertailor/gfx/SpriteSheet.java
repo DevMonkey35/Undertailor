@@ -24,6 +24,7 @@
 
 package me.scarlet.undertailor.gfx;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -172,6 +173,8 @@ public class SpriteSheet implements Disposable {
     
     @Override
     public void dispose() {
-        texture.dispose();
+        Gdx.app.postRunnable(() -> {
+            texture.dispose();
+        });
     }
 }
