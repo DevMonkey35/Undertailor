@@ -67,6 +67,7 @@ public abstract class WorldObject implements Collider, Layerable {
     private Vector2 velocity;
     private Vector2 position;
     private float rotation;
+    private float height;
     
     private BoundingRectangle boundingBox;
     
@@ -85,6 +86,7 @@ public abstract class WorldObject implements Collider, Layerable {
         this.animSet = null;
         this.rotation = 0F;
         this.room = null;
+        this.height = 0F;
         this.scale = 1F;
         this.z = 0;
     }
@@ -115,6 +117,14 @@ public abstract class WorldObject implements Collider, Layerable {
     public void setScale(float scale) {
         this.scale = scale < 0F ? 0F : scale;
         this.boundingBox.setScale(scale);
+    }
+    
+    public float getHeight() {
+        return height;
+    }
+    
+    public void setHeight(float height) {
+        this.height = height;
     }
     
     public boolean isPersisting() {
@@ -230,7 +240,7 @@ public abstract class WorldObject implements Collider, Layerable {
     public void render() {
         onRender();
         if(animation != null && isVisible) {
-            animation.drawCurrentFrame(position.x, position.y, scale, rotation);
+            animation.drawCurrentFrame(position.x, position.y + height, scale, rotation);
         }
     }
     

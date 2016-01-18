@@ -49,6 +49,8 @@ public class LuaWorldObjectMeta extends LuaLibrary {
     
     public static final LuaLibraryComponent[] COMPONENTS = {
             new getID(),
+            new getHeight(),
+            new setHeight(),
             new getZ(),
             new setZ(),
             new getVelocity(),
@@ -85,6 +87,27 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             
             WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.getId());
+        }
+    }
+    
+    static class getHeight extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            return LuaValue.valueOf(object.getHeight());
+        }
+    }
+    
+    static class setHeight extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            object.setHeight(new Float(args.checkdouble(2)));
+            return LuaValue.NIL;
         }
     }
     
