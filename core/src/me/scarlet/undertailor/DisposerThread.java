@@ -46,6 +46,7 @@ public class DisposerThread extends Thread {
      */
     public DisposerThread() {
         this.setName("Tailor Disposal Thread");
+        this.setDaemon(true);
         this.running = false;
         this.working = true;
     }

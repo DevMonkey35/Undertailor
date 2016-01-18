@@ -255,7 +255,6 @@ public class Undertailor extends ApplicationAdapter {
         }
         
         disposer = new DisposerThread();
-        disposer.setDaemon(true);
         disposer.start();
     }
     

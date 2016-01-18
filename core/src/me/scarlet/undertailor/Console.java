@@ -73,7 +73,10 @@ public class Console {
         public ConsoleThread(Console console) {
             this.buffer = new StringBuilder();
             this.console = console;
+            this.setDaemon(true);
             this.running = true;
+            
+            this.setName("Tailor Console Thread");
         }
         
         public synchronized void append(int b) {
