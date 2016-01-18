@@ -130,6 +130,6 @@ public class Tilemap implements Disposable {
     
     @Override
     public void dispose() {
-        this.sheet.dispose();
+        // this.sheet.dispose();
     }
 }
