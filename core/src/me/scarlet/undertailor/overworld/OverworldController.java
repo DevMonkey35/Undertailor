@@ -150,6 +150,7 @@ public class OverworldController {
         if(this.currentRoom != null) {
             persisted = this.currentRoom.prepareExit();
             this.currentRoom.onExit(currentRoom.getEntrypoint(entrypointExit));
+            this.currentRoom.dispose();
         }
         
         this.currentRoom = room;
