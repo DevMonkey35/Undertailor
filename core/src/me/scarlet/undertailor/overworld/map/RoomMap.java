@@ -109,6 +109,7 @@ public class RoomMap implements Disposable {
             }
             
             map.tilemaps[i] = wrapper;
+            wrapper.getReference(map);
         }
         
         Map<Object, ? extends ConfigurationNode> layerMapping = node.getNode("map").getChildrenMap();
