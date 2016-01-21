@@ -37,6 +37,7 @@ import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.overworld.map.RoomMapLayer;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Layerable;
+import me.scarlet.undertailor.util.Renderable;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 
 import java.util.HashMap;
@@ -245,15 +246,10 @@ public class WorldRoom implements Disposable {
     }
     
     public void render() {
-        // room.render();
         Set<Layerable> renderOrder = getObjectsInRenderOrder();
         for(Layerable object : renderOrder) {
-            if(object instanceof WorldObject) {
-                ((WorldObject) object).render();
-            }
-            
-            if(object instanceof RoomMapLayer) {
-                ((RoomMapLayer) object).render();
+            if(object instanceof Renderable) {
+                ((Renderable) object).render();
             }
         }
         
