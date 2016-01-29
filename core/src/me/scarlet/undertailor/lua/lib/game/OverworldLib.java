@@ -103,7 +103,7 @@ public class OverworldLib extends LuaLibrary {
     static class newWorldObject extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, -1);
+            LuaUtil.checkArguments(args, 1, -1);
             
             LuaObjectValue<WorldObject> obj = Undertailor.getOverworldController().getObjectLoader().newWorldObject(args.checkjstring(1), args.subargs(3));
             obj.getObject().setZ(args.optint(2, obj.getObject().getZ()));
