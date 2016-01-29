@@ -169,9 +169,13 @@ public class OverworldController implements Renderable {
         }
         
         room.onEnter(enterpoint);
-        float rmX = currentRoom.getMap().getReference().getSizeX() * 20;
-        float rmY = currentRoom.getMap().getReference().getSizeY() * 20;
-        this.setCameraPosition(rmX / 2.0F, rmY / 2.0F);
+        if(currentRoom.getMap() != null) {
+            float rmX = currentRoom.getMap().getReference().getSizeX() * 20;
+            float rmY = currentRoom.getMap().getReference().getSizeY() * 20;
+            this.setCameraPosition(rmX / 2.0F, rmY / 2.0F);
+        } else {
+            this.setCameraPosition(0, 0);
+        }
     }
     
     public Vector2 getCameraPosition() {
@@ -200,7 +204,7 @@ public class OverworldController implements Renderable {
             return;
         }
         
-        if(cameraFixing) {
+        if(cameraFixing && currentRoom.getMap() != null) {
             RoomMap map = currentRoom.getMap().getReference();
             float rmX = map.getSizeX() * 20;       // room's width
             float rmY = map.getSizeY() * 20;       // room's height
