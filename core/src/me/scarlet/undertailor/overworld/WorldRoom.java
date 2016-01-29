@@ -147,12 +147,18 @@ public class WorldRoom implements Disposable {
     
     static {
         RETURN_SET = new TreeSet<Layerable>((Layerable obj1, Layerable obj2) -> {
-            if((obj1.getZ() == obj2.getZ())
-                    && obj1 instanceof WorldObject
-                    && obj2 instanceof WorldObject) {
-                WorldObject wobj1 = (WorldObject) obj1;
-                WorldObject wobj2 = (WorldObject) obj2;
-                return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
+            if(obj1.getZ() == obj2.getZ()) {
+                if(obj1 instanceof WorldObject && obj2 instanceof WorldObject) {
+                    WorldObject wobj1 = (WorldObject) obj1;
+                    WorldObject wobj2 = (WorldObject) obj2;
+                    return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
+                } else {
+                    if(obj1 instanceof RoomMapLayer) {
+                        return -1;
+                    }
+                    
+                    return 1;
+                }
             } else {
                 return Integer.compare(obj1.getZ(), obj2.getZ());
             }
