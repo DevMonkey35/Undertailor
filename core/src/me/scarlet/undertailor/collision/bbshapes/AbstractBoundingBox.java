@@ -5,6 +5,10 @@ public abstract class AbstractBoundingBox implements BoundingBox {
     private boolean sensor;
     private boolean canCollide;
     
+    public AbstractBoundingBox() {
+        this.sensor = false;
+    }
+    
     @Override
     public boolean canCollide() {
         return this.canCollide;
