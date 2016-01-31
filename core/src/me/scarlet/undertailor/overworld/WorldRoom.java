@@ -228,7 +228,6 @@ public class WorldRoom implements Disposable {
         
         object.body = collision.getWorld().createBody(def);
         object.body.setUserData(object);
-        object.getBoundingBox().setSensor(true);
         object.updateCollision();
         
         added.put(id, object);
