@@ -139,7 +139,6 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
         try {
             String[] mappingSplit = mapping.split(":");
             Tilemap map = parent.getTilemap(Integer.parseInt(mappingSplit[0]));
-            System.out.println(mappingSplit[1]);
             Tile returned = map.getTile(mappingSplit[1]).clone();
             
             return returned;

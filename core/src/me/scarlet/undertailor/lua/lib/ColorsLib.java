@@ -25,6 +25,7 @@
 package me.scarlet.undertailor.lua.lib;
 
 import com.badlogic.gdx.graphics.Color;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
@@ -139,7 +140,7 @@ public class ColorsLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             Color c = check(args.arg1()).getObject();
-            System.out.println(c.toString());
+            Undertailor.instance.log("[colorslib]", c.toString());
             return LuaValue.NIL;
         }
     }

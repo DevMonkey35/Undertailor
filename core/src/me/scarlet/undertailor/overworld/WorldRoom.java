@@ -255,14 +255,15 @@ public class WorldRoom implements Disposable {
     
     public void process(float delta, InputData input) {
         onProcess(delta, input);
+        
+        for(WorldObject object : objects.values()) {
+            object.process(delta, input);
+        }
+        
         for(WorldObject object : objects.values()) {
             for(Collider collider : object.getContacts()) {
                 object.onCollide(collider);
             }
-        }
-        
-        for(WorldObject object : objects.values()) {
-            object.process(delta, input);
         }
         
         collision.getWorld().step(delta, 6, 2);
@@ -360,7 +361,6 @@ public class WorldRoom implements Disposable {
         
         this.collision.getWorld().dispose();
         this.collision = null;
-        System.out.println("dipsossd");
     }
     
     public void onPause() {}

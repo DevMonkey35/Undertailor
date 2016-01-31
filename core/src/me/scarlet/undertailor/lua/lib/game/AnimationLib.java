@@ -124,7 +124,6 @@ public class AnimationLib extends LuaLibrary {
             Undertailor.getAnimationManager().getAnimation(animation.getParentSet().getName()).getReference();
             float posX = new Float(args.checkdouble(2));
             float posY = new Float(args.checkdouble(3));
-            System.out.println(posX + ", " + posY);
             float scale = args.isnil(4) ? 2F : new Float(args.checkdouble(4));
             float rotation = args.isnil(5) ? 0F : new Float(args.checkdouble(5));
             
