@@ -94,8 +94,6 @@ public class OverworldLib extends LuaLibrary {
         @Override
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
-            
-            System.out.println("CALLED");
             return LuaRoomMapMeta.create(Undertailor.getOverworldController().getRoomLoader().getRoom(args.checkjstring(1)));
         }
     }

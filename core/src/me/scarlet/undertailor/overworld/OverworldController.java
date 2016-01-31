@@ -30,7 +30,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.overworld.map.RoomLoader;
 import me.scarlet.undertailor.overworld.map.RoomMap;
@@ -57,7 +56,6 @@ public class OverworldController implements Renderable {
     private WorldRoom currentRoom;
     private boolean renderHitboxes;
     private OrthographicCamera camera;
-    private CollisionHandler collision;
     private Task entryTransition, exitTransition;
     
     private WorldObjectLoader objLoader;
@@ -79,7 +77,6 @@ public class OverworldController implements Renderable {
         this.renderHitboxes = true;
         this.entryTransition = null;
         this.exitTransition = null;
-        this.collision = new CollisionHandler();
         this.scissor = new Rectangle();
         ScissorStack.calculateScissors(camera, Undertailor.getRenderer().getSpriteBatch().getTransformMatrix(), Undertailor.RENDER_AREA, scissor);
     }
@@ -295,7 +292,7 @@ public class OverworldController implements Renderable {
         
         if(currentRoom != null) {
             currentRoom.forceProcess();
-            if(isProcessing) currentRoom.process(collision, delta, input);
+            if(isProcessing) currentRoom.process(delta, input);
         }
     }
     

@@ -25,7 +25,7 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
-import me.scarlet.undertailor.collision.BoundingRectangle;
+import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
@@ -45,8 +45,6 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
     }
     
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
-            new getPositionOffset(),
-            new setPositionOffset(),
             new getDimensions(),
             new setDimensions(),
             new getOrigin(),
@@ -56,34 +54,6 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
     
     public LuaBoundingBoxMeta() {
         super(null, COMPONENTS);
-    }
-    
-    static class getPositionOffset extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            
-            BoundingRectangle box = check(args.arg(1)).getObject();
-            Vector2 pos = box.getPositionOffset();
-            return LuaValue.varargsOf(new LuaValue[] {
-                    LuaValue.valueOf(pos.x),
-                    LuaValue.valueOf(pos.y)
-            });
-        }
-    }
-    
-    static class setPositionOffset extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, 3);
-            
-            BoundingRectangle box = check(args.arg1()).getObject();
-            Vector2 pos = box.getPositionOffset();
-            float x = new Float(args.optdouble(2, pos.x));
-            float y = new Float(args.optdouble(3, pos.y));
-            box.setPositionOffset(x, y);
-            return LuaValue.NIL;
-        }
     }
     
     static class getDimensions extends LibraryFunction {

@@ -66,12 +66,8 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             new setCanCollide(),
             new isVisible(),
             new setVisible(),
-            new isSolid(),
-            new setSolid(),
             new getRoom(),
             new removeFromRoom(),
-            new isFocusCollide(),
-            new setFocusCollide(),
             new isPersisting(),
             new setPersisting()
     };
@@ -139,7 +135,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             WorldObject object = check(args.arg1()).getObject();
-            Vector2 vel = object.getVelocity();
+            Vector2 vel = object.getBody().getLinearVelocity();
             return LuaValue.varargsOf(new LuaValue[] {
                     LuaValue.valueOf(vel.x),
                     LuaValue.valueOf(vel.y)});
@@ -149,14 +145,28 @@ public class LuaWorldObjectMeta extends LuaLibrary {
     static class setVelocity extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, 3);
+            LuaUtil.checkArguments(args, 2, 4);
             
             WorldObject object = check(args.arg(1)).getObject();
-            Vector2 vel = object.getVelocity();
+            Vector2 vel = object.getBody().getLinearVelocity();
             float x = new Float(args.optdouble(2, vel.x));
             float y = new Float(args.optdouble(3, vel.y));
+            int movetype = args.optint(4, 0);
+            vel.set(x, y);
             
-            object.setVelocity(x, y);
+            switch(movetype) {
+                case 1: // impulse
+                    Vector2 pos = object.getBody().getPosition();
+                    object.getBody().applyLinearImpulse(vel, pos, true);
+                    break;
+                case 2: // force
+                    object.getBody().applyForceToCenter(vel, true);
+                    break;
+                default: // direct
+                    object.getBody().setLinearVelocity(vel);
+                    break;
+            }
+            
             return LuaValue.NIL;
         }
     }
@@ -301,28 +311,6 @@ public class LuaWorldObjectMeta extends LuaLibrary {
         }
     }
     
-    static class isSolid extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            
-            WorldObject object = check(args.arg1()).getObject();
-            return LuaValue.valueOf(object.isSolid());
-        }
-    }
-    
-    static class setSolid extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, 2);
-            
-            WorldObject object = check(args.arg1()).getObject();
-            boolean flag = args.checkboolean(2);
-            object.setSolid(flag);
-            return LuaValue.NIL;
-        }
-    }
-    
     static class getRoom extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
@@ -344,28 +332,6 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             
             WorldObject object = check(args.arg1()).getObject();
             object.removeFromRoom();
-            return LuaValue.NIL;
-        }
-    }
-    
-    static class isFocusCollide extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            
-            WorldObject object = check(args.arg1()).getObject();
-            return LuaValue.valueOf(object.focusCollide());
-        }
-    }
-    
-    static class setFocusCollide extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, 2);
-            
-            WorldObject object = check(args.arg1()).getObject();
-            boolean flag = args.checkboolean(2);
-            object.setFocusCollide(flag);
             return LuaValue.NIL;
         }
     }

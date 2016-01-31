@@ -24,11 +24,15 @@
 
 package me.scarlet.undertailor.collision;
 
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,25 +44,45 @@ public class CollisionHandler {
         RETURN_MAP = new HashMap<>();
     }
     
-    public CollisionHandler() {}
+    private World world;
     
-    public Map<Collider, Set<Collider>> process(Set<Collider> targets, Set<Collider> colliders) {
-        RETURN_MAP.clear();
-        for(Collider target : targets) {
-            RETURN_MAP.put(target, new HashSet<>());
-            for(Collider collider : colliders) {
-                if(!collider.canCollide()) {
-                    continue;
-                }
-                
-                Polygon targetBox = target.getBoundingBox().getPolygon();
-                Polygon colliderBox = collider.getBoundingBox().getPolygon();
-                if(Intersector.overlapConvexPolygons(targetBox, colliderBox)) {
-                    RETURN_MAP.get(target).add(collider);
+    public CollisionHandler() {
+        this.reset();
+    }
+    
+    public void reset() {
+        this.world = new World(new Vector2(0F, 0F), true);
+        this.world.setContactListener(new ContactListener() {
+            
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {}
+            
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {}
+            
+            @Override
+            public void endContact(Contact contact) {
+                Object uda = contact.getFixtureA().getBody().getUserData();
+                Object udb = contact.getFixtureB().getBody().getUserData();
+                if(uda instanceof Collider && udb instanceof Collider); {
+                    ((Collider) uda).getContacts().remove((Collider) udb);
+                    ((Collider) udb).getContacts().remove((Collider) uda);
                 }
             }
-        }
-        
-        return RETURN_MAP;
+            
+            @Override
+            public void beginContact(Contact contact) {
+                Object uda = contact.getFixtureA().getBody().getUserData();
+                Object udb = contact.getFixtureB().getBody().getUserData();
+                if(uda instanceof Collider && udb instanceof Collider); {
+                    ((Collider) uda).getContacts().add((Collider) udb);
+                    ((Collider) udb).getContacts().add((Collider) uda);
+                }
+            }
+        });
+    }
+    
+    public World getWorld() {
+        return this.world;
     }
 }

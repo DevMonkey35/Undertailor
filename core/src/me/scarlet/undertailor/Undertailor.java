@@ -32,6 +32,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
@@ -195,6 +196,7 @@ public class Undertailor extends ApplicationAdapter {
     @Override
     public void create() {
         Undertailor.instance = this;
+        Box2D.init();
         this.strict = 1;
         this.debug = true;
         this.console = new Console();

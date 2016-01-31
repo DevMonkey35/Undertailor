@@ -24,15 +24,19 @@
 
 package me.scarlet.undertailor.collision;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
+
+import java.util.Set;
 
 public interface Collider {
     
+    public Body getBody();
     public BoundingRectangle getBoundingBox();
     public void onCollide(Collider collider);
-    public Vector2 getVelocity();
-    public boolean focusCollide();
     public boolean canCollide();
-    public boolean isSolid();
-    
+    public Set<Collider> getContacts();
+    public default void updateCollision() {
+        this.getBoundingBox().applyFixture(this.getBody());
+    }
 }

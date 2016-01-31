@@ -26,11 +26,13 @@ package me.scarlet.undertailor.overworld;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.collision.BoundingRectangle;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.collision.CollisionHandler;
+import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.manager.ScriptManager;
@@ -53,16 +55,18 @@ public class WorldRoom implements Disposable {
     public static class Entrypoint implements Collider {
         
         protected String id;
-        private Vector2 velocity;
+        protected Body body;
+        
         private Vector2 spawnloc;
         private String roomTarget;
+        private Set<Collider> contacts;
         private BoundingRectangle boundingBox;
         
         public Entrypoint() {
             this.boundingBox = new BoundingRectangle();
             this.spawnloc = new Vector2(0, 0);
-            this.velocity = new Vector2(0, 0); // stored just so we don't need to recreate it
             this.roomTarget = "";
+            this.contacts = new HashSet<>();
         }
         
         public String getID() {
@@ -70,11 +74,11 @@ public class WorldRoom implements Disposable {
         }
         
         public Vector2 getPosition() {
-            return boundingBox.getPosition();
+            return body.getPosition();
         }
         
         public void setPosition(float x, float y) {
-            boundingBox.setPosition(x, y);
+            body.getPosition().set(x, y);
         }
         
         public Vector2 getSpawnPosition() {
@@ -95,7 +99,17 @@ public class WorldRoom implements Disposable {
         
         public void renderBox() {
             Undertailor.getRenderer().setShapeColor(Color.BLUE, 1F);
-            this.boundingBox.renderBox();
+            this.boundingBox.renderBox(body);
+        }
+        
+        @Override
+        public Set<Collider> getContacts() {
+            return this.contacts;
+        }
+        
+        @Override
+        public Body getBody() {
+            return this.body;
         }
         
         @Override
@@ -125,24 +139,10 @@ public class WorldRoom implements Disposable {
         }
         
         @Override
-        public Vector2 getVelocity() {
-            return velocity;
-        }
-        
-        @Override
-        public boolean focusCollide() { return false; }
-        
-        @Override
         public boolean canCollide() { return true; }
-        
-        @Override
-        public boolean isSolid() { return false; }
-        
     }
     
     private static final TreeSet<Layerable> RETURN_SET;
-    private static final Set<Collider> COLLIDER_SET;
-    private static final Set<Collider> TARGET_SET;
     private static long nextId;
     
     static {
@@ -164,8 +164,6 @@ public class WorldRoom implements Disposable {
             }
         });
         
-        COLLIDER_SET = new HashSet<Collider>();
-        TARGET_SET = new HashSet<Collider>();
         nextId = 0;
     }
     
@@ -176,6 +174,7 @@ public class WorldRoom implements Disposable {
     private Set<WorldObject> removed;
     private Map<Long, WorldObject> added;
     private Map<Long, WorldObject> objects;
+    private CollisionHandler collision;
     
     public WorldRoom() {
         this.added = new HashMap<>();
@@ -183,6 +182,7 @@ public class WorldRoom implements Disposable {
         this.entrypoints = new HashMap<>();
         this.objects = new HashMap<>();
         this.roomWrapper = null;
+        this.collision = new CollisionHandler();
     }
     
     public String getRoomName() {
@@ -194,7 +194,11 @@ public class WorldRoom implements Disposable {
     }
     
     public void setMap(RoomDataWrapper wrapper) {
-        this.dispose();
+        if(roomWrapper != null) {
+            roomWrapper.removeReference(this);
+            roomWrapper.dispose();
+        }
+        
         this.roomWrapper = wrapper;
     }
     
@@ -214,6 +218,19 @@ public class WorldRoom implements Disposable {
         long id = nextId++;
         object.id = id;
         object.room = this;
+        
+        BodyDef def = new BodyDef();
+        def.active = true;
+        def.awake = true;
+        def.allowSleep = false;
+        def.type = BodyDef.BodyType.DynamicBody;
+        def.position.set(0, 0);
+        
+        object.body = collision.getWorld().createBody(def);
+        object.body.setUserData(object);
+        object.getBoundingBox().setSensor(true);
+        object.updateCollision();
+        
         added.put(id, object);
         return id;
     }
@@ -237,18 +254,19 @@ public class WorldRoom implements Disposable {
         updateMapping();
     }
     
-    public void process(CollisionHandler collisionHandler, float delta, InputData input) {
+    public void process(float delta, InputData input) {
+        onProcess(delta, input);
         for(WorldObject object : objects.values()) {
-            Vector2 pos = object.getPosition();
-            Vector2 vel = object.getVelocity();
-            object.setPosition(pos.x + vel.x, pos.y + vel.y);
+            for(Collider collider : object.getContacts()) {
+                object.onCollide(collider);
+            }
         }
         
-        processCollisions(collisionHandler);
-        onProcess(delta, input);
         for(WorldObject object : objects.values()) {
             object.process(delta, input);
         }
+        
+        collision.getWorld().step(delta, 6, 2);
     }
     
     public void render() {
@@ -285,33 +303,6 @@ public class WorldRoom implements Disposable {
             objects.remove(object.id);
             object.id = -1;
         }
-    }
-    
-    private void processCollisions(CollisionHandler handler) {
-        TARGET_SET.clear();
-        COLLIDER_SET.clear();
-        for(Collider collider : objects.values()) {
-            if(collider.canCollide()) {
-                COLLIDER_SET.add(collider);
-                if(collider.focusCollide()) {
-                    TARGET_SET.add(collider);
-                }
-            }
-        }
-        
-        for(Entrypoint entrypoint : entrypoints.values()) {
-            COLLIDER_SET.add(entrypoint);
-        }
-        
-        Iterator<Entry<Collider, Set<Collider>>> iterator = handler.process(TARGET_SET, COLLIDER_SET).entrySet().iterator();
-        iterator.forEachRemaining(entry -> {
-            for(Collider collider : entry.getValue()) {
-                collider.onCollide(entry.getKey());
-                if(collider instanceof WorldObject) {
-                    entry.getKey().onCollide(collider);
-                }
-            }
-        });
     }
     
     public Set<WorldObject> prepareExit() {
@@ -365,7 +356,12 @@ public class WorldRoom implements Disposable {
         if(roomWrapper != null) {
             roomWrapper.removeReference(this);
             roomWrapper.dispose();
+            this.roomWrapper = null;
         }
+        
+        this.collision.getWorld().dispose();
+        this.collision = null;
+        System.out.println("dipsossd");
     }
     
     public void onPause() {}

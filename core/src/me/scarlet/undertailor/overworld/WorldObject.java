@@ -26,10 +26,11 @@ package me.scarlet.undertailor.overworld;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.collision.BoundingRectangle;
 import me.scarlet.undertailor.collision.Collider;
+import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.gfx.Animation;
 import me.scarlet.undertailor.gfx.KeyFrame;
 import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
@@ -39,8 +40,10 @@ import me.scarlet.undertailor.util.MapUtil;
 import me.scarlet.undertailor.util.Renderable;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public abstract class WorldObject implements Collider, Layerable, Renderable {
 
@@ -58,38 +61,37 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
     
     private int z;
     private float scale;
-    private boolean isSolid;
     private boolean persists;
     private boolean isVisible;
-    private boolean canCollide;
-    private boolean focusCollide;
     private Animation<?> animation;
     private AnimationSetWrapper animSet;
-    private Vector2 velocity;
-    private Vector2 position;
-    private float rotation;
     private float height;
+    private Set<Collider> contacts;
     
     private BoundingRectangle boundingBox;
     
     protected long id;
+    protected Body body;
     protected WorldRoom room;
     
     public WorldObject() {
         this.boundingBox = new BoundingRectangle();
-        this.velocity = new Vector2();
-        this.position = new Vector2();
-        this.focusCollide = false;
-        this.canCollide = true;
         this.isVisible = true;
         this.animation = null;
-        this.isSolid = true;
         this.animSet = null;
-        this.rotation = 0F;
         this.room = null;
         this.height = 0F;
         this.scale = 1F;
         this.z = 0;
+        this.contacts = new HashSet<>();
+    }
+    
+    public float getRotation() {
+        return new Float(Math.toDegrees(this.body.getAngle()));
+    }
+    
+    public void setRotation(float rotation) {
+        this.body.setTransform(body.getPosition(), (float) Math.toRadians(rotation));
     }
     
     @Override
@@ -137,38 +139,12 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
     }
     
     @Override
-    public boolean isSolid() {
-        return isSolid;
-    }
-    
-    public void setSolid(boolean flag) {
-        this.isSolid = flag;
-    }
-    
-    @Override
-    public boolean focusCollide() {
-        return focusCollide;
-    }
-    
-    public void setFocusCollide(boolean flag) {
-        this.focusCollide = flag;
-    }
-    
-    @Override
     public boolean canCollide() {
-        return canCollide;
+        return body.isActive();
     }
     
     public void setCanCollide(boolean flag) {
-        this.canCollide = flag;
-    }
-    
-    public WorldRoom getRoom() {
-        return room;
-    }
-    
-    public void removeFromRoom() {
-        room.removeObject(id);
+        this.body.setActive(flag);
     }
     
     public boolean isVisible() {
@@ -179,21 +155,20 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
         this.isVisible = flag;
     }
     
-    public Vector2 getVelocity() {
-        return velocity;
-    }
-    
-    public void setVelocity(float x, float y) {
-        this.velocity.set(x, y);
-    }
-    
     public Vector2 getPosition() {
-        return position;
+        return this.body.getPosition();
     }
     
     public void setPosition(float x, float y) {
-        position.set(x, y);
-        boundingBox.setPosition(x, y);
+        this.body.setTransform(x, y, this.body.getAngle());
+    }
+    
+    public WorldRoom getRoom() {
+        return room;
+    }
+    
+    public void removeFromRoom() {
+        room.removeObject(id);
     }
     
     public Animation<?> getCurrentAnimation() {
@@ -229,30 +204,35 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
         return boundingBox;
     }
     
-    public float getRotation() {
-        return rotation;
+    @Override
+    public Body getBody() {
+        return body;
     }
     
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
-        this.boundingBox.setRotation(rotation);
+    @Override
+    public Set<Collider> getContacts() {
+        return this.contacts;
     }
     
     public void render() {
         onRender();
         if(animation != null && isVisible) {
-            animation.drawCurrentFrame(position.x, position.y + height, scale, rotation);
+            animation.drawCurrentFrame(body.getPosition().x, body.getPosition().y + height, scale, (float) Math.toDegrees(body.getAngle()));
         }
     }
     
     public void renderBox() {
-        if(canCollide) {
+        if(body.isActive()) {
             Undertailor.getRenderer().setShapeColor(BOX_COLOR, 1F);
         } else {
             Undertailor.getRenderer().setShapeColor(BOX_COLOR_INACTIVE, 1F);
         }
         
-        this.boundingBox.renderBox();
+        this.boundingBox.renderBox(body);
+    }
+    
+    public void updateCollision() {
+        this.boundingBox.applyFixture(body);
     }
     
     public void onPause() {}
