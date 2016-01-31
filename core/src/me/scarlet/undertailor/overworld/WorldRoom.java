@@ -27,7 +27,6 @@ package me.scarlet.undertailor.overworld;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
@@ -219,14 +218,7 @@ public class WorldRoom implements Disposable {
         object.id = id;
         object.room = this;
         
-        BodyDef def = new BodyDef();
-        def.active = true;
-        def.awake = true;
-        def.allowSleep = false;
-        def.type = BodyDef.BodyType.DynamicBody;
-        def.position.set(0, 0);
-        
-        object.body = collision.getWorld().createBody(def);
+        object.body = collision.getWorld().createBody(object.getBodyDef());
         object.body.setUserData(object);
         object.updateCollision();
         

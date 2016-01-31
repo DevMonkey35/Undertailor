@@ -27,6 +27,7 @@ package me.scarlet.undertailor.overworld;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
@@ -67,6 +68,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
     private AnimationSetWrapper animSet;
     private float height;
     private Set<Collider> contacts;
+    private BodyDef bodyDef;
     
     private BoundingRectangle boundingBox;
     
@@ -84,14 +86,33 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
         this.scale = 1F;
         this.z = 0;
         this.contacts = new HashSet<>();
+        
+        this.bodyDef = new BodyDef();
+        bodyDef.active = true;
+        bodyDef.awake = true;
+        bodyDef.allowSleep = false;
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(0, 0);
+    }
+    
+    public BodyDef getBodyDef() {
+        return this.bodyDef;
     }
     
     public float getRotation() {
+        if(this.body == null) {
+            return new Float(Math.toDegrees(this.bodyDef.angle));
+        }
+        
         return new Float(Math.toDegrees(this.body.getAngle()));
     }
     
     public void setRotation(float rotation) {
-        this.body.setTransform(body.getPosition(), (float) Math.toRadians(rotation));
+        if(body == null) {
+            this.bodyDef.angle = (float) Math.toRadians(rotation);
+        } else {
+            this.body.setTransform(body.getPosition(), (float) Math.toRadians(rotation));
+        }
     }
     
     @Override
@@ -120,6 +141,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
     public void setScale(float scale) {
         this.scale = scale < 0F ? 0F : scale;
         this.boundingBox.setScale(scale);
+        this.updateCollision();
     }
     
     public float getHeight() {
@@ -140,11 +162,19 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
     
     @Override
     public boolean canCollide() {
+        if(this.body == null) {
+            return this.bodyDef.active;
+        }
+        
         return body.isActive();
     }
     
     public void setCanCollide(boolean flag) {
-        this.body.setActive(flag);
+        if(this.body == null) {
+            this.bodyDef.active = flag;
+        } else {
+            this.body.setActive(flag);
+        }
     }
     
     public boolean isVisible() {
@@ -156,11 +186,19 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
     }
     
     public Vector2 getPosition() {
+        if(this.body == null) {
+            return this.bodyDef.position;
+        }
+        
         return this.body.getPosition();
     }
     
     public void setPosition(float x, float y) {
-        this.body.setTransform(x, y, this.body.getAngle());
+        if(this.body == null) {
+            this.bodyDef.position.set(x, y);
+        } else {
+            this.body.setTransform(x, y, this.body.getAngle());
+        }
     }
     
     public WorldRoom getRoom() {
