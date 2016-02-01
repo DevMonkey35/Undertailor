@@ -169,8 +169,8 @@ public class LuaUtil {
     }
     
     public static Varargs invokeNonNull(LuaValue source, String functionName, Varargs args) {
-        if(!source.get(functionName).isnil()) {
-            return source.get(functionName).invoke(args);
+        if(!source.rawget(functionName).isnil()) {
+            return source.rawget(functionName).invoke(args);
         }
         
         return null;
