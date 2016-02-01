@@ -51,8 +51,11 @@ public class LuaWorldObjectMeta extends LuaLibrary {
     
     public static final LuaLibraryComponent[] COMPONENTS = {
             new getID(),
+            new updateCollision(),
             new getHeight(),
             new setHeight(),
+            new isOneSidedReaction(),
+            new setOneSidedReaction(),
             new getBodyType(),
             new setBodyType(),
             new getZ(),
@@ -87,6 +90,40 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             
             WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.getId());
+        }
+    }
+    
+    static class updateCollision extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            object.updateCollision();
+            
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class isOneSidedReaction extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            return LuaValue.valueOf(object.isOneSidedReaction());
+        }
+    }
+    
+    static class setOneSidedReaction extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
+            object.setOneSidedReaction(flag);
+            return LuaValue.NIL;
         }
     }
     

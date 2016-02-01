@@ -69,6 +69,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
     private float height;
     private Set<Collider> contacts;
     private BodyDef bodyDef;
+    private boolean oneSided;
     
     private BoundingRectangle boundingBox;
     
@@ -85,6 +86,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
         this.height = 0F;
         this.scale = 1F;
         this.z = 0;
+        this.oneSided = false;
         this.contacts = new HashSet<>();
         
         this.bodyDef = new BodyDef();
@@ -142,6 +144,16 @@ public abstract class WorldObject implements Collider, Layerable, Renderable {
         this.scale = scale < 0F ? 0F : scale;
         this.boundingBox.setScale(scale);
         this.updateCollision();
+    }
+    
+    @Override
+    public boolean isOneSidedReaction() {
+        return this.oneSided;
+    }
+    
+    @Override
+    public void setOneSidedReaction(boolean flag) {
+        this.oneSided = flag;
     }
     
     public float getHeight() {

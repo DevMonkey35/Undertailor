@@ -27,6 +27,8 @@ package me.scarlet.undertailor.overworld;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
@@ -52,6 +54,17 @@ import java.util.TreeSet;
 public class WorldRoom implements Disposable {
     
     public static class Entrypoint implements Collider {
+        
+        public static final BodyDef ENTRYPOINT_BODY_DEF;
+        
+        static {
+            ENTRYPOINT_BODY_DEF = new BodyDef();
+            ENTRYPOINT_BODY_DEF.active = true;
+            ENTRYPOINT_BODY_DEF.allowSleep = true;
+            ENTRYPOINT_BODY_DEF.awake = true;
+            ENTRYPOINT_BODY_DEF.fixedRotation = true;
+            ENTRYPOINT_BODY_DEF.type = BodyType.StaticBody;
+        }
         
         protected String id;
         protected Body body;
@@ -139,7 +152,16 @@ public class WorldRoom implements Disposable {
         
         @Override
         public boolean canCollide() { return true; }
+        
+        @Override
+        public boolean isOneSidedReaction() { return true; }
+        
+        @Override
+        public void setOneSidedReaction(boolean flag) {} // nope
     }
+    
+    public static final float PHYSICS_STEP = 1F/60F;
+    private static float acc = 0F;
     
     private static final TreeSet<Layerable> RETURN_SET;
     private static long nextId;
@@ -252,13 +274,15 @@ public class WorldRoom implements Disposable {
             object.process(delta, input);
         }
         
+        collision.step(delta);
+        
         for(WorldObject object : objects.values()) {
             for(Collider collider : object.getContacts()) {
-                object.onCollide(collider);
+                if(!collider.isOneSidedReaction()) {
+                    object.onCollide(collider);
+                }
             }
         }
-        
-        collision.getWorld().step(delta, 6, 2);
     }
     
     public void render() {

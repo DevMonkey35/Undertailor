@@ -38,18 +38,21 @@ import java.util.Set;
 public class CollisionHandler {
     
     public static final Map<Collider, Set<Collider>> RETURN_MAP;
+    public static final float PHYSICS_STEP = 1F/60F;
     
     static {
         RETURN_MAP = new HashMap<>();
     }
     
     private World world;
+    private float timeAccumulator;
     
     public CollisionHandler() {
         this.reset();
     }
     
     public void reset() {
+        this.timeAccumulator = 0F;
         this.world = new World(new Vector2(0F, 0F), true);
         this.world.setContactListener(new ContactListener() {
             
@@ -77,11 +80,21 @@ public class CollisionHandler {
                     ((Collider) uda).getContacts().add((Collider) udb);
                     ((Collider) udb).getContacts().add((Collider) uda);
                 }
+                
+                System.out.println("TOUCHY TOUCHY");
             }
         });
     }
     
     public World getWorld() {
         return this.world;
+    }
+    
+    public void step(float delta) {
+        this.timeAccumulator += delta;
+        while(this.timeAccumulator > PHYSICS_STEP) {
+            this.world.step(PHYSICS_STEP, 6, 2);
+            this.timeAccumulator -= PHYSICS_STEP;
+        }
     }
 }

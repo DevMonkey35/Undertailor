@@ -35,6 +35,8 @@ public interface Collider {
     public BoundingRectangle getBoundingBox();
     public void onCollide(Collider collider);
     public boolean canCollide();
+    public boolean isOneSidedReaction();
+    public void setOneSidedReaction(boolean flag);
     public Set<Collider> getContacts();
     public default void updateCollision() {
         this.getBoundingBox().applyFixture(this.getBody());
