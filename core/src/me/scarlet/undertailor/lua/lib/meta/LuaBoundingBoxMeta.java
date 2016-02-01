@@ -47,6 +47,8 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
             new getDimensions(),
             new setDimensions(),
+            new isSensor(),
+            new setSensor(),
             new getOrigin(),
             new setOrigin(),
             new getVertices()
@@ -80,6 +82,29 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
             float width = new Float(args.optdouble(2, dimensions.x));
             float height = new Float(args.optdouble(3, dimensions.y));
             box.setDimensions(width, height);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class isSensor extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);;
+            
+            BoundingRectangle box = check(args.arg1()).getObject();
+            return LuaValue.valueOf(box.isSensor());
+        }
+    }
+    
+    static class setSensor extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            BoundingRectangle box = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
+            box.setSensor(flag);
+            
             return LuaValue.NIL;
         }
     }

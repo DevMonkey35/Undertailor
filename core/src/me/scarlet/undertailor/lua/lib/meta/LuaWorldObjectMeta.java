@@ -25,6 +25,7 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Animation;
 import me.scarlet.undertailor.lua.Lua;
@@ -34,6 +35,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.overworld.WorldObject;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
@@ -51,6 +53,8 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             new getID(),
             new getHeight(),
             new setHeight(),
+            new getBodyType(),
+            new setBodyType(),
             new getZ(),
             new setZ(),
             new getVelocity(),
@@ -83,6 +87,65 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             
             WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.getId());
+        }
+    }
+    
+    static class getBodyType extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            BodyType type = null;
+            if(object.getBody() == null) {
+                type = object.getBodyDef().type;
+            } else {
+                type = object.getBody().getType();
+            }
+            
+            switch(type) {
+                case DynamicBody:
+                    return LuaValue.valueOf(0);
+                case KinematicBody:
+                    return LuaValue.valueOf(1);
+                case StaticBody:
+                    return LuaValue.valueOf(2);
+                default:
+                    return LuaValue.valueOf(-1);
+            }
+        }
+    }
+    
+    static class setBodyType extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            int typeId = args.checkint(2);
+            
+            BodyType type = null;
+            switch(typeId) {
+                case 0:
+                    type = BodyType.DynamicBody;
+                    break;
+                case 1:
+                    type = BodyType.KinematicBody;
+                    break;
+                case 2:
+                    type = BodyType.StaticBody;
+                    break;
+                default:
+                    throw new LuaError("bad argument #2: invalid body type id (must be 0, 1, or 2)");
+            }
+            
+            if(object.getBody() == null) {
+                object.getBodyDef().type = type;
+            } else {
+                object.getBody().setType(type);
+            }
+            
+            return LuaValue.NIL;
         }
     }
     
