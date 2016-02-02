@@ -38,8 +38,10 @@ import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.overworld.map.RoomMapLayer;
+import me.scarlet.undertailor.overworld.map.RoomMapLayer.SpriteData;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Layerable;
+import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 
@@ -160,18 +162,15 @@ public class WorldRoom implements Disposable {
         public void setOneSidedReaction(boolean flag) {} // nope
     }
     
-    public static final float PHYSICS_STEP = 1F/60F;
-    private static float acc = 0F;
-    
     private static final TreeSet<Layerable> RETURN_SET;
     private static long nextId;
     
     static {
         RETURN_SET = new TreeSet<Layerable>((Layerable obj1, Layerable obj2) -> {
             if(obj1.getZ() == obj2.getZ()) {
-                if(obj1 instanceof WorldObject && obj2 instanceof WorldObject) {
-                    WorldObject wobj1 = (WorldObject) obj1;
-                    WorldObject wobj2 = (WorldObject) obj2;
+                if(obj1 instanceof Positionable && obj2 instanceof Positionable) {
+                    Positionable wobj1 = (Positionable) obj1;
+                    Positionable wobj2 = (Positionable) obj2;
                     return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
                 } else {
                     if(obj1 instanceof RoomMapLayer) {
@@ -357,6 +356,9 @@ public class WorldRoom implements Disposable {
         if(this.roomWrapper != null) {
             for(RoomMapLayer layer : roomWrapper.getReference().getLayers()) {
                 RETURN_SET.add(layer);
+                for(SpriteData data : layer.getSpriteObjects()) {
+                    RETURN_SET.add(data);
+                }
             }
         }
         

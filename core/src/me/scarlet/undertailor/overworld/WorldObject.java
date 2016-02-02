@@ -38,6 +38,7 @@ import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.util.MapUtil;
+import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 
@@ -46,7 +47,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public abstract class WorldObject implements Collider, Layerable, Renderable {
+public abstract class WorldObject implements Collider, Layerable, Renderable, Positionable {
 
     public static final Color BOX_COLOR;
     public static final Color BOX_COLOR_INACTIVE;

@@ -25,21 +25,79 @@
 package me.scarlet.undertailor.overworld.map;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.BadConfigurationException;
+import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.util.NumberUtil;
+import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
 import ninja.leaping.configurate.ConfigurationNode;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class RoomMapLayer implements Layerable, Cloneable, Renderable {
+    
+    public static class SpriteData implements Layerable, Positionable, Renderable {
+        
+        public static SpriteData fromString(RoomMap parent, String str, int z) {
+            // format: sheetid:sheetindex/posx,posy
+            String[] split = str.split("[/]");
+            String[] sheetData = split[0].split(":");
+            String[] posData = split[1].split(",");
+            
+            try {
+                return new SpriteData(
+                        Float.parseFloat(posData[0]), // x
+                        Float.parseFloat(posData[1]), // y
+                        z,
+                        parent.getSpriteSheet(Integer.parseInt(sheetData[0])).getSprite(Integer.parseInt(sheetData[1])));
+            } catch(NumberFormatException e) {
+                BadConfigurationException thrown = new BadConfigurationException("bad map data: bad sprite map object data");
+                thrown.initCause(e);
+                throw thrown;
+            }
+        }
+        
+        private int z;
+        private Sprite sprite;
+        private Vector2 position;
+        
+        public SpriteData(float x, float y, int z, Sprite sprite) {
+            this.position = new Vector2(x, y);
+            this.sprite = sprite;
+            this.z = z;
+        }
+        
+        @Override
+        public Vector2 getPosition() {
+            return this.position;
+        }
+
+        @Override
+        public int getZ() { return z; }
+
+        @Override
+        public void setZ(int z) {}
+
+        @Override
+        public int getPriority() { return 0; }
+        
+        @Override
+        public void render() {
+            sprite.draw(position.x, position.y, 1);
+        }
+    }
     
     private int z;
     private String name;
     private int priority;
     private RoomMap parent;
     private Tile[][] mapping;
+    private Set<SpriteData> sprites;
     private float opacity;
     
     private RoomMapLayer() {} // for clones;
@@ -50,6 +108,7 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
         this.priority = ConfigurateUtil.processBoolean(layerData.getNode("wallLayer"), false) ? 1 : 0;
         this.name = layerData.getKey().toString();
         this.mapping = new Tile[parent.getSizeY()][parent.getSizeX()];
+        this.sprites = new HashSet<>();
         this.opacity = 1.0F;
         
         this.z = ConfigurateUtil.processInt(layerData.getNode("z"), 0);
@@ -60,6 +119,11 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
             for(int x = 0; x < parent.getSizeX(); x++) {
                 this.mapping[y][x] = parseTileMapping(tiles[x]);
             }
+        }
+        
+        String[] sprites = ConfigurateUtil.processStringArray(layerData.getNode("sprites"), null);
+        for(int i = 0; i < sprites.length; i++) {
+            this.sprites.add(SpriteData.fromString(parent, sprites[i], this.z));
         }
     }
     
@@ -135,7 +199,11 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
         }
     }
     
-    Tile parseTileMapping(String mapping) {
+    public Set<SpriteData> getSpriteObjects() {
+        return this.sprites;
+    }
+    
+    private Tile parseTileMapping(String mapping) {
         try {
             String[] mappingSplit = mapping.split(":");
             Tilemap map = parent.getTilemap(Integer.parseInt(mappingSplit[0]));

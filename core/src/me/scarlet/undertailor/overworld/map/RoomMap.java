@@ -26,7 +26,9 @@ package me.scarlet.undertailor.overworld.map;
 
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.util.ConfigurateUtil;
+import me.scarlet.undertailor.wrappers.SpriteSheetWrapper;
 import me.scarlet.undertailor.wrappers.TilemapWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -99,6 +101,7 @@ public class RoomMap implements Disposable {
         map.sizeX = ConfigurateUtil.processInt(node.getNode("sizeX"), null);
         map.sizeY = ConfigurateUtil.processInt(node.getNode("sizeY"), null);
         String[] tilemapNames = ConfigurateUtil.processStringArray(node.getNode("tilemaps"), null);
+        String[] spritesheetNames = ConfigurateUtil.processStringArray(node.getNode("spritesheets"), null);
         
         map.tilemaps = new TilemapWrapper[tilemapNames.length];
         for(int i = 0; i < map.tilemaps.length; i++) {
@@ -112,10 +115,26 @@ public class RoomMap implements Disposable {
             wrapper.getReference(map);
         }
         
+        map.spritesheets = new SpriteSheetWrapper[spritesheetNames.length];
+        for(int i = 0; i < map.spritesheets.length; i++) {
+            SpriteSheetWrapper wrapper = Undertailor.getSheetManager().getSheet(spritesheetNames[i]);
+            if(wrapper == null) {
+                Undertailor.instance.error(RoomLoader.MANAGER_TAG, "failed to load room: map data referenced non-existing spritesheet (" + spritesheetNames[i] + ")");
+                return null;
+            }
+            
+            map.spritesheets[i] = wrapper;
+            wrapper.getReference(map);
+        }
+        
         Map<Object, ? extends ConfigurationNode> layerMapping = node.getNode("map").getChildrenMap();
         for(Entry<Object, ? extends ConfigurationNode> entry : layerMapping.entrySet()) {
             RoomMapLayer loaded = new RoomMapLayer(map, entry.getValue());
-            map.layers.put(loaded.getName(), loaded);
+            if(map.getLayerAtZ(loaded.getZ()) == null) {
+                map.layers.put(loaded.getName(), loaded);
+            } else {
+                Undertailor.instance.error(RoomLoader.MANAGER_TAG, "failed to load room: map data contained multiple layers at one z point");
+            }
         }
         
         return map;
@@ -123,6 +142,7 @@ public class RoomMap implements Disposable {
     
     private int sizeX, sizeY;
     private Map<String, RoomMapLayer> layers;
+    private SpriteSheetWrapper[] spritesheets;
     private TilemapWrapper[] tilemaps;
     
     public RoomMap() {
@@ -131,6 +151,16 @@ public class RoomMap implements Disposable {
     
     public Collection<RoomMapLayer> getLayers() {
         return layers.values();
+    }
+    
+    public RoomMapLayer getLayerAtZ(int z) {
+        for(RoomMapLayer layer : layers.values()) {
+            if(layer.getZ() == z) {
+                return layer;
+            }
+        }
+        
+        return null;
     }
     
     public int getSizeX() {
@@ -145,9 +175,17 @@ public class RoomMap implements Disposable {
         return tilemaps[index].getReference();
     }
     
+    public SpriteSheet getSpriteSheet(int index) {
+        return spritesheets[index].getReference();
+    }
+    
     @Override
     public void dispose() {
         for(TilemapWrapper wrapper : tilemaps) {
+            wrapper.removeReference(this);
+        }
+        
+        for(SpriteSheetWrapper wrapper : spritesheets) {
             wrapper.removeReference(this);
         }
     }
