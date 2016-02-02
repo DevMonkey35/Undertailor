@@ -42,8 +42,8 @@ import java.util.Set;
 
 public class OverworldController implements Renderable {
     
-    public static final int RENDER_WIDTH = 320;
-    public static final int RENDER_HEIGHT = 240;
+    public static final int RENDER_WIDTH = 640;
+    public static final int RENDER_HEIGHT = 480;
     public static final String MANAGER_TAG = "overworld";
     
     private float zoom;
@@ -69,7 +69,7 @@ public class OverworldController implements Renderable {
         this.setViewport(port);
         this.charId = -1;
         
-        this.zoom = 1.0F;
+        this.zoom = 2.0F;
         this.isRendering = true;
         this.oldIsProcessing = true;
         this.isProcessing = true;
@@ -78,6 +78,8 @@ public class OverworldController implements Renderable {
         this.entryTransition = null;
         this.exitTransition = null;
         this.scissor = new Rectangle();
+        
+        this.setCameraZoom(zoom);
         ScissorStack.calculateScissors(camera, Undertailor.getRenderer().getSpriteBatch().getTransformMatrix(), Undertailor.RENDER_AREA, scissor);
     }
     
