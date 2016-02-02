@@ -171,7 +171,12 @@ public class WorldRoom implements Disposable {
                 if(obj1 instanceof Positionable && obj2 instanceof Positionable) {
                     Positionable wobj1 = (Positionable) obj1;
                     Positionable wobj2 = (Positionable) obj2;
-                    return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
+                    
+                    if(wobj1.getPosition().y == wobj2.getPosition().y) {
+                        return 1; // doesn't matter as long as its not 0
+                    } else {
+                        return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
+                    }
                 } else {
                     if(obj1 instanceof RoomMapLayer) {
                         return -1;
