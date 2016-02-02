@@ -86,7 +86,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         this.room = null;
         this.height = 0F;
         this.scale = 1F;
-        this.z = 0;
+        this.z = 1;
         this.oneSided = false;
         this.contacts = new HashSet<>();
         
