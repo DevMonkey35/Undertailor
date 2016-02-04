@@ -281,9 +281,11 @@ public class WorldRoom implements Disposable {
         collision.step(delta);
         
         for(WorldObject object : objects.values()) {
-            for(Collider collider : object.getContacts()) {
-                if(!collider.isOneSidedReaction()) {
-                    object.onCollide(collider);
+            if(object.canCollide()) {
+                for(Collider collider : object.getContacts()) {
+                    if(collider.canCollide() && !collider.isOneSidedReaction()) {
+                        object.onCollide(collider);
+                    }
                 }
             }
         }

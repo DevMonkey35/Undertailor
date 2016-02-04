@@ -70,6 +70,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     private float height;
     private Set<Collider> contacts;
     private BodyDef bodyDef;
+    private boolean canCollide;
     private boolean oneSided;
     
     private BoundingRectangle boundingBox;
@@ -88,6 +89,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         this.scale = 1F;
         this.z = 1;
         this.oneSided = false;
+        this.canCollide = true;
         this.contacts = new HashSet<>();
         
         this.bodyDef = new BodyDef();
@@ -175,18 +177,13 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     
     @Override
     public boolean canCollide() {
-        if(this.body == null) {
-            return this.bodyDef.active;
-        }
-        
-        return body.isActive();
+        return this.canCollide;
     }
     
     public void setCanCollide(boolean flag) {
+        this.canCollide = flag;
         if(this.body == null) {
             this.bodyDef.active = flag;
-        } else {
-            this.body.setActive(flag);
         }
     }
     
@@ -291,7 +288,13 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     public void onRender() {}
     public void onDestroy() {}
     public void onPersist(WorldRoom newRoom, Entrypoint entrypoint) {}
-    public void process(float delta, InputData input) {}
+    
+    public void process(float delta, InputData input) {
+        if(this.body != null && this.body.isActive() != this.canCollide) {
+            this.body.setActive(this.canCollide);
+        }
+    }
+    
     @Override public void onCollide(Collider collider) {}
     public abstract String getObjectName();
 }

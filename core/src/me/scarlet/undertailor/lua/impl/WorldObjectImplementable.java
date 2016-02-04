@@ -100,6 +100,7 @@ public class WorldObjectImplementable implements LuaImplementable<File, WorldObj
         
         @Override
         public void process(float delta, InputData input) {
+            super.process(delta, input);
             LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_PROCESS, obj.get(), LuaValue.valueOf(delta), LuaInputDataMeta.create(input));
         }
         
