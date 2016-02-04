@@ -80,8 +80,6 @@ public class CollisionHandler {
                     ((Collider) uda).getContacts().add((Collider) udb);
                     ((Collider) udb).getContacts().add((Collider) uda);
                 }
-                
-                System.out.println("TOUCHY TOUCHY");
             }
         });
     }
