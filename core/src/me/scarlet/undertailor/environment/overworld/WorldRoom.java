@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.overworld;
+package me.scarlet.undertailor.environment.overworld;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -34,11 +34,12 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
+import me.scarlet.undertailor.environment.OverworldController;
+import me.scarlet.undertailor.environment.overworld.map.RoomMapLayer;
+import me.scarlet.undertailor.environment.overworld.map.RoomMapLayer.SpriteData;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.manager.ScriptManager;
-import me.scarlet.undertailor.overworld.map.RoomMapLayer;
-import me.scarlet.undertailor.overworld.map.RoomMapLayer.SpriteData;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.util.Positionable;
@@ -131,19 +132,22 @@ public class WorldRoom implements Disposable {
             return boundingBox;
         }
         
+        // TODO lock an overworld controller to the room
+        
         @Override
         public void onCollide(Collider collider) {
-            if(Undertailor.getOverworldController().getCharacterID() > -1) {
+            OverworldController ovw = Undertailor.getEnvironmentManager().getActiveEnvironment().getOverworldController();
+            if(ovw.getCharacterID() > -1) {
                 if(collider instanceof WorldObject) {
                     WorldObject obj = (WorldObject) collider;
-                    if(obj.getId() == Undertailor.getOverworldController().getCharacterID()) {
+                    if(obj.getId() == ovw.getCharacterID()) {
                         String[] targetRoom = roomTarget.split(":");
                         String entrypoint = targetRoom.length > 1 ? targetRoom[1] : null;
                         try {
                             ScriptManager scriptMan = Undertailor.getScriptManager();
                             WorldRoomImplementable impl = scriptMan.getImplementable(WorldRoomImplementable.class);
                             WorldRoom room = impl.load(targetRoom[0]);
-                            Undertailor.getOverworldController().setCurrentRoom(room, true, id, entrypoint);
+                            ovw.setCurrentRoom(room, true, id, entrypoint);
                         } catch(LuaScriptException e) {
                             Undertailor.instance.error("overworld", "entrypoint with id " + id + " failed to process room switch: could not load target room " + targetRoom[0]);
                         }
@@ -201,6 +205,8 @@ public class WorldRoom implements Disposable {
     private Map<Long, WorldObject> objects;
     private CollisionHandler collision;
     
+    protected OverworldController currentController;
+    
     public WorldRoom() {
         this.added = new HashMap<>();
         this.removed = new HashSet<>();
@@ -208,6 +214,19 @@ public class WorldRoom implements Disposable {
         this.objects = new HashMap<>();
         this.roomWrapper = null;
         this.collision = new CollisionHandler();
+        this.currentController = null;
+    }
+    
+    public OverworldController getOwningController() {
+        return this.currentController;
+    }
+    
+    public void claim(OverworldController controller) {
+        if(this.currentController == null) {
+            this.currentController = controller;
+        } else {
+            throw new IllegalStateException("cannot claim room for controller; already owned by another controller");
+        }
     }
     
     public String getRoomName() {
@@ -299,7 +318,7 @@ public class WorldRoom implements Disposable {
             }
         }
         
-        if(Undertailor.getOverworldController().isRenderingHitboxes()) {
+        if(Undertailor.getEnvironmentManager().isRenderingHitboxes()) {
             for(Layerable object : renderOrder) {
                 if(object instanceof WorldObject) {
                     ((WorldObject) object).renderBox();

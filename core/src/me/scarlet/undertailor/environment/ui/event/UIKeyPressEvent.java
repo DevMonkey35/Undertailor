@@ -22,15 +22,23 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.scheduler;
+package me.scarlet.undertailor.environment.ui.event;
 
-import me.scarlet.undertailor.util.InputRetriever.InputData;
+public class UIKeyPressEvent implements UIEvent {
 
-public interface Task {
+    public static final String NAME = "uikeypress";
     
-    public String getName();
+    private int keyId;
+    public UIKeyPressEvent(int keyId) {
+        this.keyId = keyId;
+    }
     
-    public boolean process(float delta, InputData input);
-    // forced means if it was canceled preemptively either by an error or a call to the scheduler
-    public void onFinish(boolean forced);
+    @Override
+    public String getName() {
+        return UIKeyPressEvent.NAME;
+    }
+    
+    public int getPressedKey() {
+        return keyId;
+    }
 }

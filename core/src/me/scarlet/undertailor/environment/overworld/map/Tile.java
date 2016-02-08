@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.overworld.map;
+package me.scarlet.undertailor.environment.overworld.map;
 
 import me.scarlet.undertailor.gfx.Sprite;
 import ninja.leaping.configurate.ConfigurationNode;

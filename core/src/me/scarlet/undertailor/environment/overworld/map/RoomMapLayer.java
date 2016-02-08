@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.overworld.map;
+package me.scarlet.undertailor.environment.overworld.map;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;

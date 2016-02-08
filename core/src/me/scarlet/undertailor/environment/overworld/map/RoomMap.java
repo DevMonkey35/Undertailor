@@ -22,10 +22,17 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.overworld.map;
+package me.scarlet.undertailor.environment.overworld.map;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.collision.CollisionHandler;
+import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.wrappers.SpriteSheetWrapper;
@@ -48,7 +55,6 @@ public class RoomMap implements Disposable {
         
         public TileData() {
             this.values = new HashMap<>();
-            this.values.put(KEY_VISIBLE, 1.0F);
             this.values.put(KEY_TRAVERSABLE, 1.0F);
         }
         
@@ -92,14 +98,51 @@ public class RoomMap implements Disposable {
         }
     }
     
+    public static class TraversableData {
+        
+        private float[][] data;
+        private Map<Vector2, BoundingRectangle> boundingShapes;
+        
+        public TraversableData(float[][] data) {
+            this.data = data;
+            this.boundingShapes = new HashMap<>();
+            this.generateCollision();
+        }
+        
+        public float[][] getData() {
+            return data;
+        }
+        
+        public Map<Vector2, BoundingRectangle> getBoundingShapes() {
+            return this.boundingShapes;
+        }
+        
+        private void generateCollision() {
+            
+        }
+    }
+    
     public static final int DEFAULT_FLOOR_Z = 0;
     public static final int DEFAULT_OBJECT_Z = 1;
     public static final int DEFAULT_CEILING_Z = 2;
+    public static final BodyDef TILE_BODY_DEF;
+    public static final Color WALL_BOUNDING_COLOR;
+    
+    static {
+        TILE_BODY_DEF = new BodyDef();
+        TILE_BODY_DEF.active = true;
+        TILE_BODY_DEF.allowSleep = true;
+        TILE_BODY_DEF.awake = false;
+        TILE_BODY_DEF.fixedRotation = true;
+        TILE_BODY_DEF.type = BodyType.StaticBody;
+        WALL_BOUNDING_COLOR = Color.PURPLE;
+    }
     
     public static RoomMap fromConfig(ConfigurationNode node) {
         RoomMap map = new RoomMap();
         map.sizeX = ConfigurateUtil.processInt(node.getNode("sizeX"), null);
         map.sizeY = ConfigurateUtil.processInt(node.getNode("sizeY"), null);
+        map.data = new TileData[map.sizeY][map.sizeX];
         String[] tilemapNames = ConfigurateUtil.processStringArray(node.getNode("tilemaps"), null);
         String[] spritesheetNames = ConfigurateUtil.processStringArray(node.getNode("spritesheets"), null);
         
@@ -140,13 +183,61 @@ public class RoomMap implements Disposable {
         return map;
     }
     
+    public static TraversableData parseDataPreset(RoomMap parent, ConfigurationNode node) {
+        float[][] data = new float[parent.getSizeY()][parent.getSizeX()];
+        String[] mapping = ConfigurateUtil.processStringArray(node, null);
+        for(int y = 0; y < parent.getSizeY(); y++) {
+            String[] current = mapping[y].split(",");
+            for(int x = 0; x < parent.getSizeX(); x++) {
+                data[y][x] = Float.parseFloat(current[x]);
+            }
+        }
+        
+        return new TraversableData(data);
+    }
+    
     private int sizeX, sizeY;
     private Map<String, RoomMapLayer> layers;
     private SpriteSheetWrapper[] spritesheets;
     private TilemapWrapper[] tilemaps;
+    private TileData[][] data;
+
+    private Map<String, TraversableData> travPresets;
+    private String currentPreset;
+    private Body collision;
     
     public RoomMap() {
         this.layers = new HashMap<>(); // don't need to organize; worldroom already tries to organize for rendering
+        this.collision = null;
+    }
+    
+    public void generateCollision(CollisionHandler handler) {
+        this.destroyCollision(handler);
+        TraversableData preset = this.travPresets.get(currentPreset);
+        
+        for(int y = 0; y < data.length; y++) {
+            TileData[] row = data[y];
+            for(int x = 0; x < row.length; x++) {
+                row[x].setNumber(TileData.KEY_TRAVERSABLE, preset.getData()[y][x]);
+            }
+        }
+
+        Body body = handler.getWorld().createBody(TILE_BODY_DEF);
+        for(Entry<Vector2, BoundingRectangle> box : preset.getBoundingShapes().entrySet()) {
+            box.getValue().applyFixture(body);
+        }
+    }
+    
+    public void destroyCollision(CollisionHandler handler) {
+        handler.getWorld().destroyBody(collision);
+    }
+    
+    public TileData getDataForTile(int x, int y) {
+        if(data[y][x] == null) {
+            data[y][x] = new TileData();
+        }
+        
+        return data[y][x];
     }
     
     public Collection<RoomMapLayer> getLayers() {

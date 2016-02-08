@@ -25,11 +25,11 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
+import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
-import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;

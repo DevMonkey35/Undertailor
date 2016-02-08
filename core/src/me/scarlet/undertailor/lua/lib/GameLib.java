@@ -42,12 +42,11 @@ public class GameLib extends LuaLibrary {
             new setWindowTitle(),
             new setFrameCap(),
             
-            Lua.LIB_UI,
             Lua.LIB_AUDIO,
             Lua.LIB_LOGGER,
             Lua.LIB_GRAPHICS,
-            Lua.LIB_OVERWORLD,
-            Lua.LIB_ANIMATION
+            Lua.LIB_ANIMATION,
+            Lua.LIB_ENVIRONMENT
     };
     
     public GameLib() {

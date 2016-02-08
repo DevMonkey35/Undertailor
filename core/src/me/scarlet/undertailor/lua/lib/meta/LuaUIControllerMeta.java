@@ -22,73 +22,70 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.lua.lib.game;
+package me.scarlet.undertailor.lua.lib.meta;
 
-import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.environment.UIController;
+import me.scarlet.undertailor.environment.ui.UIObject;
+import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
-import me.scarlet.undertailor.lua.lib.meta.LuaUIObjectMeta;
-import me.scarlet.undertailor.ui.UIObject;
+import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.lib.game.EnvironmentLib;
 import me.scarlet.undertailor.util.LuaUtil;
-import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
-public class UILib extends LuaLibrary {
+public class LuaUIControllerMeta extends LuaLibrary {
+    
+    public static LuaObjectValue<UIController> create(UIController controller) {
+        return LuaObjectValue.of(controller, Lua.TYPENAME_UICONTROLLER, Lua.META_UICONTROLLER);
+    }
+    
+    public static LuaObjectValue<UIController> check(LuaValue value) {
+        return LuaUtil.checkType(value, Lua.TYPENAME_UICONTROLLER);
+    }
     
     public static final LuaLibraryComponent[] COMPONENTS = {
-            new newComponent(),
-            new newObject(),
+            new getOwningEnvironment(),
             new registerObject(),
             new getObject(),
             new destroyObject()
     };
     
-    public UILib() {
-        super("ui", COMPONENTS);
+    public LuaUIControllerMeta() {
+        super(null, COMPONENTS);
     }
     
-    static class newComponent extends LibraryFunction {
+    static class getOwningEnvironment extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, -1);
+            LuaUtil.checkArguments(args, 1, 1);
             
-            try {
-                return Undertailor.getUIController().getLuaLoader().newLuaComponent(args.arg(1).checkjstring(), args.subargs(2));
-            } catch(LuaError e) {
-                throw new LuaError("\n" + e.getMessage(), 2);
-            }
-        }
-    }
-    
-    static class newObject extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 0, 2);
+            UIController controller = check(args.arg1()).getObject();
             
-            long lifetime = args.optlong(1, 0);
-            boolean headless = args.optboolean(2, false);
-            return LuaUIObjectMeta.create(new UIObject(lifetime, headless));
+            return EnvironmentLib.create(controller.getEnvironment());
         }
     }
     
     static class registerObject extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
+            LuaUtil.checkArguments(args, 2, 2);
             
-            UIObject obj = LuaUIObjectMeta.check(args.arg(1)).getObject();
-            return LuaValue.valueOf(Undertailor.getUIController().registerObject(obj));
+            UIController controller = check(args.arg1()).getObject();
+            UIObject obj = LuaUIObjectMeta.check(args.arg(2)).getObject();
+            return LuaValue.valueOf(controller.registerObject(obj));
         }
     }
     
     static class getObject extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
+            LuaUtil.checkArguments(args, 2, 2);
             
-            int id = args.checkint(1);
-            UIObject obj = Undertailor.getUIController().getUIObject(id);
+            UIController controller = check(args.arg1()).getObject();
+            int id = args.checkint(2);
+            UIObject obj = controller.getUIObject(id);
             if(obj == null) {
                 return LuaValue.NIL;
             } else {
@@ -100,10 +97,11 @@ public class UILib extends LuaLibrary {
     static class destroyObject extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            
-            int id = args.checkint(1);
-            return LuaValue.valueOf(Undertailor.getUIController().destroyObject(id));
+            LuaUtil.checkArguments(args, 2, 2);
+
+            UIController controller = check(args.arg1()).getObject();
+            int id = args.checkint(2);
+            return LuaValue.valueOf(controller.destroyObject(id));
         }
     }
 }

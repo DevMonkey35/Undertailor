@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.ui;
+package me.scarlet.undertailor.environment.ui;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;

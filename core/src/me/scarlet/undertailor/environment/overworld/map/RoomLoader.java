@@ -22,13 +22,19 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.overworld.map;
+package me.scarlet.undertailor.environment.overworld.map;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.environment.overworld.WorldRoom;
+import me.scarlet.undertailor.exception.LuaScriptException;
+import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.manager.Manager;
+import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.util.LuaUtil;
 import me.scarlet.undertailor.wrappers.RoomDataWrapper;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
+import org.luaj.vm2.Varargs;
 
 import java.io.File;
 import java.util.HashMap;
@@ -147,6 +153,24 @@ public class RoomLoader extends Manager<RoomDataWrapper> {
         }
         
         Undertailor.instance.warn(MANAGER_TAG, "system requested non-existing room (" + name + ")");
+        return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public LuaObjectValue<WorldRoom> newRoomMap(String name, Varargs args) {
+        if(rooms.containsKey(name)) {
+            try {
+                ScriptManager scriptMan = Undertailor.getScriptManager();
+                WorldRoomImplementable impl = scriptMan.getImplementable(WorldRoomImplementable.class);
+                return (LuaObjectValue<WorldRoom>) impl.load(name, scriptFiles.get(name), args).getObjectValue();
+            } catch(LuaScriptException e) {
+                RuntimeException thrown = new RuntimeException("could not load world room script " + name + ": " + LuaUtil.formatJavaException(e));
+                thrown.initCause(e);
+                throw thrown;
+            }
+        }
+        
+        Undertailor.instance.warn(MANAGER_TAG, "system requested non-existing room script (" + name + ")");
         return null;
     }
     

@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.ui;
+package me.scarlet.undertailor.environment;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.ui.event.UIEvent;
+import me.scarlet.undertailor.environment.ui.UIObject;
+import me.scarlet.undertailor.environment.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Renderable;
 
@@ -53,34 +53,32 @@ public class UIController implements Renderable {
     
     /** Map holding all headed UI objects. */
     private SortedMap<Integer, UIObject> uis;
-    private UIComponentLoader lualoader;
     private OrthographicCamera camera;
+    private Environment env;
     private Viewport port;
     
-    public UIController(Viewport port) {
+    public UIController(Environment env, Viewport port) {
+        this.env = env;
         this.uis = new TreeMap<>(((Comparator<Integer>) (Integer i1, Integer i2) -> {
                     return i1.compareTo(i2);
                 }));
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
+        
         this.setViewport(port);
-        this.lualoader = new UIComponentLoader();
+    }
+    
+    public Environment getEnvironment() {
+        return this.env;
     }
     
     public UIObject getUIObject(int id) {
         return uis.get(id);
     }
     
-    public UIComponentLoader getLuaLoader() {
-        return lualoader;
-    }
-    
     public int registerObject(UIObject object) {
         int id = nextUID++;
         this.uis.put(id, object);
-        object.id = id;
-        if(object.isHeadless()) {
-            object.startLifetime = TimeUtils.millis();
-        }
+        object.claim(this, id);
         
         return id;
     }
@@ -107,10 +105,8 @@ public class UIController implements Renderable {
         Iterator<Entry<Integer, UIObject>> iterator = uis.entrySet().iterator();
         while(iterator.hasNext()) {
             UIObject obj = iterator.next().getValue();
-            if(obj.isHeadless()) {
-                if(TimeUtils.timeSinceMillis(obj.startLifetime) > obj.getLifetime()) {
-                    iterator.remove();
-                }
+            if(obj.isPastLifetime()) {
+                iterator.remove();
             }
         }
     }

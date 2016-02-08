@@ -22,23 +22,14 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.ui.event;
+package me.scarlet.undertailor.environment.ui.event;
 
-public class UIKeyReleaseEvent implements UIEvent {
+public class UITickEvent implements UIEvent {
 
-    public static final String NAME = "uikeyrelease";
-    
-    private int keyId;
-    public UIKeyReleaseEvent(int keyId) {
-        this.keyId = keyId;
-    }
+    public static final String NAME = "uitick";
     
     @Override
     public String getName() {
-        return UIKeyPressEvent.NAME;
-    }
-    
-    public int getReleasedKey() {
-        return keyId;
+        return UITickEvent.NAME;
     }
 }

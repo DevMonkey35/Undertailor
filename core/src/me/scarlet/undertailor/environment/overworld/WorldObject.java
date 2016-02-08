@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.overworld;
+package me.scarlet.undertailor.environment.overworld;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -32,9 +32,9 @@ import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
+import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.gfx.Animation;
 import me.scarlet.undertailor.gfx.KeyFrame;
-import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.util.MapUtil;

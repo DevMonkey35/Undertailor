@@ -22,17 +22,17 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.overworld.map;
+package me.scarlet.undertailor.environment.overworld.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.environment.overworld.map.Tile.TileState;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
 import me.scarlet.undertailor.manager.TilemapManager;
-import me.scarlet.undertailor.overworld.map.Tile.TileState;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;

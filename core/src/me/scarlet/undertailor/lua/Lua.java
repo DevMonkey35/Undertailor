@@ -26,23 +26,24 @@ package me.scarlet.undertailor.lua;
 
 import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
-import me.scarlet.undertailor.lua.lib.SchedulerLib;
+import me.scarlet.undertailor.lua.lib.StoreLib;
 import me.scarlet.undertailor.lua.lib.TextLib;
 import me.scarlet.undertailor.lua.lib.UtilLib;
 import me.scarlet.undertailor.lua.lib.game.AnimationLib;
 import me.scarlet.undertailor.lua.lib.game.AudioLib;
+import me.scarlet.undertailor.lua.lib.game.EnvironmentLib;
 import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
 import me.scarlet.undertailor.lua.lib.game.LoggerLib;
-import me.scarlet.undertailor.lua.lib.game.OverworldLib;
-import me.scarlet.undertailor.lua.lib.game.StoreLib;
-import me.scarlet.undertailor.lua.lib.game.UILib;
 import me.scarlet.undertailor.lua.lib.meta.LuaBoundingBoxMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaEntrypointMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaInputDataMeta;
+import me.scarlet.undertailor.lua.lib.meta.LuaOverworldControllerMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaPressDataMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaRoomMapMeta;
+import me.scarlet.undertailor.lua.lib.meta.LuaSchedulerMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIComponentMeta;
+import me.scarlet.undertailor.lua.lib.meta.LuaUIControllerMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIObjectMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldObjectMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
@@ -61,7 +62,7 @@ import org.luaj.vm2.LuaValue;
  */
 public class Lua {
     
-    // typenames of objects without non-library metatables
+    // typenames of objects with library metatables
     public static final String TYPENAME_TEXTCOMPONENT = "tailor-textcomponent";
     public static final String TYPENAME_DISPLAYMETA = "tailor-displaymeta";
     public static final String TYPENAME_ANIMATION = "tailor-animation";
@@ -69,8 +70,9 @@ public class Lua {
     public static final String TYPENAME_COLOR = "gdx-color";
     public static final String TYPENAME_SOUND = "tailor-audio-sound";
     public static final String TYPENAME_MUSIC = "tailor-audio-music";
+    public static final String TYPENAME_ENVIRONMENT = "tailor-environment";
     
-    // typenames of objects with non-library metatables
+    // typenames of objects with normal metatables
     public static final String TYPENAME_WORLDOBJECT = "tailor-worldobj";
     public static final String TYPENAME_WORLDROOM = "tailor-room";
     public static final String TYPENAME_UICOMPONENT = "tailor-uicomponent";
@@ -81,6 +83,9 @@ public class Lua {
     public static final String TYPENAME_STYLE = "tailor-textstyle";
     public static final String TYPENAME_UIOBJECT = "tailor-uiobj";
     public static final String TYPENAME_WORLDMAP = "tailor-roommap";
+    public static final String TYPENAME_OVERWORLDCONTROLLER = "tailor-ovwcontroller";
+    public static final String TYPENAME_UICONTROLLER = "tailor-uicontroller";
+    public static final String TYPENAME_SCHEDULER = "tailor-scheduler";
     
     // metatables
     public static final LuaValue META_WORLDOBJECT = LuaLibrary.asMetatable(new LuaWorldObjectMeta());
@@ -93,9 +98,11 @@ public class Lua {
     public static final LuaValue META_STYLE = LuaLibrary.asMetatable(new LuaStyleMeta());
     public static final LuaValue META_UIOBJECT = LuaLibrary.asMetatable(new LuaUIObjectMeta());
     public static final LuaValue META_WORLDMAP = LuaLibrary.asMetatable(new LuaRoomMapMeta());
+    public static final LuaValue META_OVERWORLDCONTROLLER = LuaLibrary.asMetatable(new LuaOverworldControllerMeta());
+    public static final LuaValue META_UICONTROLLER = LuaLibrary.asMetatable(new LuaUIControllerMeta());
+    public static final LuaValue META_SCHEDULER = LuaLibrary.asMetatable(new LuaSchedulerMeta());
     
     // shared libs -- non-parental top-level
-    public static final SchedulerLib LIB_SCHEDULER = new SchedulerLib();
     public static final ColorsLib LIB_COLORS = new ColorsLib();
     public static final UtilLib LIB_UTIL = new UtilLib();
     
@@ -107,9 +114,8 @@ public class Lua {
     public static final AnimationLib LIB_ANIMATION = new AnimationLib();
     public static final GraphicsLib LIB_GRAPHICS = new GraphicsLib();
     public static final LoggerLib LIB_LOGGER = new LoggerLib();
-    public static final OverworldLib LIB_OVERWORLD = new OverworldLib();
     public static final StoreLib LIB_STORE = new StoreLib();
-    public static final UILib LIB_UI = new UILib();
+    public static final EnvironmentLib LIB_ENVIRONMENT = new EnvironmentLib();
 
     // shared libs -- parental top level
     public static final TextLib LIB_TEXT = new TextLib();

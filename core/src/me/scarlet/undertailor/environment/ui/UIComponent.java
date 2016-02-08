@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.ui;
+package me.scarlet.undertailor.environment.ui;
 
 import com.badlogic.gdx.math.Vector2;
-import me.scarlet.undertailor.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
+import me.scarlet.undertailor.environment.ui.event.UIEvent;
 import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
 

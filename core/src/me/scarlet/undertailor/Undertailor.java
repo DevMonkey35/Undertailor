@@ -33,7 +33,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Orientation;
@@ -51,6 +50,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import me.scarlet.undertailor.environment.Environment;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -61,15 +61,13 @@ import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.lua.lib.BaseLib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
+import me.scarlet.undertailor.manager.EnvironmentManager;
 import me.scarlet.undertailor.manager.FontManager;
 import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.manager.TilemapManager;
-import me.scarlet.undertailor.overworld.OverworldController;
-import me.scarlet.undertailor.scheduler.Scheduler;
 import me.scarlet.undertailor.texts.Font;
-import me.scarlet.undertailor.ui.UIController;
 import me.scarlet.undertailor.util.Blocker;
 import me.scarlet.undertailor.util.InputRetriever;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
@@ -91,9 +89,9 @@ public class Undertailor extends ApplicationAdapter {
             new BaseLib(),
             Lua.LIB_COLORS,
             Lua.LIB_GAME,
-            Lua.LIB_SCHEDULER,
             Lua.LIB_TEXT,
-            Lua.LIB_UTIL };
+            Lua.LIB_UTIL,
+            Lua.LIB_STORE };
     
     @SuppressWarnings("rawtypes")
     public static final LuaImplementable[] IMPLS = new LuaImplementable[] {
@@ -107,12 +105,8 @@ public class Undertailor extends ApplicationAdapter {
         RENDER_AREA = new Rectangle(0, 0, 640, 480);
     }
     
-    public static UIController getUIController() {
-        return Undertailor.instance.uiController;
-    }
-    
-    public static OverworldController getOverworldController() {
-        return Undertailor.instance.ovwController;
+    public static EnvironmentManager getEnvironmentManager() {
+        return Undertailor.instance.environmentManager;
     }
     
     public static FontManager getFontManager() {
@@ -141,10 +135,6 @@ public class Undertailor extends ApplicationAdapter {
     
     public static SpriteSheetManager getSheetManager() {
         return Undertailor.instance.sheetManager;
-    }
-    
-    public static Scheduler getScheduler() {
-        return Undertailor.instance.scheduler;
     }
     
     public static ScriptManager getScriptManager() {
@@ -176,10 +166,8 @@ public class Undertailor extends ApplicationAdapter {
     private SpriteSheetManager sheetManager;
     private AnimationManager animationManager;
     
-    private UIController uiController;
-    private OverworldController ovwController;
+    private EnvironmentManager environmentManager;
     private InputRetriever inputRetriever;
-    private Scheduler scheduler;
     
     public Undertailor(LwjglApplicationConfiguration config) {
         this.config = config;
@@ -234,16 +222,14 @@ public class Undertailor extends ApplicationAdapter {
         styleManager.loadObjects(new File("fonts/styles/"));
         animationManager.loadObjects(new File("animation/"));
         
-        this.uiController = new UIController(new FitViewport(0F, 0F)); // dimensions set by controller
-        this.ovwController = new OverworldController(new FitViewport(0F, 0F));
+        this.environmentManager = new EnvironmentManager();
         this.inputRetriever = new InputRetriever();
-        this.scheduler = new Scheduler();
         
         Gdx.input.setInputProcessor(inputRetriever);
-        uiController.getLuaLoader().loadComponents(new File("scripts/uicomponent/"));
-        ovwController.getRoomLoader().loadObjects(new File("rooms/"));
-        ovwController.getRoomLoader().loadScripts(new File("scripts/rooms/"));
-        ovwController.getObjectLoader().loadObjects(new File("scripts/objects/"));
+        environmentManager.getUIComponentLoader().loadComponents(new File("scripts/uicomponent/"));
+        environmentManager.getWorldObjectLoader().loadObjects(new File("scripts/objects/"));
+        environmentManager.getRoomLoader().loadScripts(new File("scripts/rooms/"));
+        environmentManager.getRoomLoader().loadObjects(new File("rooms/"));
         
         Color cc = Color.BLACK;
         Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
@@ -263,20 +249,22 @@ public class Undertailor extends ApplicationAdapter {
     @Override
     public void render() {
         InputData input = inputRetriever.getCurrentData();
+        Environment activeEnv = environmentManager.getActiveEnvironment();
         float delta = Gdx.graphics.getDeltaTime();
-        scheduler.process(delta, input);
-        uiController.process(delta, input);
-        ovwController.process(delta, input);
+        
+        if(activeEnv != null) {
+            activeEnv.process(delta, input);
+        }
+        
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        ovwController.render();
-        uiController.render();
+        
+        if(activeEnv != null) {
+            activeEnv.render();
+        }
         
         Font bitop = fontManager.getFont("8bitop");
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 415, 2);
         renderer.flush();
-        //System.out.println("RENDER CALLS: " + renderer.getSpriteBatch().renderCalls);
-        //System.out.println("MAX SPRITES: " + renderer.getSpriteBatch().maxSpritesInBatch);
-        //System.exit(0);
         
         if(input.getPressData(Keys.F3).justPressed(0F)) {
             this.console.show();
@@ -287,7 +275,7 @@ public class Undertailor extends ApplicationAdapter {
     
     @Override
     public void resize(int width, int height) {
-        this.uiController.resize(width, height);
+        this.environmentManager.resize(width, height);
     }
     
     public void debug(String tag, String message) {

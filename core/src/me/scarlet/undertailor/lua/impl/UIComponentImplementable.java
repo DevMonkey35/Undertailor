@@ -24,6 +24,8 @@
 
 package me.scarlet.undertailor.lua.impl;
 
+import me.scarlet.undertailor.environment.ui.UIComponent;
+import me.scarlet.undertailor.environment.ui.event.UIEvent;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaImplementation;
@@ -32,8 +34,6 @@ import me.scarlet.undertailor.lua.impl.UIComponentImplementable.UIComponentImple
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable.WorldRoomImplementation;
 import me.scarlet.undertailor.lua.lib.meta.LuaInputDataMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIComponentMeta;
-import me.scarlet.undertailor.ui.UIComponent;
-import me.scarlet.undertailor.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.Globals;

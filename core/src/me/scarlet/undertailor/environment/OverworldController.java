@@ -22,25 +22,27 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.overworld;
+package me.scarlet.undertailor.environment;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
-import me.scarlet.undertailor.overworld.map.RoomLoader;
-import me.scarlet.undertailor.overworld.map.RoomMap;
-import me.scarlet.undertailor.scheduler.Task;
+import me.scarlet.undertailor.environment.overworld.WorldObject;
+import me.scarlet.undertailor.environment.overworld.WorldRoom;
+import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
+import me.scarlet.undertailor.environment.overworld.map.RoomMap;
+import me.scarlet.undertailor.environment.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Renderable;
 
 import java.util.Iterator;
 import java.util.Set;
 
-public class OverworldController implements Renderable {
+public class OverworldController implements Renderable, Disposable {
     
     public static final int RENDER_WIDTH = 640;
     public static final int RENDER_HEIGHT = 480;
@@ -58,14 +60,13 @@ public class OverworldController implements Renderable {
     private OrthographicCamera camera;
     private Task entryTransition, exitTransition;
     
-    private WorldObjectLoader objLoader;
-    private RoomLoader roomLoader;
+    //private WorldObjectLoader objLoader;
+    //private RoomLoader roomLoader;
+    private Environment env;
     
-    public OverworldController(Viewport port) {
-        this.objLoader = new WorldObjectLoader();
-        this.roomLoader = new RoomLoader();
-        
+    public OverworldController(Environment env, Viewport port) {
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
+        this.env = env;
         this.setViewport(port);
         this.charId = -1;
         
@@ -83,16 +84,12 @@ public class OverworldController implements Renderable {
         ScissorStack.calculateScissors(camera, Undertailor.getRenderer().getSpriteBatch().getTransformMatrix(), Undertailor.RENDER_AREA, scissor);
     }
     
-    public WorldObjectLoader getObjectLoader() {
-        return objLoader;
-    }
-    
-    public RoomLoader getRoomLoader() {
-        return roomLoader;
-    }
-    
     public OrthographicCamera getCamera() {
         return camera;
+    }
+    
+    public Environment getEnvironment() {
+        return this.env;
     }
     
     public void setEntryTransition(Task transition) {
@@ -117,11 +114,13 @@ public class OverworldController implements Renderable {
     
     public void setCurrentRoom(WorldRoom room, boolean transitions, String entrypointExit, String entrypointEnter) {
         if(transitions) {
+            Scheduler scheduler = env.getScheduler();
+            
             if(exitTransition != null) {
-                Undertailor.getScheduler().registerTask(exitTransition, true);
+                scheduler.registerTask(exitTransition, true);
             }
             
-            Undertailor.getScheduler().registerTask(new Task() {
+            scheduler.registerTask(new Task() {
                 @Override
                 public String getName() {
                     return "_tailor-setroom";
@@ -138,7 +137,7 @@ public class OverworldController implements Renderable {
             }, true);
             
             if(entryTransition != null) {
-                Undertailor.getScheduler().registerTask(entryTransition, true);
+                scheduler.registerTask(entryTransition, true);
             }
         } else {
             setCurrentRoom(room, entrypointExit, entrypointEnter);
@@ -153,6 +152,7 @@ public class OverworldController implements Renderable {
             this.currentRoom.dispose();
         }
         
+        room.claim(this);
         this.currentRoom = room;
         Entrypoint enterpoint = room.getEntrypoint(entrypointEnter);
         if(persisted != null && !persisted.isEmpty()) {
@@ -311,5 +311,12 @@ public class OverworldController implements Renderable {
         this.port.update(width, height, false);
         this.camera.position.set(this.camera.viewportWidth/2.0F, this.camera.viewportHeight/2.0F, 0.0F);
         this.camera.update();
+    }
+
+    @Override
+    public void dispose() {
+        if(this.currentRoom != null) {
+            this.currentRoom.dispose();
+        }
     }
 }

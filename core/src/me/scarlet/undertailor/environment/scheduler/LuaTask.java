@@ -22,9 +22,10 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.scheduler;
+package me.scarlet.undertailor.environment.scheduler;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.environment.Scheduler;
 import me.scarlet.undertailor.lua.lib.meta.LuaInputDataMeta;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import org.luaj.vm2.LuaError;

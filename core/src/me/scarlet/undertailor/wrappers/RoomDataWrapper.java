@@ -24,7 +24,7 @@
 
 package me.scarlet.undertailor.wrappers;
 
-import me.scarlet.undertailor.overworld.map.RoomMap;
+import me.scarlet.undertailor.environment.overworld.map.RoomMap;
 import ninja.leaping.configurate.ConfigurationNode;
 
 public class RoomDataWrapper extends DisposableWrapper<RoomMap> {

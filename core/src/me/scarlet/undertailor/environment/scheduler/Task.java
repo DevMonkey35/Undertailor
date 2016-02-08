@@ -22,14 +22,15 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.ui.event;
+package me.scarlet.undertailor.environment.scheduler;
 
-public class UITickEvent implements UIEvent {
+import me.scarlet.undertailor.util.InputRetriever.InputData;
 
-    public static final String NAME = "uitick";
+public interface Task {
     
-    @Override
-    public String getName() {
-        return UITickEvent.NAME;
-    }
+    public String getName();
+    
+    public boolean process(float delta, InputData input);
+    // forced means if it was canceled preemptively either by an error or a call to the scheduler
+    public void onFinish(boolean forced);
 }

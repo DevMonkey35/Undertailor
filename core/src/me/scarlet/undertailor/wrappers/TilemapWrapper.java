@@ -24,8 +24,8 @@
 
 package me.scarlet.undertailor.wrappers;
 
+import me.scarlet.undertailor.environment.overworld.map.Tilemap;
 import me.scarlet.undertailor.exception.TextureTilingException;
-import me.scarlet.undertailor.overworld.map.Tilemap;
 
 import java.io.File;
 

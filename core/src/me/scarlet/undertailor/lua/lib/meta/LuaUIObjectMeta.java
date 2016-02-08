@@ -25,12 +25,13 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
+import me.scarlet.undertailor.environment.UIController;
+import me.scarlet.undertailor.environment.ui.UIComponent;
+import me.scarlet.undertailor.environment.ui.UIObject;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
-import me.scarlet.undertailor.ui.UIComponent;
-import me.scarlet.undertailor.ui.UIObject;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -46,6 +47,7 @@ public class LuaUIObjectMeta extends LuaLibrary {
     }
     
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
+            new getOwningController(),
             new getId(),
             new isHeadless(),
             new getLifetime(),
@@ -59,6 +61,22 @@ public class LuaUIObjectMeta extends LuaLibrary {
     
     public LuaUIObjectMeta() {
         super(null, COMPONENTS);
+    }
+    
+    static class getOwningController extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            UIObject obj = check(args.arg1()).getObject();
+            UIController controller = obj.getOwningController();
+            
+            if(controller != null) {
+                return LuaUIControllerMeta.create(controller);
+            }
+            
+            return LuaValue.NIL;
+        }
     }
     
     static class getId extends LibraryFunction {

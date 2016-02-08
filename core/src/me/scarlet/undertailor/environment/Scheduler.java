@@ -22,9 +22,10 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.scheduler;
+package me.scarlet.undertailor.environment;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.environment.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 
 import java.util.HashMap;
@@ -42,11 +43,18 @@ public class Scheduler {
         nextId = 0;
     }
     
+    private Environment env;
     private Map<Integer, Task> tasks;
     private Map<Integer, Task> activeTasks;
-    public Scheduler() {
+    
+    public Scheduler(Environment env) {
+        this.env = env;
         this.tasks = new HashMap<>();
         this.activeTasks = new LinkedHashMap<>();
+    }
+    
+    public Environment getEnvironment() {
+        return this.env;
     }
     
     public void process(float delta, InputData data) {

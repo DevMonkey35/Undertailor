@@ -24,13 +24,14 @@
 
 package me.scarlet.undertailor.lua.lib.meta;
 
+import me.scarlet.undertailor.environment.OverworldController;
+import me.scarlet.undertailor.environment.overworld.WorldObject;
+import me.scarlet.undertailor.environment.overworld.WorldRoom;
+import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
-import me.scarlet.undertailor.overworld.WorldObject;
-import me.scarlet.undertailor.overworld.WorldRoom;
-import me.scarlet.undertailor.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -46,6 +47,7 @@ public class LuaWorldRoomMeta extends LuaLibrary {
     }
     
     public static final LuaLibraryComponent[] COMPONENTS = {
+            new getOwningController(),
             new getRoomName(),
             new registerObject(),
             new getObject(),
@@ -58,6 +60,22 @@ public class LuaWorldRoomMeta extends LuaLibrary {
     
     public LuaWorldRoomMeta() {
         super(null, COMPONENTS);
+    }
+    
+    static class getOwningController extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldRoom room = check(args.arg1()).getObject();
+            OverworldController controller = room.getOwningController();
+            
+            if(controller != null) {
+                return LuaOverworldControllerMeta.create(controller);
+            } else {
+                return LuaValue.NIL;
+            }
+        }
     }
     
     static class getMap extends LibraryFunction {

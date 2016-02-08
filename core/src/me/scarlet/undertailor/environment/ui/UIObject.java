@@ -22,11 +22,13 @@
  * SOFTWARE.
  */
 
-package me.scarlet.undertailor.ui;
+package me.scarlet.undertailor.environment.ui;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.ui.event.UIEvent;
+import me.scarlet.undertailor.environment.UIController;
+import me.scarlet.undertailor.environment.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
@@ -39,11 +41,10 @@ import java.util.Set;
 
 public class UIObject implements Renderable, Positionable {
     
-    protected int id;
-    protected long startLifetime;
-    
+    private int id;
     private float alpha;
-    private long lifetime; //= 0 - infinitely headed, >=1 - timed headed
+    private long startLifetime;
+    private long maxLifetime;
     private boolean headless;
     private Vector2 position;
     private boolean isVisible;
@@ -51,23 +52,40 @@ public class UIObject implements Renderable, Positionable {
     private Set<UIComponent> markRemove;
     private List<UIComponent> components;
     
-    public UIObject() {
-        this(0, false);
+    private UIController controller;
+    
+    public UIObject(boolean headless) {
+        this(headless, 0);
     }
     
-    public UIObject(long lifetime, boolean headless) {
+    public UIObject(boolean headless, long maxLifetime) {
         this.position = new Vector2(0, 0);
         this.components = new ArrayList<>();
         this.markRemove = new HashSet<>();
         this.markAdd = new HashSet<>();
         this.isVisible = true;
-        this.lifetime = lifetime < 0 ? 0 : lifetime;
+        this.startLifetime = -1;
+        this.maxLifetime = maxLifetime; // 0 = self-disposed, > 0 = disposed by self or by time limit
         this.headless = headless;
+        this.controller = null;
         this.id = -1;
+    }
+    
+    public UIController getOwningController() {
+        return this.controller;
     }
     
     public int getId() {
         return id;
+    }
+    
+    public void claim(UIController controller, int id) {
+        if(this.controller == null && this.id <= -1) {
+            this.id = id;
+            this.startLifetime = TimeUtils.millis();
+        } else {
+            throw new IllegalStateException("cannot claim uiobject for controller; already owned by another controller");
+        }
     }
     
     public boolean isHeadless() {
@@ -75,7 +93,19 @@ public class UIObject implements Renderable, Positionable {
     }
     
     public long getLifetime() {
-        return lifetime < 0 ? 0 : lifetime;
+        if(this.startLifetime > 0) {
+            return TimeUtils.timeSinceMillis(startLifetime);
+        }
+        
+        return 0;
+    }
+    
+    public boolean isPastLifetime() {
+        if(this.maxLifetime > 0 && this.startLifetime > 0) {
+            return TimeUtils.timeSinceMillis(startLifetime) >= maxLifetime;
+        }
+        
+        return false;
     }
     
     public Vector2 getPosition() {
@@ -129,7 +159,7 @@ public class UIObject implements Renderable, Positionable {
             child.onDestroy(true);
         }
         
-        Undertailor.getUIController().destroyObject(id);
+        Undertailor.getEnvironmentManager().getActiveEnvironment().getUIController().destroyObject(id);
     }
     
     public boolean isComponentActive(UIComponent component) {
