@@ -94,14 +94,13 @@ public class ColorsLib extends LuaLibrary {
     static class fromRGB extends LibraryFunction  {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 3, 4);
+            LuaUtil.checkArguments(args, 3, 3);
             
-            float r = args.isnil(1) ? 0 : new Float(args.checkdouble(1));
-            float g = args.isnil(2) ? 0 : new Float(args.checkdouble(2));
-            float b = args.isnil(3) ? 0 : new Float(args.checkdouble(3));
-            float a = args.isnil(4) ? 0 : new Float(args.checkdouble(4));
+            float r = args.optint(1, 0) / 255F;
+            float g = args.optint(2, 0) / 255F;
+            float b = args.optint(3, 0) / 255F;
             
-            return create(new Color(r, g, b, a));
+            return create(new Color(r, g, b, 1.0F));
         }
     }
     
