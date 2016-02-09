@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 public abstract class DisposableWrapper<T extends Disposable> {
     
@@ -78,7 +79,7 @@ public abstract class DisposableWrapper<T extends Disposable> {
     private T disposable;
     private long lastAccess;
     private boolean alwaysAlive;
-    private Set<Object> referrers;
+    private Map<Object, Object> referrers;
     protected DisposableWrapper(T disposable) {
         this.disposable = disposable;
         
@@ -89,7 +90,7 @@ public abstract class DisposableWrapper<T extends Disposable> {
         }
         
         registerInstance(this);
-        this.referrers = new HashSet<>();
+        this.referrers = new WeakHashMap<>();
     }
     
     protected T getRawReference() {
@@ -107,16 +108,20 @@ public abstract class DisposableWrapper<T extends Disposable> {
         }
     }
     
+    public boolean hasReferrers() {
+        return !this.referrers.isEmpty();
+    }
+    
     public final T getReference(Object referrer) {
-        if(!referrers.contains(referrer)) {
-            referrers.add(referrer);
+        if(!referrers.containsKey(referrer)) {
+            referrers.put(referrer, null);
         }
         
         return getReference();
     }
     
     public void removeReference(Object referrer) {
-        if(referrers.contains(referrer)) {
+        if(referrers.containsKey(referrer)) {
             referrers.remove(referrer);
         }
         
@@ -165,10 +170,6 @@ public abstract class DisposableWrapper<T extends Disposable> {
     
     public long getMaximumLifetime() {
         return DEFAULT_LIFETIME;
-    }
-    
-    protected Set<Object> getReferrers() {
-        return referrers;
     }
     
     public abstract T newReference();

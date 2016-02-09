@@ -61,7 +61,7 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     
     @Override
     public boolean allowDispose() {
-        if(!this.getReferrers().isEmpty()) {
+        if(!this.hasReferrers()) {
             return false;
         }
         

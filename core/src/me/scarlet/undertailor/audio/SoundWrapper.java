@@ -57,7 +57,7 @@ public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long
     
     @Override
     public boolean allowDispose() {
-        if(!this.getReferrers().isEmpty()) {
+        if(!this.hasReferrers()) {
             return false;
         }
         

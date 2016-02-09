@@ -65,7 +65,7 @@ public class SpriteSheetWrapper extends DisposableWrapper<SpriteSheet> {
 
     @Override
     public boolean allowDispose() {
-        if(!this.getReferrers().isEmpty()) {
+        if(this.hasReferrers()) {
             return false;
         }
         

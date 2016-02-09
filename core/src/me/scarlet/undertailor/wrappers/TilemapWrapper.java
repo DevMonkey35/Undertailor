@@ -58,7 +58,7 @@ public class TilemapWrapper extends DisposableWrapper<Tilemap> {
 
     @Override
     public boolean allowDispose() {
-        if(!this.getReferrers().isEmpty()) {
+        if(this.hasReferrers()) {
             return false;
         }
         

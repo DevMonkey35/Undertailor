@@ -51,7 +51,7 @@ public class AnimationSetWrapper extends DisposableWrapper<AnimationSet> {
     
     @Override
     public boolean allowDispose() {
-        if(!this.getReferrers().isEmpty()) {
+        if(this.hasReferrers()) {
             return false;
         }
         

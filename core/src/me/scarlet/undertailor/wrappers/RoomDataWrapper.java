@@ -44,7 +44,7 @@ public class RoomDataWrapper extends DisposableWrapper<RoomMap> {
     
     @Override
     public boolean allowDispose() {
-        if(!this.getReferrers().isEmpty()) {
+        if(this.hasReferrers()) {
             return false;
         }
         
