@@ -85,13 +85,15 @@ public class AnimationLib extends LuaLibrary {
         }
     }
     
+    // object methods / metatable
+    
     static class getRuntime extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
             AnimationData animation = check(args.arg(1)).getObject();
-            return LuaValue.valueOf(animation.getRuntime());
+            return LuaValue.valueOf(animation.getRuntime() / 1000.0F);
         }
     }
     
@@ -101,7 +103,7 @@ public class AnimationLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             AnimationData animation = check(args.arg(1)).getObject();
-            animation.setRuntime(args.checklong(2));
+            animation.setRuntime((long) args.checkdouble(2) * 1000);
             return LuaValue.NIL;
         }
     }
