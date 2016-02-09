@@ -64,7 +64,7 @@ public class BaseLib extends LuaLibrary {
     
     public BaseLib() {
         super(null, 
-                new load(),
+                new loadscript(),
                 new execute(),
                 new print());
     }
@@ -103,7 +103,7 @@ public class BaseLib extends LuaLibrary {
     // #   Library functions.   #
     // ##########################
     
-    static final class load extends LibraryFunction {
+    static final class loadscript extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
