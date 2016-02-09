@@ -67,7 +67,7 @@ public class Lua {
     public static final String TYPENAME_DISPLAYMETA = "tailor-displaymeta";
     public static final String TYPENAME_ANIMATION = "tailor-animation";
     public static final String TYPENAME_TEXT = "tailor-text";
-    public static final String TYPENAME_COLOR = "gdx-color";
+    public static final String TYPENAME_COLOR = "tailor-color";
     public static final String TYPENAME_SOUND = "tailor-audio-sound";
     public static final String TYPENAME_MUSIC = "tailor-audio-music";
     public static final String TYPENAME_ENVIRONMENT = "tailor-environment";
