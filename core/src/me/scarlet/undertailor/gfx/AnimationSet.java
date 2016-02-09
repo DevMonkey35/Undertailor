@@ -65,7 +65,6 @@ public class AnimationSet implements Disposable {
     }
     
     private String name;
-    private String currentSpriteset;
     private Map<String, Sprite[]> spritesets;
     private Map<String, Animation<?>> animations;
     private Map<String, SpriteSheetWrapper> sheets;
@@ -74,7 +73,6 @@ public class AnimationSet implements Disposable {
         this.animations = animations;
         this.sheets = new HashMap<>();
         this.spritesets = new HashMap<>();
-        this.currentSpriteset = DEFAULT_SPRITESET;
         
         for(String str : sheetNames) {
             SpriteSheetWrapper sheet = Undertailor.getSheetManager().getSheet(str);
@@ -111,12 +109,8 @@ public class AnimationSet implements Disposable {
         return name;
     }
     
-    public Sprite[] getCurrentSpriteset() {
-        return spritesets.get(currentSpriteset);
-    }
-    
-    public void setCurrentSpriteset(String set) {
-        this.currentSpriteset = set;
+    public Sprite[] getSpriteset(String spriteset) {
+        return this.spritesets.get(spriteset);
     }
     
     public Animation<?> getAnimation(String name) {

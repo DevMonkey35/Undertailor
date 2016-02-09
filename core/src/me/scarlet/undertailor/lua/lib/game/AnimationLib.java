@@ -24,9 +24,9 @@
 
 package me.scarlet.undertailor.lua.lib.game;
 
-import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Animation;
+import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
@@ -38,19 +38,25 @@ import org.luaj.vm2.Varargs;
 
 public class AnimationLib extends LuaLibrary {
     
-    public static LuaObjectValue<Animation<?>> check(LuaValue value) {
+    public static LuaObjectValue<AnimationData> check(LuaValue value) {
         return LuaUtil.checkType(value, Lua.TYPENAME_ANIMATION);
     }
     
-    public static LuaObjectValue<Animation<?>> create(Animation<?> value) {
+    public static LuaObjectValue<AnimationData> create(AnimationData value) {
         return LuaObjectValue.of(value, Lua.TYPENAME_ANIMATION, LuaLibrary.asMetatable(Lua.LIB_ANIMATION));
     }
     
     public static final LuaLibraryComponent[] COMPONENTS = {
-            new getAnimation(),
-            new getStartTime(),
+            new createAnimation(),
+            new getRuntime(),
+            new setRuntime(),
+            new isPlaying(),
+            new isLooping(),
+            new setLooping(),
             new play(),
+            new pause(),
             new stop(),
+            new resume(),
             new drawCurrentFrame()
     };
     
@@ -58,7 +64,7 @@ public class AnimationLib extends LuaLibrary {
         super("animation", COMPONENTS);
     }
     
-    static class getAnimation extends LibraryFunction {
+    static class createAnimation extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 2, 2);
@@ -75,30 +81,59 @@ public class AnimationLib extends LuaLibrary {
                 return LuaValue.NIL;
             }
             
-            return create(anim);
+            return create(new AnimationData(wrapper, anim));
         }
     }
     
-    static class getStartTime extends LibraryFunction {
+    static class getRuntime extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            Animation<?> animation = check(args.arg(1)).getObject();
-            Undertailor.getAnimationManager().getAnimation(animation.getParentSet().getName()).getReference();
-            return LuaValue.valueOf(animation.getStartTime());
+            AnimationData animation = check(args.arg(1)).getObject();
+            return LuaValue.valueOf(animation.getRuntime());
+        }
+    }
+    
+    static class setRuntime extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            AnimationData animation = check(args.arg(1)).getObject();
+            animation.setRuntime(args.checklong(2));
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class isPlaying extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            AnimationData animation = check(args.arg(1)).getObject();
+            return LuaValue.valueOf(animation.isPlaying());
         }
     }
     
     static class play extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 2);
+            LuaUtil.checkArguments(args, 1, 1);
             
-            Animation<?> animation = check(args.arg(1)).getObject();
-            Undertailor.getAnimationManager().getAnimation(animation.getParentSet().getName()).getReference();
-            long startTime = args.isnil(2) ? TimeUtils.millis() : args.checklong(2);
-            animation.start(startTime);
+            AnimationData animation = check(args.arg(1)).getObject();
+            animation.play();
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class pause extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            AnimationData animation = check(args.arg(1)).getObject();
+            animation.pause();
             return LuaValue.NIL;
         }
     }
@@ -108,9 +143,61 @@ public class AnimationLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            Animation<?> animation = check(args.arg(1)).getObject();
-            Undertailor.getAnimationManager().getAnimation(animation.getParentSet().getName()).getReference();
+            AnimationData animation = check(args.arg(1)).getObject();
             animation.stop();
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class resume extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            AnimationData animation = check(args.arg(1)).getObject();
+            animation.resume();
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class isLooping extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            AnimationData animation = check(args.arg(1)).getObject();
+            return LuaValue.valueOf(animation.isLooping());
+        }
+    }
+    
+    static class setLooping extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            AnimationData animation = check(args.arg(1)).getObject();
+            animation.setLooping(args.checkboolean(2));
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class getSpriteSetName extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            AnimationData animation = check(args.arg(1)).getObject();
+            return LuaValue.valueOf(animation.getSpriteSetName());
+        }
+    }
+    
+    static class setSpriteSetName extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            AnimationData animation = check(args.arg(1)).getObject();
+            animation.setSpriteSetName(args.checkjstring(2));
             return LuaValue.NIL;
         }
     }
@@ -120,8 +207,7 @@ public class AnimationLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 3, 5);
             
-            Animation<?> animation = check(args.arg(1)).getObject();
-            Undertailor.getAnimationManager().getAnimation(animation.getParentSet().getName()).getReference();
+            AnimationData animation = check(args.arg(1)).getObject();
             float posX = new Float(args.checkdouble(2));
             float posY = new Float(args.checkdouble(3));
             float scale = args.isnil(4) ? 2F : new Float(args.checkdouble(4));

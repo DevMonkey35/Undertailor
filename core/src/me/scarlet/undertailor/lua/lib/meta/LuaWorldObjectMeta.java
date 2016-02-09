@@ -26,15 +26,14 @@ package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.environment.overworld.WorldObject;
-import me.scarlet.undertailor.gfx.Animation;
+import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.lib.game.AnimationLib;
 import me.scarlet.undertailor.util.LuaUtil;
-import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -305,11 +304,11 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             WorldObject object = check(args.arg1()).getObject();
-            Animation<?> anim = object.getCurrentAnimation();
+            AnimationData anim = object.getCurrentAnimation();
             if(anim == null) {
                 return LuaValue.NIL;
             } else {
-                return LuaUtil.asVarargs(LuaValue.valueOf(anim.getParentSet().getName()), LuaValue.valueOf(anim.getName()));
+                return AnimationLib.create(anim);
             }
         }
     }
@@ -317,20 +316,11 @@ public class LuaWorldObjectMeta extends LuaLibrary {
     static class setAnimation extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 3, 4);
+            LuaUtil.checkArguments(args, 2, 2);
             
             WorldObject object = check(args.arg(1)).getObject();
-            String setName = args.checkjstring(2);
-            String animName = args.checkjstring(3);
-            int frame = args.isnil(4) ? 0 : args.checkint(4);
-            
-            if(setName == null) {
-                object.setCurrentAnimation(null, null, 0);
-            } else {
-                AnimationSetWrapper set = Undertailor.getAnimationManager().getAnimation(setName);
-                object.setCurrentAnimation(set, set.getReference().getAnimation(animName), frame);
-            }
-            
+            AnimationData data = AnimationLib.check(args.arg(2)).getObject();
+            object.setCurrentAnimation(data);
             return LuaValue.NIL;
         }
     }

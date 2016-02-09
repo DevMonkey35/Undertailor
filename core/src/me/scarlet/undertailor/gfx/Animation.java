@@ -34,10 +34,8 @@ public abstract class Animation<T extends KeyFrame> implements Disposable {
     
     private String name;
     private boolean loop;
-    private long startTime;
     protected AnimationSet animSet;
     public Animation(String name, long startTime, boolean loop) {
-        this.startTime = startTime;
         this.animSet = null;
         this.loop = loop;
         this.name = name;
@@ -51,10 +49,6 @@ public abstract class Animation<T extends KeyFrame> implements Disposable {
         return this.loop;
     }
     
-    public void stop() {
-        this.startTime = -1;
-    }
-    
     public AnimationSet getParentSet() {
         return animSet;
     }
@@ -62,15 +56,20 @@ public abstract class Animation<T extends KeyFrame> implements Disposable {
     @Override
     public void dispose() {} // nothing
     
-    public long getStartTime() {
-        return this.startTime;
+    public abstract Map<Long, T> getFrames();
+    public abstract T getFrame(long stateTime, boolean looping);
+    
+    public void drawFrame(T frame, String spriteset, float posX, float posY) {
+        this.drawFrame(frame, spriteset, posX, posY, 1F);
     }
     
-    public void start(long startTime) {
-        this.startTime = startTime;
+    public void drawFrame(T frame, String spriteset, float posX, float posY, float scale) {
+        this.drawFrame(frame, spriteset, posX, posY, scale, 0F);
     }
     
-    public void drawCurrentFrame(float posX, float posY) {
+    public abstract void drawFrame(T frame, String spriteset, float posX, float posY, float scale, float rotation);
+    
+    /*public void drawCurrentFrame(float posX, float posY) {
         this.drawCurrentFrame(posX, posY, 1F);
     }
     
@@ -78,7 +77,5 @@ public abstract class Animation<T extends KeyFrame> implements Disposable {
         this.drawCurrentFrame(posX, posY, scale, 0F);
     }
     
-    public abstract Map<Long, T> getFrames();
-    public abstract T getFrame(long stateTime);
-    public abstract void drawCurrentFrame(float posX, float posY, float scale, float rotation);
+    public abstract void drawCurrentFrame(float posX, float posY, float scale, float rotation);*/
 }

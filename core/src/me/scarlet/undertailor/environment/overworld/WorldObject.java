@@ -28,23 +28,17 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
-import me.scarlet.undertailor.gfx.Animation;
-import me.scarlet.undertailor.gfx.KeyFrame;
+import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Layerable;
-import me.scarlet.undertailor.util.MapUtil;
 import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
-import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public abstract class WorldObject implements Collider, Layerable, Renderable, Positionable {
@@ -65,8 +59,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     private float scale;
     private boolean persists;
     private boolean isVisible;
-    private Animation<?> animation;
-    private AnimationSetWrapper animSet;
+    private AnimationData animation;
     private float height;
     private Set<Collider> contacts;
     private BodyDef bodyDef;
@@ -83,7 +76,6 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         this.boundingBox = new BoundingRectangle();
         this.isVisible = true;
         this.animation = null;
-        this.animSet = null;
         this.room = null;
         this.height = 0F;
         this.scale = 1F;
@@ -219,32 +211,12 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         room.removeObject(id);
     }
     
-    public Animation<?> getCurrentAnimation() {
+    public AnimationData getCurrentAnimation() {
         return animation;
     }
     
-    public void setCurrentAnimation(AnimationSetWrapper set, Animation<?> animation, int startFrame) {
-        if(!set.equals(animSet)) {
-            if(this.animSet != null) {
-                this.animSet.removeReference(this);
-            }
-            
-            if(set != null) {
-                this.animSet = set;
-                set.getReference(this);
-            }
-        }
-        
-        this.animation = animation;
-        if(animation != null) {
-            if(startFrame != 0 && startFrame > 0) {
-                Map<Long, ? extends KeyFrame> frames = animation.getFrames();
-                Entry<Long, ? extends KeyFrame> entry = MapUtil.getByIndex(frames, startFrame > frames.size() - 1 ? frames.size() - 1 : startFrame);
-                animation.start(TimeUtils.millis() - entry.getKey() + entry.getValue().getFrameTime() - 1);
-            } else {
-                animation.start(TimeUtils.millis());
-            }
-        }
+    public void setCurrentAnimation(AnimationData data) {
+        this.animation = data;
     }
     
     @Override

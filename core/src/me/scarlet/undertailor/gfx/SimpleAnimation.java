@@ -24,7 +24,6 @@
 
 package me.scarlet.undertailor.gfx;
 
-import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.KeyFrame.FrameObjectMeta;
 import me.scarlet.undertailor.gfx.KeyFrame.SimpleKeyFrame;
@@ -82,11 +81,11 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     }
 
     @Override
-    public SimpleKeyFrame getFrame(long stateTime) {
+    public SimpleKeyFrame getFrame(long stateTime, boolean looping) {
         long time = stateTime;
         Entry<Long, SimpleKeyFrame> last = MapUtil.getLastEntry(frames);
         if(time > last.getKey()) {
-            if(this.isLooping()) {
+            if(looping) {
                 time = (long) (time - (last.getKey() * (Math.floor(time / last.getKey()))));
             } else {
                 return last.getValue();
@@ -110,17 +109,12 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
             }
         }
         
-        return null;
+        return current.getValue(); // returns the last frame
     }
     
     @Override
-    public void drawCurrentFrame(float posX, float posY, float scale, float rotation) {
-        SimpleKeyFrame frame = this.getFrame(this.getStartTime() == -1 ? 0 : TimeUtils.timeSinceMillis(this.getStartTime()));
-        if(frame == null) {
-            return;
-        }
-        
-        Sprite sprite = this.getParentSet().getCurrentSpriteset()[frame.getSpriteIndex()];
+    public void drawFrame(SimpleKeyFrame frame, String spriteset, float posX, float posY, float scale, float rotation) {
+        Sprite sprite = this.getParentSet().getSpriteset(spriteset)[frame.getSpriteIndex()];
         FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
         float scaleX = meta.scaleX * scale;
         float scaleY = meta.scaleY * scale;
