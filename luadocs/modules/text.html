@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/base.html">base</a></li>
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.animation.html">game.animation</a></li>
+  <li><a href="../modules/meta.tailor-animation.html">meta.tailor-animation</a></li>
+  <li><a href="../modules/meta.tailor-color.html">meta.tailor-color</a></li>
+  <li><strong>text</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>text</code></h1>
+<p>Text library module.</p>
+<p> Also serves as the metatable for
+ <code>tailor-text</code> objects. Metatable functions are written
+ separately in the <code>meta.tailor-text</code> module doc.</p>
+
+<p> Contains submodules:</p>
+
+<ul>
+    <li><code>text.component</code></li>
+</ul>
+
+<p> Contains functions to interface with text objects used by
+ Undertailor.</p>
+
+<p> Text objects have the typename <code>tailor-text</code>.</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#newDisplayMeta">newDisplayMeta([offX=0][, offY=0][, scaleX=1][, scaleY=1][, color=nil])</a></td>
+	<td class="summary">Generates new display metadata to be used by styles in order
+ to customize text rendering.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#newText">newText(fontname, stylename, color, soundname, playspeed, segmentsize, delay)</a></td>
+	<td class="summary">TODO change this function to use objects instead of object
+ names</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawText">drawText(text, x, y[, scaleX=1.0][, scaleY=1.0][, alpha=1.0])</a></td>
+	<td class="summary">Draws the given text using the specified parameters.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "newDisplayMeta"></a>
+    <strong>newDisplayMeta([offX=0][, offY=0][, scaleX=1][, scaleY=1][, color=nil])</strong>
+    </dt>
+    <dd>
+    Generates new display metadata to be used by styles in order
+ to customize text rendering.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">offX</span>
+            <span class="types"><span class="type">number</span></span>
+         the horizontal positional offset of the
+   target sprite
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">offY</span>
+            <span class="types"><span class="type">number</span></span>
+         the vertical positional offset of the
+   target sprite
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">scaleX</span>
+            <span class="types"><span class="type">number</span></span>
+         the horizontal scale of the target
+   sprite
+         (<em>default</em> 1)
+        </li>
+        <li><span class="parameter">scaleY</span>
+            <span class="types"><span class="type">number</span></span>
+         the vertical scale of the target
+   sprite
+         (<em>default</em> 1)
+        </li>
+        <li><span class="parameter">color</span>
+            <span class="types"><span class="type">tailor-color</span></span>
+         the color of the target
+   sprite
+
+         (<em>default</em> nil)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "newText"></a>
+    <strong>newText(fontname, stylename, color, soundname, playspeed, segmentsize, delay)</strong>
+    </dt>
+    <dd>
+    TODO change this function to use objects instead of object
+ names
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fontname</span>
+
+
+
+        </li>
+        <li><span class="parameter">stylename</span>
+
+
+
+        </li>
+        <li><span class="parameter">color</span>
+
+
+
+        </li>
+        <li><span class="parameter">soundname</span>
+
+
+
+        </li>
+        <li><span class="parameter">playspeed</span>
+
+
+
+        </li>
+        <li><span class="parameter">segmentsize</span>
+
+
+
+        </li>
+        <li><span class="parameter">delay</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawText"></a>
+    <strong>drawText(text, x, y[, scaleX=1.0][, scaleY=1.0][, alpha=1.0])</strong>
+    </dt>
+    <dd>
+    Draws the given text using the specified parameters.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">text</span>
+            <span class="types"><span class="type">tailor-text</span></span>
+         the text to draw
+        </li>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the x position to draw at
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y position to draw at
+        </li>
+        <li><span class="parameter">scaleX</span>
+            <span class="types"><span class="type">number</span></span>
+         the horizontal scale of the text
+         (<em>default</em> 1.0)
+        </li>
+        <li><span class="parameter">scaleY</span>
+            <span class="types"><span class="type">number</span></span>
+         the vertical scale of the text
+         (<em>default</em> 1.0)
+        </li>
+        <li><span class="parameter">alpha</span>
+            <span class="types"><span class="type">number</span></span>
+         the alpha value of the text
+         (<em>default</em> 1.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-02-09 21:30:39 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
