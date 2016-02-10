@@ -1,0 +1,378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Object_retrieval_functions">Object retrieval functions </a></li>
+<li><a href="#Global_volume_control_functions">Global volume control functions </a></li>
+<li><a href="#Global_stop_functions">Global stop functions </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/base.html">base</a></li>
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.animation.html">game.animation</a></li>
+  <li><strong>game.audio</strong></li>
+  <li><a href="../modules/meta.tailor-animation.html">meta.tailor-animation</a></li>
+  <li><a href="../modules/meta.tailor-color.html">meta.tailor-color</a></li>
+  <li><a href="../modules/meta.tailor-text.html">meta.tailor-text</a></li>
+  <li><a href="../modules/text.html">text</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>game.audio</code></h1>
+<p>Audio library module.</p>
+<p> Also serves as the metatable for
+ <code>tailor-audio</code> objects. Metatable functions are written
+ separately in the <code>meta.tailor-audio</code> module doc.</p>
+
+<p> Contains functions to interface with audio files.</p>
+
+<p> Sounds have the typename <code>tailor-audio-sound</code>.
+ Music tracks have the typename <code>tailor-audio-music</code>.
+ </p>
+
+
+<h2><a href="#Object_retrieval_functions">Object retrieval functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getMusic">getMusic(id)</a></td>
+	<td class="summary">Returns the <code>tailor-audio-music</code> object of the given ID.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSound">getSound(id)</a></td>
+	<td class="summary">Returns the <code>tailor-audio-sound</code> object of the given ID.</td>
+	</tr>
+</table>
+<h2><a href="#Global_volume_control_functions">Global volume control functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getMasterVolume">getMasterVolume()</a></td>
+	<td class="summary">Gets the current volume of the entire game.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setMasterVolume">setMasterVolume(volume)</a></td>
+	<td class="summary">Sets the current volume of the entire game.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getMusicVolume">getMusicVolume()</a></td>
+	<td class="summary">Gets the current volume of music played by the game.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setMuiscVolume">setMuiscVolume(volume)</a></td>
+	<td class="summary">Sets the current volume of music played by the game.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSoundVolume">getSoundVolume()</a></td>
+	<td class="summary">Gets the current volume of sounds played by the game.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setSoundVolume">setSoundVolume(volume)</a></td>
+	<td class="summary">Sets the current volume of sounds played by the game.</td>
+	</tr>
+</table>
+<h2><a href="#Global_stop_functions">Global stop functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#stopAllAudio">stopAllAudio()</a></td>
+	<td class="summary">Kills all currently playing audio; both sound and music.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#stopAllMusic">stopAllMusic()</a></td>
+	<td class="summary">Kills all currently playing music.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#stopAllSounds">stopAllSounds()</a></td>
+	<td class="summary">Kills all currently playing sound.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Object_retrieval_functions"></a>Object retrieval functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getMusic"></a>
+    <strong>getMusic(id)</strong>
+    </dt>
+    <dd>
+    Returns the <code>tailor-audio-music</code> object of the given ID.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the id of the target music file
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+     <span class="keyword">local</span> asgore = game.audio.getMusic(<span class="string">"fight.mus_vsasgore"</span>)
+     <span class="comment">-- points to <code>music/fight/mus_vsasgore</code>
+</span>     <span class="comment">--                                    .ogg,
+</span>     <span class="comment">--                                    .wav, or
+</span>     <span class="comment">--                                    .mp3
+</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getSound"></a>
+    <strong>getSound(id)</strong>
+    </dt>
+    <dd>
+    Returns the <code>tailor-audio-sound</code> object of the given ID.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the id of the target music file
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+     <span class="keyword">local</span> talkovw = game.audio.getSound(<span class="string">"ds_ovw"</span>)
+     <span class="comment">-- points to <code>sounds/ds_ovw</code>
+</span>     <span class="comment">--                         .ogg,
+</span>     <span class="comment">--                         .wav, or
+</span>     <span class="comment">--                         .mp3
+</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Global_volume_control_functions"></a>Global volume control functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getMasterVolume"></a>
+    <strong>getMasterVolume()</strong>
+    </dt>
+    <dd>
+    Gets the current volume of the entire game.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the current master volume
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setMasterVolume"></a>
+    <strong>setMasterVolume(volume)</strong>
+    </dt>
+    <dd>
+    Sets the current volume of the entire game.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">volume</span>
+            <span class="types"><span class="type">number</span></span>
+         the new volume, a number between 0.0 and 1.0
+   (percentage)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getMusicVolume"></a>
+    <strong>getMusicVolume()</strong>
+    </dt>
+    <dd>
+    Gets the current volume of music played by the game.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the current music volume
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setMuiscVolume"></a>
+    <strong>setMuiscVolume(volume)</strong>
+    </dt>
+    <dd>
+    Sets the current volume of music played by the game.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">volume</span>
+            <span class="types"><span class="type">number</span></span>
+         the new volume, a number between 0.0 and 1.0
+   (percentage)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getSoundVolume"></a>
+    <strong>getSoundVolume()</strong>
+    </dt>
+    <dd>
+    Gets the current volume of sounds played by the game.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the current sound volume
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setSoundVolume"></a>
+    <strong>setSoundVolume(volume)</strong>
+    </dt>
+    <dd>
+    Sets the current volume of sounds played by the game.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">volume</span>
+            <span class="types"><span class="type">number</span></span>
+         the new volume, a number between 0.0 and 1.0
+   (percentage)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Global_stop_functions"></a>Global stop functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "stopAllAudio"></a>
+    <strong>stopAllAudio()</strong>
+    </dt>
+    <dd>
+    Kills all currently playing audio; both sound and music.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "stopAllMusic"></a>
+    <strong>stopAllMusic()</strong>
+    </dt>
+    <dd>
+    Kills all currently playing music.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "stopAllSounds"></a>
+    <strong>stopAllSounds()</strong>
+    </dt>
+    <dd>
+    Kills all currently playing sound.
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-02-10 02:27:41 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
