@@ -31,6 +31,7 @@ import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.lib.game.AudioLib;
 import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
 import me.scarlet.undertailor.lua.lib.text.TextComponentLib;
 import me.scarlet.undertailor.texts.Font;
@@ -100,7 +101,7 @@ public class TextLib extends LuaLibrary {
             Font font = Undertailor.getFontManager().getFont(args.checkjstring(1));
             Style style = args.isnil(2) ? null : Undertailor.getStyleManager().getStyle(args.arg(2).checkjstring());
             Color color = args.isnil(3) ? null : ColorsLib.check(args.arg(3)).getObject();
-            SoundWrapper sound = args.arg(4).isnil() ? null : Undertailor.getAudioManager().getSoundManager().getResource(args.arg(4).checkstring().tojstring());
+            SoundWrapper sound = args.arg(4).isnil() ? null : (SoundWrapper) AudioLib.checkSound(args.arg(4)).getObject();
             int speed = args.optint(5, TextComponent.DEFAULT_SPEED);
             int segsize = args.optint(6, 1);
             float delay = new Float(args.optdouble(7, 0F));
