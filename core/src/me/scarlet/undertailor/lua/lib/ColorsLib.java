@@ -25,6 +25,7 @@
 package me.scarlet.undertailor.lua.lib;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Colors;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -60,6 +61,13 @@ public class ColorsLib extends LuaLibrary {
     // ##########################
     // #   Library functions.   #
     // ##########################
+    
+    @Override
+    public void postinit(LuaValue env, LuaValue table) {
+        for(String key : Colors.getColors().keys()) {
+            table.set(key, LuaValue.valueOf(Colors.get(key).toString()));
+        }
+    }
     
     static class fromHex extends LibraryFunction {
         @Override
