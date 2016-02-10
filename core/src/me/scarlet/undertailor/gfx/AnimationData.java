@@ -47,13 +47,15 @@ public class AnimationData {
     }
     
     public void pause() {
-        if(pauseTime <= -1) {
+        if(this.startTime > 0 && pauseTime <= -1) {
             this.pauseTime = TimeUtils.millis();
         }
     }
     
     public void resume() {
-        if(this.pauseTime > 0) {
+        if (this.startTime <= -1) {
+            this.play();
+        } else if(this.pauseTime > 0) {
             this.startTime = startTime + TimeUtils.timeSinceMillis(this.pauseTime);
             this.pauseTime = -1;
         }
@@ -62,16 +64,25 @@ public class AnimationData {
     public long getRuntime() {
         if(startTime <= -1) {
             return 0;
+        } else {
+            if(pauseTime > 0) {
+                return TimeUtils.timeSinceMillis(startTime) - TimeUtils.timeSinceMillis(pauseTime);
+            }
+            
+            return TimeUtils.timeSinceMillis(startTime);
         }
-        
-        return TimeUtils.timeSinceMillis(startTime);
     }
     
     public void setRuntime(long runtime) {
         if(this.pauseTime > 0) {
             this.startTime = this.pauseTime - runtime;
         } else {
-            this.startTime = TimeUtils.millis() - runtime;
+            if(this.startTime <= -1) {
+                this.pauseTime = TimeUtils.millis();
+                this.startTime = pauseTime - runtime;
+            } else {
+                this.startTime = TimeUtils.millis() - runtime;
+            }
         }
     }
     
