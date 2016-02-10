@@ -83,6 +83,7 @@ public class UIObject implements Renderable, Positionable {
         if(this.controller == null && this.id <= -1) {
             this.id = id;
             this.startLifetime = TimeUtils.millis();
+            this.controller = controller;
         } else {
             throw new IllegalStateException("cannot claim uiobject for controller; already owned by another controller");
         }
