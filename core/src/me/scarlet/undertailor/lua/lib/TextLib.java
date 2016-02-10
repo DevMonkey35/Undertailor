@@ -58,11 +58,11 @@ public class TextLib extends LuaLibrary {
     public static final LuaLibraryComponent[] COMPONENTS = {
             new newDisplayMeta(),
             new newText(),
+            new drawText(),
             new addComponent(),
             new addComponents(),
             new getComponentAtCharacter(),
             new getMembers(),
-            new drawText(),
             new TextComponentLib()
     };
     
@@ -146,7 +146,7 @@ public class TextLib extends LuaLibrary {
             Text text = TextLib.check(args.arg(1)).getObject();
             int index = args.checkint(2);
             try {
-                TextComponent component = text.getComponentAtCharacter(index);
+                TextComponent component = text.getComponentAtCharacter(index - 1); // -1 since lua isn't 0-based
                 if(component == null) {
                     return LuaValue.NIL;
                 }
