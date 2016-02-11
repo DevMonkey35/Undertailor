@@ -394,8 +394,8 @@ public class AudioLib extends LuaLibrary {
             
             Audio<?> audio = check(args.arg1()).getObject();
             float volume = NumberUtil.boundFloat(new Float(args.optdouble(2, audio.getVolume())), 0.0F, 1.0F);
-            float pan = NumberUtil.boundFloat(new Float(args.optdouble(3, audio.getPan())), -1.0F, 1.0F);
-            float pitch = NumberUtil.boundFloat(new Float(args.optdouble(4, audio.getPitch())), 0.5F, 2.0F);
+            float pitch = NumberUtil.boundFloat(new Float(args.optdouble(3, audio.getPitch())), 0.5F, 2.0F);
+            float pan = NumberUtil.boundFloat(new Float(args.optdouble(4, audio.getPan())), -1.0F, 1.0F);
             
             if(audio instanceof MusicWrapper) {
                 return LuaValue.valueOf(((MusicWrapper) audio).play(volume, pan, pitch));
