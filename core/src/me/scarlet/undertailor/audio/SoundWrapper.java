@@ -119,7 +119,11 @@ public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long
 
     @Override
     public void pause(Long id) {
-        this.getReference().pause(id);
+        if(id < 0) {
+            this.getReference().pause();
+        } else {
+            this.getReference().pause(id);
+        }
     }
 
     @Override
