@@ -1,0 +1,608 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Interchangeable_functions">Interchangeable functions </a></li>
+<li><a href="#Non_interchangeable_functions">Non-interchangeable functions </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/base.html">base</a></li>
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.animation.html">game.animation</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/meta.tailor-animation.html">meta.tailor-animation</a></li>
+  <li><strong>meta.tailor-audio</strong></li>
+  <li><a href="../modules/meta.tailor-color.html">meta.tailor-color</a></li>
+  <li><a href="../modules/meta.tailor-text.html">meta.tailor-text</a></li>
+  <li><a href="../modules/text.html">text</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>meta.tailor-audio</code></h1>
+<p>Metatable functions for <a href="../modules/meta.tailor-audio.html">tailor-audio</a> objects.</p>
+<p> Both <code>tailor-audio-sound</code> and <code>tailor-audio-music</code> share
+ these functions; some may only function for one and may be
+ ignored by the other.
+ </p>
+
+
+<h2><a href="#Interchangeable_functions">Interchangeable functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#audio:getPan">audio:getPan()</a></td>
+	<td class="summary">Returns the panning value for this <a href="../modules/meta.tailor-audio.html">tailor-audio</a> object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:setPan">audio:setPan(pan)</a></td>
+	<td class="summary">Sets the panning value for this <a href="../modules/meta.tailor-audio.html">tailor-audio</a> object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:getPitch">audio:getPitch()</a></td>
+	<td class="summary">Gets the currently set pitch for this <a href="../modules/meta.tailor-audio.html">tailor-audio</a> object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:setPitch">audio:setPitch(pitch)</a></td>
+	<td class="summary">Sets the pitch value for this <a href="../modules/meta.tailor-audio.html">tailor-audio</a> object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:getPosition">audio:getPosition()</a></td>
+	<td class="summary">Returns the position of the currently playing audio.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:setPosition">audio:setPosition(position)</a></td>
+	<td class="summary">Sets the position of the currently playing audio.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:getVolume">audio:getVolume()</a></td>
+	<td class="summary">Returns the volume this audio will be played at.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:setVolume">audio:setVolume(volume)</a></td>
+	<td class="summary">Sets the volume this audio will be played at.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:isLooping">audio:isLooping()</a></td>
+	<td class="summary">Returns whether or not this piece of audio is looping.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:setLooping">audio:setLooping(flag)</a></td>
+	<td class="summary">Sets whether or not this piece of audio is looping.</td>
+	</tr>
+</table>
+<h2><a href="#Non_interchangeable_functions">Non-interchangeable functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#audio:setLoopPoint">audio:setLoopPoint(point)</a></td>
+	<td class="summary">Sets the point of looping for this piece of audio.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:isPaused">audio:isPaused()</a></td>
+	<td class="summary">Returns whether or not the audio is paused.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:isPlaying">audio:isPlaying()</a></td>
+	<td class="summary">Returns whether or not the audio is playing.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:play">audio:play([volume=current volume][, pitch=current pitch][, pan=current pan])</a></td>
+	<td class="summary">Plays this piece of audio.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:pause">audio:pause([id=nil])</a></td>
+	<td class="summary">Pauses this piece of audio.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio:stop">audio:stop([id=nil])</a></td>
+	<td class="summary">Pauses this piece of audio.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Interchangeable_functions"></a>Interchangeable functions </h2>
+
+          <div class="section-description">
+           Functions that work for both music and sound with no
+ differences
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "audio:getPan"></a>
+    <strong>audio:getPan()</strong>
+    </dt>
+    <dd>
+    Returns the panning value for this <a href="../modules/meta.tailor-audio.html">tailor-audio</a> object.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the pan value for this piece of audio
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:setPan"></a>
+    <strong>audio:setPan(pan)</strong>
+    </dt>
+    <dd>
+    Sets the panning value for this <a href="../modules/meta.tailor-audio.html">tailor-audio</a> object. </p>
+
+<p> The panning value is how "centered" the audio is played;
+ negative values will play audio more on the left, positives
+ on the right, and 0 will center. 0 is the default.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pan</span>
+            <span class="types"><span class="type">number</span></span>
+         a number between -1.0 and 1.0 defining the
+   panning of the audio
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:getPitch"></a>
+    <strong>audio:getPitch()</strong>
+    </dt>
+    <dd>
+    Gets the currently set pitch for this <a href="../modules/meta.tailor-audio.html">tailor-audio</a> object.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the pitch value for this piece of audio
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:setPitch"></a>
+    <strong>audio:setPitch(pitch)</strong>
+    </dt>
+    <dd>
+    Sets the pitch value for this <a href="../modules/meta.tailor-audio.html">tailor-audio</a> object. </p>
+
+<p> Limitations of a dependency prevent the game from setting
+ <strong>only</strong> the pitch; this function may also serve as a speed
+ up/down function.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pitch</span>
+            <span class="types"><span class="type">number</span></span>
+         a number between 0.5 and 2.0 defining the pitch
+   of the audio
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:getPosition"></a>
+    <strong>audio:getPosition()</strong>
+    </dt>
+    <dd>
+    Returns the position of the currently playing audio.  Only
+ for music; sounds will always return 0.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+         the position of the currently playing music in
+   in seconds, or 0 if this is a sound object
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:setPosition"></a>
+    <strong>audio:setPosition(position)</strong>
+    </dt>
+    <dd>
+    Sets the position of the currently playing audio.  Only
+ for music; sounds will ignore this function being called.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">position</span>
+            <span class="types"><span class="type">number</span></span>
+         the position of of the audio to set in
+   seconds
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:getVolume"></a>
+    <strong>audio:getVolume()</strong>
+    </dt>
+    <dd>
+    Returns the volume this audio will be played at.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the local volume of this audio
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:setVolume"></a>
+    <strong>audio:setVolume(volume)</strong>
+    </dt>
+    <dd>
+    Sets the volume this audio will be played at. </p>
+
+<p> This does not override global volume settings set from the
+ <a href="../modules/game.audio.html#">game.audio</a> library; in fact this is controlled by those
+ values. Volume will always be calculated through <code>master</code>
+ * <code>group</code> * <code>local</code> = <code>final volume</code>.</p>
+
+<pre><code> local master = 1.0
+ local music = 0.5
+ local sound = 0.75
+
+ local ourVolume = 1.0
+
+ finalMusicVolume = master * music * ourVolume
+ finalSoundVolume = master * sound * ourVolume
+</code></pre>
+<p>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">volume</span>
+            <span class="types"><span class="type">number</span></span>
+         a number between 0.0 and 1.0 to set the local
+   volume of this piece of audio
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:isLooping"></a>
+    <strong>audio:isLooping()</strong>
+    </dt>
+    <dd>
+    Returns whether or not this piece of audio is looping. </p>
+
+<p> For music, this checks whether or not the music has a
+ looping point. For sound, this simply checks a boolean
+ value determining whether or not it is looping.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        if this audio is looping
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:setLooping"></a>
+    <strong>audio:setLooping(flag)</strong>
+    </dt>
+    <dd>
+    Sets whether or not this piece of audio is looping. </p>
+
+<p> For both sound and music, this method simply says whether or
+ not to replay the audio when it reaches its end.</p>
+
+<p> This is the same as invoking <code>audio:setLoopPoint(0)</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">flag</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether or not to loop this audio
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Non_interchangeable_functions"></a>Non-interchangeable functions </h2>
+
+          <div class="section-description">
+           Functions that don't work similarly for both sound and music
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "audio:setLoopPoint"></a>
+    <strong>audio:setLoopPoint(point)</strong>
+    </dt>
+    <dd>
+    Sets the point of looping for this piece of audio. </p>
+
+<p> Only useful for music, sounds will only treat the looping
+ point value as a boolean value. Essentially, this method has
+ no notable differences with <a href="../modules/meta.tailor-audio.html#audio:setLooping">audio:setLooping</a>.</p>
+
+<p> For music, this simply sets the reset point when playback is
+ started again through looping.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">point</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+     <span class="keyword">local</span> music;
+     music:setLoopPoint(<span class="number">7.0</span>); <span class="comment">-- we're looping now
+</span>     music:play(); <span class="comment">-- play the music
+</span>
+     <span class="comment">-- when the music loops back around, it'll start at 7s in
+</span>
+ Setting this value to <span class="number">0</span> <span class="keyword">or</span> greater automagically enables
+ looping.</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "audio:isPaused"></a>
+    <strong>audio:isPaused()</strong>
+    </dt>
+    <dd>
+    Returns whether or not the audio is paused. </p>
+
+<p> Only works for music; sounds will always return false.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+         whether or not the audio is paused, or false if this
+   is a sound object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:isPlaying"></a>
+    <strong>audio:isPlaying()</strong>
+    </dt>
+    <dd>
+    Returns whether or not the audio is playing. </p>
+
+<p> Only works for music; sounds will always return false.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+         whether or not the audio is playing, or false if
+   this is a sound object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:play"></a>
+    <strong>audio:play([volume=current volume][, pitch=current pitch][, pan=current pan])</strong>
+    </dt>
+    <dd>
+    Plays this piece of audio. </p>
+
+<p> Music objects only control one piece of audio; the return
+ value for this method has no functional use.</p>
+
+<p> Sound objects manage multiple instances of the same piece of
+ audio; this function returns the ID of the new sound that
+ will be played.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">volume</span>
+            <span class="types"><span class="type">number</span></span>
+         <a href="../modules/meta.tailor-audio.html#audio:setVolume">audio:setVolume</a>
+         (<em>default</em> current volume)
+        </li>
+        <li><span class="parameter">pitch</span>
+            <span class="types"><span class="type">number</span></span>
+         <a href="../modules/meta.tailor-audio.html#audio:setPitch">audio:setPitch</a>
+         (<em>default</em> current pitch)
+        </li>
+        <li><span class="parameter">pan</span>
+            <span class="types"><span class="type">number</span></span>
+         <a href="../modules/meta.tailor-audio.html#audio:setPan">audio:setPan</a>
+         (<em>default</em> current pan)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         nothing useful if this is a music object, or the id
+   of the new sound to be played if this is a sound object
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:pause"></a>
+    <strong>audio:pause([id=nil])</strong>
+    </dt>
+    <dd>
+    Pauses this piece of audio. </p>
+
+<p> Music objects only control one piece of audio; the parameter
+ is meaningless when invoked on music objects.</p>
+
+<p> Sound objects manage multiple instances of the same piece of
+ audio; if called with a specified ID, the sound of the given
+ ID will be paused. Calling with no parameters on a sound
+ object will pause all currently unpaused instances of the
+ sound.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the id of the sound to pause if this is a
+   sound object, or nothing to globally pause all instances
+   of this sound or if this is a music object
+
+         (<em>default</em> nil)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio:stop"></a>
+    <strong>audio:stop([id=nil])</strong>
+    </dt>
+    <dd>
+    Pauses this piece of audio. </p>
+
+<p> Music objects only control one piece of audio; the parameter
+ is meaningless when invoked on music objects.</p>
+
+<p> Sound objects manage multiple instances of the same piece of
+ audio; if called with a specified ID, the sound of the given
+ ID will be stopped. Calling with no parameters on a sound
+ object will pause all currently playing instances of the
+ sound.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the id of the sound to stop if this is a
+   sound object, or nothing to globally stop all instances of
+   this sound or if this is a music object
+
+         (<em>default</em> nil)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-02-11 02:05:08 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
