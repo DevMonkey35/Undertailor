@@ -56,12 +56,12 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
             keyFrames[i] = new SimpleKeyFrame(frames[i], (long) (1000.0 * frameTime), meta);
         }
         
-        return new SimpleAnimation(name, 0, looping, keyFrames);
+        return new SimpleAnimation(name, looping, keyFrames);
     }
     
     private Map<Long, SimpleKeyFrame> frames;
-    public SimpleAnimation(String name, long startTime, boolean loop, SimpleKeyFrame... frames) {
-        super(name, startTime, loop);
+    public SimpleAnimation(String name, boolean loop, SimpleKeyFrame... frames) {
+        super(name, loop);
         this.frames = new LinkedHashMap<>();
         long lastTime = 0;
         for(SimpleKeyFrame frame : frames) {

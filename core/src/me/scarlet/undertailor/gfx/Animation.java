@@ -35,7 +35,7 @@ public abstract class Animation<T extends KeyFrame> implements Disposable {
     private String name;
     private boolean loop;
     protected AnimationSet animSet;
-    public Animation(String name, long startTime, boolean loop) {
+    public Animation(String name, boolean loop) {
         this.animSet = null;
         this.loop = loop;
         this.name = name;
