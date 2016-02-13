@@ -39,7 +39,9 @@ import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 public abstract class WorldObject implements Collider, Layerable, Renderable, Positionable {
 
@@ -67,6 +69,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     private boolean oneSided;
     
     private BoundingRectangle boundingBox;
+    private Map<Collider, String> ignoreCollideList;
     
     protected long id;
     protected Body body;
@@ -85,6 +88,8 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         this.contacts = new HashSet<>();
         
         this.bodyDef = new BodyDef();
+        this.ignoreCollideList = new WeakHashMap<>();
+        
         bodyDef.active = true;
         bodyDef.awake = true;
         bodyDef.allowSleep = false;
@@ -94,6 +99,22 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     
     public BodyDef getBodyDef() {
         return this.bodyDef;
+    }
+    
+    @Override
+    public boolean isCollisionIgnored(Collider obj) {
+        return this.ignoreCollideList.containsKey(obj);
+    }
+    
+    @Override
+    public void setIgnoreCollisionWith(Collider obj, boolean flag) {
+        if(isCollisionIgnored(obj) != flag) {
+            if(flag) {
+                this.ignoreCollideList.put(obj, "we don't care what this is");
+            } else {
+                this.ignoreCollideList.remove(obj);
+            }
+        }
     }
     
     public float getRotation() {

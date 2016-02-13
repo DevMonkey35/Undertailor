@@ -53,6 +53,8 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             new updateCollision(),
             new getHeight(),
             new setHeight(),
+            new isIgnoringCollisionWith(),
+            new setIgnoringCollisionWith(),
             new isOneSidedReaction(),
             new setOneSidedReaction(),
             new getBodyType(),
@@ -89,6 +91,32 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             
             WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.getId());
+        }
+    }
+    
+    static class isIgnoringCollisionWith extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+
+            WorldObject object = check(args.arg1()).getObject();
+            WorldObject collider = check(args.arg(2)).getObject();
+            
+            return LuaValue.valueOf(object.isCollisionIgnored(collider));
+        }
+    }
+    
+    static class setIgnoringCollisionWith extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 3, 3);
+
+            WorldObject object = check(args.arg1()).getObject();
+            WorldObject collider = check(args.arg(2)).getObject();
+            boolean flag = args.checkboolean(3);
+            
+            object.setIgnoreCollisionWith(collider, flag);
+            return LuaValue.NIL;
         }
     }
     

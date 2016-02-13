@@ -34,6 +34,8 @@ public interface Collider {
     public Body getBody();
     public BoundingRectangle getBoundingBox();
     public void onCollide(Collider collider);
+    public boolean isCollisionIgnored(Collider collider);
+    public void setIgnoreCollisionWith(Collider collider, boolean flag);
     public boolean canCollide();
     public boolean isOneSidedReaction();
     public void setOneSidedReaction(boolean flag);

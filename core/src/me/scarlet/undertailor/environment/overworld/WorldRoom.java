@@ -71,6 +71,7 @@ public class WorldRoom implements Disposable {
         
         protected String id;
         protected Body body;
+        protected WorldRoom currentRoom;
         
         private Vector2 spawnloc;
         private String roomTarget;
@@ -136,20 +137,22 @@ public class WorldRoom implements Disposable {
         
         @Override
         public void onCollide(Collider collider) {
-            OverworldController ovw = Undertailor.getEnvironmentManager().getActiveEnvironment().getOverworldController();
-            if(ovw.getCharacterID() > -1) {
-                if(collider instanceof WorldObject) {
-                    WorldObject obj = (WorldObject) collider;
-                    if(obj.getId() == ovw.getCharacterID()) {
-                        String[] targetRoom = roomTarget.split(":");
-                        String entrypoint = targetRoom.length > 1 ? targetRoom[1] : null;
-                        try {
-                            ScriptManager scriptMan = Undertailor.getScriptManager();
-                            WorldRoomImplementable impl = scriptMan.getImplementable(WorldRoomImplementable.class);
-                            WorldRoom room = impl.load(targetRoom[0]);
-                            ovw.setCurrentRoom(room, true, id, entrypoint);
-                        } catch(LuaScriptException e) {
-                            Undertailor.instance.error("overworld", "entrypoint with id " + id + " failed to process room switch: could not load target room " + targetRoom[0]);
+            if(this.currentRoom != null) {
+                OverworldController ovw = currentRoom.getOwningController();
+                if(ovw.getCharacterID() > -1) {
+                    if(collider instanceof WorldObject) {
+                        WorldObject obj = (WorldObject) collider;
+                        if(obj.getId() == ovw.getCharacterID()) {
+                            String[] targetRoom = roomTarget.split(":");
+                            String entrypoint = targetRoom.length > 1 ? targetRoom[1] : null;
+                            try {
+                                ScriptManager scriptMan = Undertailor.getScriptManager();
+                                WorldRoomImplementable impl = scriptMan.getImplementable(WorldRoomImplementable.class);
+                                WorldRoom room = impl.load(targetRoom[0]);
+                                ovw.setCurrentRoom(room, true, id, entrypoint);
+                            } catch(LuaScriptException e) {
+                                Undertailor.instance.error("overworld", "entrypoint with id " + id + " failed to process room switch: could not load target room " + targetRoom[0]);
+                            }
                         }
                     }
                 }
@@ -164,6 +167,20 @@ public class WorldRoom implements Disposable {
         
         @Override
         public void setOneSidedReaction(boolean flag) {} // nope
+        
+        @Override
+        public boolean isCollisionIgnored(Collider collider) {
+            if(this.currentRoom != null) {
+                if(collider instanceof WorldObject && ((WorldObject) collider).getId() == this.currentRoom.getOwningController().getCharacterID()) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        @Override
+        public void setIgnoreCollisionWith(Collider collider, boolean flag) {} // nope
     }
     
     private static final TreeSet<Layerable> RETURN_SET;
@@ -252,9 +269,11 @@ public class WorldRoom implements Disposable {
     
     public void registerEntrypoint(String pointId, Entrypoint point) {
         point.id = pointId;
+        point.currentRoom = this;
         Entrypoint old = entrypoints.put(pointId, point);
         if(old != null) {
             old.id = null;
+            old.currentRoom = null;
         }
     }
     
@@ -302,8 +321,12 @@ public class WorldRoom implements Disposable {
         for(WorldObject object : objects.values()) {
             if(object.canCollide()) {
                 for(Collider collider : object.getContacts()) {
-                    if(collider.canCollide() && !collider.isOneSidedReaction()) {
+                    if(collider.canCollide() && !collider.isOneSidedReaction() && !object.isCollisionIgnored(collider)) {
                         object.onCollide(collider);
+                    } else {
+                        if(collider instanceof WorldObject) {
+                            System.out.println(object.getObjectName() + " ignored collision with " + ((WorldObject) collider).getObjectName());
+                        }
                     }
                 }
             }
