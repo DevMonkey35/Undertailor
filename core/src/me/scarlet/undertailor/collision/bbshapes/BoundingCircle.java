@@ -24,6 +24,7 @@
 
 package me.scarlet.undertailor.collision.bbshapes;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -34,14 +35,18 @@ import me.scarlet.undertailor.Undertailor;
  */
 public class BoundingCircle extends AbstractBoundingBox {
     
+    private Vector2 origin;
     private boolean fixedRotation;
     private float radius;
     private float scale;
+    private Body targetBody;
     
     private Fixture lastFixture;
     
     public BoundingCircle() {
+        this.origin = new Vector2(0, 0);
         this.fixedRotation = true;
+        this.targetBody = null;
         this.radius = 5F;
         this.scale = 1F;
     }
@@ -71,16 +76,42 @@ public class BoundingCircle extends AbstractBoundingBox {
     }
     
     @Override
+    public Vector2 getOrigin() {
+        return origin;
+    }
+    
+    @Override
+    public void setOrigin(float x, float y) {
+        this.origin.set(x, y);
+    }
+    
+    @Override
+    public boolean hasTarget() {
+        return this.targetBody != null;
+    }
+    
+    @Override
     public void applyFixture(Body body) {
-        if(lastFixture != null && body.getFixtureList().contains(lastFixture, true)) {
+        if(this.targetBody == body || !this.hasTarget()) {
+            this.targetBody = body;
+            if(lastFixture != null && body.getFixtureList().contains(lastFixture, true)) {
+                body.destroyFixture(lastFixture);
+            }
+    
+            body.setFixedRotation(fixedRotation);
+            CircleShape circle = new CircleShape();
+            circle.setPosition(origin);
+            circle.setRadius(radius * scale);
+            body.createFixture(circle, 0.5F);
+            circle.dispose();
+        }
+    }
+    
+    @Override
+    public void destroyFixture(Body body) {
+        if(this.lastFixture != null && body.getFixtureList().contains(lastFixture, true)) {
             body.destroyFixture(lastFixture);
         }
-
-        body.setFixedRotation(fixedRotation);
-        CircleShape circle = new CircleShape();
-        circle.setRadius(radius * scale);
-        body.createFixture(circle, 0.5F);
-        circle.dispose();
     }
     
     @Override

@@ -26,6 +26,9 @@ package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
+import me.scarlet.undertailor.collision.bbshapes.BoundingCircle;
+import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.environment.overworld.WorldObject;
 import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.lua.Lua;
@@ -67,6 +70,8 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             new setPosition(),
             new getAnimation(),
             new setAnimation(),
+            new createBoundingBox(),
+            new removeBoundingBox(),
             new getBoundingBox(),
             new getScale(),
             new setScale(),
@@ -208,6 +213,40 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             } else {
                 object.getBody().setType(type);
             }
+            
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class createBoundingBox extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            String boxId = args.checkjstring(2);
+            int type = args.optint(3, 1);
+            BoundingBox box;
+            if(type == 1) { // rectangle
+                box = new BoundingRectangle();
+            } else {
+                box = new BoundingCircle();
+            }
+            
+            object.setBoundingBox(boxId, box);
+            return LuaBoundingBoxMeta.create(box);
+        }
+    }
+    
+    static class removeBoundingBox extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            String boxId = args.checkjstring(2);
+            
+            object.setBoundingBox(boxId, null);
             
             return LuaValue.NIL;
         }
@@ -356,10 +395,11 @@ public class LuaWorldObjectMeta extends LuaLibrary {
     static class getBoundingBox extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
+            LuaUtil.checkArguments(args, 2, 2);
             
             WorldObject object = check(args.arg1()).getObject();
-            return LuaBoundingBoxMeta.create(object.getBoundingBox());
+            String boxId = args.checkjstring(2);
+            return LuaBoundingBoxMeta.create(object.getBoundingBox(boxId));
         }
     }
     

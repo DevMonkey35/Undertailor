@@ -25,14 +25,16 @@
 package me.scarlet.undertailor.collision;
 
 import com.badlogic.gdx.physics.box2d.Body;
-import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
+import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
 
 import java.util.Set;
 
 public interface Collider {
     
     public Body getBody();
-    public BoundingRectangle getBoundingBox();
+    public Set<BoundingBox> getBoundingBoxes();
+    public BoundingBox getBoundingBox(String id);
+    public void setBoundingBox(String id, BoundingBox box);
     public void onCollide(Collider collider);
     public boolean isCollisionIgnored(Collider collider);
     public void setIgnoreCollisionWith(Collider collider, boolean flag);
@@ -41,6 +43,10 @@ public interface Collider {
     public void setOneSidedReaction(boolean flag);
     public Set<Collider> getContacts();
     public default void updateCollision() {
-        this.getBoundingBox().applyFixture(this.getBody());
+        if(this.getBody() != null) {
+            for(BoundingBox box : this.getBoundingBoxes()) {
+                box.applyFixture(this.getBody());
+            }
+        }
     }
 }

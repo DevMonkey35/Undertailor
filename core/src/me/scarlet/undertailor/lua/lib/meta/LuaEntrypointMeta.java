@@ -25,6 +25,7 @@
 package me.scarlet.undertailor.lua.lib.meta;
 
 import com.badlogic.gdx.math.Vector2;
+import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -145,7 +146,7 @@ public class LuaEntrypointMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             Entrypoint entrypoint = check(args.arg1()).getObject();
-            return LuaBoundingBoxMeta.create(entrypoint.getBoundingBox());
+            return LuaBoundingBoxMeta.create((BoundingRectangle) entrypoint.getBoundingBox(null)); // tempfix
         }
     }
 }

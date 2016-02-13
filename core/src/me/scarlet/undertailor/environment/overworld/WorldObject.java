@@ -30,7 +30,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
-import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
+import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
 import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
@@ -38,6 +38,7 @@ import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -68,7 +69,9 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     private boolean canCollide;
     private boolean oneSided;
     
-    private BoundingRectangle boundingBox;
+    //private BoundingRectangle boundingBox;
+    
+    private Map<String, BoundingBox> boundingBoxes;
     private Map<Collider, String> ignoreCollideList;
     
     protected long id;
@@ -76,16 +79,16 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     protected WorldRoom room;
     
     public WorldObject() {
-        this.boundingBox = new BoundingRectangle();
+        this.z = 1;
+        this.scale = 1F;
+        this.height = 0F;
+        this.room = null;
         this.isVisible = true;
         this.animation = null;
-        this.room = null;
-        this.height = 0F;
-        this.scale = 1F;
-        this.z = 1;
         this.oneSided = false;
         this.canCollide = true;
         this.contacts = new HashSet<>();
+        this.boundingBoxes = new HashMap<>();
         
         this.bodyDef = new BodyDef();
         this.ignoreCollideList = new WeakHashMap<>();
@@ -158,8 +161,24 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     
     public void setScale(float scale) {
         this.scale = scale < 0F ? 0F : scale;
-        this.boundingBox.setScale(scale);
-        this.updateCollision();
+        for(BoundingBox box : boundingBoxes.values()) {
+            box.setScale(this.scale);
+        }
+    }
+    
+    @Override
+    public BoundingBox getBoundingBox(String id) {
+        return this.boundingBoxes.get(id);
+    }
+    
+    @Override
+    public void setBoundingBox(String id, BoundingBox box) {
+        if(box == null && boundingBoxes.containsKey(id)) {
+            this.boundingBoxes.get(id).destroyFixture(body);
+            this.boundingBoxes.remove(id);
+        } else {
+            this.boundingBoxes.put(id, box);
+        }
     }
     
     @Override
@@ -241,8 +260,8 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     }
     
     @Override
-    public BoundingRectangle getBoundingBox() {
-        return boundingBox;
+    public Set<BoundingBox> getBoundingBoxes() {
+        return new HashSet<>(this.boundingBoxes.values());
     }
     
     @Override
@@ -269,11 +288,9 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
             Undertailor.getRenderer().setShapeColor(BOX_COLOR_INACTIVE, 1F);
         }
         
-        this.boundingBox.renderBox(body);
-    }
-    
-    public void updateCollision() {
-        this.boundingBox.applyFixture(body);
+        for(BoundingBox box : this.getBoundingBoxes()) {
+            box.renderBox(body);
+        }
     }
     
     public void onPause() {}

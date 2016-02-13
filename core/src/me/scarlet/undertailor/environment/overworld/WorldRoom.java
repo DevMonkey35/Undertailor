@@ -33,6 +33,7 @@ import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.collision.CollisionHandler;
+import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.environment.OverworldController;
 import me.scarlet.undertailor.environment.overworld.map.RoomMapLayer;
@@ -59,6 +60,7 @@ public class WorldRoom implements Disposable {
     public static class Entrypoint implements Collider {
         
         public static final BodyDef ENTRYPOINT_BODY_DEF;
+        public static final String ENTRYPOINT_BOX_ID = "entrypointBox";
         
         static {
             ENTRYPOINT_BODY_DEF = new BodyDef();
@@ -76,10 +78,11 @@ public class WorldRoom implements Disposable {
         private Vector2 spawnloc;
         private String roomTarget;
         private Set<Collider> contacts;
-        private BoundingRectangle boundingBox;
+        private Map<String, BoundingBox> boundingBoxes;
         
         public Entrypoint() {
-            this.boundingBox = new BoundingRectangle();
+            this.boundingBoxes = new HashMap<>();
+            this.boundingBoxes.put(ENTRYPOINT_BOX_ID, new BoundingRectangle());
             this.spawnloc = new Vector2(0, 0);
             this.roomTarget = "";
             this.contacts = new HashSet<>();
@@ -115,7 +118,9 @@ public class WorldRoom implements Disposable {
         
         public void renderBox() {
             Undertailor.getRenderer().setShapeColor(Color.BLUE, 1F);
-            this.boundingBox.renderBox(body);
+            for(BoundingBox box : this.getBoundingBoxes()) {
+                box.renderBox(body);
+            }
         }
         
         @Override
@@ -129,11 +134,9 @@ public class WorldRoom implements Disposable {
         }
         
         @Override
-        public BoundingRectangle getBoundingBox() {
-            return boundingBox;
+        public Set<BoundingBox> getBoundingBoxes() {
+            return new HashSet<>(this.boundingBoxes.values());
         }
-        
-        // TODO lock an overworld controller to the room
         
         @Override
         public void onCollide(Collider collider) {
@@ -166,9 +169,6 @@ public class WorldRoom implements Disposable {
         public boolean isOneSidedReaction() { return true; }
         
         @Override
-        public void setOneSidedReaction(boolean flag) {} // nope
-        
-        @Override
         public boolean isCollisionIgnored(Collider collider) {
             if(this.currentRoom != null) {
                 if(collider instanceof WorldObject && ((WorldObject) collider).getId() == this.currentRoom.getOwningController().getCharacterID()) {
@@ -180,7 +180,16 @@ public class WorldRoom implements Disposable {
         }
         
         @Override
+        public void setOneSidedReaction(boolean flag) {} // nope
+        
+        @Override
         public void setIgnoreCollisionWith(Collider collider, boolean flag) {} // nope
+
+        @Override
+        public BoundingBox getBoundingBox(String id) { return this.boundingBoxes.get(ENTRYPOINT_BOX_ID); } // nope
+
+        @Override
+        public void setBoundingBox(String id, BoundingBox box) {} // nope
     }
     
     private static final TreeSet<Layerable> RETURN_SET;

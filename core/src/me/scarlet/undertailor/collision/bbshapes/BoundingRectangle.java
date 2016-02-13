@@ -39,6 +39,7 @@ public class BoundingRectangle extends AbstractBoundingBox {
     private Vector2 origin;
     private Vector2 dimensions;
     private boolean fixedRotation;
+    private Body targetBody;
     private float rotation;
     private float scale;
     
@@ -48,6 +49,7 @@ public class BoundingRectangle extends AbstractBoundingBox {
         this.dimensions = new Vector2(1, 1);
         this.origin = new Vector2();
         this.fixedRotation = true;
+        this.targetBody = null;
         this.rotation = 0F;
         this.scale = 1.0F;
     }
@@ -85,22 +87,38 @@ public class BoundingRectangle extends AbstractBoundingBox {
     }
     
     @Override
+    public boolean hasTarget() {
+        return this.targetBody != null;
+    }
+    
+    @Override
     public void applyFixture(Body body) {
+        if(this.targetBody == body || !this.hasTarget()) {
+            this.targetBody = body;
+            if(lastFixture != null && body.getFixtureList().contains(lastFixture, true)) {
+                body.destroyFixture(lastFixture);
+            }
+            
+            body.setFixedRotation(fixedRotation);
+            PolygonShape polygon = new PolygonShape();
+            FixtureDef fixDef = new FixtureDef();
+            polygon.setAsBox((dimensions.x * scale) / 2, (dimensions.y * scale) / 2, new Vector2(origin.x * scale, origin.y * scale), rotation);
+            fixDef.isSensor = this.isSensor();
+            fixDef.shape = polygon;
+            fixDef.friction = 0.0F;
+            fixDef.density = 1F;
+            
+            this.lastFixture = body.createFixture(fixDef);
+            polygon.dispose();
+        } else {
+            throw new IllegalArgumentException("cannot reuse bounding object on another body");
+        }
+    }
+    
+    public void destroyFixture(Body body) {
         if(lastFixture != null && body.getFixtureList().contains(lastFixture, true)) {
             body.destroyFixture(lastFixture);
         }
-        
-        body.setFixedRotation(fixedRotation);
-        PolygonShape polygon = new PolygonShape();
-        FixtureDef fixDef = new FixtureDef();
-        polygon.setAsBox((dimensions.x * scale) / 2, (dimensions.y * scale) / 2, new Vector2(origin.x * scale, origin.y * scale), rotation);
-        fixDef.isSensor = this.isSensor();
-        fixDef.shape = polygon;
-        fixDef.friction = 0.0F;
-        fixDef.density = 1F;
-        
-        this.lastFixture = body.createFixture(fixDef);
-        polygon.dispose();
     }
     
     public float[] getVertices() {

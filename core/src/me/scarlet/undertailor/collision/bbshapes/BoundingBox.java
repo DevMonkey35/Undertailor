@@ -24,15 +24,22 @@
 
 package me.scarlet.undertailor.collision.bbshapes;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
 public interface BoundingBox {
     
+    public Vector2 getOrigin();
+    public void setOrigin(float x, float y);
     public boolean canCollide();
     public void setCanCollide(boolean flag);
     public boolean isSensor();
     public void setSensor(boolean flag);
     public void applyFixture(Body body);
+    public void destroyFixture(Body body);
     public void renderBox(Body body);
+    public float getScale();
+    public void setScale(float scale);
+    public boolean hasTarget();
     
 }
