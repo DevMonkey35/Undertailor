@@ -8,6 +8,8 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import me.scarlet.undertailor.Undertailor;
 
+import java.io.File;
+
 public class DesktopLauncher extends Application {
     
     private static boolean runtimeReady;
@@ -17,6 +19,13 @@ public class DesktopLauncher extends Application {
     }
     
     static class TailorThread extends Thread {
+        
+        private File assetDir;
+        
+        public TailorThread(File assetDir) {
+            this.assetDir = assetDir;
+        }
+        
         @Override
         public void run() {
             while(!runtimeReady) {}
@@ -27,7 +36,7 @@ public class DesktopLauncher extends Application {
             config.vSyncEnabled = true;
             config.addIcon("assets/defaultIcon_small.png", Files.FileType.Classpath);
             config.addIcon("assets/defaultIcon.png", Files.FileType.Classpath);
-            new LwjglApplication(new Undertailor(config), config);
+            new LwjglApplication(new Undertailor(config, assetDir), config);
         }
     }
     
@@ -45,8 +54,35 @@ public class DesktopLauncher extends Application {
     }
     
     public static void main (String[] args) {
+        File assetDir;
+        if(args[0].equalsIgnoreCase("-dev")) {
+            assetDir = new File(System.getProperty("user.dir"));
+            System.out.println("setting asset directory to work directory");
+        } else {
+            StringBuilder builder = new StringBuilder();
+            for(int i = 0; i < args.length; i++) {
+                builder.append(args[i]);
+            }
+            
+            String path = builder.toString();
+            if(path.startsWith("\"")) {
+                path = path.substring(1);
+            }
+            
+            if(path.endsWith("\"")) {
+                path = path.substring(0, path.length() - 1);
+            }
+            
+            assetDir = new File(path);
+            if(!assetDir.exists() || !assetDir.isDirectory()) {
+                throw new IllegalArgumentException("file at path \"" + path + "\" wasn't existing or wasn't a directory");
+            }
+            
+            System.out.println("setting asset directory to dir at path \"" + path + "\"");
+        }
+        
         initRuntime();
-        new TailorThread().start();
+        new TailorThread(assetDir).start();
         Application.launch(args);
     }
 

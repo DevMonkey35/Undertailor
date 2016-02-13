@@ -83,6 +83,7 @@ import java.io.InputStream;
 public class Undertailor extends ApplicationAdapter {
     
     public static Undertailor instance;
+    public static File ASSETS_DIRECTORY;
     public static final Rectangle RENDER_AREA;
     public static final String MANAGER_TAG = "tailor";
     public static final LuaLibrary[] LIBS = new LuaLibrary[] {
@@ -103,6 +104,20 @@ public class Undertailor extends ApplicationAdapter {
     
     static {
         RENDER_AREA = new Rectangle(0, 0, 640, 480);
+        
+        try {
+            // TODO allow this to be changeable through options
+            ASSETS_DIRECTORY = new File(Undertailor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+        } catch(Exception e) {
+            System.out.println("Failed to find jar directory. Program will exit.");
+            e.printStackTrace();
+            System.exit(0);
+            
+            // shut the fuck up build errors it doesnt need to be initialized
+            RuntimeException thrown = new RuntimeException();
+            thrown.initCause(e);
+            throw thrown;
+        }
     }
     
     public static EnvironmentManager getEnvironmentManager() {
@@ -169,7 +184,11 @@ public class Undertailor extends ApplicationAdapter {
     private EnvironmentManager environmentManager;
     private InputRetriever inputRetriever;
     
-    public Undertailor(LwjglApplicationConfiguration config) {
+    public Undertailor(LwjglApplicationConfiguration config, File assetDir) {
+        if(assetDir != null && assetDir.isDirectory()) {
+            Undertailor.ASSETS_DIRECTORY = assetDir;
+        }
+        
         this.config = config;
         config.foregroundFPS = 60;
         config.backgroundFPS = 60;
@@ -214,30 +233,30 @@ public class Undertailor extends ApplicationAdapter {
         this.sheetManager = new SpriteSheetManager();
         this.animationManager = new AnimationManager();
         
-        fontManager.loadObjects(new File("fonts/"));
-        audioManager.loadMusic(new File("music/"));
-        audioManager.loadSounds(new File("sounds/"));
-        sheetManager.loadObjects(new File("sprites/"));
-        tilemapManager.loadObjects(new File("tilemaps/"));
-        styleManager.loadObjects(new File("fonts/styles/"));
-        animationManager.loadObjects(new File("animation/"));
+        fontManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "fonts/"));
+        audioManager.loadMusic(new File(Undertailor.ASSETS_DIRECTORY, "music/"));
+        audioManager.loadSounds(new File(Undertailor.ASSETS_DIRECTORY, "sounds/"));
+        sheetManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "sprites/"));
+        tilemapManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "tilemaps/"));
+        styleManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "fonts/styles/"));
+        animationManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "animation/"));
         
         this.environmentManager = new EnvironmentManager();
         this.inputRetriever = new InputRetriever();
         
         Gdx.input.setInputProcessor(inputRetriever);
-        environmentManager.getUIComponentLoader().loadComponents(new File("scripts/uicomponent/"));
-        environmentManager.getWorldObjectLoader().loadObjects(new File("scripts/objects/"));
-        environmentManager.getRoomLoader().loadScripts(new File("scripts/rooms/"));
-        environmentManager.getRoomLoader().loadObjects(new File("rooms/"));
+        environmentManager.getUIComponentLoader().loadComponents(new File(Undertailor.ASSETS_DIRECTORY, "scripts/uicomponent/"));
+        environmentManager.getWorldObjectLoader().loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "scripts/objects/"));
+        environmentManager.getRoomLoader().loadScripts(new File(Undertailor.ASSETS_DIRECTORY, "scripts/rooms/"));
+        environmentManager.getRoomLoader().loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "rooms/"));
         
         Color cc = Color.BLACK;
         Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
         
-        File mainFile = new File("main.lua");
+        File mainFile = new File(Undertailor.ASSETS_DIRECTORY, "main.lua");
         if(mainFile.exists()) {
             Globals globals = scriptManager.generateGlobals(true);
-            globals.loadfile("main.lua").invoke();
+            globals.loadfile(mainFile.getAbsolutePath()).invoke();
         } else {
             error("tailor", "main.lua file not found; no start code was executed");
         }

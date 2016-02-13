@@ -63,7 +63,7 @@ public class BaseLib extends LuaLibrary {
     private Globals globals;
     
     public BaseLib() {
-        super(null, 
+        super(null,
                 new loadscript(),
                 new execute(),
                 new print());
@@ -172,7 +172,7 @@ public class BaseLib extends LuaLibrary {
     }
     
     public LuaTable loadFile(String path) throws LuaError {
-        File file = new File(System.getProperty("user.dir") + File.separatorChar + path);
+        File file = new File(Undertailor.ASSETS_DIRECTORY, path);
         InputStream input = globals.finder.findResource(file.getAbsolutePath());
         if (input == null)
             throw new LuaError("file at " + file.getAbsolutePath() + " was not found");
