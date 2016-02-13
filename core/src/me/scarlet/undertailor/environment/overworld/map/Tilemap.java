@@ -28,12 +28,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.environment.overworld.map.Tile.TileState;
 import me.scarlet.undertailor.exception.TextureTilingException;
+import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
 import me.scarlet.undertailor.manager.TilemapManager;
-import me.scarlet.undertailor.util.ConfigurateUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 
@@ -92,29 +91,44 @@ public class Tilemap implements Disposable {
         for(Entry<Object, ? extends ConfigurationNode> entry : map.entrySet()) {
             ConfigurationNode tileConfig = entry.getValue();
             String tileName = tileConfig.getKey().toString();
-            String defaultState = null;
-            Tile tile = new Tile(tileName);
             
-            for(int i = 0; i < ILLEGAL_CHARACTERS.length(); i++) {
-                char ch = ILLEGAL_CHARACTERS.charAt(i);
-                if(tileName.contains(ch + "")) {
-                    throw new ConfigurationException("tile name \"" + tileName + "\" contained illegal character '" + ch + "'");
+            Tile tile;
+            String value = tileConfig.getString();
+            try {
+                tile = new Tile(tileName, 0, this.sheet.getSprite(Integer.parseInt(value)));
+            } catch(NumberFormatException e) {
+                float frameTime = 0.15F;
+                String[] paramSplit = value.split(";");
+                String[] frames;
+                if(paramSplit.length == 2) { // 
+                    try {
+                        frameTime = Float.parseFloat(paramSplit[0]);
+                        frames = paramSplit[1].split(",");
+                    } catch(NumberFormatException e2) {
+                        Undertailor.instance.error(TilemapManager.MANAGER_TAG, "failed to load tile " + this.name + ":" + tileName + "; bad tile data");
+                        continue;
+                    }
+                } else if(paramSplit.length == 1) {
+                    frames = paramSplit[0].split(",");
+                } else {
+                    Undertailor.instance.error(TilemapManager.MANAGER_TAG, "failed to load tile " + this.name + ":" + tileName + "; bad tile data");
+                    continue;
                 }
+                
+                Sprite[] sprites = new Sprite[frames.length];
+                for(int i = 0; i < sprites.length; i++) {
+                    try {
+                        sprites[i] = this.sheet.getSprite(Integer.parseInt(frames[i]));
+                    } catch(NumberFormatException e2) {
+                        Undertailor.instance.error(TilemapManager.MANAGER_TAG, "failed to load tile " + this.name + ":" + tileName + "; bad tile data");
+                        continue;
+                    }
+                }
+                
+                tile = new Tile(tileName, (long) (frameTime * 1000.0), sprites);
             }
             
-            Map<Object, ? extends ConfigurationNode> states = tileConfig.getNode("states").getChildrenMap();
-            for(Entry<Object, ? extends ConfigurationNode> stateEntry : states.entrySet()) {
-                TileState state = new TileState(stateEntry.getKey().toString(), tile, this.sheet.getSprite(ConfigurateUtil.processInt(stateEntry.getValue().getNode("sprite"), null)));
-                tile.addState(state);
-                
-                if(defaultState == null) {
-                    defaultState = state.getStateName();
-                    tile.setCurrentState(defaultState);
-                }
-                
-                Undertailor.instance.debug(TilemapManager.MANAGER_TAG, "loading tilestate " + tileName + ":" + state.getStateName());
-            }
-            
+            System.out.println(tile.getTileName() + ", " + tile.getFrameTime());
             Undertailor.instance.debug(TilemapManager.MANAGER_TAG, "loaded tile " + this.name + ":" + tileName);
             this.tiles.put(tileName, tile);
         }

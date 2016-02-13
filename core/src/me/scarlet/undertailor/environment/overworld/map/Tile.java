@@ -24,89 +24,67 @@
 
 package me.scarlet.undertailor.environment.overworld.map;
 
+import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.gfx.Sprite;
-import ninja.leaping.configurate.ConfigurationNode;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Tile implements Cloneable {
     
-    public static class TileState {
-        
-        public static TileState fromConfig(ConfigurationNode config) {
-            return null; // TODO;
-        }
-        
-        private Tile parent;
-        private Sprite sprite; // TODO tile animation
-        private String stateName;
-        
-        public TileState(String stateName, Tile parent, Sprite sprite) {
-            this.sprite = sprite;
-            this.parent = parent;
-            this.stateName = stateName;
-        }
-        
-        public Tile getParent() {
-            return parent;
-        }
-        
-        public String getStateName() {
-            return stateName;
-        }
-        
-        public Sprite getSprite() {
-            return sprite;
-        }
-    }
+    public static final long GLOBAL_TILE_START_TIME;
     
     private String tileName;
-    private String currentState;
-    private Map<String, TileState> states;
+    private long frameTime;
+    private Sprite[] sprites;
+    
+    static {
+        GLOBAL_TILE_START_TIME = TimeUtils.millis();
+    }
     
     private Tile() {
         this.tileName = null;
-        this.currentState = null;
-        this.states = new HashMap<String, TileState>();
+        this.frameTime = 150; 
     }
     
-    public Tile(String tileName) {
+    public Tile(String tileName, long frameTime, Sprite... sprites) {
         this.tileName = tileName;
-        this.currentState = null;
-        this.states = new HashMap<String, TileState>();
+        this.frameTime = frameTime;
+        this.sprites = sprites;
     }
     
     public String getTileName() {
         return tileName;
     }
     
-    public void addState(TileState state) {
-        this.addStates(state);
+    public void draw(float xPos, float yPos) {
+        sprites[getCurrentSprite()].draw(xPos, yPos, 1F, 1F, 0F, false, false, 20, 20, true);
     }
     
-    public void addStates(TileState... states) {
-        for(TileState state : states) {
-            this.states.put(state.getStateName(), state);
-        }
-    }
-    
-    public TileState getCurrentState() {
-        return states.get(currentState);
-    }
-    
-    public void setCurrentState(String stateId) {
-        if(states.containsKey(stateId)) {
-            this.currentState = stateId;
-        }
+    public float getFrameTime() {
+        return this.frameTime;
     }
     
     public Tile clone() {
         Tile returned = new Tile();
         returned.tileName = this.tileName;
-        returned.currentState = this.currentState;
-        returned.states = new HashMap<>(this.states);
+        returned.frameTime = this.frameTime;
+        returned.sprites = this.sprites;
         
         return returned;
+    }
+    
+    private int getCurrentSprite() {
+        if(this.frameTime <= 0) {
+            return 0;
+        }
+        
+        double runtime = TimeUtils.timeSinceMillis(GLOBAL_TILE_START_TIME);
+        
+        // shave runtime
+        double animationTotalTime = frameTime * sprites.length;
+        
+        if(runtime >= animationTotalTime) {
+            runtime -= Math.floor(runtime / animationTotalTime) * animationTotalTime;
+        }
+        
+        return (int) Math.floor(runtime / frameTime);
     }
 }

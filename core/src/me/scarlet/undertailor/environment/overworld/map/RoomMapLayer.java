@@ -190,7 +190,7 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
                     if(tile != null) {
                         float xPos = x * 20F;
                         float yPos = y * 20F;
-                        tile.getCurrentState().getSprite().draw(xPos, yPos, 1F, 1F, 0F, false, false, 20, 20, true);
+                        tile.draw(xPos, yPos);
                     }
                 }
             }
