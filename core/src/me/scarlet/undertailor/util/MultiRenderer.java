@@ -212,6 +212,25 @@ public class MultiRenderer {
         renderer.rectLine(begin, end, thickness);
     }
     
+    public void drawArc(Vector2 pos, float radius, float start, float degrees) {
+        this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Filled) {
+            renderer.set(ShapeType.Filled);
+        }
+        
+        renderer.arc(pos.x, pos.y, radius, start, degrees);
+    }
+    
+    
+    public void drawArc(Vector2 pos, float radius, float start, float degrees, int segments) {
+        this.startDrawingShape();
+        if(renderer.getCurrentType() != ShapeType.Filled) {
+            renderer.set(ShapeType.Filled);
+        }
+        
+        renderer.arc(pos.x, pos.y, radius, start, degrees, segments);
+    }
+    
     public void drawRectangle(Vector2 pos, float width, float height, float lineThickness) {
         this.startDrawingShape();
         if(renderer.getCurrentType() != ShapeType.Filled) {

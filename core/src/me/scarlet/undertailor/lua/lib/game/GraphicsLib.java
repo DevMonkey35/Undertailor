@@ -95,6 +95,27 @@ public class GraphicsLib extends LuaLibrary {
         }
     }
     
+    static class drawArc extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 5, 6);
+            
+            Vector2 pos = new Vector2(new Float(args.checkdouble(1)), new Float(args.checkdouble(2)));
+            float radius = new Float(args.checkdouble(3));
+            float start = new Float(args.checkdouble(4));
+            float degrees = new Float(args.checkdouble(5));
+            int segments = args.optint(6, -1);
+            
+            if(segments <= -1) {
+                Undertailor.getRenderer().drawArc(pos, radius, start, degrees);
+            } else {
+                Undertailor.getRenderer().drawArc(pos, radius, start, degrees, segments);
+            }
+            
+            return LuaValue.NIL;
+        }
+    }
+    
     static class drawLine extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
