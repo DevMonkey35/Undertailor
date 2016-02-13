@@ -142,12 +142,23 @@ public class LuaUtil {
     }
     
     @SuppressWarnings("unchecked")
-    public static <T extends LuaValue> T checkType(LuaValue value, String typename) {
-        if(!isOfType(value, typename)) {
-            throw new LuaError("expected " + typename + ", got " + value.typename());
+    public static <T extends LuaValue> T checkType(LuaValue value, String... typenames) {
+        for(String typename : typenames) {
+            if(isOfType(value, typename)) {
+                return (T) value;
+            }
         }
         
-        return (T) value;
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < typenames.length; i++) {
+            if(i == typenames.length - 1) {
+                sb.append(", or " + typenames[i]);
+            } else {
+                sb.append(", " + typenames[i]);
+            }
+        }
+        
+        throw new LuaError("expected " + sb.toString() + ", got " + value.typename());
     }
     
     public static boolean isOfType(LuaValue value, String typename) {
