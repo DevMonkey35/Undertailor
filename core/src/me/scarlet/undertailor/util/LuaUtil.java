@@ -70,6 +70,24 @@ public class LuaUtil {
         }
     }
     
+    public static boolean isArrayTable(LuaTable table) {
+        LuaValue key = LuaValue.NIL;
+        while(true) {
+            Varargs pair = table.next(key);
+            if(pair.isnil(1)) {
+                break;
+            }
+            
+            if(!pair.arg1().isint()) {
+                return false;
+            }
+            
+            key = pair.arg1();
+        }
+        
+        return true;
+    }
+    
     public static Map<String, LuaFunction> checkImplementation(Globals table, File scriptFile, String[] requiredMethods) throws LuaScriptException {
         Map<String, LuaFunction> functions = getScriptFunctions(table, scriptFile);
         if(requiredMethods != null) {
