@@ -138,12 +138,20 @@ public class LuaLibrary extends TwoArgFunction implements LuaLibraryComponent {
     public LuaLibrary(String libName, LuaLibraryComponent... values) {
         this.libName = libName;
         this.values = new HashSet<LuaLibraryComponent>();
-        for(LuaLibraryComponent value : values) {
-            if(value instanceof LibraryFunction) {
-                ((LibraryFunction) value).lib =  this;
+        addComponents(values);
+    }
+    
+    public void addComponents(LuaLibraryComponent... components) {
+        for(LuaLibraryComponent component : components) {
+            if(this.values.contains(component)) {
+                continue;
             }
             
-            this.values.add(value);
+            if(component instanceof LibraryFunction) {
+                ((LibraryFunction) component).lib =  this;
+            }
+            
+            this.values.add(component);
         }
     }
     
