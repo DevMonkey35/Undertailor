@@ -24,6 +24,7 @@
 
 package me.scarlet.undertailor.util;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -36,9 +37,11 @@ import com.badlogic.gdx.math.Vector2;
 
 public class MultiRenderer {
     
+    private Color clearColor;
     private SpriteBatch batch;
     private ShapeRenderer renderer;
     public MultiRenderer() {
+        this.clearColor = Color.BLACK;
         this.batch = new SpriteBatch();
         this.renderer = new ShapeRenderer();
     }
@@ -59,6 +62,18 @@ public class MultiRenderer {
     
     public ShapeRenderer getShapeRenderer() {
         return renderer;
+    }
+    
+    public Color getClearColor() {
+        return this.clearColor;
+    }
+    
+    public void setClearColor(Color color) {
+        this.clearColor = (color == null ? Color.BLACK : color);
+    }
+    
+    public void clear() {
+        Gdx.gl.glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0F);
     }
     
     public void flush() {

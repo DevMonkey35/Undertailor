@@ -29,7 +29,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Box2D;
@@ -250,8 +249,7 @@ public class Undertailor extends ApplicationAdapter {
         environmentManager.getRoomLoader().loadScripts(new File(Undertailor.ASSETS_DIRECTORY, "scripts/rooms/"));
         environmentManager.getRoomLoader().loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "rooms/"));
         
-        Color cc = Color.BLACK;
-        Gdx.gl.glClearColor(cc.r, cc.g, cc.b, cc.a);
+        renderer.clear();
         
         File mainFile = new File(Undertailor.ASSETS_DIRECTORY, "main.lua");
         if(mainFile.exists()) {

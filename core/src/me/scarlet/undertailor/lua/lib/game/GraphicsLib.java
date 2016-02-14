@@ -38,6 +38,8 @@ import org.luaj.vm2.Varargs;
 public class GraphicsLib extends LuaLibrary {
     
     public static final LuaLibraryComponent[] COMPONENTS = {
+            new getClearColor(),
+            new setClearColor(),
             new getSpriteColor(),
             new setSpriteColor(),
             new getShapeColor(),
@@ -53,6 +55,25 @@ public class GraphicsLib extends LuaLibrary {
     
     public GraphicsLib() {
         super("graphics", COMPONENTS);
+    }
+    
+    static class getClearColor extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            return ColorsLib.create(Undertailor.getRenderer().getClearColor());
+        }
+    }
+    
+    static class setClearColor extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            Color color = ColorsLib.check(args.arg(1)).getObject();
+            Undertailor.getRenderer().setClearColor(color);
+            return LuaValue.NIL;
+        }
     }
     
     static class getSpriteColor extends LibraryFunction {
