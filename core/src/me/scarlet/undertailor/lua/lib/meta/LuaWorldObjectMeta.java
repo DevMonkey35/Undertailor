@@ -56,6 +56,8 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             new updateCollision(),
             new getHeight(),
             new setHeight(),
+            new getRotation(),
+            new setRotation(),
             new isIgnoringCollisionWith(),
             new setIgnoringCollisionWith(),
             new isOneSidedReaction(),
@@ -96,6 +98,28 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             
             WorldObject object = check(args.arg1()).getObject();
             return LuaValue.valueOf(object.getId());
+        }
+    }
+    
+    static class getRotation extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            return LuaValue.valueOf(object.getRotation());
+        }
+    }
+    
+    static class setRotation extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            WorldObject object = check(args.arg1()).getObject();
+            float rotation = new Float(args.checkdouble(2));
+            object.setRotation(rotation);
+            return LuaValue.NIL;
         }
     }
     
@@ -368,10 +392,11 @@ public class LuaWorldObjectMeta extends LuaLibrary {
     static class getAnimation extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
+            LuaUtil.checkArguments(args, 2, 2);
             
             WorldObject object = check(args.arg1()).getObject();
-            AnimationData anim = object.getCurrentAnimation();
+            String animationId = args.checkjstring(2);
+            AnimationData anim = object.getAnimation(animationId);
             if(anim == null) {
                 return LuaValue.NIL;
             } else {
@@ -383,11 +408,12 @@ public class LuaWorldObjectMeta extends LuaLibrary {
     static class setAnimation extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, 2);
+            LuaUtil.checkArguments(args, 3, 3);
             
             WorldObject object = check(args.arg(1)).getObject();
-            AnimationData data = AnimationLib.check(args.arg(2)).getObject();
-            object.setCurrentAnimation(data);
+            String animationId = args.checkjstring(2);
+            AnimationData anim = args.isnil(3) ? null : AnimationLib.check(args.arg(3)).getObject();
+            object.setAnimation(animationId, anim);
             return LuaValue.NIL;
         }
     }

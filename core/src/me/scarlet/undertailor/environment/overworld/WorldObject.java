@@ -62,12 +62,14 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     private float scale;
     private boolean persists;
     private boolean isVisible;
-    private AnimationData animation;
+    //private AnimationData animation;
     private float height;
     private Set<Collider> contacts;
     private BodyDef bodyDef;
     private boolean canCollide;
     private boolean oneSided;
+    
+    private Map<String, AnimationData> animations;
     
     private Map<String, BoundingBox> boundingBoxes;
     private Map<Collider, String> ignoreCollideList;
@@ -82,10 +84,10 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         this.height = 0F;
         this.room = null;
         this.isVisible = true;
-        this.animation = null;
         this.oneSided = false;
         this.canCollide = true;
         this.contacts = new HashSet<>();
+        this.animations = new HashMap<>();
         this.boundingBoxes = new HashMap<>();
         
         this.bodyDef = new BodyDef();
@@ -249,12 +251,16 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         room.removeObject(id);
     }
     
-    public AnimationData getCurrentAnimation() {
-        return animation;
+    public AnimationData getAnimation(String id) {
+        return this.animations.get(id);
     }
     
-    public void setCurrentAnimation(AnimationData data) {
-        this.animation = data;
+    public void setAnimation(String id, AnimationData data) {
+        if(data == null) {
+            if(this.animations.containsKey(id)) this.animations.remove(id);
+        } else {
+            this.animations.put(id, data);
+        }
     }
     
     @Override
@@ -274,8 +280,10 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     
     public void render() {
         onRender();
-        if(animation != null && isVisible) {
-            animation.drawCurrentFrame(body.getPosition().x, body.getPosition().y + height, scale, (float) Math.toDegrees(body.getAngle()));
+        if(isVisible) {
+            for(AnimationData animation : this.animations.values()) {
+                animation.drawCurrentFrame(body.getPosition().x, body.getPosition().y + height, scale, (float) Math.toDegrees(body.getAngle()));
+            }
         }
     }
     
