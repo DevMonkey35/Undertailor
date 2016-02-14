@@ -40,7 +40,6 @@ public class BoundingRectangle extends AbstractBoundingBox {
     private Vector2 dimensions;
     private boolean fixedRotation;
     private Body targetBody;
-    private float rotation;
     private float scale;
     
     private Fixture lastFixture;
@@ -50,7 +49,6 @@ public class BoundingRectangle extends AbstractBoundingBox {
         this.offset = new Vector2();
         this.fixedRotation = true;
         this.targetBody = null;
-        this.rotation = 0F;
         this.scale = 1.0F;
     }
     
@@ -102,7 +100,7 @@ public class BoundingRectangle extends AbstractBoundingBox {
             body.setFixedRotation(fixedRotation);
             PolygonShape polygon = new PolygonShape();
             FixtureDef fixDef = new FixtureDef();
-            polygon.setAsBox((dimensions.x * scale) / 2, (dimensions.y * scale) / 2, new Vector2(offset.x * scale, offset.y * scale), rotation);
+            polygon.setAsBox((dimensions.x * scale) / 2, (dimensions.y * scale) / 2, new Vector2(offset.x * scale, offset.y * scale), body.getAngle());
             fixDef.isSensor = this.isSensor();
             fixDef.shape = polygon;
             fixDef.friction = 0.0F;

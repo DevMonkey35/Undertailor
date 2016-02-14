@@ -24,6 +24,7 @@
 
 package me.scarlet.undertailor.lua.lib.game;
 
+import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Animation;
 import me.scarlet.undertailor.gfx.AnimationData;
@@ -48,6 +49,9 @@ public class AnimationLib extends LuaLibrary {
     
     public static final LuaLibraryComponent[] COMPONENTS = {
             new createAnimation(),
+            
+            new getOffset(),
+            new setOffset(),
             new getRuntime(),
             new setRuntime(),
             new isPlaying(),
@@ -86,6 +90,34 @@ public class AnimationLib extends LuaLibrary {
     }
     
     // object methods / metatable
+    
+    static class getOffset extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            AnimationData anim = check(args.arg1()).getObject();
+            Vector2 pos = anim.getOffset();
+            return LuaValue.varargsOf(new LuaValue[] {
+                    LuaValue.valueOf(pos.x),
+                    LuaValue.valueOf(pos.y)});
+        }
+    }
+    
+    static class setOffset extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            AnimationData anim = check(args.arg1()).getObject();
+            Vector2 offset = anim.getOffset();
+            float x = new Float(args.optdouble(2, offset.x));
+            float y = new Float(args.optdouble(3, offset.y));
+            
+            anim.setOffset(x, y);
+            return LuaValue.NIL;
+        }
+    }
     
     static class getRuntime extends LibraryFunction {
         @Override

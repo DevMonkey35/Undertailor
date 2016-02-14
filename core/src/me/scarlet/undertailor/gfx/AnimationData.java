@@ -1,5 +1,6 @@
 package me.scarlet.undertailor.gfx;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 
@@ -7,6 +8,7 @@ public class AnimationData {
     
     private long pauseTime;
     private long startTime;
+    private Vector2 offset;
     private boolean looping;
     private String spriteset;
     private Animation<KeyFrame> anim;
@@ -18,11 +20,20 @@ public class AnimationData {
         this.looping = animation.isLooping();
         this.startTime = -1;
         this.pauseTime = -1;
+        this.offset = new Vector2(0, 0);
         this.spriteset = AnimationSet.DEFAULT_SPRITESET;
     }
     
     public Animation<KeyFrame> getReferenceAnimation() {
         return this.anim;
+    }
+    
+    public Vector2 getOffset() {
+        return this.offset;
+    }
+    
+    public void setOffset(float x, float y) {
+        this.offset.set(x, y);
     }
     
     public String getSpriteSetName() {
@@ -104,6 +115,25 @@ public class AnimationData {
     
     public void drawCurrentFrame(float posX, float posY, float scale, float rotation) {
         KeyFrame frame = this.anim.getFrame(this.getRuntime(), this.looping);
+        if(rotation == 0) {
+            posX += offset.x;
+            posY += offset.y;
+        } else if(rotation == 180) {
+            posX -= offset.x;
+            posY -= offset.y;
+        } else if(offset.x != 0 || offset.y != 0) {
+            double offPosX = posX + offset.x;
+            double offPosY = posY + offset.y;
+            double a = offPosX - posX;
+            double b = offPosY - posY;
+            
+            double distance = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+            double currentAngle = Math.atan((b) / (a));
+            float radRotation = (float) Math.toRadians(rotation);
+            posX += new Float(distance * Math.cos(radRotation + currentAngle));
+            posY += new Float(distance * Math.sin(radRotation + currentAngle));
+        }
+        
         this.anim.drawFrame(frame, spriteset, posX, posY, scale, rotation);
     }
 }
