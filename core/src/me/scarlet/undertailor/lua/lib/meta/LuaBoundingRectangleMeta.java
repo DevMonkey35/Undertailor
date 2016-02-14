@@ -46,8 +46,6 @@ public class LuaBoundingRectangleMeta extends LuaBoundingBoxMeta {
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
             new getDimensions(),
             new setDimensions(),
-            new getOrigin(),
-            new setOrigin(),
             new getVertices()
     };
     
@@ -81,34 +79,6 @@ public class LuaBoundingRectangleMeta extends LuaBoundingBoxMeta {
             float width = new Float(args.optdouble(2, dimensions.x));
             float height = new Float(args.optdouble(3, dimensions.y));
             box.setDimensions(width, height);
-            return LuaValue.NIL;
-        }
-    }
-    
-    static class getOrigin extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            
-            BoundingRectangle box = check(args.arg(1)).getObject();
-            Vector2 origin = box.getOrigin();
-            return LuaValue.varargsOf(new LuaValue[] {
-                    LuaValue.valueOf(origin.x),
-                    LuaValue.valueOf(origin.y)
-            });
-        }
-    }
-    
-    static class setOrigin extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, 3);
-            
-            BoundingRectangle box = check(args.arg1()).getObject();
-            Vector2 origin = box.getOrigin();
-            float x = new Float(args.optdouble(2, origin.x));
-            float y = new Float(args.optdouble(3, origin.y));
-            box.setOrigin(x, y);
             return LuaValue.NIL;
         }
     }

@@ -29,8 +29,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 public interface BoundingBox {
     
-    public Vector2 getOrigin();
-    public void setOrigin(float x, float y);
+    public Vector2 getOffset();
+    public void setOffset(float x, float y);
     public boolean canCollide();
     public void setCanCollide(boolean flag);
     public boolean isSensor();

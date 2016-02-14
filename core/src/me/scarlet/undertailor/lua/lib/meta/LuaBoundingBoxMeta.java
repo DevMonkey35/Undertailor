@@ -24,6 +24,7 @@
 
 package me.scarlet.undertailor.lua.lib.meta;
 
+import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
 import me.scarlet.undertailor.collision.bbshapes.BoundingCircle;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
@@ -50,12 +51,42 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
     }
     
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
+            new getOffset(),
+            new setOffset(),
             new isSensor(),
             new setSensor()
     };
     
     public LuaBoundingBoxMeta() {
         super(null, COMPONENTS);
+    }
+    
+    static class getOffset extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            BoundingBox box = check(args.arg(1)).getObject();
+            Vector2 offset = box.getOffset();
+            return LuaValue.varargsOf(new LuaValue[] {
+                    LuaValue.valueOf(offset.x),
+                    LuaValue.valueOf(offset.y)
+            });
+        }
+    }
+    
+    static class setOffset extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 3);
+            
+            BoundingBox box = check(args.arg1()).getObject();
+            Vector2 offset = box.getOffset();
+            float x = new Float(args.optdouble(2, offset.x));
+            float y = new Float(args.optdouble(3, offset.y));
+            box.setOffset(x, y);
+            return LuaValue.NIL;
+        }
     }
     
     static class isSensor extends LibraryFunction {

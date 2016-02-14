@@ -36,7 +36,7 @@ import me.scarlet.undertailor.Undertailor;
  */
 public class BoundingRectangle extends AbstractBoundingBox {
     
-    private Vector2 origin;
+    private Vector2 offset;
     private Vector2 dimensions;
     private boolean fixedRotation;
     private Body targetBody;
@@ -47,7 +47,7 @@ public class BoundingRectangle extends AbstractBoundingBox {
     
     public BoundingRectangle() {
         this.dimensions = new Vector2(1, 1);
-        this.origin = new Vector2();
+        this.offset = new Vector2();
         this.fixedRotation = true;
         this.targetBody = null;
         this.rotation = 0F;
@@ -62,12 +62,12 @@ public class BoundingRectangle extends AbstractBoundingBox {
         this.dimensions.set(x, y);
     }
     
-    public Vector2 getOrigin() {
-        return this.origin;
+    public Vector2 getOffset() {
+        return this.offset;
     }
     
-    public void setOrigin(float x, float y) {
-        this.origin.set(x, y);
+    public void setOffset(float x, float y) {
+        this.offset.set(x, y);
     }
     
     public boolean isFixedRotation() {
@@ -102,7 +102,7 @@ public class BoundingRectangle extends AbstractBoundingBox {
             body.setFixedRotation(fixedRotation);
             PolygonShape polygon = new PolygonShape();
             FixtureDef fixDef = new FixtureDef();
-            polygon.setAsBox((dimensions.x * scale) / 2, (dimensions.y * scale) / 2, new Vector2(origin.x * scale, origin.y * scale), rotation);
+            polygon.setAsBox((dimensions.x * scale) / 2, (dimensions.y * scale) / 2, new Vector2(offset.x * scale, offset.y * scale), rotation);
             fixDef.isSensor = this.isSensor();
             fixDef.shape = polygon;
             fixDef.friction = 0.0F;

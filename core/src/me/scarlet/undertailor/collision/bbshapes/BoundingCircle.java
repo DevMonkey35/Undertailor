@@ -76,12 +76,12 @@ public class BoundingCircle extends AbstractBoundingBox {
     }
     
     @Override
-    public Vector2 getOrigin() {
+    public Vector2 getOffset() {
         return origin;
     }
     
     @Override
-    public void setOrigin(float x, float y) {
+    public void setOffset(float x, float y) {
         this.origin.set(x, y);
     }
     

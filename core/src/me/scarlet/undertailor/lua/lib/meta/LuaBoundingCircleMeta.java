@@ -24,7 +24,6 @@
 
 package me.scarlet.undertailor.lua.lib.meta;
 
-import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.collision.bbshapes.BoundingCircle;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
@@ -45,9 +44,7 @@ public class LuaBoundingCircleMeta extends LuaBoundingBoxMeta {
     
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
             new getRadius(),
-            new setRadius(),
-            new getOrigin(),
-            new setOrigin()
+            new setRadius()
     };
     
     public LuaBoundingCircleMeta() {
@@ -73,34 +70,6 @@ public class LuaBoundingCircleMeta extends LuaBoundingBoxMeta {
             
             BoundingCircle circle = check(args.arg(1)).getObject();
             circle.setRadius(new Float(args.checkdouble(2)));
-            return LuaValue.NIL;
-        }
-    }
-    
-    static class getOrigin extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            
-            BoundingCircle circle = check(args.arg(1)).getObject();
-            Vector2 origin = circle.getOrigin();
-            return LuaValue.varargsOf(new LuaValue[] {
-                    LuaValue.valueOf(origin.x),
-                    LuaValue.valueOf(origin.y)
-            });
-        }
-    }
-    
-    static class setOrigin extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, 3);
-            
-            BoundingCircle circle = check(args.arg1()).getObject();
-            Vector2 origin = circle.getOrigin();
-            float x = new Float(args.optdouble(2, origin.x));
-            float y = new Float(args.optdouble(3, origin.y));
-            circle.setOrigin(x, y);
             return LuaValue.NIL;
         }
     }
