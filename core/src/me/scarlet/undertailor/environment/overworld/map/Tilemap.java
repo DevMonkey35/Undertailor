@@ -128,7 +128,6 @@ public class Tilemap implements Disposable {
                 tile = new Tile(tileName, (long) (frameTime * 1000.0), sprites);
             }
             
-            System.out.println(tile.getTileName() + ", " + tile.getFrameTime());
             Undertailor.instance.debug(TilemapManager.MANAGER_TAG, "loaded tile " + this.name + ":" + tileName);
             this.tiles.put(tileName, tile);
         }

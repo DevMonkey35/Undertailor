@@ -333,10 +333,6 @@ public class WorldRoom implements Disposable {
                 for(Collider collider : object.getContacts()) {
                     if(collider.canCollide() && !collider.isOneSidedReaction() && !object.isCollisionIgnored(collider)) {
                         object.onCollide(collider);
-                    } else {
-                        if(collider instanceof WorldObject) {
-                            System.out.println(object.getObjectName() + " ignored collision with " + ((WorldObject) collider).getObjectName());
-                        }
                     }
                 }
             }

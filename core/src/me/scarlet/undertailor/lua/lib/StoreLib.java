@@ -215,7 +215,6 @@ public class StoreLib extends LuaLibrary {
             }
             
             if(tables.get(key) == null) {
-                System.out.println("NIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIL");
                 return LuaValue.NIL;
             }
             
