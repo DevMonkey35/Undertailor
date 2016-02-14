@@ -61,6 +61,7 @@ public class WorldObjectImplementable implements LuaImplementable<File, WorldObj
     public static final String IMPLFUNCTION_ONPERSIST = "onPersist";   // onPersist(self)
     public static final String IMPLFUNCTION_ONCOLLIDE = "onCollide";   // onCollide(self, object)
     public static final String IMPLFUNCTION_ONINTERACT = "onInteract"; // onInteract(self, object)
+    public static final String IMPLFUNCTION_ONREGISTER = "onRegister"; // onRegister(self, id, room)
     
     public static final String[] REQUIRED_FUNCTIONS = {IMPLFUNCTION_CREATE};
     public static final String[] FUNCTIONS = {IMPLFUNCTION_CREATE, IMPLFUNCTION_PROCESS, IMPLFUNCTION_ONRENDER, IMPLFUNCTION_ONCOLLIDE, IMPLFUNCTION_ONINTERACT, IMPLFUNCTION_ONPERSIST, IMPLFUNCTION_ONPAUSE, IMPLFUNCTION_ONRESUME};
@@ -129,6 +130,11 @@ public class WorldObjectImplementable implements LuaImplementable<File, WorldObj
         @Override
         public void onResume() {
             LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONRESUME, obj.get());
+        }
+        
+        @Override
+        public void onRegister(long id, WorldRoom room) {
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONREGISTER, obj.get());
         }
     }
     

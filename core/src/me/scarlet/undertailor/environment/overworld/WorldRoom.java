@@ -294,6 +294,7 @@ public class WorldRoom implements Disposable {
         object.body = collision.getWorld().createBody(object.getBodyDef());
         object.body.setUserData(object);
         object.updateCollision();
+        object.onRegister(object.id, this);
         
         added.put(id, object);
         return id;

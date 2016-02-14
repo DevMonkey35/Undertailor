@@ -69,8 +69,6 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     private boolean canCollide;
     private boolean oneSided;
     
-    //private BoundingRectangle boundingBox;
-    
     private Map<String, BoundingBox> boundingBoxes;
     private Map<Collider, String> ignoreCollideList;
     
@@ -297,6 +295,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     public void onResume() {}
     public void onRender() {}
     public void onDestroy() {}
+    public void onRegister(long id, WorldRoom room) {}
     public void onPersist(WorldRoom newRoom, Entrypoint entrypoint) {}
     
     public void process(float delta, InputData input) {
