@@ -82,7 +82,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             new isVisible(),
             new setVisible(),
             new getRoom(),
-            new removeFromRoom(),
+            new destroy(),
             new isPersisting(),
             new setPersisting()
     };
@@ -509,13 +509,13 @@ public class LuaWorldObjectMeta extends LuaLibrary {
         }
     }
     
-    static class removeFromRoom extends LibraryFunction {
+    static class destroy extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
             WorldObject object = check(args.arg1()).getObject();
-            object.removeFromRoom();
+            object.destroy();
             return LuaValue.NIL;
         }
     }
