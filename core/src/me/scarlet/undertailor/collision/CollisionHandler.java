@@ -25,11 +25,14 @@
 package me.scarlet.undertailor.collision;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.manager.EnvironmentManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,9 +49,12 @@ public class CollisionHandler {
     
     private World world;
     private float timeAccumulator;
+    private Box2DDebugRenderer renderer;
     
     public CollisionHandler() {
         this.reset();
+        renderer = new Box2DDebugRenderer();
+        renderer.setDrawAABBs(true);
     }
     
     public void reset() {
@@ -93,6 +99,11 @@ public class CollisionHandler {
         while(this.timeAccumulator > PHYSICS_STEP) {
             this.world.step(PHYSICS_STEP, 6, 2);
             this.timeAccumulator -= PHYSICS_STEP;
+        }
+        
+        EnvironmentManager envMan = Undertailor.getEnvironmentManager();
+        if(envMan.getActiveEnvironment() != null && envMan.isRenderingHitboxes()) {
+            this.renderer.render(world, Undertailor.getEnvironmentManager().getActiveEnvironment().getOverworldController().getCamera().combined);
         }
     }
 }

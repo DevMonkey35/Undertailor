@@ -24,11 +24,9 @@
 
 package me.scarlet.undertailor.environment.overworld;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
 import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
@@ -45,10 +43,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 public abstract class WorldObject implements Collider, Layerable, Renderable, Positionable {
-
-    public static final Color BOX_COLOR;
-    public static final Color BOX_COLOR_INACTIVE;
-    public static boolean renderBoxes = true;
     
     public static BodyDef generateDefaultObjectDef() {
         BodyDef def = new BodyDef();
@@ -60,14 +54,6 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         def.position.set(0, 0);
         
         return def;
-    }
-    
-    static {
-        BOX_COLOR = Color.RED;
-        BOX_COLOR.a = 1.0F;
-        
-        BOX_COLOR_INACTIVE = Color.YELLOW;
-        BOX_COLOR_INACTIVE.a = 1.0F;
     }
     
     private int z;
@@ -299,18 +285,6 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
             for(AnimationData animation : this.animations.values()) {
                 animation.drawCurrentFrame(body.getPosition().x, body.getPosition().y + height, scale, (float) Math.toDegrees(body.getAngle()));
             }
-        }
-    }
-    
-    public void renderBox() {
-        if(body.isActive()) {
-            Undertailor.getRenderer().setShapeColor(BOX_COLOR, 1F);
-        } else {
-            Undertailor.getRenderer().setShapeColor(BOX_COLOR_INACTIVE, 1F);
-        }
-        
-        for(BoundingBox box : this.getBoundingBoxes()) {
-            box.renderBox(body);
         }
     }
     

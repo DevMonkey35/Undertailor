@@ -341,18 +341,6 @@ public class WorldRoom implements Disposable {
                 ((Renderable) object).render();
             }
         }
-        
-        if(Undertailor.getEnvironmentManager().isRenderingHitboxes()) {
-            for(Layerable object : renderOrder) {
-                if(object instanceof WorldObject) {
-                    ((WorldObject) object).renderBox();
-                }
-            }
-            
-            for(Entrypoint entrypoint : entrypoints.values()) {
-                entrypoint.renderBox();
-            }
-        }
     }
     
     private void updateMapping() {
