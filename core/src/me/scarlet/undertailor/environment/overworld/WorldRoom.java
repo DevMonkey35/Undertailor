@@ -288,12 +288,7 @@ public class WorldRoom implements Disposable {
     
     public long registerObject(WorldObject object) {
         long id = nextId++;
-        object.id = id;
-        object.room = this;
-        
-        object.body = collision.getWorld().createBody(object.getBodyDef());
-        object.body.setUserData(object);
-        object.updateCollision();
+        object.claim(id, this, collision.getWorld().createBody(object.getBodyDef()));
         object.onRegister(object.id, this);
         
         added.put(id, object);
@@ -434,6 +429,10 @@ public class WorldRoom implements Disposable {
         
         this.collision.getWorld().dispose();
         this.collision = null;
+    }
+    
+    public CollisionHandler getCollisionHandler() {
+        return this.collision;
     }
     
     public void onPause() {}

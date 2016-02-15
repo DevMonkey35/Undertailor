@@ -50,6 +50,18 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     public static final Color BOX_COLOR_INACTIVE;
     public static boolean renderBoxes = true;
     
+    public static BodyDef generateDefaultObjectDef() {
+        BodyDef def = new BodyDef();
+        
+        def.active = true;
+        def.awake = true;
+        def.allowSleep = false;
+        def.type = BodyDef.BodyType.DynamicBody;
+        def.position.set(0, 0);
+        
+        return def;
+    }
+    
     static {
         BOX_COLOR = Color.RED;
         BOX_COLOR.a = 1.0F;
@@ -62,6 +74,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     private float scale;
     private boolean persists;
     private boolean isVisible;
+    
     //private AnimationData animation;
     private float height;
     private Set<Collider> contacts;
@@ -90,18 +103,20 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         this.animations = new HashMap<>();
         this.boundingBoxes = new HashMap<>();
         
-        this.bodyDef = new BodyDef();
+        this.bodyDef = WorldObject.generateDefaultObjectDef();
         this.ignoreCollideList = new WeakHashMap<>();
-        
-        bodyDef.active = true;
-        bodyDef.awake = true;
-        bodyDef.allowSleep = false;
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(0, 0);
     }
     
     public BodyDef getBodyDef() {
         return this.bodyDef;
+    }
+    
+    public void claim(long id, WorldRoom room, Body body) {
+        this.id = id;
+        this.room = room;
+        this.body = body;
+        this.body.setUserData(this);
+        this.updateCollision();
     }
     
     @Override
