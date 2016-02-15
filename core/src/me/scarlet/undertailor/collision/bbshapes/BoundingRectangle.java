@@ -29,27 +29,20 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import me.scarlet.undertailor.Undertailor;
 
 /**
  * Oriented bounding box.
  */
 public class BoundingRectangle extends AbstractBoundingBox {
     
-    private Vector2 offset;
-    private Vector2 dimensions;
-    private boolean fixedRotation;
     private Body targetBody;
-    private float scale;
-    
+    private Vector2 dimensions;
     private Fixture lastFixture;
     
     public BoundingRectangle() {
         this.dimensions = new Vector2(1, 1);
-        this.offset = new Vector2();
-        this.fixedRotation = true;
+        this.lastFixture = null;
         this.targetBody = null;
-        this.scale = 1.0F;
     }
     
     public Vector2 getDimensions() {
@@ -58,30 +51,6 @@ public class BoundingRectangle extends AbstractBoundingBox {
     
     public void setDimensions(float x, float y) {
         this.dimensions.set(x, y);
-    }
-    
-    public Vector2 getOffset() {
-        return this.offset;
-    }
-    
-    public void setOffset(float x, float y) {
-        this.offset.set(x, y);
-    }
-    
-    public boolean isFixedRotation() {
-        return this.fixedRotation;
-    }
-    
-    public void setFixedRotation(boolean flag) {
-        this.fixedRotation = flag;
-    }
-    
-    public float getScale() {
-        return this.scale;
-    }
-    
-    public void setScale(float scale) {
-        this.scale = scale;
     }
     
     @Override
@@ -97,17 +66,19 @@ public class BoundingRectangle extends AbstractBoundingBox {
                 body.destroyFixture(lastFixture);
             }
             
-            body.setFixedRotation(fixedRotation);
-            PolygonShape polygon = new PolygonShape();
-            FixtureDef fixDef = new FixtureDef();
-            polygon.setAsBox((dimensions.x * scale) / 2, (dimensions.y * scale) / 2, new Vector2(offset.x * scale, offset.y * scale), body.getAngle());
-            fixDef.isSensor = this.isSensor();
-            fixDef.shape = polygon;
-            fixDef.friction = 0.0F;
-            fixDef.density = 1F;
-            
-            this.lastFixture = body.createFixture(fixDef);
-            polygon.dispose();
+            if(this.canCollide()) {
+                Vector2 offset = this.getOffset();
+                PolygonShape polygon = new PolygonShape();
+                FixtureDef fixDef = new FixtureDef();
+                polygon.setAsBox((dimensions.x * this.getScale()) / 2, (dimensions.y * this.getScale()) / 2, new Vector2(offset.x * this.getScale(), offset.y * this.getScale()), this.getRotation());
+                fixDef.isSensor = this.isSensor();
+                fixDef.shape = polygon;
+                fixDef.friction = 0.0F;
+                fixDef.density = 1F;
+                
+                this.lastFixture = body.createFixture(fixDef);
+                polygon.dispose();
+            }
         } else {
             throw new IllegalArgumentException("cannot reuse bounding object on another body");
         }
@@ -116,6 +87,7 @@ public class BoundingRectangle extends AbstractBoundingBox {
     public void destroyFixture(Body body) {
         if(lastFixture != null && body.getFixtureList().contains(lastFixture, true)) {
             body.destroyFixture(lastFixture);
+            this.lastFixture = null;
         }
     }
     
@@ -134,31 +106,5 @@ public class BoundingRectangle extends AbstractBoundingBox {
         }
         
         return null;
-    }
-    
-    @Override
-    public void renderBox(Body body) {
-        if(lastFixture != null && lastFixture.getShape() != null) {
-            PolygonShape shape = (PolygonShape) lastFixture.getShape();
-            float[] vertices = this.getVertices();
-            
-            Vector2 vertex = new Vector2();
-            Vector2 lastVertex = null;
-            Vector2 firstVertex = null;
-            for(int i = 0; i < shape.getVertexCount(); i++) {
-                vertex = new Vector2(body.getPosition().x + vertices[i * 2], body.getPosition().y + vertices[i * 2 + 1]);
-                if(firstVertex == null) {
-                    firstVertex = vertex;
-                }
-                
-                if(lastVertex != null) {
-                    Undertailor.getRenderer().drawLine(lastVertex, vertex, 0.5F);
-                }
-                
-                lastVertex = vertex;
-            }
-            
-            Undertailor.getRenderer().drawLine(lastVertex, firstVertex, 0.5F);
-        }
     }
 }

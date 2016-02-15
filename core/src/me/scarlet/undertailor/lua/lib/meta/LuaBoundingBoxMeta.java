@@ -51,6 +51,10 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
     }
     
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
+            new canCollide(),
+            new setCanCollide(),
+            new getRotation(),
+            new setRotation(),
             new getOffset(),
             new setOffset(),
             new isSensor(),
@@ -59,6 +63,27 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
     
     public LuaBoundingBoxMeta() {
         super(null, COMPONENTS);
+    }
+    
+    static class getRotation extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            BoundingBox box = check(args.arg(1)).getObject();
+            return LuaValue.valueOf(box.getRotation());
+        }
+    }
+    
+    static class setRotation extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            BoundingBox box = check(args.arg(1)).getObject();
+            box.setRotation(new Float(args.checkdouble(2)));
+            return LuaValue.NIL;
+        }
     }
     
     static class getOffset extends LibraryFunction {
@@ -85,6 +110,29 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
             float x = new Float(args.optdouble(2, offset.x));
             float y = new Float(args.optdouble(3, offset.y));
             box.setOffset(x, y);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class canCollide extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);;
+            
+            BoundingBox box = check(args.arg1()).getObject();
+            return LuaValue.valueOf(box.canCollide());
+        }
+    }
+    
+    static class setCanCollide extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            BoundingBox box = check(args.arg1()).getObject();
+            boolean flag = args.checkboolean(2);
+            box.setCanCollide(flag);
+            
             return LuaValue.NIL;
         }
     }

@@ -24,31 +24,25 @@
 
 package me.scarlet.undertailor.collision.bbshapes;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import me.scarlet.undertailor.Undertailor;
 
 /**
  * Radial bounding box.
  */
 public class BoundingCircle extends AbstractBoundingBox {
     
-    private Vector2 origin;
-    private boolean fixedRotation;
     private float radius;
-    private float scale;
     private Body targetBody;
+    private boolean fixedRotation;
     
     private Fixture lastFixture;
     
     public BoundingCircle() {
-        this.origin = new Vector2(0, 0);
         this.fixedRotation = true;
         this.targetBody = null;
         this.radius = 5F;
-        this.scale = 1F;
     }
     
     public boolean isFixedRotation() {
@@ -67,24 +61,6 @@ public class BoundingCircle extends AbstractBoundingBox {
         this.radius = radius;
     }
     
-    public float getScale() {
-        return this.scale;
-    }
-    
-    public void setScale(float scale) {
-        this.scale = scale;
-    }
-    
-    @Override
-    public Vector2 getOffset() {
-        return origin;
-    }
-    
-    @Override
-    public void setOffset(float x, float y) {
-        this.origin.set(x, y);
-    }
-    
     @Override
     public boolean hasTarget() {
         return this.targetBody != null;
@@ -97,13 +73,15 @@ public class BoundingCircle extends AbstractBoundingBox {
             if(lastFixture != null && body.getFixtureList().contains(lastFixture, true)) {
                 body.destroyFixture(lastFixture);
             }
-    
-            body.setFixedRotation(fixedRotation);
-            CircleShape circle = new CircleShape();
-            circle.setPosition(origin);
-            circle.setRadius(radius * scale);
-            body.createFixture(circle, 0.5F);
-            circle.dispose();
+            
+            if(this.canCollide()) {
+                body.setFixedRotation(fixedRotation);
+                CircleShape circle = new CircleShape();
+                circle.setPosition(this.getOffset());
+                circle.setRadius(radius * this.getScale());
+                body.createFixture(circle, 0.5F);
+                circle.dispose();
+            }
         }
     }
     
@@ -111,14 +89,7 @@ public class BoundingCircle extends AbstractBoundingBox {
     public void destroyFixture(Body body) {
         if(this.lastFixture != null && body.getFixtureList().contains(lastFixture, true)) {
             body.destroyFixture(lastFixture);
-        }
-    }
-    
-    @Override
-    public void renderBox(Body body) {
-        if(lastFixture != null && lastFixture.getShape() != null) {
-            CircleShape shape = (CircleShape) lastFixture.getShape();
-            Undertailor.getRenderer().drawCircle(body.getPosition().x, body.getPosition().y, shape.getRadius() * scale);
+            this.lastFixture = null;
         }
     }
 }

@@ -24,7 +24,6 @@
 
 package me.scarlet.undertailor.environment.overworld;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -114,13 +113,6 @@ public class WorldRoom implements Disposable {
         
         public void setRoomTarget(String target) {
             this.roomTarget = target;
-        }
-        
-        public void renderBox() {
-            Undertailor.getRenderer().setShapeColor(Color.BLUE, 1F);
-            for(BoundingBox box : this.getBoundingBoxes()) {
-                box.renderBox(body);
-            }
         }
         
         @Override

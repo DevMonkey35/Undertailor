@@ -24,13 +24,32 @@
 
 package me.scarlet.undertailor.collision.bbshapes;
 
+import com.badlogic.gdx.math.Vector2;
+
 public abstract class AbstractBoundingBox implements BoundingBox {
 
+    private float scale;
+    private float rotation;
     private boolean sensor;
     private boolean canCollide;
+    private Vector2 offset;
     
     public AbstractBoundingBox() {
+        this.canCollide = true;
         this.sensor = false;
+        this.rotation = 0F;
+        this.scale = 1F;
+        this.offset = new Vector2(0, 0);
+    }
+    
+    @Override
+    public float getRotation() {
+        return this.rotation;
+    }
+    
+    @Override
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
     }
     
     @Override
@@ -51,5 +70,25 @@ public abstract class AbstractBoundingBox implements BoundingBox {
     @Override
     public void setSensor(boolean flag) {
         this.sensor = flag;
+    }
+    
+    @Override
+    public float getScale() {
+        return this.scale;
+    }
+    
+    @Override
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
+    
+    @Override
+    public Vector2 getOffset() {
+        return this.offset;
+    }
+    
+    @Override
+    public void setOffset(float x, float y) {
+        this.offset.set(x, y);
     }
 }

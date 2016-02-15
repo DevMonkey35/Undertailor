@@ -51,6 +51,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
         def.awake = true;
         def.allowSleep = false;
         def.type = BodyDef.BodyType.DynamicBody;
+        def.fixedRotation = true;
         def.position.set(0, 0);
         
         return def;
