@@ -269,10 +269,6 @@ public class Undertailor extends ApplicationAdapter {
         Environment activeEnv = environmentManager.getActiveEnvironment();
         float delta = Gdx.graphics.getDeltaTime();
         
-        if(activeEnv != null) {
-            activeEnv.process(delta, input);
-        }
-        
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         if(activeEnv != null) {
@@ -282,6 +278,10 @@ public class Undertailor extends ApplicationAdapter {
         Font bitop = fontManager.getFont("8bitop");
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 415, 2);
         renderer.flush();
+        
+        if(activeEnv != null) {
+            activeEnv.process(delta, input);
+        }
         
         if(input.getPressData(Keys.F3).justPressed(0F)) {
             this.console.show();
