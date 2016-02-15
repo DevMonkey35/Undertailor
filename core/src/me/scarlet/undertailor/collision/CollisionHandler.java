@@ -54,7 +54,6 @@ public class CollisionHandler {
     public CollisionHandler() {
         this.reset();
         renderer = new Box2DDebugRenderer();
-        renderer.setDrawAABBs(true);
     }
     
     public void reset() {
