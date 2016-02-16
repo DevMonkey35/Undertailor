@@ -24,7 +24,6 @@
 
 package me.scarlet.undertailor.lua.lib.meta;
 
-import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.environment.Scheduler;
 import me.scarlet.undertailor.environment.scheduler.LuaTask;
 import me.scarlet.undertailor.lua.Lua;
@@ -50,9 +49,7 @@ public class LuaSchedulerMeta extends LuaLibrary {
     public static final LuaLibraryComponent[] COMPONENTS = {
             new getOwningEnvironment(),
             new registerTask(),
-            new cancelTask(),
-            new millis(),
-            new sinceMillis()
+            new cancelTask()
     }; 
     
     public LuaSchedulerMeta() {
@@ -93,25 +90,6 @@ public class LuaSchedulerMeta extends LuaLibrary {
             
             scheduler.cancelTask(id);
             return LuaValue.NIL;
-        }
-    }
-    
-    static class millis extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 0, 0);
-            
-            return LuaValue.valueOf(TimeUtils.millis());
-        }
-    }
-    
-    static class sinceMillis extends LibraryFunction {
-        @Override
-        public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
-            
-            long millis = args.checklong(1);
-            return LuaValue.valueOf(TimeUtils.timeSinceMillis(millis));
         }
     }
 }

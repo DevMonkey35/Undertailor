@@ -28,6 +28,7 @@ import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.lua.lib.StoreLib;
 import me.scarlet.undertailor.lua.lib.TextLib;
+import me.scarlet.undertailor.lua.lib.TimeLib;
 import me.scarlet.undertailor.lua.lib.UtilLib;
 import me.scarlet.undertailor.lua.lib.game.AnimationLib;
 import me.scarlet.undertailor.lua.lib.game.AudioLib;
@@ -107,6 +108,7 @@ public class Lua {
     
     // shared libs -- non-parental top-level
     public static final ColorsLib LIB_COLORS = new ColorsLib();
+    public static final TimeLib LIB_TIME = new TimeLib();
     public static final UtilLib LIB_UTIL = new UtilLib();
     
     // shared libs -- text children

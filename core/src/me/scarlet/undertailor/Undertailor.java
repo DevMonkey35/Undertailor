@@ -91,7 +91,8 @@ public class Undertailor extends ApplicationAdapter {
             Lua.LIB_GAME,
             Lua.LIB_TEXT,
             Lua.LIB_UTIL,
-            Lua.LIB_STORE };
+            Lua.LIB_STORE,
+            Lua.LIB_TIME };
     
     @SuppressWarnings("rawtypes")
     public static final LuaImplementable[] IMPLS = new LuaImplementable[] {
