@@ -32,6 +32,7 @@ import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.lib.game.EnvironmentLib;
 import me.scarlet.undertailor.util.LuaUtil;
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -50,7 +51,8 @@ public class LuaSchedulerMeta extends LuaLibrary {
             new getOwningEnvironment(),
             new registerTask(),
             new cancelTask(),
-            new hasTask()
+            new hasTask(),
+            new generateTask()
     }; 
     
     public LuaSchedulerMeta() {
@@ -103,6 +105,29 @@ public class LuaSchedulerMeta extends LuaLibrary {
             int id = args.checkint(2);
             
             return LuaValue.valueOf(scheduler.hasTask(id));
+        }
+    }
+    
+    static class generateTask extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 3, -1);
+            
+            Scheduler scheduler = check(args.arg1()).getObject();
+            String name = args.checkjstring(2);
+            LuaFunction func = args.checkfunction(3);
+            
+            LuaTable compile = new LuaTable();
+            if(args.narg() > 3) {
+                LuaUtil.iterateTable((LuaTable) args.subargs(4), vargs -> {
+                    compile.set(vargs.arg(1), vargs.arg(2));
+                });
+            }
+            
+            compile.set("name", name);
+            compile.set("process", func);
+            
+            return LuaValue.valueOf(scheduler.registerTask(new LuaTask(compile), true));
         }
     }
 }

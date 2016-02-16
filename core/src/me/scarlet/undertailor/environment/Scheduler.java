@@ -72,6 +72,7 @@ public class Scheduler {
                 }
             } catch(Exception e) {
                 Undertailor.instance.warn(MANAGER_TAG, "task " + taskName + " was removed due to caught error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+                e.printStackTrace();
                 iterator.remove();
             }
         }
@@ -90,6 +91,7 @@ public class Scheduler {
                 }
             } catch(Exception e) {
                 Undertailor.instance.warn(MANAGER_TAG, "active task " + taskName + " was removed due to caught error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+                e.printStackTrace();
                 iterator.remove();
             }
         }
