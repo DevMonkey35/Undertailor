@@ -62,7 +62,7 @@ public class LuaPressDataMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 2);
             
             PressData data = check(args.arg1()).getObject();
-            float time = new Float(args.optdouble(2, 0));
+            long time = (long) (args.optdouble(2, 0) * 1000);
             return LuaValue.valueOf(data.justPressed(time));
         }
     }
@@ -73,7 +73,7 @@ public class LuaPressDataMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 2);
             
             PressData data = check(args.arg1()).getObject();
-            float time = new Float(args.optdouble(2, 0));
+            long time = (long) (args.optdouble(2, 0) * 1000);
             return LuaValue.valueOf(data.justReleased(time));
         }
     }
@@ -94,7 +94,7 @@ public class LuaPressDataMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             PressData data = check(args.arg1()).getObject();
-            return LuaValue.valueOf(data.getHoldTime());
+            return LuaValue.valueOf(data.getHoldTime() / 1000.0);
         }
     }
     
@@ -104,7 +104,7 @@ public class LuaPressDataMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             PressData data = check(args.arg1()).getObject();
-            return LuaValue.valueOf(data.getLastPressTime());
+            return LuaValue.valueOf(data.getLastPressTime() / 1000.0);
         }
     }
     
@@ -114,7 +114,7 @@ public class LuaPressDataMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             PressData data = check(args.arg1()).getObject();
-            return LuaValue.valueOf(data.getLastReleaseTime());
+            return LuaValue.valueOf(data.getLastReleaseTime() / 1000.0);
         }
     }
 }

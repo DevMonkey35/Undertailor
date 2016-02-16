@@ -283,7 +283,7 @@ public class Undertailor extends ApplicationAdapter {
             activeEnv.process(delta, input);
         }
         
-        if(input.getPressData(Keys.F3).justPressed(0F)) {
+        if(input.getPressData(Keys.F3).justPressed(0)) {
             this.console.show();
         }
             

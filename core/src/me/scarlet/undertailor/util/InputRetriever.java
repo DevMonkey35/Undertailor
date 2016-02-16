@@ -90,22 +90,20 @@ public class InputRetriever implements InputProcessor {
             return TimeUtils.timeSinceMillis(lastReleaseTime);
         }
         
-        public boolean justReleased(float time) {
+        public boolean justReleased(long time) {
             if(time <= 0)  {
                 return this.lastReleaseTick == parent.currentTick;
             }
             
-            long msTime = (long) (1000.0 * time);
-            return this.lastReleaseTime >= 0 && this.getLastReleaseTime() < msTime;
+            return this.lastReleaseTime >= 0 && this.getLastReleaseTime() < time;
         }
         
-        public boolean justPressed(float time) {
+        public boolean justPressed(long time) {
             if(time <= 0)  {
                 return this.lastPressTick == parent.currentTick;
             }
             
-            long msTime = (long) (1000.0 * time);
-            return this.lastPressTime >= 0 && this.getLastPressTime() < msTime;
+            return this.lastPressTime >= 0 && this.getLastPressTime() < time;
         }
         
         public long getLastPressTime() {
