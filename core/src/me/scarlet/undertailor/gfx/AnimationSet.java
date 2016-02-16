@@ -52,7 +52,7 @@ public class AnimationSet implements Disposable {
             for(Entry<Object, ? extends ConfigurationNode> entry : node.getNode("animation").getChildrenMap().entrySet()) {
                 String key = entry.getKey().toString();
                 ConfigurationNode animationNode = entry.getValue();
-                if(ConfigurateUtil.processInt(animationNode.getNode("type"), null) == 0) {
+                if(ConfigurateUtil.processInt(animationNode.getNode("type"), 0) == 0) {
                     animations.put(key, SimpleAnimation.fromConfig(animationNode));
                 }
             }
