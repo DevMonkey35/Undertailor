@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 
 public class Scheduler {
     
-    public static int nextId;
+    public static long nextId;
     public static final String MANAGER_TAG = "scheduler";
     
     static {
@@ -44,8 +44,8 @@ public class Scheduler {
     }
     
     private Environment env;
-    private Map<Integer, Task> tasks;
-    private Map<Integer, Task> activeTasks;
+    private Map<Long, Task> tasks;
+    private Map<Long, Task> activeTasks;
     
     public Scheduler(Environment env) {
         this.env = env;
@@ -58,10 +58,10 @@ public class Scheduler {
     }
     
     public void process(float delta, InputData data) {
-        Iterator<Entry<Integer, Task>> iterator = tasks.entrySet().iterator();
+        Iterator<Entry<Long, Task>> iterator = tasks.entrySet().iterator();
         while(iterator.hasNext()) {
-            Entry<Integer, Task> entry = iterator.next();
-            int id = entry.getKey();
+            Entry<Long, Task> entry = iterator.next();
+            long id = entry.getKey();
             Task task = entry.getValue();
             String taskName = (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
             
@@ -78,8 +78,8 @@ public class Scheduler {
         
         iterator = activeTasks.entrySet().iterator();
         if(iterator.hasNext()) {
-            Entry<Integer, Task> entry = iterator.next();
-            int id = entry.getKey();
+            Entry<Long, Task> entry = iterator.next();
+            long id = entry.getKey();
             Task task = entry.getValue();
             String taskName = (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
             
@@ -95,8 +95,8 @@ public class Scheduler {
         }
     }
     
-    public int registerTask(Task task, boolean active) {
-        int id = nextId++;
+    public long registerTask(Task task, boolean active) {
+        long id = nextId++;
         String taskName = (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
         if(active) {
             activeTasks.put(id, task);
@@ -109,7 +109,7 @@ public class Scheduler {
         return id;
     }
     
-    public void cancelTask(int id) {
+    public void cancelTask(long id) {
         if(tasks.containsKey(id)) {
             Task task = tasks.get(id);
             String taskName = (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
@@ -127,5 +127,9 @@ public class Scheduler {
             Undertailor.instance.debug(MANAGER_TAG, "active task " + taskName + " was removed by scheduler call");
             activeTasks.remove(id);
         }
+    }
+    
+    public boolean hasTask(long id) {
+        return tasks.containsKey(id) || activeTasks.containsKey(id);
     }
 }

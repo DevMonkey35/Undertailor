@@ -49,7 +49,8 @@ public class LuaSchedulerMeta extends LuaLibrary {
     public static final LuaLibraryComponent[] COMPONENTS = {
             new getOwningEnvironment(),
             new registerTask(),
-            new cancelTask()
+            new cancelTask(),
+            new hasTask()
     }; 
     
     public LuaSchedulerMeta() {
@@ -90,6 +91,18 @@ public class LuaSchedulerMeta extends LuaLibrary {
             
             scheduler.cancelTask(id);
             return LuaValue.NIL;
+        }
+    }
+    
+    static class hasTask extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            Scheduler scheduler = check(args.arg1()).getObject();
+            int id = args.checkint(2);
+            
+            return LuaValue.valueOf(scheduler.hasTask(id));
         }
     }
 }
