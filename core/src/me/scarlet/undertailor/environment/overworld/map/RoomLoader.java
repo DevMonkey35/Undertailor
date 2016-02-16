@@ -158,7 +158,7 @@ public class RoomLoader extends Manager<RoomDataWrapper> {
     
     @SuppressWarnings("unchecked")
     public LuaObjectValue<WorldRoom> newRoomMap(String name, Varargs args) {
-        if(rooms.containsKey(name)) {
+        if(scriptFiles.containsKey(name)) {
             try {
                 ScriptManager scriptMan = Undertailor.getScriptManager();
                 WorldRoomImplementable impl = scriptMan.getImplementable(WorldRoomImplementable.class);
@@ -175,7 +175,7 @@ public class RoomLoader extends Manager<RoomDataWrapper> {
     }
     
     public File getRoomScript(String name) {
-        if(rooms.containsKey(name)) {
+        if(scriptFiles.containsKey(name)) {
             return scriptFiles.get(name);
         }
         
