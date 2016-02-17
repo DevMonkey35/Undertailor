@@ -50,6 +50,7 @@ public class AnimationLib extends LuaLibrary {
     public static final LuaLibraryComponent[] COMPONENTS = {
             new createAnimation(),
             
+            new getAnimationName(),
             new getOffset(),
             new setOffset(),
             new getRuntime(),
@@ -66,6 +67,16 @@ public class AnimationLib extends LuaLibrary {
     
     public AnimationLib() {
         super("animation", COMPONENTS);
+    }
+    
+    static class getAnimationName extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            AnimationData data = check(args.arg1()).getObject();
+            return LuaValue.valueOf(data.getReferenceAnimation().getName());
+        }
     }
     
     static class createAnimation extends LibraryFunction {
