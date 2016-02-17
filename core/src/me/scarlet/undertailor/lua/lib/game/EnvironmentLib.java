@@ -125,7 +125,7 @@ public class EnvironmentLib extends LuaLibrary {
     static class newUIComponent extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 2, -1);
+            LuaUtil.checkArguments(args, 1, -1);
             
             try {
                 return getEnvironmentManager().getUIComponentLoader().newLuaComponent(args.arg(1).checkjstring(), args.subargs(2));
@@ -171,8 +171,7 @@ public class EnvironmentLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, -1);
             
-            LuaObjectValue<WorldObject> obj = getEnvironmentManager().getWorldObjectLoader().newWorldObject(args.checkjstring(1), args.subargs(3));
-            obj.getObject().setZ(args.optint(2, obj.getObject().getZ()));
+            LuaObjectValue<WorldObject> obj = getEnvironmentManager().getWorldObjectLoader().newWorldObject(args.checkjstring(1), args.subargs(2));
             return obj;
         }
     }
