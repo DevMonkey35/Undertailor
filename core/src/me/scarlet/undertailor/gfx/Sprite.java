@@ -99,7 +99,6 @@ public class Sprite {
     }
     
     public void draw(float posX, float posY, float scaleX, float scaleY, float rotation, boolean flipX, boolean flipY, int sizeX, int sizeY, boolean ensureBottomLeft) { // for texts
-        
         float originX = 0, originY = 0;
         int offX = 0, offY = 0;
         if(meta != null) {
@@ -116,9 +115,8 @@ public class Sprite {
             y -= originY;
         }
         
-        TextureRegion drawn = new TextureRegion(region);
-        drawn.flip(flipX, flipY);
-        
-        Undertailor.getRenderer().draw(drawn, x, y, originX, originY, sizeX, sizeY, scaleX, scaleY, rotation);
+        region.flip(flipX, flipY);
+        Undertailor.getRenderer().draw(region, x, y, originX, originY, sizeX, sizeY, scaleX, scaleY, rotation);
+        region.flip(flipX, flipY);
     }
 }
