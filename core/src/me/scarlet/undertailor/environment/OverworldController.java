@@ -24,10 +24,9 @@
 
 package me.scarlet.undertailor.environment;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
@@ -51,7 +50,6 @@ public class OverworldController implements Renderable, Disposable {
     private float zoom;
     private long charId;
     private Viewport port;
-    private Rectangle scissor;
     private boolean isRendering;
     private boolean isProcessing, oldIsProcessing;
     private boolean cameraFixing;
@@ -78,10 +76,8 @@ public class OverworldController implements Renderable, Disposable {
         this.renderHitboxes = true;
         this.entryTransition = null;
         this.exitTransition = null;
-        this.scissor = new Rectangle();
         
         this.setCameraZoom(zoom);
-        ScissorStack.calculateScissors(camera, Undertailor.getRenderer().getSpriteBatch().getTransformMatrix(), Undertailor.RENDER_AREA, scissor);
     }
     
     public OrthographicCamera getCamera() {
@@ -275,10 +271,8 @@ public class OverworldController implements Renderable, Disposable {
         }
         
         if(currentRoom != null) {
-            ScissorStack.pushScissors(scissor);
             Undertailor.getRenderer().setProjectionMatrix(camera.combined);
             currentRoom.render();
-            ScissorStack.popScissors();
         }
     }
     
@@ -309,8 +303,6 @@ public class OverworldController implements Renderable, Disposable {
     
     public void resize(int width, int height) {
         this.port.update(width, height, false);
-        this.camera.position.set(this.camera.viewportWidth/2.0F, this.camera.viewportHeight/2.0F, 0.0F);
-        this.camera.update();
     }
 
     @Override
