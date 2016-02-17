@@ -166,6 +166,7 @@ public class Undertailor extends ApplicationAdapter {
     
     private short strict;
     private boolean debug;
+    private boolean paused;
     
     private LwjglApplicationConfiguration config;
     
@@ -190,15 +191,20 @@ public class Undertailor extends ApplicationAdapter {
         }
         
         this.config = config;
+        this.paused = false;
         config.foregroundFPS = 60;
         config.backgroundFPS = 60;
     }
     
     @Override
-    public void pause() {}
+    public void pause() {
+        this.paused = true;
+    }
     
     @Override
-    public void resume() {}
+    public void resume() {
+        this.paused = false;
+    }
     
     @Override
     public void create() {
@@ -294,6 +300,10 @@ public class Undertailor extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         this.environmentManager.resize(width, height);
+    }
+    
+    public boolean isPaused() {
+        return this.paused;
     }
     
     public void debug(String tag, String message) {
