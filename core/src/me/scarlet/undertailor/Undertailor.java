@@ -283,7 +283,7 @@ public class Undertailor extends ApplicationAdapter {
         }
         
         Font bitop = fontManager.getFont("8bitop");
-        bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 415, 2);
+        bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 427, 2);
         renderer.flush();
         
         if(activeEnv != null) {

@@ -55,7 +55,7 @@ public class Tile implements Cloneable {
     }
     
     public void draw(float xPos, float yPos) {
-        sprites[getCurrentSprite()].draw(xPos, yPos, 1F, 1F, 0F, false, false, 20, 20, true);
+        sprites[getCurrentSprite()].draw(xPos, yPos, 1F, 1F, 0F, false, false, 20, 20, false);
     }
     
     public float getFrameTime() {

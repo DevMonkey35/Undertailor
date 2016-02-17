@@ -113,6 +113,9 @@ public class Sprite {
         if(!ensureBottomLeft) {
             x -= originX;
             y -= originY;
+        } else {
+            x += originX;
+            y += originY;
         }
         
         region.flip(flipX, flipY);
