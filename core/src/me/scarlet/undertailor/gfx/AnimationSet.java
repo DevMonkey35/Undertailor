@@ -32,6 +32,7 @@ import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.wrappers.SpriteSheetWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -102,11 +103,16 @@ public class AnimationSet implements Disposable {
         
         for(Animation<?> animation : animations.values()) {
             animation.animSet = this;
+            animation.finalChecks();
         }
     }
     
     public String getName() {
         return name;
+    }
+    
+    public Collection<Sprite[]> getSpritesets() {
+        return this.spritesets.values();
     }
     
     public Sprite[] getSpriteset(String spriteset) {

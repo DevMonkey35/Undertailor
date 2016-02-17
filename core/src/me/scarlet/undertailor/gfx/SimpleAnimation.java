@@ -25,6 +25,7 @@
 package me.scarlet.undertailor.gfx;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.exception.AnimationLoadException;
 import me.scarlet.undertailor.gfx.KeyFrame.FrameObjectMeta;
 import me.scarlet.undertailor.gfx.KeyFrame.SimpleKeyFrame;
 import me.scarlet.undertailor.manager.AnimationManager;
@@ -78,6 +79,17 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     @Override
     public Map<Long, SimpleKeyFrame> getFrames() {
         return new LinkedHashMap<>(frames);
+    }
+    
+    @Override
+    public void finalChecks() {
+        for(SimpleKeyFrame frame : frames.values()) {
+            for(Sprite[] set : this.getParentSet().getSpritesets()) {
+                if(set.length < frame.getSpriteIndex() + 1) {
+                    throw new AnimationLoadException("animation " + this.getName() + " in animation set " + this.getParentSet().getName() + " referenced a non-existing sprite index");
+                }
+            }
+        }
     }
 
     @Override

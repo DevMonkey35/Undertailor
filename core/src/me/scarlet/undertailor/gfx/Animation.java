@@ -69,6 +69,8 @@ public abstract class Animation<T extends KeyFrame> implements Disposable {
     
     public abstract void drawFrame(T frame, String spriteset, float posX, float posY, float scale, float rotation);
     
+    public void finalChecks() {};
+    
     /*public void drawCurrentFrame(float posX, float posY) {
         this.drawCurrentFrame(posX, posY, 1F);
     }
