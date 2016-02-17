@@ -48,7 +48,7 @@ public class LuaUIObjectMeta extends LuaLibrary {
     
     public static final LuaLibraryComponent[] COMPONENTS = new LibraryFunction[] {
             new getOwningController(),
-            new getId(),
+            new getID(),
             new isHeadless(),
             new getLifetime(),
             new isVisible(),
@@ -79,7 +79,7 @@ public class LuaUIObjectMeta extends LuaLibrary {
         }
     }
     
-    static class getId extends LibraryFunction {
+    static class getID extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
