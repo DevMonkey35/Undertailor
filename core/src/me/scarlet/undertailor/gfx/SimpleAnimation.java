@@ -126,6 +126,10 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     
     @Override
     public void drawFrame(SimpleKeyFrame frame, String spriteset, float posX, float posY, float scale, float rotation) {
+        if(frame.getSpriteIndex() <= -1) {
+            return;
+        }
+        
         Sprite sprite = this.getParentSet().getSpriteset(spriteset)[frame.getSpriteIndex()];
         FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
         float scaleX = meta.scaleX * scale;
