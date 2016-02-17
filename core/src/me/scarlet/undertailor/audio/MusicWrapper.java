@@ -38,6 +38,7 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     public static final long MAX_LIFETIME = 60000; // 1min
     
     private String id;
+    protected String rescName;
     private File fileReference;
     private AudioResourceManager<MusicWrapper> manager;
     public MusicWrapper(String id, AudioResourceManager<MusicWrapper> manager, File fileReference) {
@@ -73,6 +74,7 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
         this.loopPoint = -1F;
     }
     
+    public String getAudioName() { return this.rescName; }
     public float getAffectedVolume() { return manager.getAffectedVolume() * volume; }
     public float getVolume() { return volume; }
     public void setVolume(float volume) { this.volume = NumberUtil.boundFloat(volume, 0.0F, 1.0F); }

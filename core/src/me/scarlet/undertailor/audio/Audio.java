@@ -26,6 +26,7 @@ package me.scarlet.undertailor.audio;
 
 public interface Audio<T> {
     
+    public String getAudioName();
     public float getAffectedVolume();
     public float getPosition();
     public void setPosition(float position);

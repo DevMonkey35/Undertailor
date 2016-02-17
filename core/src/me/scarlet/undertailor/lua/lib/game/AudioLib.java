@@ -97,7 +97,8 @@ public class AudioLib extends LuaLibrary {
             new stop(),
             new stopAllAudio(),
             new stopAllMusic(),
-            new stopAllSounds()
+            new stopAllSounds(),
+            new getAudioName()
     };
     
     public AudioLib() {
@@ -233,6 +234,16 @@ public class AudioLib extends LuaLibrary {
     // ###########################
     
     // Getter/setter methods.
+    
+    static class getAudioName extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            Audio<?> audio = check(args.arg(1)).getObject();
+            return LuaValue.valueOf(audio.getAudioName());
+        }
+    }
     
     static class getPosition extends LibraryFunction {
         @Override

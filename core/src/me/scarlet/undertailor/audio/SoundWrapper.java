@@ -34,7 +34,8 @@ import java.io.File;
 public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long> {
 
     public static final long MAX_LIFETIME = 30000; // 30s
-    
+
+    protected String rescName;
     private File fileReference;
     private AudioResourceManager<SoundWrapper> manager;
     public SoundWrapper(AudioResourceManager<SoundWrapper> manager, File fileReference) {
@@ -63,6 +64,7 @@ public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long
         this.loopPoint = -1F;
     }
     
+    public String getAudioName() { return this.rescName; }
     public float getAffectedVolume() { return manager.getAffectedVolume() * volume; }
     public float getVolume() { return volume; }
     public void setVolume(float volume) { this.volume = NumberUtil.boundFloat(volume, 0.0F, 1.0F); }

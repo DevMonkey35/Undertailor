@@ -93,5 +93,11 @@ public class AudioResourceManager<T extends Audio<?>> {
     
     public void loadResource(String rescName, T resource) {
         this.resources.put(rescName, resource);
+        
+        if(resource instanceof MusicWrapper) {
+            ((MusicWrapper) resource).rescName = rescName;
+        } else if(resource instanceof SoundWrapper) {
+            ((SoundWrapper) resource).rescName = rescName;
+        }
     }
 }
