@@ -150,11 +150,15 @@ public class LuaUtil {
         }
         
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < typenames.length; i++) {
-            if(i == typenames.length - 1) {
-                sb.append(", or " + typenames[i]);
-            } else {
-                sb.append(", " + typenames[i]);
+        if(typenames.length == 1) {
+            sb.append(typenames[0]);
+        } else {
+            for(int i = 0; i < typenames.length; i++) {
+                if(i == typenames.length - 1) {
+                    sb.append("or " + typenames[i]);
+                } else {
+                    sb.append(typenames[i] + ", ");
+                }
             }
         }
         
