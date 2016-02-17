@@ -50,18 +50,4 @@ public class TilemapWrapper extends DisposableWrapper<Tilemap> {
             return null;
         }
     }
-    
-    @Override
-    public long getMaximumLifetime() {
-        return SpriteSheetWrapper.MAX_LIFETIME;
-    }
-
-    @Override
-    public boolean allowDispose() {
-        if(this.hasReferrers()) {
-            return false;
-        }
-        
-        return true;
-    }
 }

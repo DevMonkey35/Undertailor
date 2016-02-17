@@ -57,18 +57,4 @@ public class SpriteSheetWrapper extends DisposableWrapper<SpriteSheet> {
             return null;
         }
     }
-    
-    @Override
-    public long getMaximumLifetime() {
-        return MAX_LIFETIME;
-    }
-
-    @Override
-    public boolean allowDispose() {
-        if(this.hasReferrers()) {
-            return false;
-        }
-        
-        return true;
-    }
 }

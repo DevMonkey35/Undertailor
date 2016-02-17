@@ -35,24 +35,11 @@ public class RoomDataWrapper extends DisposableWrapper<RoomMap> {
     public RoomDataWrapper(ConfigurationNode mapData) {
         super(null);
         this.mapData = mapData;
+        this.setAlwaysAlive(true);
     }
     
     @Override
     public RoomMap newReference() {
         return RoomMap.fromConfig(mapData);
-    }
-    
-    @Override
-    public boolean allowDispose() {
-        if(this.hasReferrers()) {
-            return false;
-        }
-        
-        return true;
-    }
-    
-    @Override
-    public long getMaximumLifetime() {
-        return MAX_LIFETIME;
     }
 }

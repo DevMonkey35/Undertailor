@@ -50,20 +50,6 @@ public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long
         return Gdx.audio.newSound(Gdx.files.absolute(fileReference.getAbsolutePath()));
     }
     
-    @Override
-    public long getMaximumLifetime() {
-        return MAX_LIFETIME;
-    }
-    
-    @Override
-    public boolean allowDispose() {
-        if(!this.hasReferrers()) {
-            return false;
-        }
-        
-        return true;
-    }
-    
     // audio impl
     private float loopPoint;
     private float volume;

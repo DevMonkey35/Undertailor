@@ -55,21 +55,8 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     }
     
     @Override
-    public long getMaximumLifetime() {
-        return MAX_LIFETIME;
-    }
-    
-    @Override
     public boolean allowDispose() {
-        if(!this.hasReferrers()) {
-            return false;
-        }
-        
-        if(!this.isDisposed()) {
-            return !this.getReference().isPlaying();
-        }
-        
-        return true;
+        return this.allowDispose() && !this.getReference().isPlaying();
     }
     
     // audio impl

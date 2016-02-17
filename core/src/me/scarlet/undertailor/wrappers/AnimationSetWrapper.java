@@ -43,18 +43,4 @@ public class AnimationSetWrapper extends DisposableWrapper<AnimationSet> {
     public AnimationSet newReference() {
         return AnimationSet.fromConfig(name, node);
     }
-    
-    @Override
-    public long getMaximumLifetime() {
-        return MAX_LIFETIME;
-    }
-    
-    @Override
-    public boolean allowDispose() {
-        if(this.hasReferrers()) {
-            return false;
-        }
-        
-        return true;
-    }
 }
