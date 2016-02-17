@@ -54,7 +54,7 @@ public class TextComponent {
             this.offX = offX;
             this.offY = offY;
             this.scaleX = scaleX;
-            this.scaleY = scaleX;
+            this.scaleY = scaleY;
             this.color = color;
         }
         
@@ -103,9 +103,7 @@ public class TextComponent {
         @Override
         public String getText() {
             StringBuilder sb = new StringBuilder();
-            members.forEach(com -> {
-                sb.append(com.getText());
-            });
+            members.forEach(com -> sb.append(com.getText()));
             
             return sb.toString();
         }
@@ -130,13 +128,12 @@ public class TextComponent {
             }
             
             List<Pair<TextComponent, Integer>> compList = new ArrayList<>();
-            for(int i = 0; i < members.size(); i++) {
-                TextComponent member = members.get(i);
+            for (TextComponent member : members) {
                 int len = member.getText().length();
-                if(!compList.isEmpty()) {
+                if (!compList.isEmpty()) {
                     len = len + compList.get(compList.size() - 1).getFirstElement().get().getText().length();
                 }
-                
+
                 compList.add(new Pair<>(member, len));
             }
             
@@ -172,13 +169,12 @@ public class TextComponent {
             Map<TextComponent, Integer> compMap = new LinkedHashMap<>();
             
             TextComponent last = null;
-            for(int i = 0; i < members.size(); i++) {
-                TextComponent member = members.get(i);
+            for (TextComponent member : members) {
                 int len = member.getText().length();
-                if(last != null) {
+                if (last != null) {
                     len = len + compMap.get(last);
                 }
-                
+
                 last = member;
                 compMap.put(member, len);
             }
