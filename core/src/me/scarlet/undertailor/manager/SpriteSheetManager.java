@@ -73,7 +73,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
             return file.getName().endsWith(".png") || file.isDirectory();
         })) {
             if(file.isDirectory()) {
-                loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName() + ".");
+                loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
                 continue;
             }
             
@@ -96,6 +96,8 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
                 Texture texture = new Texture(Gdx.files.absolute(file.getAbsolutePath()));
                 SpriteSheetWrapper sheet = new SpriteSheetWrapper(entryName, texture, root);
                 sheets.put(entryName, sheet);
+                
+                Undertailor.instance.log(MANAGER_TAG, "loading spritesheet " + entryName);
             } catch(Exception e) {
                 Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet: vm exception (" + LuaUtil.formatJavaException(e) + ")", e);
             }
