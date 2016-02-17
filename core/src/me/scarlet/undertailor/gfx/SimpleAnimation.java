@@ -26,6 +26,7 @@ package me.scarlet.undertailor.gfx;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.AnimationLoadException;
+import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.gfx.KeyFrame.FrameObjectMeta;
 import me.scarlet.undertailor.gfx.KeyFrame.SimpleKeyFrame;
 import me.scarlet.undertailor.manager.AnimationManager;
@@ -33,6 +34,7 @@ import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.MapUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -46,15 +48,33 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         String name = node.getKey().toString();
         Undertailor.instance.debug(AnimationManager.MANAGER_TAG, "loading simpleanimation " + name);
         
-        float frameTime = ConfigurateUtil.processFloat(node.getNode("frameTime"), 0.5F);
-        int[] frames = ConfigurateUtil.processIntArray(node.getNode("frames"), null);
+        String[] frames = ConfigurateUtil.processStringArray(node.getNode("frames"), null);
         boolean looping = ConfigurateUtil.processBoolean(node.getNode("looping"), false);
         
-        FrameObjectMeta meta = new FrameObjectMeta();
-        meta.flipX = ConfigurateUtil.processBoolean(node.getNode("flipX"), false);
+        Map<String, Object> defaultData = new HashMap<>();
+        defaultData.put("flipX", ConfigurateUtil.processBoolean(node.getNode("flipX"), false));
+        defaultData.put("flipY", ConfigurateUtil.processBoolean(node.getNode("flipY"), false));
+        defaultData.put("frameTime", ConfigurateUtil.processFloat(node.getNode("frameTime"), 0.5F));
         SimpleKeyFrame[] keyFrames = new SimpleKeyFrame[frames.length];
-        for(int i = 0; i < frames.length; i++) {
-            keyFrames[i] = new SimpleKeyFrame(frames[i], (long) (1000.0 * frameTime), meta);
+        
+        try {
+            for(int i = 0; i < frames.length; i++) {
+                String frame = frames[i];
+                String frameIndexStr = frame.split(";")[0];
+                Map<String, Object> data;
+                if(frame.length() > frameIndexStr.length()) {
+                    data = Animation.parseParameters(defaultData, frame.substring(frameIndexStr.length() + 1)); // number and ;
+                } else {
+                    data = defaultData;
+                }
+                
+                int frameIndex = Integer.parseInt(frameIndexStr);
+                FrameObjectMeta meta = FrameObjectMeta.fromMapping(data);
+                float frameTime = (float) data.get("frameTime");
+                keyFrames[i] = new SimpleKeyFrame(frameIndex, (long) (1000.0 * frameTime), meta);
+            }
+        } catch(NumberFormatException e) {
+            throw new ConfigurationException("bad frame object data: invalid frame index");
         }
         
         return new SimpleAnimation(name, looping, keyFrames);

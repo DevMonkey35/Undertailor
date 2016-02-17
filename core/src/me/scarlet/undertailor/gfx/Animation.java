@@ -25,10 +25,50 @@
 package me.scarlet.undertailor.gfx;
 
 import com.badlogic.gdx.utils.Disposable;
+import me.scarlet.undertailor.exception.ConfigurationException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Animation<T extends KeyFrame> implements Disposable {
+    
+    public static Map<String, Object> parseParameters(Map<String, Object> defaults, String str) {
+        Map<String, Object> map = new HashMap<>(defaults);
+        String[] params = str.split(";");
+        for(String param : params) {
+            String[] keyValuePair = param.split("=");
+            if(keyValuePair.length != 2) {
+                throw new ConfigurationException("bad frame object data: parameter not structured for key/value pair");
+            }
+            
+            String key = keyValuePair[0];
+            String value = keyValuePair[1];
+            
+            try {
+                switch(key) {
+                    case "offX":
+                    case "offY":
+                    case "scale":
+                    case "scaleX":
+                    case "scaleY":
+                    case "rotation":
+                    case "frameTime":
+                        map.put(key, Float.parseFloat(value));
+                        break;
+                    case "flipX":
+                    case "flipY":
+                        map.put(key, Boolean.parseBoolean(value));
+                        break;
+                    default:
+                        break;
+                }
+            } catch(NumberFormatException e) {
+                throw new ConfigurationException("bad frame object data: invalid parameter value \"" + value + "\" for parameter \"" + key + "\"");
+            }
+        }
+        
+        return map;
+    }
     
     public static final String DEFAULT_SPRITESET = "default";
     

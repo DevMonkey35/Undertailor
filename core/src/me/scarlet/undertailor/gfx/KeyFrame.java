@@ -24,9 +24,27 @@
 
 package me.scarlet.undertailor.gfx;
 
+import java.util.Map;
+
 public class KeyFrame {
     
     public static class FrameObjectMeta {
+        
+        public static FrameObjectMeta fromMapping(Map<String, Object> map) {
+            FrameObjectMeta meta = new FrameObjectMeta();
+            
+            if(map.containsKey("offX")) { meta.offX = (float) map.get("offX"); }
+            if(map.containsKey("offY")) { meta.offY = (float) map.get("offY"); }
+            if(map.containsKey("scaleX")) { meta.scaleX = (float) map.get("scaleX"); }
+            if(map.containsKey("scaleY")) { meta.scaleY = (float) map.get("scaleY"); }
+            if(map.containsKey("scale")) { meta.scaleX = (float) map.get("scale"); meta.scaleY = (float) map.get("scale"); }
+            if(map.containsKey("rotation")) { meta.rotation = (float) map.get("rotation"); }
+            if(map.containsKey("flipX")) { meta.flipX = (boolean) map.get("flipX"); }
+            if(map.containsKey("flipY")) { meta.flipY = (boolean) map.get("flipY"); }
+            
+            return meta; // TODO maybe clean this up a bit
+        }
+        
         public float offX, offY, scaleX, scaleY, rotation;
         public boolean smooth, flipX, flipY;
         public int smoothingType;
