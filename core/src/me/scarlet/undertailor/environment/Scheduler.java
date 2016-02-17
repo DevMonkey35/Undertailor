@@ -78,7 +78,7 @@ public class Scheduler {
         }
         
         iterator = activeTasks.entrySet().iterator();
-        if(iterator.hasNext()) {
+        while(iterator.hasNext()) {
             Entry<Long, Task> entry = iterator.next();
             long id = entry.getKey();
             Task task = entry.getValue();
@@ -88,6 +88,8 @@ public class Scheduler {
                 if(task.process(delta, data)) {
                     Undertailor.instance.debug(MANAGER_TAG, "active task " + taskName + " finished and was removed");
                     iterator.remove();
+                } else {
+                    break;
                 }
             } catch(Exception e) {
                 Undertailor.instance.warn(MANAGER_TAG, "active task " + taskName + " was removed due to caught error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
