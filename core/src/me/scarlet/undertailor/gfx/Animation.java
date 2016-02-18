@@ -102,15 +102,15 @@ public abstract class Animation<T extends KeyFrame> implements Disposable {
     public abstract Map<Long, T> getFrames();
     public abstract T getFrame(long stateTime, boolean looping);
     
-    public void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY) {
-        this.drawFrame(stateTime, looping, spriteset, posX, posY, 1F);
+    public void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY, float offX, float offY) {
+        this.drawFrame(stateTime, looping, spriteset, posX, posY, offX, offY, 1F);
     }
     
-    public void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY, float scale) {
-        this.drawFrame(stateTime, looping, spriteset, posX, posY, scale, 0F);
+    public void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY, float offX, float offY, float scale) {
+        this.drawFrame(stateTime, looping, spriteset, posX, posY, offX, offY, scale, 0F);
     }
     
-    public abstract void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY, float scale, float rotation);
+    public abstract void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY, float offX, float offY, float scale, float rotation);
     
     public void finalChecks() {};
     

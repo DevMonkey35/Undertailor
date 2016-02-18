@@ -115,7 +115,7 @@ public class AnimationData {
     
     public void drawCurrentFrame(float posX, float posY, float scale, float rotation) {
         // KeyFrame frame = this.anim.getFrame(this.getRuntime(), this.looping);
-        if(rotation == 0) {
+        /*if(rotation == 0) {
             posX += offset.x;
             posY += offset.y;
         } else if(rotation == 180) {
@@ -132,8 +132,8 @@ public class AnimationData {
             float radRotation = (float) Math.toRadians(rotation);
             posX += new Float(distance * Math.cos(radRotation + currentAngle));
             posY += new Float(distance * Math.sin(radRotation + currentAngle));
-        }
+        }*/
         
-        this.anim.drawFrame(this.getRuntime(), this.isLooping(), spriteset, posX, posY, scale, rotation);
+        this.anim.drawFrame(this.getRuntime(), this.isLooping(), spriteset, posX, posY, offset.x, offset.y, scale, rotation);
     }
 }

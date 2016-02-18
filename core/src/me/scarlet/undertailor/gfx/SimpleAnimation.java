@@ -140,7 +140,7 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     }
     
     @Override
-    public void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY, float scale, float rotation) {
+    public void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY, float offX, float offY, float scale, float rotation) {
         Entry<Long, SimpleKeyFrame> currentFrameEntry = getFrameEntry(stateTime, looping);
         if(currentFrameEntry.getValue().getSpriteIndex() <= -1) {
             return;
@@ -179,20 +179,39 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         Sprite sprite = this.getParentSet().getSpriteset(spriteset)[currentFrameEntry.getValue().getSpriteIndex()];
         FrameObjectMeta meta = currentFrameEntry.getValue().getMeta() == null ? new FrameObjectMeta() : currentFrameEntry.getValue().getMeta();
         FrameObjectMeta nextFrame = nextFrameEntry.getValue().getMeta();
-        float scaleX, scaleY, offX, offY;
+        float scaleX, scaleY;
         
         if(smoothingValue > 0) {
             scaleX = (meta.scaleX + ((nextFrame.scaleX - meta.scaleX) * smoothingValue)) * scale;
             scaleY = (meta.scaleY + ((nextFrame.scaleY - meta.scaleY) * smoothingValue)) * scale;
-            offX = (meta.offX + ((nextFrame.offX - meta.offX) * smoothingValue)) * scaleX;
-            offY = (meta.offY + ((nextFrame.offY - meta.offY) * smoothingValue)) * scaleX;
+            offX += (meta.offX + ((nextFrame.offX - meta.offX) * smoothingValue)) * scaleX;
+            offY += (meta.offY + ((nextFrame.offY - meta.offY) * smoothingValue)) * scaleX;
         } else {
             scaleX = meta.scaleX * scale;
             scaleY = meta.scaleY * scale;
-            offX = meta.offX * scaleX;
-            offY = meta.offY * scaleY;
+            offX += meta.offX * scaleX;
+            offY += meta.offY * scaleY;
         }
         
-        sprite.draw(posX + (offX * scaleX), posY + (offY * scaleY), scaleX, scaleY, meta.rotation + rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
+        if(rotation == 0) {
+            posX += offX;
+            posY += offY;
+        } else if(rotation == 180) {
+            posX -= offX;
+            posY -= offY;
+        } else if(offX != 0 || offY != 0) {
+            double offPosX = posX + offX;
+            double offPosY = posY + offY;
+            double a = offPosX - posX;
+            double b = offPosY - posY;
+            
+            double distance = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+            double currentAngle = Math.atan((b) / (a));
+            float radRotation = (float) Math.toRadians(rotation);
+            posX += new Float(distance * Math.cos(radRotation + currentAngle));
+            posY += new Float(distance * Math.sin(radRotation + currentAngle));
+        }
+        
+        sprite.draw(posX, posY, scaleX, scaleY, meta.rotation + rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
     }
 }
