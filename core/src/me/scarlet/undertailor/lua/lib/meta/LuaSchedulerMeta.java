@@ -111,11 +111,12 @@ public class LuaSchedulerMeta extends LuaLibrary {
     static class generateTask extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 3, -1);
+            LuaUtil.checkArguments(args, 3, 4);
             
             Scheduler scheduler = check(args.arg1()).getObject();
-            String name = args.checkjstring(2);
+            String name = args.optjstring(2, null);
             LuaFunction func = args.checkfunction(3);
+            boolean active = args.optboolean(4, true);
             
             LuaTable compile = new LuaTable();
             if(args.narg() > 3) {
@@ -127,7 +128,7 @@ public class LuaSchedulerMeta extends LuaLibrary {
             compile.set("name", name);
             compile.set("process", func);
             
-            return LuaValue.valueOf(scheduler.registerTask(new LuaTask(compile), true));
+            return LuaValue.valueOf(scheduler.registerTask(new LuaTask(compile), active));
         }
     }
 }
