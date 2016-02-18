@@ -59,6 +59,9 @@ public abstract class Animation<T extends KeyFrame> implements Disposable {
                     case "flipY":
                         map.put(key, Boolean.parseBoolean(value));
                         break;
+                    case "smoothingType":
+                        map.put(key, Integer.parseInt(value));
+                        break;
                     default:
                         break;
                 }

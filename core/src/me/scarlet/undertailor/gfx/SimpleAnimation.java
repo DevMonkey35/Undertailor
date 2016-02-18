@@ -168,8 +168,10 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
                 
                 float frameTime = currentFrameEntry.getValue().getFrameTime();
                 time = Math.abs(time - currentFrameEntry.getKey()) * -1 + frameTime;
-                smoothingValue = NumberUtil.boundFloat(time / frameTime, 0.0F, 1.0F);
-                //System.out.println(time + " / " + frameTime);
+                
+                if(smoothingType == 1) { // linear
+                    smoothingValue = NumberUtil.boundFloat(time / frameTime, 0.0F, 1.0F);
+                }
             }
         }
         
