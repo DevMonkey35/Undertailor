@@ -32,13 +32,13 @@ import me.scarlet.undertailor.gfx.KeyFrame.SimpleKeyFrame;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.MapUtil;
+import me.scarlet.undertailor.util.NumberUtil;
 import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     
@@ -52,9 +52,12 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         boolean looping = ConfigurateUtil.processBoolean(node.getNode("looping"), false);
         
         Map<String, Object> defaultData = new HashMap<>();
+        defaultData.put("offX", ConfigurateUtil.processFloat(node.getNode("offX"), 0F));
+        defaultData.put("offY", ConfigurateUtil.processFloat(node.getNode("offY"), 0F));
         defaultData.put("flipX", ConfigurateUtil.processBoolean(node.getNode("flipX"), false));
         defaultData.put("flipY", ConfigurateUtil.processBoolean(node.getNode("flipY"), false));
         defaultData.put("frameTime", ConfigurateUtil.processFloat(node.getNode("frameTime"), 0.5F));
+        defaultData.put("smoothingType", ConfigurateUtil.processInt(node.getNode("smoothingType"), 0));
         SimpleKeyFrame[] keyFrames = new SimpleKeyFrame[frames.length];
         
         try {
@@ -80,10 +83,10 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         return new SimpleAnimation(name, looping, keyFrames);
     }
     
-    private Map<Long, SimpleKeyFrame> frames;
+    private TreeMap<Long, SimpleKeyFrame> frames;
     public SimpleAnimation(String name, boolean loop, SimpleKeyFrame... frames) {
         super(name, loop);
-        this.frames = new LinkedHashMap<>();
+        this.frames = new TreeMap<>();
         long lastTime = 0;
         for(SimpleKeyFrame frame : frames) {
             if(lastTime <= 0) {
@@ -98,7 +101,7 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
 
     @Override
     public Map<Long, SimpleKeyFrame> getFrames() {
-        return new LinkedHashMap<>(frames);
+        return new TreeMap<>(frames);
     }
     
     @Override
@@ -112,50 +115,82 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         }
     }
 
-    @Override
+    @Override // actual frame first, previous frame second
     public SimpleKeyFrame getFrame(long stateTime, boolean looping) {
+        return getFrameEntry(stateTime, looping).getValue();
+    }
+    
+    Entry<Long, SimpleKeyFrame> getFrameEntry(long stateTime, boolean looping) {
         long time = stateTime;
         Entry<Long, SimpleKeyFrame> last = MapUtil.getLastEntry(frames);
+        if(this.frames.size() == 1) {
+            return last;
+        }
+        
         if(time > last.getKey()) {
             if(looping) {
-                time = (long) (time - (last.getKey() * (Math.floor(time / last.getKey()))));
+                time = (long) (time - ((last.getKey()) * Math.floor(time / (last.getKey()))));
             } else {
-                return last.getValue();
+                return last;
             }
         }
         
-        Entry<Long, SimpleKeyFrame> current = null;
-        Entry<Long, SimpleKeyFrame> previous = null;
-        Iterator<Entry<Long, SimpleKeyFrame>> iterator = this.frames.entrySet().iterator();
-        while(iterator.hasNext()) {
-            previous = current;
-            current = iterator.next();
-            if(time <= current.getKey()) {
-                if(previous == null) {
-                    return current.getValue();
-                } else {
-                    if(time > previous.getKey()) {
-                        return current.getValue();
-                    }
-                }
-            }
-        }
-        
-        return current.getValue(); // returns the last frame
+        Entry<Long, SimpleKeyFrame> entry = frames.ceilingEntry(time);
+        return entry == null ? last : entry;
     }
     
     @Override
-    public void drawFrame(SimpleKeyFrame frame, String spriteset, float posX, float posY, float scale, float rotation) {
-        if(frame.getSpriteIndex() <= -1) {
+    public void drawFrame(long stateTime, boolean looping, String spriteset, float posX, float posY, float scale, float rotation) {
+        Entry<Long, SimpleKeyFrame> currentFrameEntry = getFrameEntry(stateTime, looping);
+        if(currentFrameEntry.getValue().getSpriteIndex() <= -1) {
             return;
         }
         
-        Sprite sprite = this.getParentSet().getSpriteset(spriteset)[frame.getSpriteIndex()];
-        FrameObjectMeta meta = frame.getMeta() == null ? new FrameObjectMeta() : frame.getMeta();
-        float scaleX = meta.scaleX * scale;
-        float scaleY = meta.scaleY * scale;
-        float offX = meta.offX * scaleX;
-        float offY = meta.offY * scaleY;
+        Entry<Long, SimpleKeyFrame> nextFrameEntry = null;
+        if(frames.size() > 1) {
+            nextFrameEntry = frames.higherEntry(currentFrameEntry.getKey());
+        }
+        
+        if(nextFrameEntry == null) {
+            nextFrameEntry = frames.firstEntry();
+        }
+        
+        float smoothingValue = 0.0F;
+        
+        if(nextFrameEntry != currentFrameEntry) {
+            int smoothingType = nextFrameEntry.getValue().getMeta().smoothingType;
+            if(smoothingType > 0) {
+                Entry<Long, SimpleKeyFrame> last = MapUtil.getLastEntry(frames);
+                float time = (float) stateTime;
+                if(stateTime > last.getKey()) {
+                    time = (float) (time - ((last.getKey()) * Math.floor(time / (last.getKey()))));
+                }
+                
+                float frameTime = currentFrameEntry.getValue().getFrameTime();
+                time = Math.abs(time - currentFrameEntry.getKey()) * -1 + frameTime;
+                smoothingValue = NumberUtil.boundFloat(time / frameTime, 0.0F, 1.0F);
+                //System.out.println(time + " / " + frameTime);
+            }
+        }
+        
+        //System.out.println("smoothing value is " + smoothingValue);
+        Sprite sprite = this.getParentSet().getSpriteset(spriteset)[currentFrameEntry.getValue().getSpriteIndex()];
+        FrameObjectMeta meta = currentFrameEntry.getValue().getMeta() == null ? new FrameObjectMeta() : currentFrameEntry.getValue().getMeta();
+        FrameObjectMeta nextFrame = nextFrameEntry.getValue().getMeta();
+        float scaleX, scaleY, offX, offY;
+        
+        if(smoothingValue > 0) {
+            scaleX = (meta.scaleX + ((nextFrame.scaleX - meta.scaleX) * smoothingValue)) * scale;
+            scaleY = (meta.scaleY + ((nextFrame.scaleY - meta.scaleY) * smoothingValue)) * scale;
+            offX = (meta.offX + ((nextFrame.offX - meta.offX) * smoothingValue)) * scaleX;
+            offY = (meta.offY + ((nextFrame.offY - meta.offY) * smoothingValue)) * scaleX;
+        } else {
+            scaleX = meta.scaleX * scale;
+            scaleY = meta.scaleY * scale;
+            offX = meta.offX * scaleX;
+            offY = meta.offY * scaleY;
+        }
+        
         sprite.draw(posX + (offX * scaleX), posY + (offY * scaleY), scaleX, scaleY, meta.rotation + rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
     }
 }

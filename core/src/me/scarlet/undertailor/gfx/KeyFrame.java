@@ -41,12 +41,13 @@ public class KeyFrame {
             if(map.containsKey("rotation")) { meta.rotation = (float) map.get("rotation"); }
             if(map.containsKey("flipX")) { meta.flipX = (boolean) map.get("flipX"); }
             if(map.containsKey("flipY")) { meta.flipY = (boolean) map.get("flipY"); }
+            if(map.containsKey("smoothingType")) { meta.smoothingType = (int) map.get("smoothingType"); }
             
             return meta; // TODO maybe clean this up a bit
         }
         
         public float offX, offY, scaleX, scaleY, rotation;
-        public boolean smooth, flipX, flipY;
+        public boolean flipX, flipY;
         public int smoothingType;
         
         public FrameObjectMeta() {
@@ -57,9 +58,8 @@ public class KeyFrame {
             this.rotation = 0F;
             this.flipX = false;
             this.flipY = false;
-            this.smooth = false;
             // smooth tells animator to smoothly transition to this meta's values from the last frame
-            this.smoothingType = 0; // 0 = linear, -1 = fast->slow, 1 = slow->fast
+            this.smoothingType = 0; // 0 = none, 1 = linear, 2 = fast->slow, 3 = slow->fast
             // smoothingType tells how smoothing should occur; linearly or exponentially
         }
     }
