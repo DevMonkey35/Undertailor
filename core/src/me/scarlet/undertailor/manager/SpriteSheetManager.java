@@ -57,7 +57,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
     // directory needs to include sprites.json
     public void loadObjects(File dir, String heading) {
         if(!dir.exists()) {
-            return;
+            dir.mkdirs();
         }
         
         if(!dir.isDirectory()) {

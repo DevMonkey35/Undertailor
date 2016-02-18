@@ -53,7 +53,7 @@ public class StyleManager extends Manager<Style> {
     private void loadStyles(File directory, String heading) {
         String dirPath = directory.getAbsolutePath();
         if(!directory.exists()) {
-            return;
+            directory.mkdirs();
         }
         
         if(!directory.isDirectory()) {

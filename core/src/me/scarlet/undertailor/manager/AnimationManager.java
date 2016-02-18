@@ -52,7 +52,7 @@ public class AnimationManager extends Manager<AnimationSetWrapper> {
     private void loadObjects(File dir, String heading) {
         String dirPath = dir.getAbsolutePath();
         if(!dir.exists()) {
-            Undertailor.instance.warn(MANAGER_TAG, "could not load animation directory " + dirPath + " (did not exist)");
+            dir.mkdirs();
             return;
         }
         

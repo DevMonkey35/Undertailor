@@ -86,8 +86,7 @@ public class AudioManager {
         checkArgument(table >= 0 && table <= 1, "Unknown table id");
         
         if(!dir.exists()) {
-            Undertailor.instance.warn(MANAGER_TAG, "could not load music/sound from directory: " + dirPath + " (doesn't exist)");
-            return;
+            dir.mkdirs();
         }
         
         if(!dir.isDirectory()) {

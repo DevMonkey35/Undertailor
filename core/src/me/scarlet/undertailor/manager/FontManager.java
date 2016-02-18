@@ -57,8 +57,7 @@ public class FontManager extends Manager<Font> {
     public void loadObjects(File dir, String heading) {
         String dirPath = dir.getAbsolutePath();
         if(!dir.exists()) {
-            Undertailor.instance.warn(MANAGER_TAG, "could not load font directory " + dirPath + " (did not exist)");
-            return;
+            dir.mkdirs();
         }
         
         if(!dir.isDirectory()) {

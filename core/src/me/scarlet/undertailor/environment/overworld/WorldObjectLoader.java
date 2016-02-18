@@ -77,8 +77,7 @@ public class WorldObjectLoader {
         
         String dirPath = directory.getAbsolutePath();
         if(!directory.exists()) {
-            Undertailor.instance.warn(MANAGER_TAG, "could not load objects from directory: " + dirPath + " (doesn't exist)");
-            return;
+            directory.mkdirs();
         }
         
         if(directory.isFile()) {
