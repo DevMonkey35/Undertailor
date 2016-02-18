@@ -179,18 +179,20 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
         Sprite sprite = this.getParentSet().getSpriteset(spriteset)[currentFrameEntry.getValue().getSpriteIndex()];
         FrameObjectMeta meta = currentFrameEntry.getValue().getMeta() == null ? new FrameObjectMeta() : currentFrameEntry.getValue().getMeta();
         FrameObjectMeta nextFrame = nextFrameEntry.getValue().getMeta();
-        float scaleX, scaleY;
+        float scaleX, scaleY, mRotation;
         
         if(smoothingValue > 0) {
             scaleX = (meta.scaleX + ((nextFrame.scaleX - meta.scaleX) * smoothingValue)) * scale;
             scaleY = (meta.scaleY + ((nextFrame.scaleY - meta.scaleY) * smoothingValue)) * scale;
             offX += (meta.offX + ((nextFrame.offX - meta.offX) * smoothingValue)) * scaleX;
-            offY += (meta.offY + ((nextFrame.offY - meta.offY) * smoothingValue)) * scaleX;
+            offY += (meta.offY + ((nextFrame.offY - meta.offY) * smoothingValue)) * scaleY;
+            mRotation = meta.rotation + ((nextFrame.rotation - meta.rotation) * smoothingValue);
         } else {
             scaleX = meta.scaleX * scale;
             scaleY = meta.scaleY * scale;
             offX += meta.offX * scaleX;
             offY += meta.offY * scaleY;
+            mRotation = meta.rotation;
         }
         
         if(rotation == 0) {
@@ -212,6 +214,6 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
             posY += new Float(distance * Math.sin(radRotation + currentAngle));
         }
         
-        sprite.draw(posX, posY, scaleX, scaleY, meta.rotation + rotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
+        sprite.draw(posX, posY, scaleX, scaleY, rotation + mRotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);
     }
 }
