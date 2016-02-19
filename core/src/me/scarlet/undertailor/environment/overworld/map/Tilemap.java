@@ -66,7 +66,7 @@ public class Tilemap implements Disposable {
     private SpriteSheet sheet;
     private Map<String, Tile> tiles;
     
-    public Tilemap(String name, File texture, File meta) throws TextureTilingException, FileNotFoundException, ConfigurationException, IOException {
+    public Tilemap(String name, File texture, File meta) throws TextureTilingException, ConfigurationException, IOException {
         this.name = name;
         this.tiles = new HashMap<>();
         
@@ -121,7 +121,6 @@ public class Tilemap implements Disposable {
                         sprites[i] = this.sheet.getSprite(Integer.parseInt(frames[i]));
                     } catch(NumberFormatException e2) {
                         Undertailor.instance.error(TilemapManager.MANAGER_TAG, "failed to load tile " + this.name + ":" + tileName + "; bad tile data");
-                        continue;
                     }
                 }
                 

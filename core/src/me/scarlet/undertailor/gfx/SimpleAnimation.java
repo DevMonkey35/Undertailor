@@ -210,8 +210,8 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
             double distance = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
             double currentAngle = Math.atan((b) / (a));
             float radRotation = (float) Math.toRadians(rotation);
-            posX += new Float(distance * Math.cos(radRotation + currentAngle));
-            posY += new Float(distance * Math.sin(radRotation + currentAngle));
+            posX += (float) (distance * Math.cos(radRotation + currentAngle));
+            posY += (float) (distance * Math.sin(radRotation + currentAngle));
         }
         
         sprite.draw(posX, posY, scaleX, scaleY, rotation + mRotation, meta.flipX, meta.flipY, sprite.getTextureRegion().getRegionWidth(), sprite.getTextureRegion().getRegionHeight(), false);

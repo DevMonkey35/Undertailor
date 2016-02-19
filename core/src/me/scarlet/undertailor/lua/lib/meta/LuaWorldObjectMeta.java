@@ -117,7 +117,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             WorldObject object = check(args.arg1()).getObject();
-            float rotation = new Float(args.checkdouble(2));
+            float rotation = (float) args.checkdouble(2);
             object.setRotation(rotation);
             return LuaValue.NIL;
         }
@@ -189,7 +189,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             WorldObject object = check(args.arg1()).getObject();
-            BodyType type = null;
+            BodyType type;
             if(object.getBody() == null) {
                 type = object.getBodyDef().type;
             } else {
@@ -217,7 +217,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             WorldObject object = check(args.arg1()).getObject();
             int typeId = args.checkint(2);
             
-            BodyType type = null;
+            BodyType type;
             switch(typeId) {
                 case 0:
                     type = BodyType.DynamicBody;
@@ -292,7 +292,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             WorldObject object = check(args.arg1()).getObject();
-            object.setHeight(new Float(args.checkdouble(2)));
+            object.setHeight((float) args.checkdouble(2));
             return LuaValue.NIL;
         }
     }
@@ -339,8 +339,8 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             
             WorldObject object = check(args.arg(1)).getObject();
             Vector2 vel = object.getBody().getLinearVelocity();
-            float x = new Float(args.optdouble(2, vel.x));
-            float y = new Float(args.optdouble(3, vel.y));
+            float x = (float) args.optdouble(2, vel.x);
+            float y = (float) args.optdouble(3, vel.y);
             int movetype = args.optint(4, 0);
             vel.set(x, y);
             
@@ -381,8 +381,8 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             
             WorldObject object = check(args.arg1()).getObject();
             Vector2 pos = object.getPosition();
-            float x = new Float(args.optdouble(2, pos.x));
-            float y = new Float(args.optdouble(3, pos.y));
+            float x = (float) args.optdouble(2, pos.x);
+            float y = (float) args.optdouble(3, pos.y);
             
             object.setPosition(x, y);
             return LuaValue.NIL;
@@ -445,7 +445,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             WorldObject object = check(args.arg1()).getObject();
-            float scale = new Float(args.checkdouble(2));
+            float scale = (float) args.checkdouble(2);
             object.setScale(scale);
             return LuaValue.NIL;
         }

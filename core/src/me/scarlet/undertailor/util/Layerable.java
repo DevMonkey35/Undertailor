@@ -30,8 +30,8 @@ package me.scarlet.undertailor.util;
  */
 public interface Layerable {
     
-    public int getZ();
-    public void setZ(int z);
-    public int getPriority(); // floors should be 0; everything else should be 1
+    int getZ();
+    void setZ(int z);
+    int getPriority(); // floors should be 0; everything else should be 1
     
 }

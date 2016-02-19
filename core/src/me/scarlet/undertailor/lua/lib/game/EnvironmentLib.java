@@ -2,7 +2,6 @@ package me.scarlet.undertailor.lua.lib.game;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.environment.Environment;
-import me.scarlet.undertailor.environment.overworld.WorldObject;
 import me.scarlet.undertailor.environment.ui.UIObject;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -204,8 +203,7 @@ public class EnvironmentLib extends LuaLibrary {
                 return impl.getObjectValue();
             } else {
                 try {
-                    LuaObjectValue<WorldObject> obj = getEnvironmentManager().getWorldObjectLoader().newWorldObject(objectName, args.subargs(2));
-                    return obj;
+                    return getEnvironmentManager().getWorldObjectLoader().newWorldObject(objectName, args.subargs(2));
                 } catch(LuaError e) {
                     throw new LuaError("\n" + e.getMessage(), 2);
                 }

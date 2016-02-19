@@ -38,7 +38,7 @@ public class Blocker {
      */
     static class BlockingThread extends Thread {
         
-        private Blocker blocker;
+        private final Blocker blocker;
         private Runnable runnable;
         
         public BlockingThread(Blocker blocker, Runnable runnable) {
@@ -68,9 +68,7 @@ public class Blocker {
         
         @Override
         public void run() {
-            Platform.runLater(() -> {
-                super.run();
-            });
+            Platform.runLater(super::run);
         }
     }
     
@@ -85,21 +83,20 @@ public class Blocker {
      */
     public static void block(Runnable runnable, boolean jfx) {
         Blocker blocker = new Blocker();
-        
+
         BlockingThread blockerThread;
-        if(jfx) {
+        if (jfx) {
             blockerThread = new JavaFXBlockingThread(blocker, runnable);
         } else {
             blockerThread = new BlockingThread(blocker, runnable);
         }
-        
+
         blockerThread.start();
-        
-        synchronized(blocker) {
-            while(blocker.isBlocking()) {
-                try {
-                    blocker.wait();
-                } catch(InterruptedException e) {}
+
+        while (blocker.isBlocking()) {
+            try {
+                blocker.wait();
+            } catch (InterruptedException ignored) {
             }
         }
     }

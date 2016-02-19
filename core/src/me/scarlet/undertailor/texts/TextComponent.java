@@ -105,15 +105,15 @@ public class TextComponent {
         this.segmentSize = segmentSize;
         
         if(speed != null && speed <= 0) {
-            speed = DEFAULT_SPEED;
+            this.speed = DEFAULT_SPEED;
         }
         
         if(segmentSize != null && segmentSize <= 0) {
-            segmentSize = 1;
+            this.segmentSize = 1;
         }
         
         if(wait != null && wait < 0) {
-            wait = 0F;
+            this.wait = 0F;
         }
     }
     

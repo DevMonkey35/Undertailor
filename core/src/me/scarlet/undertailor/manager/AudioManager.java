@@ -112,7 +112,7 @@ public class AudioManager {
                 Undertailor.instance.log(MANAGER_TAG, "WARN: name conflict with another sound/music file of another file type detected (" + name + "); old one will be replaced with new one");
             }
             
-            Audio<?> value = null;
+            Audio<?> value;
             if(table == 0) { // sound
                 value = new SoundWrapper(soundMan, file);
                 Undertailor.instance.debug(MANAGER_TAG, "registered sound " + name);

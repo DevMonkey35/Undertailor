@@ -67,7 +67,7 @@ public class Console {
     public static class ConsoleThread extends Thread {
         
         private boolean running;
-        private StringBuilder buffer;
+        private final StringBuilder buffer;
         private Console console;
         
         public ConsoleThread(Console console) {
@@ -92,7 +92,7 @@ public class Console {
                         console.appendText(buffer.toString().trim());
                         buffer.setLength(0);
                     }
-                } catch(InterruptedException e) {}
+                } catch(InterruptedException ignored) {}
             }
         }
         
@@ -122,7 +122,7 @@ public class Console {
             }
             
             wrap.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                if(newValue.booleanValue()) {
+                if(newValue) {
                     output.setWrapText(true);
                 } else {
                     output.setWrapText(false);
@@ -170,9 +170,7 @@ public class Console {
     
     public void show() {
         if(!stage.isShowing()) {
-            Platform.runLater(() -> {
-                stage.show();
-            });
+            Platform.runLater(() -> stage.show());
             
             Undertailor.instance.log(Undertailor.MANAGER_TAG, "showing console");
         }

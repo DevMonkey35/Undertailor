@@ -26,23 +26,23 @@ package me.scarlet.undertailor.audio;
 
 public interface Audio<T> {
     
-    public String getAudioName();
-    public float getAffectedVolume();
-    public float getPosition();
-    public void setPosition(float position);
-    public float getVolume();
-    public void setVolume(float volume);
-    public float getPan();
-    public void setPan(float pan);
-    public float getPitch();
-    public void setPitch(float pitch);
-    public boolean isLooping();
-    public void setLoopPoint(float loopPoint);
-    public boolean isPlaying(T id);
-    public boolean isPaused(T id);
-    public T play(float volume, float pan, float pitch);
-    public T play();
-    public void pause(T id);
-    public void stop(T id);
+    String getAudioName();
+    float getAffectedVolume();
+    float getPosition();
+    void setPosition(float position);
+    float getVolume();
+    void setVolume(float volume);
+    float getPan();
+    void setPan(float pan);
+    float getPitch();
+    void setPitch(float pitch);
+    boolean isLooping();
+    void setLoopPoint(float loopPoint);
+    boolean isPlaying(T id);
+    boolean isPaused(T id);
+    T play(float volume, float pan, float pitch);
+    T play();
+    void pause(T id);
+    void stop(T id);
     
 }

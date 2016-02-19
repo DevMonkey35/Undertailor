@@ -106,8 +106,8 @@ public class LuaUIComponentMeta extends LuaLibrary {
             
             UIComponent component = check(args.arg1()).getObject();
             Vector2 pos = component.getPosition();
-            float x = new Float(args.optdouble(2, pos.x));
-            float y = new Float(args.optdouble(3, pos.y));
+            float x = (float) args.optdouble(2, pos.x);
+            float y = (float) args.optdouble(3, pos.y);
             
             component.setPosition(new Vector2(x, y));
             return LuaValue.NIL;

@@ -75,7 +75,7 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * @throws LuaScriptException if the implementation within the script was
      *             marked invalid (bad value or missing required function)
      */
-    public static Map<String, LuaFunction> loadFile(LuaImplementable<?, ?> implementable, File scriptFile, Globals globals) throws FileNotFoundException, LuaScriptException {
+    static Map<String, LuaFunction> loadFile(LuaImplementable<?, ?> implementable, File scriptFile, Globals globals) throws FileNotFoundException, LuaScriptException {
         Map<String, LuaFunction> functions = LuaUtil.getScriptFunctions(globals, scriptFile);
         Map<String, LuaFunction> setFunctions = new HashMap<>();
         
@@ -111,7 +111,7 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * name not be a function value), the script will be rejected and the load
      * method will throw a {@link LuaScriptException}.</p>
      */
-    public String[] getRequiredFunctions();
+    String[] getRequiredFunctions();
     
     /**
      * Returns the list of functions recognized and used by anything utilizing
@@ -120,7 +120,7 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * <p>This should include the functions returned by
      * {@link #getRequiredFunctions()}.</p>
      */
-    public String[] getFunctions();
+    String[] getFunctions();
     
     /**
      * Called to execute action whenever the implementation of a listed function
@@ -149,7 +149,7 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * @param funcName the name of the changed function
      * @param newValue the new function to be set; can be nil
      */
-    public default boolean onFunctionChange(LuaImplementation impl, String funcName, LuaValue newValue) {
+    default boolean onFunctionChange(LuaImplementation impl, String funcName, LuaValue newValue) {
         return true;
     }
     
@@ -168,7 +168,7 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * @throws LuaScriptException if an error occurs loading the functions from
      *             the given load data
      */
-    public default void loadFunctions(String scriptId, R loaded) throws LuaScriptException {
+    default void loadFunctions(String scriptId, R loaded) throws LuaScriptException {
         this.loadFunctions(scriptId, loaded, Undertailor.getScriptManager().generateGlobals(), false);
     }
     
@@ -191,7 +191,7 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * @throws LuaScriptException if an error occurs loading the functions from
      *             the given load data
      */
-    public void loadFunctions(String scriptId, R loaded, Globals globals, boolean replace) throws LuaScriptException;
+    void loadFunctions(String scriptId, R loaded, Globals globals, boolean replace) throws LuaScriptException;
     
     /**
      * Loads function data tagged with the given ID into a
@@ -206,11 +206,11 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * @throws LuaScriptException if the data given is marked invalid for
      *             injection into the target type of implementation object
      */
-    public default T load(String scriptId, LuaValue... args) throws LuaScriptException {
+    default T load(String scriptId, LuaValue... args) throws LuaScriptException {
         return load(scriptId, LuaUtil.asVarargs(args));
-    };
-    
-    public T load(String scriptId, Varargs args) throws LuaScriptException;
+    }
+
+    T load(String scriptId, Varargs args) throws LuaScriptException;
     
     /**
      * Loads function data tagged with the given ID into a
@@ -237,11 +237,11 @@ public interface LuaImplementable<R, T extends LuaImplementation> {
      * @throws LuaScriptException if the data given is marked invalid for
      *             injection into the target type of implementation object
      */
-    public default T load(String scriptId, R loaded, LuaValue... args) throws LuaScriptException {
+    default T load(String scriptId, R loaded, LuaValue... args) throws LuaScriptException {
         return load(scriptId, loaded, LuaUtil.asVarargs(args));
     }
     
-    public default T load(String scriptId, R loaded, Varargs args) throws LuaScriptException {
+    default T load(String scriptId, R loaded, Varargs args) throws LuaScriptException {
         this.loadFunctions(scriptId, loaded);
         return load(scriptId, args);
     }

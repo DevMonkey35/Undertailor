@@ -25,7 +25,6 @@
 package me.scarlet.undertailor.lua;
 
 import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
@@ -81,7 +80,7 @@ public class LuaObjectValue<T> extends LuaTable {
     @SuppressWarnings("unchecked")
     public static <T> LuaObjectValue<T> of(T object, String typename, LuaValue metatable) {
         if(!objects.containsKey(object)) {
-            objects.put(object, new LuaObjectValue<T>(object, typename, metatable));
+            objects.put(object, new LuaObjectValue<>(object, typename, metatable));
         }
         
         return (LuaObjectValue<T>) objects.get(object);
@@ -142,7 +141,7 @@ public class LuaObjectValue<T> extends LuaTable {
             for(String func : impl.getImplementable().getFunctions()) {
                 if(key.tojstring().equals(func)) {
                     if(value.isfunction()) {
-                        impl.getImplementable().onFunctionChange(impl, key.tojstring(), (LuaFunction) value);
+                        impl.getImplementable().onFunctionChange(impl, key.tojstring(), value);
                         break;
                     } else { // can't be nil here so it has to be anything but a func
                         throw new LuaError("cannot change variable " + func + " to contain a non-functional value (implemented script function)");

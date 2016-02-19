@@ -31,7 +31,6 @@ import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,9 +64,7 @@ public class StyleManager extends Manager<Style> {
         }
         
         Undertailor.instance.log(MANAGER_TAG, "loading styles from directory " + dirPath);
-        for(File file : directory.listFiles((FileFilter) (File file) -> {
-            return file.getName().endsWith(".lua") || file.isDirectory();
-        })) {
+        for(File file : directory.listFiles((File file1) -> file1.getName().endsWith(".lua") || file1.isDirectory())) {
             if(file.isDirectory()) {
                 loadStyles(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
                 continue;

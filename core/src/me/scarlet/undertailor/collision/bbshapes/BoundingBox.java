@@ -29,18 +29,18 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 public interface BoundingBox {
     
-    public float getRotation();
-    public void setRotation(float rotation);
-    public Vector2 getOffset();
-    public void setOffset(float x, float y);
-    public boolean canCollide();
-    public void setCanCollide(boolean flag);
-    public boolean isSensor();
-    public void setSensor(boolean flag);
-    public void applyFixture(Body body);
-    public void destroyFixture(Body body);
-    public float getScale();
-    public void setScale(float scale);
-    public boolean hasTarget();
+    float getRotation();
+    void setRotation(float rotation);
+    Vector2 getOffset();
+    void setOffset(float x, float y);
+    boolean canCollide();
+    void setCanCollide(boolean flag);
+    boolean isSensor();
+    void setSensor(boolean flag);
+    void applyFixture(Body body);
+    void destroyFixture(Body body);
+    float getScale();
+    void setScale(float scale);
+    boolean hasTarget();
     
 }

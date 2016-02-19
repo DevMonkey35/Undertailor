@@ -36,7 +36,6 @@ import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.environment.OverworldController;
 import me.scarlet.undertailor.environment.overworld.map.RoomMapLayer;
-import me.scarlet.undertailor.environment.overworld.map.RoomMapLayer.SpriteData;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.manager.ScriptManager;
@@ -53,6 +52,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class WorldRoom implements Disposable {
     
@@ -188,22 +188,22 @@ public class WorldRoom implements Disposable {
     private static long nextId;
     
     static {
-        RETURN_SET = new TreeSet<Layerable>((Layerable obj1, Layerable obj2) -> {
-            if(obj1.getZ() == obj2.getZ()) {
-                if(obj1 instanceof Positionable && obj2 instanceof Positionable) {
+        RETURN_SET = new TreeSet<>((Layerable obj1, Layerable obj2) -> {
+            if (obj1.getZ() == obj2.getZ()) {
+                if (obj1 instanceof Positionable && obj2 instanceof Positionable) {
                     Positionable wobj1 = (Positionable) obj1;
                     Positionable wobj2 = (Positionable) obj2;
-                    
-                    if(wobj1.getPosition().y == wobj2.getPosition().y) {
+
+                    if (wobj1.getPosition().y == wobj2.getPosition().y) {
                         return 1; // doesn't matter as long as its not 0
                     } else {
                         return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
                     }
                 } else {
-                    if(obj1 instanceof RoomMapLayer) {
+                    if (obj1 instanceof RoomMapLayer) {
                         return -1;
                     }
-                    
+
                     return 1;
                 }
             } else {
@@ -314,25 +314,20 @@ public class WorldRoom implements Disposable {
         }
         
         collision.step(delta);
-        
-        for(WorldObject object : objects.values()) {
-            if(object.canCollide()) {
-                for(Collider collider : object.getContacts()) {
-                    if(collider.canCollide() && !collider.isOneSidedReaction() && !object.isCollisionIgnored(collider)) {
-                        object.onCollide(collider);
-                    }
-                }
-            }
-        }
+
+        objects.values().stream().filter(WorldObject::canCollide)
+                .forEach(object -> object.getContacts().stream()
+                        .filter(collider -> collider.canCollide()
+                                && !collider.isOneSidedReaction()
+                                && !object.isCollisionIgnored(collider))
+                        .forEach(object::onCollide));
     }
     
     public void render() {
         Set<Layerable> renderOrder = getObjectsInRenderOrder();
-        for(Layerable object : renderOrder) {
-            if(object instanceof Renderable) {
-                ((Renderable) object).render();
-            }
-        }
+        renderOrder.stream()
+                .filter(object -> object instanceof Renderable)
+                .forEach(object -> ((Renderable) object).render());
     }
     
     private void updateMapping() {
@@ -368,16 +363,12 @@ public class WorldRoom implements Disposable {
     
     public void pause() {
         this.onPause();
-        for(WorldObject object : objects.values()) {
-            object.onPause();
-        }
+        objects.values().forEach(WorldObject::onPause);
     }
     
     public void resume() {
         this.onResume();
-        for(WorldObject object : objects.values()) {
-            object.onResume();
-        }
+        objects.values().forEach(WorldObject::onResume);
     }
     
     private TreeSet<Layerable> getObjectsInRenderOrder() {
@@ -386,15 +377,11 @@ public class WorldRoom implements Disposable {
         if(this.roomWrapper != null) {
             for(RoomMapLayer layer : roomWrapper.getReference().getLayers()) {
                 RETURN_SET.add(layer);
-                for(SpriteData data : layer.getSpriteObjects()) {
-                    RETURN_SET.add(data);
-                }
+                RETURN_SET.addAll(layer.getSpriteObjects().stream().collect(Collectors.toList()));
             }
         }
-        
-        for(WorldObject object : objects.values()) {
-            RETURN_SET.add(object);
-        }
+
+        RETURN_SET.addAll(objects.values().stream().collect(Collectors.toList()));
         
         return RETURN_SET;
     }

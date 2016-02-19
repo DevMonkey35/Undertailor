@@ -173,8 +173,6 @@ public class SpriteSheet implements Disposable {
     
     @Override
     public void dispose() {
-        Gdx.app.postRunnable(() -> {
-            texture.dispose();
-        });
+        Gdx.app.postRunnable(() -> texture.dispose());
     }
 }

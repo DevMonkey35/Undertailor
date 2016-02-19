@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Font {
     
@@ -183,13 +184,10 @@ public class Font {
         }
         
         public CharMeta getCharacterMeta(char ch) {
-            Set<CharMeta> collectedMeta = new HashSet<CharMeta>();
-            for(Entry<String, CharMeta> entry : charMeta.entrySet()) {
-                if(entry.getKey().indexOf(ch) != -1) {
-                   collectedMeta.add(entry.getValue());
-                }
-            }
-            
+            Set<CharMeta> collectedMeta = charMeta.entrySet().stream()
+                    .filter(entry -> entry.getKey().indexOf(ch) != -1)
+                    .map(Entry::getValue).collect(Collectors.toSet());
+
             if(!collectedMeta.isEmpty()) {
                 CharMeta compiled = new CharMeta();
                 for(CharMeta meta : collectedMeta) {
@@ -223,12 +221,8 @@ public class Font {
         for(int i = 0; i < data.characterList.length(); i++) {
             sheetMeta.spriteMeta[i] = data.getCharacterMeta(data.characterList.charAt(i)).asSpriteMeta(ySize);
         }
-        
-        try {
-            this.sheet = new SpriteSheet("font-" + data.fontName, spriteSheet, sheetMeta);
-        } catch(TextureTilingException e) {
-            throw e;
-        }
+
+        this.sheet = new SpriteSheet("font-" + data.fontName, spriteSheet, sheetMeta);
     }
     
     public FontData getFontData() {
@@ -319,7 +313,7 @@ public class Font {
     
     public void fontTest(int posX, int posY, int scale) {
         String charList = this.getFontData().characterList;
-        Set<Integer> yPos = new HashSet<Integer>();
+        Set<Integer> yPos = new HashSet<>();
         yPos.add(posY);
         
         for(int i = 0; i < Math.ceil(charList.length()/13) + 1; i++) {

@@ -26,5 +26,5 @@ package me.scarlet.undertailor.environment.ui.event;
 
 public interface UIEvent {
     
-    public String getName();
+    String getName();
 }

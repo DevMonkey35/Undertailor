@@ -31,18 +31,18 @@ import java.util.Set;
 
 public interface Collider {
     
-    public Body getBody();
-    public Set<BoundingBox> getBoundingBoxes();
-    public BoundingBox getBoundingBox(String id);
-    public void setBoundingBox(String id, BoundingBox box);
-    public void onCollide(Collider collider);
-    public boolean isCollisionIgnored(Collider collider);
-    public void setIgnoreCollisionWith(Collider collider, boolean flag);
-    public boolean canCollide();
-    public boolean isOneSidedReaction();
-    public void setOneSidedReaction(boolean flag);
-    public Set<Collider> getContacts();
-    public default void updateCollision() {
+    Body getBody();
+    Set<BoundingBox> getBoundingBoxes();
+    BoundingBox getBoundingBox(String id);
+    void setBoundingBox(String id, BoundingBox box);
+    void onCollide(Collider collider);
+    boolean isCollisionIgnored(Collider collider);
+    void setIgnoreCollisionWith(Collider collider, boolean flag);
+    boolean canCollide();
+    boolean isOneSidedReaction();
+    void setOneSidedReaction(boolean flag);
+    Set<Collider> getContacts();
+    default void updateCollision() {
         if(this.getBody() != null) {
             for(BoundingBox box : this.getBoundingBoxes()) {
                 box.applyFixture(this.getBody());

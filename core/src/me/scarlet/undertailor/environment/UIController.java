@@ -59,9 +59,7 @@ public class UIController implements Renderable {
     
     public UIController(Environment env, Viewport port) {
         this.env = env;
-        this.uis = new TreeMap<>(((Comparator<Integer>) (Integer i1, Integer i2) -> {
-                    return i1.compareTo(i2);
-                }));
+        this.uis = new TreeMap<>(((Comparator<Integer>) Integer::compareTo));
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
         
         this.setViewport(port);
@@ -88,9 +86,7 @@ public class UIController implements Renderable {
     }
     
     public void pushEvent(UIEvent event) {
-        this.processObjects(object -> {
-            object.pushEvent(event);
-        }, false);
+        this.processObjects(object -> object.pushEvent(event), false);
     }
     
     public void process(float delta, InputData input) {
@@ -98,9 +94,7 @@ public class UIController implements Renderable {
             return;
         }
         
-        this.processObjects(object -> {
-            object.process(delta, input);
-        }, false);
+        this.processObjects(object -> object.process(delta, input), false);
         
         Iterator<Entry<Integer, UIObject>> iterator = uis.entrySet().iterator();
         while(iterator.hasNext()) {
@@ -113,9 +107,7 @@ public class UIController implements Renderable {
     
     public void render() {
         Undertailor.getRenderer().setProjectionMatrix(camera.combined);
-        this.processObjects(object -> {
-            object.render();
-        }, false);
+        this.processObjects(UIObject::render, false);
     }
     
     private void processObjects(Consumer<UIObject> consumer, boolean all) {

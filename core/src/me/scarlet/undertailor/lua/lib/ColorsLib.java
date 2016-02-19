@@ -38,11 +38,11 @@ import org.luaj.vm2.Varargs;
 
 public class ColorsLib extends LuaLibrary {
     
-    public static final LuaObjectValue<Color> check(LuaValue value) {
+    public static LuaObjectValue<Color> check(LuaValue value) {
         return LuaUtil.checkType(value, Lua.TYPENAME_COLOR);
     }
     
-    public static final LuaObjectValue<Color> create(Color color) {
+    public static LuaObjectValue<Color> create(Color color) {
         return LuaObjectValue.of(color, Lua.TYPENAME_COLOR, LuaLibrary.asMetatable(Lua.LIB_COLORS));
     }
     
@@ -132,10 +132,10 @@ public class ColorsLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 5); // color, r, g, b, a
             
             Color color = check(args.arg(1)).getObject();
-            float r = args.isnil(2) ? color.r : new Float(args.checkdouble(2));
-            float g = args.isnil(3) ? color.g : new Float(args.checkdouble(3));
-            float b = args.isnil(4) ? color.b : new Float(args.checkdouble(4));
-            float a = args.isnil(5) ? color.a : new Float(args.checkdouble(5));
+            float r = args.isnil(2) ? color.r : (float) args.checkdouble(2);
+            float g = args.isnil(3) ? color.g : (float) args.checkdouble(3);
+            float b = args.isnil(4) ? color.b : (float) args.checkdouble(4);
+            float a = args.isnil(5) ? color.a : (float) args.checkdouble(5);
             color.set(r, g, b, a);
             return LuaValue.NIL;
         }

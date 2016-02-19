@@ -122,8 +122,8 @@ public class AnimationLib extends LuaLibrary {
             
             AnimationData anim = check(args.arg1()).getObject();
             Vector2 offset = anim.getOffset();
-            float x = new Float(args.optdouble(2, offset.x));
-            float y = new Float(args.optdouble(3, offset.y));
+            float x = (float) args.optdouble(2, offset.x);
+            float y = (float) args.optdouble(3, offset.y);
             
             anim.setOffset(x, y);
             return LuaValue.NIL;
@@ -253,10 +253,10 @@ public class AnimationLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 3, 5);
             
             AnimationData animation = check(args.arg(1)).getObject();
-            float posX = new Float(args.checkdouble(2));
-            float posY = new Float(args.checkdouble(3));
-            float scale = args.isnil(4) ? 2F : new Float(args.checkdouble(4));
-            float rotation = args.isnil(5) ? 0F : new Float(args.checkdouble(5));
+            float posX = (float) args.checkdouble(2);
+            float posY = (float) args.checkdouble(3);
+            float scale = args.isnil(4) ? 2F : (float) args.checkdouble(4);
+            float rotation = args.isnil(5) ? 0F : (float) args.checkdouble(5);
             
             animation.drawCurrentFrame(posX, posY, scale, rotation);
             return LuaValue.NIL;

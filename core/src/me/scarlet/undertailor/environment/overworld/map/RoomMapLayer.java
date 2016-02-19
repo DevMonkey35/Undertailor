@@ -122,8 +122,8 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
         }
         
         String[] sprites = ConfigurateUtil.processStringArray(layerData.getNode("sprites"), null);
-        for(int i = 0; i < sprites.length; i++) {
-            this.sprites.add(SpriteData.fromString(parent, sprites[i], this.z));
+        for (String sprite : sprites) {
+            this.sprites.add(SpriteData.fromString(parent, sprite, this.z));
         }
     }
     
@@ -207,9 +207,8 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
         try {
             String[] mappingSplit = mapping.split(":");
             Tilemap map = parent.getTilemap(Integer.parseInt(mappingSplit[0]));
-            Tile returned = map.getTile(mappingSplit[1]).clone();
-            
-            return returned;
+
+            return map.getTile(mappingSplit[1]).clone();
         } catch(NullPointerException e) {
             BadConfigurationException thrown = new BadConfigurationException("bad map data: data requested non-existing tilemap or tile");
             thrown.initCause(e);

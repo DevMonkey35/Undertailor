@@ -124,10 +124,10 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     
     public float getRotation() {
         if(this.body == null) {
-            return new Float(Math.toDegrees(this.bodyDef.angle));
+            return (float) Math.toDegrees(this.bodyDef.angle);
         }
         
-        return new Float(Math.toDegrees(this.body.getAngle()));
+        return (float) Math.toDegrees(this.body.getAngle());
     }
     
     public void setRotation(float rotation) {
@@ -222,7 +222,7 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     }
     
     public boolean isVisible() {
-        return isVisible();
+        return this.isVisible;
     }
     
     public void setVisible(boolean flag) {

@@ -63,9 +63,7 @@ public class TilemapManager extends Manager<TilemapWrapper> {
             heading = "";
         }
         
-        for(File file : dir.listFiles(file -> {
-            return file.getName().endsWith(".png") || file.isDirectory();
-        })) {
+        for(File file : dir.listFiles(file1 -> file1.getName().endsWith(".png") || file1.isDirectory())) {
             if(file.isDirectory()) {
                 loadTilemaps(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
                 continue;
@@ -84,7 +82,6 @@ public class TilemapManager extends Manager<TilemapWrapper> {
                 tilemaps.put(entryName, new TilemapWrapper(entryName, file, metaFile));
             } catch(TextureTilingException e) {
                 Undertailor.instance.error(MANAGER_TAG, "failed to load tilemap: " + LuaUtil.formatJavaException(e), e);
-                continue;
             }
         }
     }
