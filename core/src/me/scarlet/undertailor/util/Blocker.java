@@ -93,10 +93,11 @@ public class Blocker {
 
         blockerThread.start();
 
-        while (blocker.isBlocking()) {
-            try {
-                blocker.wait();
-            } catch (InterruptedException ignored) {
+        synchronized(blocker) {
+            while (blocker.isBlocking()) {
+                try {
+                    blocker.wait();
+                } catch (InterruptedException ignored) {}
             }
         }
     }
