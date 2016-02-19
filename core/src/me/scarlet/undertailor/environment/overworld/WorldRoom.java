@@ -298,6 +298,7 @@ public class WorldRoom implements Disposable {
     public void removeObject(long id) {
         WorldObject obj = objects.get(id);
         if(obj != null) {
+            obj.room = null;
             removed.add(obj);
         }
     }

@@ -246,11 +246,12 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
     }
     
     public WorldRoom getRoom() {
-        return room;
+        return this.room;
     }
     
     public void destroy() {
         room.removeObject(id);
+        this.room = null;
     }
     
     public AnimationData getAnimation(String id) {
