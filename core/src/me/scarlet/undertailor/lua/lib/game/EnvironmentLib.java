@@ -8,11 +8,20 @@ import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
 import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.impl.UIComponentImplementable;
+import me.scarlet.undertailor.lua.impl.UIComponentImplementable.UIComponentImplementation;
+import me.scarlet.undertailor.lua.impl.WorldObjectImplementable;
+import me.scarlet.undertailor.lua.impl.WorldObjectImplementable.WorldObjectImplementation;
+import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
+import me.scarlet.undertailor.lua.impl.WorldRoomImplementable.WorldRoomImplementation;
 import me.scarlet.undertailor.lua.lib.meta.LuaOverworldControllerMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaRoomMapMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaSchedulerMeta;
+import me.scarlet.undertailor.lua.lib.meta.LuaUIComponentMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIControllerMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaUIObjectMeta;
+import me.scarlet.undertailor.lua.lib.meta.LuaWorldObjectMeta;
+import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.manager.EnvironmentManager;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
@@ -125,12 +134,20 @@ public class EnvironmentLib extends LuaLibrary {
     static class newUIComponent extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, -1);
+            LuaUtil.checkArguments(args, 0, -1);
+            String componentName = args.optjstring(1, null);
             
-            try {
-                return getEnvironmentManager().getUIComponentLoader().newLuaComponent(args.arg(1).checkjstring(), args.subargs(2));
-            } catch(LuaError e) {
-                throw new LuaError("\n" + e.getMessage(), 2);
+            if(componentName == null) {
+                UIComponentImplementation impl = new UIComponentImplementation();
+                impl.setImplementable(Undertailor.getScriptManager().getImplementable(UIComponentImplementable.class));
+                impl.setObjectValue(LuaUIComponentMeta.create(impl));
+                return impl.getObjectValue();
+            } else {
+                try {
+                    return getEnvironmentManager().getUIComponentLoader().newLuaComponent(componentName, args.subargs(2));
+                } catch(LuaError e) {
+                    throw new LuaError("\n" + e.getMessage(), 2);
+                }
             }
         }
     }
@@ -148,12 +165,20 @@ public class EnvironmentLib extends LuaLibrary {
     static class newWorldRoom extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);
+            LuaUtil.checkArguments(args, 0, 1);
+            String roomName = args.optjstring(1, null);
             
-            try {
-                return getEnvironmentManager().getRoomLoader().newRoomMap(args.checkjstring(1), args.subargs(2));
-            } catch(LuaError e) {
-                throw new LuaError("\n" + e.getMessage(), 2);
+            if(roomName == null) {
+                WorldRoomImplementation impl = new WorldRoomImplementation();
+                impl.setImplementable(Undertailor.getScriptManager().getImplementable(WorldRoomImplementable.class));
+                impl.setObjectValue(LuaWorldRoomMeta.create(impl));
+                return impl.getObjectValue();
+            } else {
+                try {
+                    return getEnvironmentManager().getRoomLoader().newRoomMap(roomName, args.subargs(2));
+                } catch(LuaError e) {
+                    throw new LuaError("\n" + e.getMessage(), 2);
+                }
             }
         }
     }
@@ -169,10 +194,22 @@ public class EnvironmentLib extends LuaLibrary {
     static class newWorldObject extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, -1);
+            LuaUtil.checkArguments(args, 0, -1);
+            String objectName = args.optjstring(1, null);
             
-            LuaObjectValue<WorldObject> obj = getEnvironmentManager().getWorldObjectLoader().newWorldObject(args.checkjstring(1), args.subargs(2));
-            return obj;
+            if(objectName == null) {
+                WorldObjectImplementation impl = new WorldObjectImplementation();
+                impl.setImplementable(Undertailor.getScriptManager().getImplementable(WorldObjectImplementable.class));
+                impl.setObjectValue(LuaWorldObjectMeta.create(impl));
+                return impl.getObjectValue();
+            } else {
+                try {
+                    LuaObjectValue<WorldObject> obj = getEnvironmentManager().getWorldObjectLoader().newWorldObject(objectName, args.subargs(2));
+                    return obj;
+                } catch(LuaError e) {
+                    throw new LuaError("\n" + e.getMessage(), 2);
+                }
+            }
         }
     }
     

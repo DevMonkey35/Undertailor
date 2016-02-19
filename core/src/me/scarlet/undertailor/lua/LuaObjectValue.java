@@ -111,8 +111,10 @@ public class LuaObjectValue<T> extends LuaTable {
         if(object instanceof LuaImplementation) {
             LuaImplementation impl = (LuaImplementation) object;
             impl.setObjectValue(this);
-            for(String key : impl.getFunctions().keySet()) {
-                this.set(key, impl.getFunctions().get(key));
+            if(impl.getFunctions() != null) {
+                for(String key : impl.getFunctions().keySet()) {
+                    this.set(key, impl.getFunctions().get(key));
+                }
             }
         }
         
