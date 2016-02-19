@@ -101,7 +101,6 @@ public abstract class DisposableWrapper<T extends Disposable> {
         synchronized(this) {
             if(this.isDisposed()) {
                 disposable = this.newReference();
-                System.out.println("a new reference for an object of the class " + this.getClass().getSimpleName() + " was created");
             }
             
             this.lastAccess = TimeUtils.millis();
@@ -162,7 +161,6 @@ public abstract class DisposableWrapper<T extends Disposable> {
                 this.lastAccess = -1;
                 disposable = null;
                 
-                System.out.println("a reference of the class " + this.getClass().getSimpleName() + " was disposed");
                 return true;
             }
         }
