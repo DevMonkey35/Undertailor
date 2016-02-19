@@ -65,7 +65,7 @@ public class LuaTask implements Task {
             return false;
         }
         
-        return returned.checkboolean(); 
+        return returned.optboolean(true); 
     }
 
     @Override
