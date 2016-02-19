@@ -76,7 +76,7 @@ public class LuaSchedulerMeta extends LuaLibrary {
             
             Scheduler scheduler = check(args.arg1()).getObject();
             LuaTable impl = args.checktable(2);
-            boolean active = args.optboolean(3, false);
+            boolean active = args.optboolean(3, true);
             
             LuaTask task = new LuaTask(impl);
             return LuaValue.valueOf(scheduler.registerTask(task, active));
