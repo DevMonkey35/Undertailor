@@ -57,7 +57,7 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     
     @Override
     public boolean allowDispose() {
-        return this.allowDispose() && !this.getReference().isPlaying();
+        return super.allowDispose() && !this.getReference().isPlaying();
     }
     
     // audio impl

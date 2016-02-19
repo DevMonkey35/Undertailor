@@ -120,9 +120,7 @@ public class LuaSchedulerMeta extends LuaLibrary {
             
             LuaTable compile = new LuaTable();
             if(args.narg() > 3) {
-                LuaUtil.iterateTable((LuaTable) args.subargs(4), vargs -> {
-                    compile.set(vargs.arg(1), vargs.arg(2));
-                });
+                LuaUtil.iterateTable((LuaTable) args.subargs(4), vargs -> compile.set(vargs.arg(1), vargs.arg(2)));
             }
             
             if(name != null) compile.set("name", name);

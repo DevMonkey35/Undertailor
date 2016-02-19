@@ -81,7 +81,7 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             BoundingBox box = check(args.arg(1)).getObject();
-            box.setRotation(new Float(args.checkdouble(2)));
+            box.setRotation((float) args.checkdouble(2));
             return LuaValue.NIL;
         }
     }
@@ -107,8 +107,8 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
             
             BoundingBox box = check(args.arg1()).getObject();
             Vector2 offset = box.getOffset();
-            float x = new Float(args.optdouble(2, offset.x));
-            float y = new Float(args.optdouble(3, offset.y));
+            float x = (float) args.optdouble(2, offset.x);
+            float y = (float) args.optdouble(3, offset.y);
             box.setOffset(x, y);
             return LuaValue.NIL;
         }
@@ -117,8 +117,8 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
     static class canCollide extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);;
-            
+            LuaUtil.checkArguments(args, 1, 1);
+
             BoundingBox box = check(args.arg1()).getObject();
             return LuaValue.valueOf(box.canCollide());
         }
@@ -140,8 +140,8 @@ public class LuaBoundingBoxMeta extends LuaLibrary {
     static class isSensor extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
-            LuaUtil.checkArguments(args, 1, 1);;
-            
+            LuaUtil.checkArguments(args, 1, 1);
+
             BoundingBox box = check(args.arg1()).getObject();
             return LuaValue.valueOf(box.isSensor());
         }

@@ -68,4 +68,8 @@ public final class TextParser {
         }
         return params;
     }
+
+    public static void main(String[] args) {
+
+    }
 }

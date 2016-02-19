@@ -84,10 +84,8 @@ public class EnvironmentManager {
     
     public void setCurrentViewportType(ViewportType type) {
         this.currentViewportType = type;
-        
-        for(Environment env : environments.values()) {
-            env.updateViewport();
-        }
+
+        environments.values().forEach(Environment::updateViewport);
     }
     
     public Environment getActiveEnvironment() {

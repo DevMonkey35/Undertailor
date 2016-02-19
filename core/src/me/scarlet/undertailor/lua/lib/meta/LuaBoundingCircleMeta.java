@@ -69,7 +69,7 @@ public class LuaBoundingCircleMeta extends LuaBoundingBoxMeta {
             LuaUtil.checkArguments(args, 2, 2);
             
             BoundingCircle circle = check(args.arg(1)).getObject();
-            circle.setRadius(new Float(args.checkdouble(2)));
+            circle.setRadius((float) args.checkdouble(2));
             return LuaValue.NIL;
         }
     }

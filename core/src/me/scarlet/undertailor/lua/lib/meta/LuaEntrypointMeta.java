@@ -80,8 +80,8 @@ public class LuaEntrypointMeta extends LuaLibrary {
             
             Entrypoint entrypoint = check(args.arg1()).getObject();
             Vector2 spawnpos = entrypoint.getSpawnPosition();
-            float x = new Float(args.optdouble(2, spawnpos.x));
-            float y = new Float(args.optdouble(3, spawnpos.y));
+            float x = (float) args.optdouble(2, spawnpos.x);
+            float y = (float) args.optdouble(3, spawnpos.y);
             
             entrypoint.setSpawnPosition(x, y);
             return LuaValue.NIL;
@@ -109,8 +109,8 @@ public class LuaEntrypointMeta extends LuaLibrary {
             
             Entrypoint entrypoint = check(args.arg1()).getObject();
             Vector2 pos = entrypoint.getPosition();
-            float x = new Float(args.optdouble(2, pos.x));
-            float y = new Float(args.optdouble(3, pos.y));
+            float x = (float) args.optdouble(2, pos.x);
+            float y = (float) args.optdouble(3, pos.y);
             
             entrypoint.setPosition(x, y);
             return LuaValue.NIL;

@@ -32,7 +32,7 @@ public interface LuaLibraryComponent {
      * Returns the key this {@link LuaLibraryComponent} would be stored under
      * should its {@link #store(LuaValue)} method be called.
      */
-    public String getKey();
+    String getKey();
     
     /**
      * Stores the equivalent {@link LuaValue} of this
@@ -41,5 +41,5 @@ public interface LuaLibraryComponent {
      * 
      * @param env the environment table to store this value in
      */
-    public void store(LuaValue env);
+    void store(LuaValue env);
 }

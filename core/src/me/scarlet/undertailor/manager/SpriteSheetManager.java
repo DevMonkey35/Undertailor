@@ -69,9 +69,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
         }
         
         Undertailor.instance.log(MANAGER_TAG, "loading sprites from directory " + dir.getAbsolutePath());
-        for(File file : dir.listFiles(file -> {
-            return file.getName().endsWith(".png") || file.isDirectory();
-        })) {
+        for(File file : dir.listFiles(file1 -> file1.getName().endsWith(".png") || file1.isDirectory())) {
             if(file.isDirectory()) {
                 loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
                 continue;
@@ -125,7 +123,7 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
     }
     
     public void testSheet(String sheetName) {
-        SpriteSheetWrapper sheetRef = this.sheets.get(sheetName);;
+        SpriteSheetWrapper sheetRef = this.sheets.get(sheetName);
         SpriteSheet sheet = sheetRef.getReference(this);
         SpriteBatch batch = new SpriteBatch();
         batch.begin();

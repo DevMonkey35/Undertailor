@@ -102,11 +102,7 @@ public class UIObject implements Renderable, Positionable {
     }
     
     public boolean isPastLifetime() {
-        if(this.maxLifetime > 0 && this.startLifetime > 0) {
-            return TimeUtils.timeSinceMillis(startLifetime) >= maxLifetime;
-        }
-        
-        return false;
+        return this.maxLifetime > 0 && this.startLifetime > 0 && TimeUtils.timeSinceMillis(startLifetime) >= maxLifetime;
     }
     
     public Vector2 getPosition() {
@@ -230,7 +226,7 @@ public class UIObject implements Renderable, Positionable {
     public String toString() {
         StringBuilder sb = new StringBuilder(id + ":");
         for(UIComponent comp : components) {
-            sb.append(" " + comp.getComponentTypeName());
+            sb.append(" ").append(comp.getComponentTypeName());
         }
         
         return sb.toString().trim();

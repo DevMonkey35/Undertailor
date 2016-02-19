@@ -49,7 +49,7 @@ public interface LuaImplementation {
      * implementation. Errors will occur during usage of this LuaImplementation
      * if attempts to use it while this method returns null.</p>
      */
-    public LuaImplementable<?, ? extends LuaImplementation> getImplementable();
+    LuaImplementable<?, ? extends LuaImplementation> getImplementable();
     
     /**
      * Sets the parent {@link LuaImplementable} for this implementation.
@@ -76,7 +76,7 @@ public interface LuaImplementation {
      * instantiation. It is up to whatever holds the implementation to ensure
      * those functions stay present, should they choose to let them be.</p>
      */
-    public Map<String, LuaFunction> getFunctions();
+    Map<String, LuaFunction> getFunctions();
     
     /**
      * Sets the function table for this implementation.
@@ -94,7 +94,7 @@ public interface LuaImplementation {
     /**
      * Returns the object value that contains this {@link LuaImplementation}.
      */
-    public LuaObjectValue<?> getObjectValue();
+    LuaObjectValue<?> getObjectValue();
     
     /**
      * Sets the object value that contains this {@link LuaImplementation}.
@@ -108,7 +108,7 @@ public interface LuaImplementation {
      * 
      * @param obj the object value to set
      */
-    public void setObjectValue(LuaObjectValue<?> obj);
+    void setObjectValue(LuaObjectValue<?> obj);
     
     /**
      * Changes a function within this implementation.

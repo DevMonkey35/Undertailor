@@ -67,18 +67,16 @@ public class WorldRoomImplementable implements LuaImplementable<File, WorldRoomI
         // generic impl of LuaImplementation; screw readability they're one-liners
         @Override public LuaImplementable<?, ?> getImplementable() { return impl; }
         @Override public void setImplementable(LuaImplementable<?, ?> impl) { this.impl = impl; }
-        @Override public Map<String, LuaFunction> getFunctions() { if(this.functions != null) return new HashMap<String, LuaFunction>(functions); else return null; }
+        @Override public Map<String, LuaFunction> getFunctions() { if(this.functions != null) return new HashMap<>(functions); else return null; }
         @Override public void setFunctions(Map<String, LuaFunction> functions) { this.functions = functions; }
         
         @Override public LuaObjectValue<?> getObjectValue() { return obj.get(); }
         @Override public void setObjectValue(LuaObjectValue<?> obj) {
             this.obj = new WeakReference<>(obj);
             if(this.functions != null) {
-                for(String key : functions.keySet()) {
-                    if(functions.containsKey(key)) {
-                        obj.set(key, functions.get(key));
-                    }
-                }
+                functions.keySet().stream()
+                        .filter(key -> functions.containsKey(key))
+                        .forEach(key -> obj.set(key, functions.get(key)));
             }
         }
         

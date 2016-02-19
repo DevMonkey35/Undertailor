@@ -97,7 +97,7 @@ public class TextComponentLib extends LuaLibrary {
             SoundWrapper sound = args.arg(5).isnil() ? null : Undertailor.getAudioManager().getSoundManager().getResource(args.arg(5).checkstring().tojstring());
             int speed = args.arg(6).isnil() ? TextComponent.DEFAULT_SPEED : args.arg(6).checkint();
             int segsize = args.arg(7).isnil() ? 1 : args.arg(7).checkint();
-            float wait = args.arg(8).isnil() ? 0F : new Float(args.arg(8).checkdouble());
+            float wait = args.arg(8).isnil() ? 0F : (float) args.arg(8).checkdouble();
             
             if(text.trim().isEmpty()) {
                 throw new LuaError("bad argument: text cannot be empty or only have whitespace characters");

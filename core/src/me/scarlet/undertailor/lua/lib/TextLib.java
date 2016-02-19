@@ -75,10 +75,10 @@ public class TextLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 0, 5);
             
-            float offX = new Float(args.optdouble(1, 0F));
-            float offY = new Float(args.optdouble(2, 0F));
-            float scaleX = new Float(args.optdouble(3, 1F));
-            float scaleY = new Float(args.optdouble(4, 1F));
+            float offX = (float) args.optdouble(1, 0F);
+            float offY = (float) args.optdouble(2, 0F);
+            float scaleX = (float) args.optdouble(3, 1F);
+            float scaleY = (float) args.optdouble(4, 1F);
             Color color = args.arg(5).isnil() ? null : ColorsLib.check(args.arg(5)).getObject();
             
             if(scaleX < 0F) {
@@ -104,7 +104,7 @@ public class TextLib extends LuaLibrary {
             SoundWrapper sound = args.arg(4).isnil() ? null : (SoundWrapper) AudioLib.checkSound(args.arg(4)).getObject();
             int speed = args.optint(5, TextComponent.DEFAULT_SPEED);
             int segsize = args.optint(6, 1);
-            float delay = new Float(args.optdouble(7, 0F));
+            float delay = (float) args.optdouble(7, 0F);
             
             return TextLib.create(new Text(font, style, color, sound, speed, segsize, delay));
         }
@@ -178,11 +178,11 @@ public class TextLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 3, 6);
             
             Text text = TextLib.check(args.arg(1)).getObject();
-            float posX = new Float(args.arg(2).checkdouble());
-            float posY = new Float(args.arg(3).checkdouble());
-            float scaleX = new Float(args.optdouble(4, 1.0));
-            float scaleY = new Float(args.optdouble(5, scaleX));
-            float alpha = new Float(args.optdouble(6, 1.0));
+            float posX = (float) args.arg(2).checkdouble();
+            float posY = (float) args.arg(3).checkdouble();
+            float scaleX = (float) args.optdouble(4, 1.0);
+            float scaleY = (float) args.optdouble(5, scaleX);
+            float alpha = (float) args.optdouble(6, 1.0);
             Undertailor.getFontManager().write(text, posX, posY, scaleX, scaleY, alpha);
             return LuaValue.NIL;
         }

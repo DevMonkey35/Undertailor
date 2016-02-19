@@ -124,7 +124,7 @@ public class AudioLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            audioman().getMusicManager().setVolume(new Float(args.checkdouble(1)));
+            audioman().getMusicManager().setVolume((float) args.checkdouble(1));
             return LuaValue.NIL;
         }
     }
@@ -142,7 +142,7 @@ public class AudioLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            audioman().getSoundManager().setVolume(new Float(args.checkdouble(1)));
+            audioman().getSoundManager().setVolume((float) args.checkdouble(1));
             return LuaValue.NIL;
         }
     }
@@ -160,7 +160,7 @@ public class AudioLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);
             
-            audioman().setVolume(new Float(args.checkdouble(1)));
+            audioman().setVolume((float) args.checkdouble(1));
             return LuaValue.NIL;
         }
     }
@@ -191,13 +191,9 @@ public class AudioLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 0, 0);
             
-            audioman().getMusicManager().getAllPlaying().forEach(wrapper -> {
-                wrapper.stop("");
-            });
+            audioman().getMusicManager().getAllPlaying().forEach(wrapper -> wrapper.stop(""));
             
-            audioman().getSoundManager().getAllPlaying().forEach(wrapper -> {
-                wrapper.stop((long) -1);
-            });
+            audioman().getSoundManager().getAllPlaying().forEach(wrapper -> wrapper.stop((long) -1));
             
             return LuaValue.NIL;
         }
@@ -208,9 +204,7 @@ public class AudioLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 0, 0);
             
-            audioman().getMusicManager().getAllPlaying().forEach(wrapper -> {
-                wrapper.stop("");
-            });
+            audioman().getMusicManager().getAllPlaying().forEach(wrapper -> wrapper.stop(""));
             
             return LuaValue.NIL;
         }
@@ -221,9 +215,7 @@ public class AudioLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 0, 0);
             
-            audioman().getSoundManager().getAllPlaying().forEach(wrapper -> {
-                wrapper.stop((long) -1);
-            });
+            audioman().getSoundManager().getAllPlaying().forEach(wrapper -> wrapper.stop((long) -1));
             
             return LuaValue.NIL;
         }
@@ -261,7 +253,7 @@ public class AudioLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             Audio<?> audio = check(args.arg(1)).getObject();
-            float position = new Float(args.checkdouble(2));
+            float position = (float) args.checkdouble(2);
             
             audio.setPosition(position);
             return LuaValue.NIL;
@@ -302,7 +294,7 @@ public class AudioLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             Audio<?> audio = check(args.arg(1)).getObject();
-            float point = new Float(args.checkdouble(2));
+            float point = (float) args.checkdouble(2);
             
             audio.setLoopPoint(point);
             return LuaValue.NIL;
@@ -325,7 +317,7 @@ public class AudioLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             Audio<?> audio = check(args.arg(1)).getObject();
-            float pitch = new Float(args.checkdouble(2));
+            float pitch = (float) args.checkdouble(2);
             
             audio.setPitch(pitch);
             return LuaValue.NIL;
@@ -348,7 +340,7 @@ public class AudioLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             Audio<?> audio = check(args.arg(1)).getObject();
-            float volume = NumberUtil.boundFloat(new Float(args.checkdouble(2)), 0.0F, 1.0F);
+            float volume = NumberUtil.boundFloat((float) args.checkdouble(2), 0.0F, 1.0F);
             
             audio.setVolume(volume);
             return LuaValue.NIL;
@@ -371,7 +363,7 @@ public class AudioLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             Audio<?> audio = check(args.arg(1)).getObject();
-            float pan = NumberUtil.boundFloat(new Float(args.checkdouble(2)), -1.0F, 1.0F);
+            float pan = NumberUtil.boundFloat((float) args.checkdouble(2), -1.0F, 1.0F);
             
             audio.setPan(pan);
             return LuaValue.NIL;
@@ -404,9 +396,9 @@ public class AudioLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 4);
             
             Audio<?> audio = check(args.arg1()).getObject();
-            float volume = NumberUtil.boundFloat(new Float(args.optdouble(2, audio.getVolume())), 0.0F, 1.0F);
-            float pitch = NumberUtil.boundFloat(new Float(args.optdouble(3, audio.getPitch())), 0.5F, 2.0F);
-            float pan = NumberUtil.boundFloat(new Float(args.optdouble(4, audio.getPan())), -1.0F, 1.0F);
+            float volume = NumberUtil.boundFloat((float) args.optdouble(2, audio.getVolume()), 0.0F, 1.0F);
+            float pitch = NumberUtil.boundFloat((float) args.optdouble(3, audio.getPitch()), 0.5F, 2.0F);
+            float pan = NumberUtil.boundFloat((float) args.optdouble(4, audio.getPan()), -1.0F, 1.0F);
             
             if(audio instanceof MusicWrapper) {
                 return LuaValue.valueOf(((MusicWrapper) audio).play(volume, pan, pitch));

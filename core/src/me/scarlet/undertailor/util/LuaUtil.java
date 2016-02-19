@@ -136,7 +136,7 @@ public class LuaUtil {
     }
     
     public static void checkArguments(Varargs args, int min, int max) {
-        if(args.narg() < min || (max <= 0 ? false : args.narg() > max)) {
+        if(args.narg() < min || (max > 0 && args.narg() > max)) {
             throw new LuaError("arguments insufficient or overflowing (min " + min + (max <= 0 ? ")" : " max " + max + ")"));
         }
     }
@@ -155,9 +155,9 @@ public class LuaUtil {
         } else {
             for(int i = 0; i < typenames.length; i++) {
                 if(i == typenames.length - 1) {
-                    sb.append("or " + typenames[i]);
+                    sb.append("or ").append(typenames[i]);
                 } else {
-                    sb.append(typenames[i] + ", ");
+                    sb.append(typenames[i]).append(", ");
                 }
             }
         }
@@ -166,11 +166,8 @@ public class LuaUtil {
     }
     
     public static boolean isOfType(LuaValue value, String typename) {
-        if(value.typename().equals(typename)) {
-            return true;
-        }
-        
-        return false;
+        return value.typename().equals(typename);
+
     }
     
     public static LuaValue toMetatable(LuaValue functionTable) {

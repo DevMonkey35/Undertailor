@@ -202,12 +202,10 @@ public class BaseLib extends LuaLibrary {
             }
             
             return table;
-        } catch(Exception e) {
-            throw e;
         } finally {
             try {
                 input.close();
-            } catch ( Exception e ) {}
+            } catch ( Exception ignored) {}
         }
     }
 }

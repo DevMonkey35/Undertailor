@@ -45,7 +45,7 @@ public class DesktopLauncher extends Application {
             try {
                 DesktopLauncher.class.getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
                 runtimeReady = true;
-            } catch(Exception e) {}
+            } catch(Exception ignored) {}
         }
     }
     
@@ -62,8 +62,8 @@ public class DesktopLauncher extends Application {
                 System.out.println("setting asset directory to work directory");
             } else {
                 StringBuilder builder = new StringBuilder();
-                for(int i = 0; i < args.length; i++) {
-                    builder.append(args[i]);
+                for (String arg : args) {
+                    builder.append(arg);
                 }
                 
                 String path = builder.toString();

@@ -33,7 +33,6 @@ import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.Varargs;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,9 +85,7 @@ public class WorldObjectLoader {
         }
         
         Undertailor.instance.log(MANAGER_TAG, "loading objects scripts from directory " + dirPath);
-        for(File file : directory.listFiles((FileFilter) (File file) -> {
-            return file.getName().endsWith(".lua") || file.isDirectory();
-        })) {
+        for(File file : directory.listFiles((File file1) -> file1.getName().endsWith(".lua") || file1.isDirectory())) {
             if(file.isDirectory()) {
                 loadObjects(file, heading.isEmpty() ? file.getName() : heading + "." + file.getName());
                 continue;

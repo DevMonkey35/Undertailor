@@ -59,11 +59,7 @@ public class RoomMap implements Disposable {
         }
         
         public boolean getBoolean(String key) {
-            if(values.containsKey(key)) {
-                return values.get(key) > 0.0F;
-            }
-            
-            return false;
+            return values.containsKey(key) && values.get(key) > 0.0F;
         }
         
         public void setBoolean(String key, boolean flag) {

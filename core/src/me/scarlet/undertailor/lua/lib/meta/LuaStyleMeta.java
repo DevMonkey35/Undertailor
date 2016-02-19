@@ -76,7 +76,7 @@ public class LuaStyleMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             Style style = check(args.arg1()).getObject();
-            float delta = new Float(args.checkdouble(2));
+            float delta = (float) args.checkdouble(2);
             
             style.onNextTextRender(delta);
             return LuaValue.NIL;

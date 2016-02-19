@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class StoreLib extends LuaLibrary {
     
@@ -67,9 +66,7 @@ public class StoreLib extends LuaLibrary {
             if(node.hasMapChildren()) { // is a table;
                 table.set(tablekey, load(node));
             } else if(node.hasListChildren()) { // is an array
-                List<String> strList = node.getList((Function<Object, String>) obj -> {
-                    return obj.toString();
-                });
+                List<String> strList = node.getList(Object::toString);
                 
                 LuaTable arrayTable = new LuaTable();
                 for(int i = 0; i < strList.size(); i++) {
@@ -118,7 +115,7 @@ public class StoreLib extends LuaLibrary {
                 if(key == null || (sValue == null && !value.istable())) {
                     Undertailor.instance.warn("store", "dropped key/value pair \"" + (node.getKey() != null ? node.getKey() + "." : "") + (key == null ? args.arg(1).tojstring() : key) + "\" during table->file conversion (key or value unsupported for storage)");
                 } else {
-                    if(value.istable() && ((LuaTable) table).keyCount() > 0) {
+                    if(value.istable() && (table.keyCount() > 0)) {
                         convert(node.getNode(key), (LuaTable) value, false);
                     } else {
                         node.getNode(key).setValue(sValue);

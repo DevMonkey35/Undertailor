@@ -71,9 +71,9 @@ public class CollisionHandler {
             public void endContact(Contact contact) {
                 Object uda = contact.getFixtureA().getBody().getUserData();
                 Object udb = contact.getFixtureB().getBody().getUserData();
-                if(uda instanceof Collider && udb instanceof Collider); {
-                    ((Collider) uda).getContacts().remove((Collider) udb);
-                    ((Collider) udb).getContacts().remove((Collider) uda);
+                if(uda instanceof Collider && udb instanceof Collider) {
+                    ((Collider) uda).getContacts().remove(udb);
+                    ((Collider) udb).getContacts().remove(uda);
                 }
             }
             
@@ -81,7 +81,7 @@ public class CollisionHandler {
             public void beginContact(Contact contact) {
                 Object uda = contact.getFixtureA().getBody().getUserData();
                 Object udb = contact.getFixtureB().getBody().getUserData();
-                if(uda instanceof Collider && udb instanceof Collider); {
+                if(uda instanceof Collider && udb instanceof Collider) {
                     ((Collider) uda).getContacts().add((Collider) udb);
                     ((Collider) udb).getContacts().add((Collider) uda);
                 }

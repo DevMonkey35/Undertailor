@@ -168,10 +168,6 @@ public abstract class DisposableWrapper<T extends Disposable> {
         return false;
     }
     
-    public long getMaximumLifetime() {
-        return DEFAULT_LIFETIME;
-    }
-    
     public abstract T newReference();
     public boolean allowDispose() {
         return !this.hasReferrers();

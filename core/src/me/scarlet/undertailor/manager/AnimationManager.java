@@ -65,9 +65,7 @@ public class AnimationManager extends Manager<AnimationSetWrapper> {
             heading = "";
         }
         Undertailor.instance.log(MANAGER_TAG, "searching for animations in " + dirPath);
-        for(File file : dir.listFiles(file -> {
-            return file.getName().endsWith(".tailoranim") || file.isDirectory();
-        })) {
+        for(File file : dir.listFiles(file1 -> file1.getName().endsWith(".tailoranim") || file1.isDirectory())) {
             if(file.isDirectory()) {
                 loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
                 continue;

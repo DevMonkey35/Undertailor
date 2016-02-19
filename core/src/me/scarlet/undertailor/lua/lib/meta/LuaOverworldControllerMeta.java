@@ -201,8 +201,8 @@ public class LuaOverworldControllerMeta extends LuaLibrary {
             OverworldController controller = check(args.arg1()).getObject();
             Vector2 position = controller.getCameraPosition();
             
-            float posX = new Float(args.optdouble(2, position.x)); //args.isnil(1) ? position.x : new Float(args.checkdouble(1));
-            float posY = new Float(args.optdouble(3, position.y)); // args.isnil(2) ? position.y : new Float(args.checkdouble(2));
+            float posX = (float) args.optdouble(2, position.x); //args.isnil(1) ? position.x : new Float(args.checkdouble(1));
+            float posY = (float) args.optdouble(3, position.y); // args.isnil(2) ? position.y : new Float(args.checkdouble(2));
             controller.setCameraPosition(posX, posY);
             
             return LuaValue.NIL;
@@ -226,7 +226,7 @@ public class LuaOverworldControllerMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             OverworldController controller = check(args.arg1()).getObject();
-            float zoom = new Float(args.checkdouble(2));
+            float zoom = (float) args.checkdouble(2);
             controller.setCameraZoom(zoom);
             return LuaValue.NIL;
         }

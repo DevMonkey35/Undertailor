@@ -66,7 +66,7 @@ public class StyleImplementable implements LuaImplementable<File, StyleImplement
         // generic impl of LuaImplementation; screw readability they're one-liners
         @Override public LuaImplementable<?, ?> getImplementable() { return impl; }
         @Override public void setImplementable(LuaImplementable<?, ?> impl) { this.impl = impl; }
-        @Override public Map<String, LuaFunction> getFunctions() { if(this.functions != null) return new HashMap<String, LuaFunction>(functions); else return null; } 
+        @Override public Map<String, LuaFunction> getFunctions() { if(this.functions != null) return new HashMap<>(functions); else return null; }
         @Override public void setFunctions(Map<String, LuaFunction> functions) { this.functions = functions; }
         
         @Override public LuaObjectValue<?> getObjectValue() { return obj.get(); }
@@ -76,13 +76,9 @@ public class StyleImplementable implements LuaImplementable<File, StyleImplement
             }
             
             this.obj = new WeakReference<>(obj);
-            for(String key : functions.keySet()) {
-                if(this.functions != null) {
-                    if(functions.containsKey(key)) {
-                        obj.set(key, functions.get(key));
-                    }
-                }
-            }
+            functions.keySet().stream().filter(key -> this.functions != null)
+                    .filter(key -> functions.containsKey(key)).forEach(key -> obj
+                    .set(key, functions.get(key)));
         }
         
         private File sourceFile;
@@ -120,8 +116,8 @@ public class StyleImplementable implements LuaImplementable<File, StyleImplement
     private Map<String, Map<String, LuaFunction>> loadedMapping;
     
     public StyleImplementable() {
-        this.loadedFiles = new HashMap<String, File>();
-        this.loadedMapping = new HashMap<String, Map<String, LuaFunction>>();
+        this.loadedFiles = new HashMap<>();
+        this.loadedMapping = new HashMap<>();
     }
     
     @Override
@@ -157,9 +153,8 @@ public class StyleImplementable implements LuaImplementable<File, StyleImplement
             impl.setFunctions(loadedMapping.get(scriptId));
             impl.setImplementable(this);
             impl.setObjectValue(LuaStyleMeta.create(impl));
-            
-            File loadData = loadedFiles.get(scriptId);
-            impl.sourceFile = loadData;
+
+            impl.sourceFile = loadedFiles.get(scriptId);
             impl.getFunctions().get(IMPLFUNCTION_CREATE).call(impl.getObjectValue());
             return impl;
         }

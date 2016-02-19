@@ -150,8 +150,8 @@ public class LuaUIObjectMeta extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 3);
             
             UIObject obj = check(args.arg(1)).getObject();
-            float x = new Float(args.arg(2).checkdouble());
-            float y = new Float(args.arg(3).checkdouble());
+            float x = (float) args.arg(2).checkdouble();
+            float y = (float) args.arg(3).checkdouble();
             
             Vector2 pos = obj.getPosition();
             pos.set(x, y);

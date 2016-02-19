@@ -108,11 +108,7 @@ public class LuaLibrary extends TwoArgFunction implements LuaLibraryComponent {
         
         @Override
         public final Varargs invoke(Varargs args) {
-            try {
-                return execute(args);
-            } catch(Exception e) {
-                throw e;
-            }
+            return execute(args);
         }
         
         public abstract Varargs execute(Varargs args);
@@ -123,7 +119,7 @@ public class LuaLibrary extends TwoArgFunction implements LuaLibraryComponent {
     
     public LuaLibrary(String libName) {
         this.libName = libName;
-        this.values = new HashSet<LuaLibraryComponent>();
+        this.values = new HashSet<>();
     }
     
     /**
@@ -137,7 +133,7 @@ public class LuaLibrary extends TwoArgFunction implements LuaLibraryComponent {
      */
     public LuaLibrary(String libName, LuaLibraryComponent... values) {
         this.libName = libName;
-        this.values = new HashSet<LuaLibraryComponent>();
+        this.values = new HashSet<>();
         addComponents(values);
     }
     
@@ -248,5 +244,5 @@ public class LuaLibrary extends TwoArgFunction implements LuaLibraryComponent {
     /**
      * Creates another {@link LuaLibrary} of this type with no modifications.
      */
-    public LuaLibrary cleanClone() { return new LuaLibrary(libName, values.toArray(new LuaLibraryComponent[values.size()])); };
+    public LuaLibrary cleanClone() { return new LuaLibrary(libName, values.toArray(new LuaLibraryComponent[values.size()])); }
 }

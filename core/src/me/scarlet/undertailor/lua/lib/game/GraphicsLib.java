@@ -90,7 +90,7 @@ public class GraphicsLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 2);
             
             Color color = ColorsLib.check(args.arg(1)).getObject();
-            float alpha = new Float(args.optdouble(2, color.a));
+            float alpha = (float) args.optdouble(2, color.a);
             Undertailor.getRenderer().setBatchColor(color, alpha);
             return LuaValue.NIL;
         }
@@ -110,7 +110,7 @@ public class GraphicsLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 2);
             
             Color color = ColorsLib.check(args.arg(1)).getObject();
-            float alpha = new Float(args.optdouble(2, color.a));
+            float alpha = (float) args.optdouble(2, color.a);
             Undertailor.getRenderer().setShapeColor(color, alpha);
             return LuaValue.NIL;
         }
@@ -121,10 +121,10 @@ public class GraphicsLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 5, 6);
             
-            Vector2 pos = new Vector2(new Float(args.checkdouble(1)), new Float(args.checkdouble(2)));
-            float radius = new Float(args.checkdouble(3));
-            float start = new Float(args.checkdouble(4));
-            float degrees = new Float(args.checkdouble(5));
+            Vector2 pos = new Vector2((float) args.checkdouble(1), (float) args.checkdouble(2));
+            float radius = (float) args.checkdouble(3);
+            float start = (float) args.checkdouble(4);
+            float degrees = (float) args.checkdouble(5);
             int segments = args.optint(6, -1);
             
             if(segments <= -1) {
@@ -142,11 +142,11 @@ public class GraphicsLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 4, 5);
             
-            Vector2 a = new Vector2(new Float(args.checkdouble(1)),
-                    new Float(args.checkdouble(2)));
-            Vector2 b = new Vector2(new Float(args.checkdouble(3)),
-                    new Float(args.checkdouble(4)));
-            float thickness = args.isnil(5) ? 1.0F : new Float(args.checkdouble(5));
+            Vector2 a = new Vector2((float) args.checkdouble(1),
+                    (float) args.checkdouble(2));
+            Vector2 b = new Vector2((float) args.checkdouble(3),
+                    (float) args.checkdouble(4));
+            float thickness = args.isnil(5) ? 1.0F : (float) args.checkdouble(5);
             
             Undertailor.getRenderer().drawLine(a, b, thickness);
             return LuaValue.NIL;
@@ -158,11 +158,11 @@ public class GraphicsLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 4, 5);
             
-            Vector2 pos = new Vector2(new Float(args.checkdouble(1)),
-                    new Float(args.checkdouble(2)));
-            float width = new Float(args.checkdouble(3));
-            float height = new Float(args.checkdouble(4));
-            float thickness = args.isnil(5) ? 1.0F : new Float(args.checkdouble(5));
+            Vector2 pos = new Vector2((float) args.checkdouble(1),
+                    (float) args.checkdouble(2));
+            float width = (float) args.checkdouble(3);
+            float height = (float) args.checkdouble(4);
+            float thickness = args.isnil(5) ? 1.0F : (float) args.checkdouble(5);
             
             Undertailor.getRenderer().drawRectangle(pos, width, height, thickness);
             return LuaValue.NIL;
@@ -174,10 +174,10 @@ public class GraphicsLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 4, 4);
             
-            Vector2 pos = new Vector2(new Float(args.checkdouble(1)),
-                    new Float(args.checkdouble(2)));
-            float width = new Float(args.checkdouble(3));
-            float height = new Float(args.checkdouble(4));
+            Vector2 pos = new Vector2((float) args.checkdouble(1),
+                    (float) args.checkdouble(2));
+            float width = (float) args.checkdouble(3);
+            float height = (float) args.checkdouble(4);
             
             Undertailor.getRenderer().drawFilledRectangle(pos, width, height);
             return LuaValue.NIL;
@@ -189,9 +189,9 @@ public class GraphicsLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 3, 3);
             
-            float x = new Float(args.checkdouble(1));
-            float y = new Float(args.checkdouble(2));
-            float radius = new Float(args.checkdouble(3));
+            float x = (float) args.checkdouble(1);
+            float y = (float) args.checkdouble(2);
+            float radius = (float) args.checkdouble(3);
             
             Undertailor.getRenderer().drawCircle(x, y, radius);
             return LuaValue.NIL;
@@ -203,9 +203,9 @@ public class GraphicsLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 3, 3);
             
-            float x = new Float(args.checkdouble(1));
-            float y = new Float(args.checkdouble(2));
-            float radius = new Float(args.checkdouble(3));
+            float x = (float) args.checkdouble(1);
+            float y = (float) args.checkdouble(2);
+            float radius = (float) args.checkdouble(3);
             
             Undertailor.getRenderer().drawFilledCircle(x, y, radius);
             return LuaValue.NIL;
@@ -220,13 +220,13 @@ public class GraphicsLib extends LuaLibrary {
             Vector2 vx1 = new Vector2(0, 0);
             Vector2 vx2 = new Vector2(0, 0);
             Vector2 vx3 = new Vector2(0, 0);
-            vx1.x = new Float(args.checkdouble(1));
-            vx1.y = new Float(args.checkdouble(2));
-            vx2.x = new Float(args.checkdouble(3));
-            vx2.y = new Float(args.checkdouble(4));
-            vx3.x = new Float(args.checkdouble(5));
-            vx3.y = new Float(args.checkdouble(6));
-            float lineThickness = NumberUtil.boundFloat(new Float(args.optdouble(7, 1F)), 0.0F);
+            vx1.x = (float) args.checkdouble(1);
+            vx1.y = (float) args.checkdouble(2);
+            vx2.x = (float) args.checkdouble(3);
+            vx2.y = (float) args.checkdouble(4);
+            vx3.x = (float) args.checkdouble(5);
+            vx3.y = (float) args.checkdouble(6);
+            float lineThickness = NumberUtil.boundFloat((float) args.optdouble(7, 1F), 0.0F);
             
             Undertailor.getRenderer().drawTriangle(vx1, vx2, vx3, lineThickness);
             return LuaValue.NIL;
@@ -241,12 +241,12 @@ public class GraphicsLib extends LuaLibrary {
             Vector2 vx1 = new Vector2(0, 0);
             Vector2 vx2 = new Vector2(0, 0);
             Vector2 vx3 = new Vector2(0, 0);
-            vx1.x = new Float(args.checkdouble(1));
-            vx1.y = new Float(args.checkdouble(2));
-            vx2.x = new Float(args.checkdouble(3));
-            vx2.y = new Float(args.checkdouble(4));
-            vx3.x = new Float(args.checkdouble(5));
-            vx3.y = new Float(args.checkdouble(6));
+            vx1.x = (float) args.checkdouble(1);
+            vx1.y = (float) args.checkdouble(2);
+            vx2.x = (float) args.checkdouble(3);
+            vx2.y = (float) args.checkdouble(4);
+            vx3.x = (float) args.checkdouble(5);
+            vx3.y = (float) args.checkdouble(6);
             
             Undertailor.getRenderer().drawFilledTriangle(vx1, vx2, vx3);
             return LuaValue.NIL;

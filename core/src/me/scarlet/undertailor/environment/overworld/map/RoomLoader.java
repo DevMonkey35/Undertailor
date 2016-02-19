@@ -73,9 +73,7 @@ public class RoomLoader extends Manager<RoomDataWrapper> {
             heading = "";
         }
         
-        for(File file : dir.listFiles(file -> {
-            return file.isDirectory() || file.getName().endsWith(".roommap");
-        })) {
+        for(File file : dir.listFiles(file1 -> file1.isDirectory() || file1.getName().endsWith(".roommap"))) {
             if(file.isDirectory()) {
                 loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName() + ".");
                 continue;
@@ -121,9 +119,7 @@ public class RoomLoader extends Manager<RoomDataWrapper> {
             heading = "";
         }
         
-        for(File file : dir.listFiles(file -> {
-            return file.isDirectory() || file.getName().endsWith(".lua");
-        })) {
+        for(File file : dir.listFiles(file1 -> file1.isDirectory() || file1.getName().endsWith(".lua"))) {
             if(file.isDirectory()) {
                 loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName() + ".");
                 continue;

@@ -76,8 +76,8 @@ public class LuaBoundingRectangleMeta extends LuaBoundingBoxMeta {
             
             BoundingRectangle box = check(args.arg1()).getObject();
             Vector2 dimensions = box.getDimensions();
-            float width = new Float(args.optdouble(2, dimensions.x));
-            float height = new Float(args.optdouble(3, dimensions.y));
+            float width = (float) args.optdouble(2, dimensions.x);
+            float height = (float) args.optdouble(3, dimensions.y);
             box.setDimensions(width, height);
             return LuaValue.NIL;
         }

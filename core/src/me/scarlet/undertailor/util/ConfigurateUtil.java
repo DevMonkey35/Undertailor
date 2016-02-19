@@ -28,6 +28,8 @@ import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.exception.NoRecordedValueException;
 import ninja.leaping.configurate.ConfigurationNode;
 
+import java.util.List;
+
 public class ConfigurateUtil {
     
     public static int processInt(ConfigurationNode node, Integer defaultt) {
@@ -40,8 +42,7 @@ public class ConfigurateUtil {
         } else {
             String str = node.getString();
             try {
-                Integer returned = Integer.parseInt(str);
-                return returned;
+                return Integer.parseInt(str);
             } catch(NumberFormatException e) {
                 throw new ConfigurationException("bad value (\"" + str + "\") for node " + pathFromArray(node.getPath()));
             }
@@ -58,8 +59,7 @@ public class ConfigurateUtil {
         } else {
             String str = node.getString();
             try {
-                Float returned = Float.parseFloat(str);
-                return returned;
+                return Float.parseFloat(str);
             } catch(NumberFormatException e) {
                 throw new ConfigurationException("bad value (\"" + str + "\") for node " + pathFromArray(node.getPath()));
             }
@@ -88,9 +88,8 @@ public class ConfigurateUtil {
         } else {
             String str = node.getString();
             try {
-                String[] stringList = node.getList(obj -> {
-                    return obj.toString();
-                }).toArray(new String[0]);
+                List<String> list = node.getList(Object::toString);
+                String[] stringList = list.toArray(new String[list.size()]);
                 
                 Integer[] returned = new Integer[stringList.length];
                 for(int i = 0; i < stringList.length; i++) {
@@ -125,10 +124,8 @@ public class ConfigurateUtil {
                 return defaultt;
             }
         } else {
-            String[] stringList = node.getList(obj -> {
-                return obj.toString();
-            }).toArray(new String[0]);
-            return stringList;
+            List<String> list = node.getList(Object::toString);
+            return list.toArray(new String[list.size()]);
         }
     }
     
@@ -152,7 +149,7 @@ public class ConfigurateUtil {
     public static String pathFromArray(Object[] path) {
         StringBuilder sb = new StringBuilder();
         for(Object obj : path) {
-            sb.append("." + obj.toString());
+            sb.append(".").append(obj.toString());
         }
         
         return sb.toString().substring(1);

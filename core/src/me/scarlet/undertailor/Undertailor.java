@@ -396,12 +396,10 @@ public class Undertailor extends ApplicationAdapter {
             GridPane.setColumnIndex(confirm, 2);
             GridPane.setHalignment(confirm, HPos.RIGHT);
             
-            confirm.setOnMouseReleased(event -> {
-                stage.close();
-            });
+            confirm.setOnMouseReleased(event -> stage.close());
             
             wrap.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                if(newValue.booleanValue()) {
+                if(newValue) {
                     errr.setWrapText(true);
                 } else {
                     errr.setWrapText(false);

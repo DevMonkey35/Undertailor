@@ -29,9 +29,9 @@ import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.util.NumberUtil;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AudioResourceManager<T extends Audio<?>> {
     
@@ -46,7 +46,7 @@ public class AudioResourceManager<T extends Audio<?>> {
         this.volume = 1.0F;
         this.mTag = mTag;
         this.rescName = rescName;
-        this.resources = new HashMap<String, T>();
+        this.resources = new HashMap<>();
     }
     
     public int getTotalLoaded() {
@@ -70,15 +70,7 @@ public class AudioResourceManager<T extends Audio<?>> {
     }
     
     public Set<T> getAllPlaying() {
-        Set<T> returned = new HashSet<T>(); // TODO change this so we're not iterating through the entire list later
-        
-        for(T resc : resources.values()) {
-            if(resc.isPlaying(null)) {
-                returned.add(resc);
-            }
-        }
-        
-        return returned;
+        return resources.values().stream().filter(resc -> resc.isPlaying(null)).collect(Collectors.toSet());
     }
     
     public T getResource(String name) {
