@@ -125,7 +125,7 @@ public class LuaSchedulerMeta extends LuaLibrary {
                 });
             }
             
-            compile.set("name", name);
+            if(name != null) compile.set("name", name);
             compile.set("process", func);
             
             return LuaValue.valueOf(scheduler.registerTask(new LuaTask(compile), active));
