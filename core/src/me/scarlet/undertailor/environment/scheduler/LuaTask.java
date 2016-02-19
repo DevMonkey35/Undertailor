@@ -60,12 +60,13 @@ public class LuaTask implements Task {
     @Override
     public boolean process(float delta, InputData input) {
         LuaValue returned = taskImpl.get(IMPLMETHOD_PROCESS).call(taskImpl, LuaValue.valueOf(delta), LuaInputDataMeta.create(input));
-        if(!returned.isboolean()) {
-            Undertailor.instance.warn(Scheduler.MANAGER_TAG, "lua task was preemptively ended; task implementation returned invalid value (expected boolean)");
-            return false;
+        try {
+            return returned.optboolean(true);
+        } catch(LuaError error) {
+            Undertailor.instance.warn(Scheduler.MANAGER_TAG, "lua task was preemptively ended; task implementation returned invalid value (expected boolean, got " + returned.typename() + ")");
+            this.onFinish(true);
+            return true;
         }
-        
-        return returned.optboolean(true); 
     }
 
     @Override

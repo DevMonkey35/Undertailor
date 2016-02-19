@@ -30,6 +30,7 @@ public interface Task {
     
     public String getName();
     
+    // returns true to indicate finished, false if it needs to keep running
     public boolean process(float delta, InputData input);
     // forced means if it was canceled preemptively either by an error or a call to the scheduler
     public void onFinish(boolean forced);
