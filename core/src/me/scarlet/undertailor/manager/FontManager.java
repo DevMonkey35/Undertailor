@@ -31,7 +31,7 @@ import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Font.FontData;
 import me.scarlet.undertailor.texts.TextComponent;
-import me.scarlet.undertailor.texts.TextComponent.Text;
+import me.scarlet.undertailor.texts.Text;
 import me.scarlet.undertailor.util.LuaUtil;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 
@@ -70,9 +70,7 @@ public class FontManager extends Manager<Font> {
         }
         
         Undertailor.instance.log(MANAGER_TAG, "searching for fonts in " + dirPath);
-        for(File file : dir.listFiles(file -> {
-            return file.isDirectory() || file.getName().endsWith(".png");
-        })) {
+        for(File file : dir.listFiles(file1 -> file1.isDirectory() || file1.getName().endsWith(".png"))) {
             if(file.isDirectory()) {
                 if(heading.isEmpty() && file.getName().equals("styles")) {
                     continue;

@@ -59,12 +59,7 @@ public class Font {
             }
             
             public static CharMeta fromConfig(ConfigurationNode root) {
-                try {
-                    CharMeta meta = new CharMeta(ConfigurateUtil.processIntegerArray(root, new Integer[] {null, null, null, null}));
-                    return meta;
-                } catch(ConfigurationException e) {
-                    throw e;
-                }
+                return new CharMeta(ConfigurateUtil.processIntegerArray(root, new Integer[] {null, null, null, null}));
             }
             
             public CharMeta(Integer[] values) {
