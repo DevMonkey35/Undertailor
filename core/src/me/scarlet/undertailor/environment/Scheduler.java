@@ -68,11 +68,13 @@ public class Scheduler {
             try {
                 if(task.process(delta, data)) {
                     Undertailor.instance.debug(MANAGER_TAG, "task " + taskName + " finished and was removed");
+                    task.onFinish(false);
                     iterator.remove();
                 }
             } catch(Exception e) {
                 Undertailor.instance.warn(MANAGER_TAG, "task " + taskName + " was removed due to caught error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
                 e.printStackTrace();
+                task.onFinish(true);
                 iterator.remove();
             }
         }
@@ -87,6 +89,7 @@ public class Scheduler {
             try {
                 if(task.process(delta, data)) {
                     Undertailor.instance.debug(MANAGER_TAG, "active task " + taskName + " finished and was removed");
+                    task.onFinish(false);
                     iterator.remove();
                 } else {
                     break;
@@ -94,6 +97,7 @@ public class Scheduler {
             } catch(Exception e) {
                 Undertailor.instance.warn(MANAGER_TAG, "active task " + taskName + " was removed due to caught error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
                 e.printStackTrace();
+                task.onFinish(true);
                 iterator.remove();
             }
         }
