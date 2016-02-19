@@ -38,7 +38,7 @@ import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Style;
 import me.scarlet.undertailor.texts.TextComponent;
-import me.scarlet.undertailor.texts.TextComponent.Text;
+import me.scarlet.undertailor.texts.Text;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
