@@ -77,6 +77,8 @@ public class OverworldController implements Renderable, Disposable {
         this.exitTransition = null;
         
         this.setCameraZoom(zoom);
+        this.camera.position.set(0, 0, 0);
+        this.camera.update();
     }
     
     public OrthographicCamera getCamera() {
@@ -296,7 +298,6 @@ public class OverworldController implements Renderable, Disposable {
         this.port.setWorldHeight(RENDER_HEIGHT);
         this.port.setWorldWidth(RENDER_WIDTH);
         this.port.setCamera(camera);
-        this.camera.position.set(this.camera.viewportWidth/2.0F, this.camera.viewportHeight/2.0F, 0.0F);
         this.camera.update();
     }
     
