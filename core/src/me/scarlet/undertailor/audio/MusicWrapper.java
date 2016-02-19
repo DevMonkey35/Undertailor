@@ -103,12 +103,12 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     }
     
     @Override
-    public boolean isPlaying() {
+    public boolean isPlaying(String unused) {
         return this.getReference().isPlaying();
     }
 
     @Override
-    public boolean isPaused() {
+    public boolean isPaused(String unused) {
         return !this.getReference().isPlaying() && this.getReference().getPosition() <= 0.0F;
     }
 

@@ -73,7 +73,7 @@ public class AudioResourceManager<T extends Audio<?>> {
         Set<T> returned = new HashSet<T>(); // TODO change this so we're not iterating through the entire list later
         
         for(T resc : resources.values()) {
-            if(resc.isPlaying()) {
+            if(resc.isPlaying(null)) {
                 returned.add(resc);
             }
         }

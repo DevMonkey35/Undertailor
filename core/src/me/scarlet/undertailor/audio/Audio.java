@@ -38,8 +38,8 @@ public interface Audio<T> {
     public void setPitch(float pitch);
     public boolean isLooping();
     public void setLoopPoint(float loopPoint);
-    public boolean isPlaying();
-    public boolean isPaused();
+    public boolean isPlaying(T id);
+    public boolean isPaused(T id);
     public T play(float volume, float pan, float pitch);
     public T play();
     public void pause(T id);

@@ -84,10 +84,10 @@ public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long
     public void setPosition(float position) {}
 
     @Override
-    public boolean isPlaying() { return false; }
-
+    public boolean isPaused(Long unused) { return false; }
+    
     @Override
-    public boolean isPaused() { return false; }
+    public boolean isPlaying(Long unused) { return false; }
     
     // #
 
@@ -107,7 +107,7 @@ public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long
 
     @Override
     public void pause(Long id) {
-        if(id < 0) {
+        if(id == null || id < 0) {
             this.getReference().pause();
         } else {
             this.getReference().pause(id);
@@ -116,7 +116,7 @@ public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long
 
     @Override
     public void stop(Long id) {
-        if(id < 0) {
+        if(id == null || id < 0) {
             this.getReference().stop();
         } else {
             this.getReference().stop(id);

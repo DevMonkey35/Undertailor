@@ -384,7 +384,7 @@ public class AudioLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             Audio<?> audio = check(args.arg(1)).getObject();
-            return LuaValue.valueOf(audio.isPaused());
+            return LuaValue.valueOf(audio.isPaused(null));
         }
     }
     
@@ -394,7 +394,7 @@ public class AudioLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             Audio<?> audio = check(args.arg(1)).getObject();
-            return LuaValue.valueOf(audio.isPlaying());
+            return LuaValue.valueOf(audio.isPlaying(null));
         }
     }
     
