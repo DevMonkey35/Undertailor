@@ -29,7 +29,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.exception.ConfigurationException;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.gfx.Sprite.SpriteMeta;
