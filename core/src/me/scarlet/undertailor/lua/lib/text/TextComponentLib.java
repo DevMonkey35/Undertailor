@@ -103,7 +103,16 @@ public class TextComponentLib extends LuaLibrary {
                 throw new LuaError("bad argument: text cannot be empty or only have whitespace characters");
             }
             
-            return create(new TextComponent(text, font, style, color, sound, speed, segsize, wait));
+            return create(TextComponent.builder()
+                    .setFont(font)
+                    .setStyle(style)
+                    .setColor(color)
+                    .setText(text)
+                    .setTextSound(sound)
+                    .setSpeed(speed)
+                    .setSegmentSize(segsize)
+                    .setDelay(wait)
+                    .build());//new TextComponent(text, font, style, color, sound, speed, segsize, wait));
         }
     }
     

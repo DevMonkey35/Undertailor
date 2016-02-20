@@ -106,7 +106,19 @@ public class TextLib extends LuaLibrary {
             int segsize = args.optint(6, 1);
             float delay = (float) args.optdouble(7, 0F);
             
-            return TextLib.create(new Text(font, style, color, sound, speed, segsize, delay));
+            if(font == null) {
+                throw new LuaError("font cannot be nil");
+            }
+            
+            return TextLib.create(Text.builder()
+                    .setFont(font)
+                    .setStyle(style)
+                    .setColor(color)
+                    .setTextSound(sound)
+                    .setSpeed(speed)
+                    .setSegmentSize(segsize)
+                    .setDelay(delay)
+                    .build());//new Text(font, style, color, sound, speed, segsize, delay));
         }
     }
     

@@ -3,6 +3,8 @@ package me.scarlet.undertailor.texts;
 import com.badlogic.gdx.graphics.Color;
 import com.google.common.base.Preconditions;
 import me.scarlet.undertailor.audio.SoundWrapper;
+import me.scarlet.undertailor.texts.parse.ParsedText;
+import me.scarlet.undertailor.texts.parse.TextParam;
 import me.scarlet.undertailor.util.Pair;
 
 import java.util.ArrayList;
@@ -11,9 +13,78 @@ import java.util.List;
 import java.util.Map;
 
 public class Text extends TextComponent {
+    
+    public static Text fromString(String defaultParams, String str) {
+        ParsedText components = ParsedText.of(str);
+        ParsedText params = ParsedText.of(defaultParams);
+        
+        Map<TextParam, String> defaults;
+        if(params.getPieces().size() < 0) {
+            throw new IllegalArgumentException("no parameters specified");
+        }
+        
+        return null;
+    }
+    
+    public static class Builder extends TextComponent.Builder {
+        
+        private List<TextComponent> components;
+        
+        public Builder() {
+            super();
+            this.components = new ArrayList<>();
+        }
+        
+        // overrides
+        @Override public Builder setText(String text) { return (Builder) super.setText(text); }
+        @Override public Builder setFont(Font font) { return (Builder) super.setFont(font); }
+        @Override public Builder setStyle(Style style) { return (Builder) super.setStyle(style); }
+        @Override public Builder setColor(Color color) { return (Builder) super.setColor(color); }
+        @Override public Builder setTextSound(SoundWrapper textSound) { return (Builder) super.setTextSound(textSound); }
+        @Override public Builder setSpeed(int speed) { return (Builder) super.setSpeed(speed); }
+        @Override public Builder setSegmentSize(int segmentSize) { return (Builder) super.setSegmentSize(segmentSize); }
+        @Override public Builder setDelay(float delay) { return (Builder) super.setDelay(delay); }
+        
+        public Builder addComponents(TextComponent... components) {
+            for(TextComponent component : components) {
+                this.components.add(component);
+            }
+            
+            return this;
+        }
+        
+        @Override
+        public Text build() {
+            Text text = new Text();
+            
+            if(this.font == null) {
+                throw new IllegalStateException("cannot generate a text object with no default font");
+            }
+            
+            text.font = this.font;
+            text.style = this.style;
+            text.color = this.color;
+            text.textSound = this.textSound;
+            text.speed = this.speed;
+            text.segmentSize = this.segmentSize;
+            text.delay = this.delay;
+            components.forEach(text::addComponents);
+            
+            return text;
+        }
+    }
+    
+    public static Builder builder() {
+        return new Text.Builder();
+    }
+    
     private List<TextComponent> members;
+    
+    private Text() {
+        this.members = new ArrayList<>();
+    }
 
-    public Text(Font font) {
+    /*public Text(Font font) {
         this(font, null);
     }
 
@@ -45,7 +116,7 @@ public class Text extends TextComponent {
             component.parent = this;
             members.add(component);
         }
-    }
+    }*/
 
     @Override
     public String getText() {
@@ -105,12 +176,23 @@ public class Text extends TextComponent {
     @Override
     public Text substring(int start, int end) {
         if(start == end) {
-            return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.wait,
-                    new TextComponent("", super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.wait));
+            throw new IllegalArgumentException("cannot substring into an empty text object");
+            /*return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.delay,
+                    new TextComponent("", super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.delay));*/
         }
 
         if(members.size() == 1) {
-            return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.wait, members.get(0).substring(start, end));
+            return Text.builder()
+                    .setFont(super.font)
+                    .setStyle(super.style)
+                    .setColor(super.color)
+                    .setTextSound(super.textSound)
+                    .setSpeed(super.speed)
+                    .setSegmentSize(super.segmentSize)
+                    .setDelay(super.delay)
+                    .addComponents(members.get(0).substring(start, end))
+                    .build();
+            //return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.delay, members.get(0).substring(start, end));
         }
 
         Map<TextComponent, Integer> compMap = new LinkedHashMap<>();
@@ -168,6 +250,15 @@ public class Text extends TextComponent {
             processed++;
         }
 
-        return new Text(super.font, super.style, super.color, super.textSound, super.speed, super.segmentSize, super.wait, compList.toArray(new TextComponent[compList.size()]));
+        return Text.builder()
+                .setFont(super.font)
+                .setStyle(super.style)
+                .setColor(super.color)
+                .setTextSound(super.textSound)
+                .setSpeed(super.speed)
+                .setSegmentSize(super.segmentSize)
+                .setDelay(super.delay)
+                .addComponents(compList.toArray(new TextComponent[compList.size()]))
+                .build();
     }
 }

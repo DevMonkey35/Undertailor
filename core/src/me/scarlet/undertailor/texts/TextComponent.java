@@ -55,22 +55,108 @@ public class TextComponent {
         }
     }
     
+    public static class Builder {
+        
+        protected Font font;
+        protected float delay;
+        protected String text;
+        protected Color color;
+        protected Style style;
+        protected SoundWrapper textSound;
+        protected int speed, segmentSize;
+        
+        public Builder() {
+            this.text = null;
+            this.font = null;
+            this.style = null;
+            this.textSound = null;
+            
+            this.speed = 35;
+            this.delay = 0F;
+            this.segmentSize = 1;
+            this.color = Color.WHITE;
+        }
+        
+        public Builder setText(String text) {
+            this.text = text;
+            return this;
+        }
+        
+        public Builder setColor(Color color) {
+            this.color = color;
+            if(this.color == null) {
+                this.color = Color.WHITE;
+            } else {
+                this.color.a = 1F;
+            }
+            
+            return this;
+        }
+        
+        public Builder setStyle(Style style) {
+            this.style = style;
+            return this;
+        }
+        
+        public Builder setFont(Font font) {
+            this.font = font;
+            return this;
+        }
+        
+        public Builder setSpeed(int speed) {
+            this.speed = speed;
+            return this;
+        }
+        
+        public Builder setSegmentSize(int segmentSize) {
+            this.segmentSize = segmentSize;
+            return this;
+        }
+        
+        public Builder setDelay(float delay) {
+            this.delay = delay;
+            return this;
+        }
+        
+        public Builder setTextSound(SoundWrapper textSound) {
+            this.textSound = textSound;
+            return this;
+        }
+        
+        public TextComponent build() {
+            TextComponent component = new TextComponent();
+            component.text = this.text;
+            component.font = this.font;
+            component.color = this.color;
+            component.style = this.style;
+            component.speed = this.speed;
+            component.delay = this.delay;
+            component.textSound = this.textSound;
+            component.segmentSize = this.segmentSize;
+            
+            return component;
+        }
+    }
+    
     protected TextComponent parent;
     protected SoundWrapper textSound;
     private String text;
     protected Color color;
     protected Style style;
     protected Font font;
-    protected Integer speed;       // segments per second?
-    protected Integer segmentSize; // how many characters to play at a time
-    protected Float wait;          // delay between text components
+    protected Integer speed;       // how many characters to play in a second
+    protected Integer segmentSize; // characters in one segment?
+    protected Float delay;         // delay between text components
     
     public static final int DEFAULT_SPEED = 35;
     
-    public static TextComponent of(String text, Font font) {
-        return new TextComponent(text, font);
+    public static Builder builder() {
+        return new Builder();
     }
     
+    protected TextComponent() {}
+    
+    /*
     public TextComponent(String text, Font font) {
         this(text, font, null);
     }
@@ -115,10 +201,14 @@ public class TextComponent {
         if(wait != null && wait < 0) {
             this.wait = 0F;
         }
-    }
+    }*/
     
     public String getText() {
         return text;
+    }
+    
+    public void setText(String text) {
+        this.text = text;
     }
     
     public Color getColor() {
@@ -133,12 +223,20 @@ public class TextComponent {
         return color;
     }
     
+    public void setColor(Color color) {
+        this.color = color;
+    }
+    
     public SoundWrapper getSound() {
         if(textSound == null && parent != null) {
             return parent.textSound;
         }
         
         return textSound;
+    }
+    
+    public void setSound(SoundWrapper textSound) {
+        this.textSound = textSound;
     }
     
     public int getSpeed() {
@@ -153,12 +251,20 @@ public class TextComponent {
         return speed;
     }
     
+    public void setSpeed(int speed) {
+        this.speed = speed < 1 ? 1 : speed;
+    }
+    
     public Style getStyle() {
         if(style == null && parent != null) {
             return parent.style;
         }
         
         return style;
+    }
+    
+    public void setStyle(Style style) {
+        this.style = style;
     }
     
     public Font getFont() {
@@ -169,16 +275,24 @@ public class TextComponent {
         return font;
     }
     
+    public void setFont(Font font) {
+        this.font = font;
+    }
+    
     public float getDelay() {
-        if(wait == null) {
-            if(parent != null && parent.wait != null) {
-                return parent.wait;
+        if(delay == null) {
+            if(parent != null && parent.delay != null) {
+                return parent.delay;
             }
             
             return 0F;
         }
         
-        return wait;
+        return delay;
+    }
+    
+    public void setDelay(float delay) {
+        this.delay = delay < 0 ? 0 : delay;
     }
     
     public int getSegmentSize() {
@@ -193,11 +307,24 @@ public class TextComponent {
         return segmentSize;
     }
     
+    public void setSegmentSize(int segmentSize) {
+        this.segmentSize = segmentSize < 1 ? 1 : segmentSize;
+    }
+    
     public TextComponent substring(int start) {
         return substring(start, this.text.length());
     }
     
     public TextComponent substring(int start, int end) {
-        return new TextComponent(text.substring(start, end), font, style, color, textSound, speed, segmentSize, wait);
+        return TextComponent.builder()
+                .setText(text.substring(start, end))
+                .setFont(font)
+                .setStyle(style)
+                .setColor(color)
+                .setTextSound(textSound)
+                .setSpeed(speed)
+                .setSegmentSize(segmentSize)
+                .setDelay(delay)
+                .build();
     }
 }
