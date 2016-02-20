@@ -1,47 +1,36 @@
-apply plugin: "java"
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-sourceSets.main.java.srcDirs = [ "src/" ]
-
-project.ext.mainClassName = "me.scarlet.undertailor.desktop.DesktopLauncher"
-project.ext.assetsDir = new File("../core/src/assets");
-
-task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-    workingDir = project.assetsDir
-    ignoreExitValue = true
+sourceSets {
+    main.java.srcDirs = ['src']
 }
 
-task dist(type: Jar) {
-    from files(sourceSets.main.output.classesDir)
-    from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
- 
+dependencies {
+    compile project(':core')
+    compile "commons-cli:commons-cli:1.3"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+}
+
+jar {
+    classifier = 'base'
+
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes(
+                'Implementation-Title': rootProject.name,
+                'Implementation-Version': version,
+                'Main-Class': 'me.scarlet.undertailer.desktop.DesktopLauncher'
+        )
     }
 }
 
-dist.dependsOn classes
-
-eclipse {
-    project {
-        name = appName + "-desktop"
-        linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/core/src/assets'
-    }
+shadowJar {
+    classifier = ''
 }
 
-task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
-  doLast {
-    def classpath = new XmlParser().parse(file(".classpath"))
-    new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);
-    def writer = new FileWriter(file(".classpath"))
-    def printer = new XmlNodePrinter(new PrintWriter(writer))
-    printer.setPreserveWhitespace(true)
-    printer.print(classpath)
-  }
+artifacts {
+    archives shadowJar
 }
