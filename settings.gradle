@@ -1,1 +1,3 @@
+rootProject.name = 'Undertailor'
 include 'desktop', 'core'
+
