@@ -26,16 +26,14 @@ package me.scarlet.undertailor.texts.parse;
 
 public enum TextParam {
 
-    FONT("FONT", ""), //TODO: Have Xemiru fill in default values.
-    STYLE("STYLE", ""), //TODO: Have Xemiru fill in default values.
-    COLOR("COLOR", ""), //TODO: Have Xemiru fill in default values.
-    SOUND("SOUND", ""), //TODO: Have Xemiru fill in default values.
-    SPEED("SPEED", ""), //TODO: Have Xemiru fill in default values.
-    DELAY("DELAY", ""), //TODO: Have Xemiru fill in default values.
-    BOLD("BOLD", ""), //TODO: Have Xemiru fill in default values.
-    ITALIC("ITALIC", ""), //TODO: Have Xemiru fill in default values.
-    UNDERLINE("UNDERLINE", ""), //TODO: Have Xemiru fill in default values.
-    UNDEFINED("UNDEFINED", ""), //TODO: Have Xemiru fill in default values.
+    FONT("FONT", ""),
+    STYLE("STYLE", ""),
+    COLOR("COLOR", ""),
+    SOUND("SOUND", ""),
+    SPEED("SPEED", ""),
+    DELAY("DELAY", ""),
+    SEGMENTSIZE("SEGMENTSIZE", ""),
+    UNDEFINED("UNDEFINED", ""),
     ;
 
     private final String name;
