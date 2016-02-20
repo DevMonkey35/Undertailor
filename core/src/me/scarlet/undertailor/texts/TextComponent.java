@@ -71,7 +71,7 @@ public class TextComponent {
             this.style = null;
             this.textSound = null;
             
-            this.speed = 35;
+            this.speed = TextComponent.DEFAULT_SPEED;
             this.delay = 0F;
             this.segmentSize = 1;
             this.color = Color.WHITE;
@@ -148,7 +148,7 @@ public class TextComponent {
     protected Integer segmentSize; // characters in one segment?
     protected Float delay;         // delay between text components
     
-    public static final int DEFAULT_SPEED = 35;
+    public static final int DEFAULT_SPEED = 30;
     
     public static Builder builder() {
         return new Builder();
