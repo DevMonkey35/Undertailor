@@ -33,7 +33,6 @@ import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaImplementation;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.impl.WorldObjectImplementable.WorldObjectImplementation;
-import me.scarlet.undertailor.lua.impl.WorldRoomImplementable.WorldRoomImplementation;
 import me.scarlet.undertailor.lua.lib.meta.LuaEntrypointMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaInputDataMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaWorldObjectMeta;
@@ -82,14 +81,10 @@ public class WorldObjectImplementable implements LuaImplementable<File, WorldObj
         
         @Override public LuaObjectValue<?> getObjectValue() { return obj.get(); }
         @Override public void setObjectValue(LuaObjectValue<?> obj) {
-            if((obj.getObject() instanceof WorldRoomImplementation)) {
-                throw new IllegalArgumentException("cannot accept object value (mismatching value)");
-            }
-            
             this.obj = new WeakReference<>(obj);
-            functions.keySet().stream().filter(key -> this.functions != null)
-                    .filter(key -> functions.containsKey(key)).forEach(key -> obj
-                    .set(key, functions.get(key)));
+            if(this.functions != null) {
+                functions.keySet().forEach(key -> obj.set(key, functions.get(key)));
+            }
         }
 
         @Override

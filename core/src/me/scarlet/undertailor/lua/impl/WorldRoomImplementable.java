@@ -74,9 +74,7 @@ public class WorldRoomImplementable implements LuaImplementable<File, WorldRoomI
         @Override public void setObjectValue(LuaObjectValue<?> obj) {
             this.obj = new WeakReference<>(obj);
             if(this.functions != null) {
-                functions.keySet().stream()
-                        .filter(key -> functions.containsKey(key))
-                        .forEach(key -> obj.set(key, functions.get(key)));
+                functions.keySet().forEach(key -> obj.set(key, functions.get(key)));
             }
         }
         
