@@ -27,7 +27,6 @@ package me.scarlet.undertailor.texts.parse;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -67,7 +66,6 @@ public final class TextParser {
         }
 
         results.add(input.substring(lastIndex));
-        System.out.println(Arrays.toString(results.toArray()));
         return results;
     }
 
