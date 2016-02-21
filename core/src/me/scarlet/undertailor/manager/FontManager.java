@@ -141,7 +141,7 @@ public class FontManager extends Manager<Font> {
             return;
         }
         
-        if(text.getMembers().size() < 1) {
+        if(text.getMembers().size() < 1 || text.getText().trim().isEmpty()) {
             return; // ignore empty texts
         }
         
