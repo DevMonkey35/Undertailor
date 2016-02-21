@@ -84,7 +84,7 @@ public final class TextParser {
                 }
 
                 params.put(textParam,
-                        array.length > 1 || array[1].isEmpty() ? array[1] :
+                        array.length > 1 ? array[1] :
                                 textParam.getDefaultValue());
             }
         }
