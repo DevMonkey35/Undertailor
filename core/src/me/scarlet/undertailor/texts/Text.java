@@ -38,18 +38,6 @@ import java.util.Map;
 
 public class Text extends TextComponent {
     
-    public static Text fromString(String defaultParams, String str) {
-        ParsedText components = ParsedText.of(str);
-        ParsedText params = ParsedText.of(defaultParams);
-        
-        Map<TextParam, String> defaults;
-        if(params.getPieces().size() < 0) {
-            throw new IllegalArgumentException("no parameters specified");
-        }
-        
-        return null;
-    }
-    
     public static class Builder extends TextComponent.Builder {
         
         private List<TextComponent> components;
@@ -100,6 +88,32 @@ public class Text extends TextComponent {
     
     public static Builder builder() {
         return new Text.Builder();
+    }
+    
+    public static Text fromString(String defaultParams, String str) {
+        if(str.trim().length() == 0) {
+            throw new IllegalArgumentException("cannot parse empty string");
+        }
+        
+        ParsedText components = ParsedText.of(str);
+        ParsedText params = ParsedText.of(defaultParams);
+        
+        if(params.getPieces().size() < 0) {
+            throw new IllegalArgumentException("no parameters specified for parent text");
+        }
+        
+        if(components.getPieces().isEmpty()) {
+            throw new IllegalArgumentException("cannot parse empty string");
+        }
+        
+        Text.Builder builder = Text.builder();
+        Map<TextParam, String> defaults = params.getPieces().get(0).getParams();
+        TextComponent.applyParameters(builder, defaults);
+        components.getPieces().forEach(piece -> {
+            builder.addComponents(TextComponent.fromPiece(piece));
+        });
+        
+        return builder.build();
     }
     
     private List<TextComponent> members;

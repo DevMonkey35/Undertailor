@@ -25,7 +25,13 @@
 package me.scarlet.undertailor.texts;
 
 import com.badlogic.gdx.graphics.Color;
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.audio.SoundWrapper;
+import me.scarlet.undertailor.texts.parse.ParsedText;
+import me.scarlet.undertailor.texts.parse.TextParam;
+import me.scarlet.undertailor.texts.parse.TextPiece;
+
+import java.util.Map;
 
 public class TextComponent {
     
@@ -136,6 +142,118 @@ public class TextComponent {
             
             return component;
         }
+    }
+    
+    public static final String PARAM_ERROR_MESSAGE = "bad parameter value \"%s\" for key %s";
+    
+    public static TextComponent.Builder applyParameters(TextComponent.Builder builder, Map<TextParam, String> mapping) {
+        mapping.keySet().forEach(param -> {
+            String valueString = mapping.get(param);
+            switch(param) {
+                case COLOR:
+                    String[] split = valueString.split(",");
+                    Color color;
+                    if(split.length == 1) { // hex
+                        try {
+                            color = Color.valueOf(split[0]);
+                        } catch(Exception e) {
+                            throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "color") + " (bad hex string)");
+                        }
+                    } else if(split.length == 3) { // r, g, b
+                        try {
+                            color = new Color(
+                                    Integer.parseInt(split[0]) / 255.0F,
+                                    Integer.parseInt(split[1]) / 255.0F,
+                                    Integer.parseInt(split[2]) / 255.0F,
+                                    1.0F);
+                        } catch(Exception e) {
+                            throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "color") + " (bad rgb values)");
+                        }
+                    } else {
+                        throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "color"));
+                    }
+                    
+                    builder.setColor(color);
+                    break;
+                case DELAY:
+                    try {
+                        float time = Float.parseFloat(valueString);
+                        builder.setDelay(time);
+                    } catch(Exception e) {
+                        throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "delay") + " (bad number value)");
+                    }
+                    
+                    break;
+                case FONT:
+                    Font font = Undertailor.getFontManager().getFont(valueString);
+                    if(font == null) {
+                        throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "font") + " (non-existing font)");
+                    }
+                    
+                    builder.setFont(font);
+                    break;
+                case SEGMENTSIZE:
+                    try {
+                        int segsize = Integer.parseInt(valueString);
+                        builder.setSegmentSize(segsize);
+                    } catch(Exception e) {
+                        throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "segmentsize") + " (bad integer value)");
+                    }
+                    
+                    break;
+                case SOUND:
+                    SoundWrapper sound = Undertailor.getAudioManager().getSoundManager().getResource(valueString);
+                    if(sound == null) {
+                        throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "sound") + " (non-existing sound)");
+                    }
+                    
+                    builder.setTextSound(sound);
+                    break;
+                case SPEED:
+                    try {
+                        int speed = Integer.parseInt(valueString);
+                        builder.setSpeed(speed);
+                    } catch(Exception e) {
+                        throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "speed") + " (bad integer value)");
+                    }
+                    
+                    break;
+                case STYLE:
+                    Style style = Undertailor.getStyleManager().getStyle(valueString);
+                    if(style == null) {
+                        throw new IllegalArgumentException(String.format(PARAM_ERROR_MESSAGE, valueString, "style") + " (non-existing style)");
+                    }
+                    
+                    builder.setStyle(style);
+                    break;
+                case UNDEFINED:
+                default:
+                    break;
+            }
+        });
+        
+        return builder;
+    }
+    
+    public static TextComponent fromString(String str) {
+        if(str.trim().length() == 0) {
+            throw new IllegalArgumentException("cannot parse empty string");
+        }
+        
+        ParsedText components = ParsedText.of(str);
+        
+        if(components.getPieces().isEmpty()) {
+            throw new IllegalArgumentException("cannot parse empty string");
+        }
+        
+        return TextComponent.fromPiece(components.getPieces().get(0)); // only the first
+    }
+    
+    public static TextComponent fromPiece(TextPiece piece) {
+        TextComponent.Builder builder = TextComponent.builder();
+        TextComponent.applyParameters(builder, piece.getParams());
+        builder.setText(piece.getMessage());
+        return builder.build();
     }
     
     protected TextComponent parent;

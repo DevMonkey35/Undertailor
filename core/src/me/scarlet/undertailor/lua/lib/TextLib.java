@@ -36,9 +36,9 @@ import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
 import me.scarlet.undertailor.lua.lib.text.TextComponentLib;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Style;
+import me.scarlet.undertailor.texts.Text;
 import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
-import me.scarlet.undertailor.texts.Text;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -59,6 +59,7 @@ public class TextLib extends LuaLibrary {
             new newDisplayMeta(),
             new newText(),
             new drawText(),
+            new fromString(),
             new addComponent(),
             new addComponents(),
             new getComponentAtCharacter(),
@@ -119,6 +120,15 @@ public class TextLib extends LuaLibrary {
                     .setSegmentSize(segsize)
                     .setDelay(delay)
                     .build());//new Text(font, style, color, sound, speed, segsize, delay));
+        }
+    }
+    
+    static class fromString extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            return TextLib.create(Text.fromString(args.checkjstring(1), args.checkjstring(2)));
         }
     }
     

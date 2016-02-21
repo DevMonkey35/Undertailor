@@ -37,13 +37,16 @@ import me.scarlet.undertailor.lua.lib.game.AudioLib;
 import me.scarlet.undertailor.lua.lib.meta.LuaStyleMeta;
 import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.texts.Style;
-import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.texts.Text;
+import me.scarlet.undertailor.texts.TextComponent;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TextComponentLib extends LuaLibrary {
     
@@ -72,6 +75,14 @@ public class TextComponentLib extends LuaLibrary {
             new substring()
     };
     
+    private static final Set<String> COMPONENT_DUPE_BLACKLIST;
+    
+    static {
+        COMPONENT_DUPE_BLACKLIST = new HashSet<>();
+        COMPONENT_DUPE_BLACKLIST.add("newComponent");
+        COMPONENT_DUPE_BLACKLIST.add("fromString");
+    }
+    
     public TextComponentLib() {
         super("component", COMPONENTS);
     }
@@ -79,10 +90,21 @@ public class TextComponentLib extends LuaLibrary {
     @Override
     public void postinit(LuaValue env, LuaValue table) {
         LuaUtil.iterateTable((LuaTable) table, args -> {
-            env.set(args.arg1(), args.arg(2)); // dupe the funcs
+            if(!COMPONENT_DUPE_BLACKLIST.contains(args.arg1().tojstring())) {
+                env.set(args.arg1(), args.arg(2)); // dupe the funcs
+            }
         });
         
         env.set("component", table);
+    }
+    
+    static class fromString extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            return TextComponentLib.create(TextComponent.fromString(args.checkjstring(1)));
+        }
     }
     
     static class newComponent extends LibraryFunction {
