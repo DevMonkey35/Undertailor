@@ -247,7 +247,7 @@ public class Font {
     
     public int write(String text, Style style, Color color, float posX, float posY, float scaleX, float scaleY, float alpha) {
         if(text.trim().isEmpty()) {
-            return 0;
+            return (int) (text.length() * this.getFontData().getSpaceSize() * scaleX);
         }
         
         char[] chars = new char[text.length()];
