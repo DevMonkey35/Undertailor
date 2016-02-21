@@ -143,6 +143,10 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
     void updateLoop() {
         if(loopPoint < 0) {
             this.getReference().setOnCompletionListener(null);
+            this.getReference().setLooping(false);
+        } else if(loopPoint == 0) {
+            this.getReference().setOnCompletionListener(null);
+            this.getReference().setLooping(true);
         } else {
             this.getReference().setOnCompletionListener(music -> {
                 music.play();
