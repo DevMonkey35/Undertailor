@@ -168,7 +168,7 @@ public class TextLib extends LuaLibrary {
             Text text = TextLib.check(args.arg(1)).getObject();
             int index = args.checkint(2);
             try {
-                TextComponent component = text.getComponentAtCharacter(index - 1); // -1 since lua isn't 0-based
+                TextComponent component = text.getComponentAtCharacter(index);
                 if(component == null) {
                     return LuaValue.NIL;
                 }
