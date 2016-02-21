@@ -146,7 +146,8 @@ public class FontManager extends Manager<Font> {
         }
         
         if(text.getMembers().size() == 1) {
-            text.getFont().write(text.getText(), text.getStyle(), text.getColor(), posX, posY, scaleX, scaleY, alpha);
+            TextComponent member = text.getMembers().get(0);
+            text.getFont().write(member.getText(), member.getStyle(), member.getColor(), posX, posY, scaleX, scaleY, alpha);
         } else {
             int pos = 0;
             for(int i = 0; i < text.getMembers().size(); i++) {
