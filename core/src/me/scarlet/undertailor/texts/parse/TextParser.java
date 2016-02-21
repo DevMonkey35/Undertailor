@@ -82,10 +82,17 @@ public final class TextParser {
                 if (textParam == TextParam.UNDEFINED) {
                     continue;
                 }
-
-                params.put(textParam,
-                        array.length > 1 ? array[1] :
-                                textParam.getDefaultValue());
+                
+                String value;
+                if (array.length < 2) {
+                    value = textParam.getDefaultValue();
+                } else if (array[1].isEmpty()) {
+                    value = textParam.getDefaultValue();
+                } else {
+                    value = array[1];
+                }
+                
+                params.put(textParam, value);
             }
         }
         return params;
