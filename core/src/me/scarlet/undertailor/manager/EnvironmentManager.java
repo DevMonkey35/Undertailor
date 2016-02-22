@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.environment.Environment;
+import me.scarlet.undertailor.environment.Scheduler;
 import me.scarlet.undertailor.environment.overworld.WorldObjectLoader;
 import me.scarlet.undertailor.environment.overworld.map.RoomLoader;
 import me.scarlet.undertailor.environment.ui.UIComponentLoader;
@@ -42,8 +43,9 @@ public class EnvironmentManager {
         FIT
     }
     
-    private Map<String, Environment> environments;
     private String activeEnvironment;
+    private Scheduler globalScheduler;
+    private Map<String, Environment> environments;
     
     private ViewportType currentViewportType;
 
@@ -60,6 +62,7 @@ public class EnvironmentManager {
         this.uiLoader = new UIComponentLoader();
         this.objLoader = new WorldObjectLoader();
         this.roomLoader = new RoomLoader();
+        this.globalScheduler = new Scheduler(null);
     }
 
     
@@ -76,6 +79,10 @@ public class EnvironmentManager {
             default:
                 return null;
         }
+    }
+    
+    public Scheduler getGlobalScheduler() {
+        return this.globalScheduler;
     }
     
     public ViewportType getCurrentViewportType() {

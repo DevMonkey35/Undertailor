@@ -285,6 +285,8 @@ public class Undertailor extends ApplicationAdapter {
         bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 427, 2);
         renderer.flush();
         
+        environmentManager.getGlobalScheduler().process(delta, input);
+        
         if(activeEnv != null) {
             activeEnv.process(delta, input);
         }

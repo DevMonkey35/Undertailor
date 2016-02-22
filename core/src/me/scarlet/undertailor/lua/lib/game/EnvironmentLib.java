@@ -67,6 +67,7 @@ public class EnvironmentLib extends LuaLibrary {
             new destroyEnvironment(),
             new getActiveEnvironment(),
             new setActiveEnvironment(),
+            new getGlobalScheduler(),
             
             new newUIComponent(),
             new newUIObject(),
@@ -94,6 +95,15 @@ public class EnvironmentLib extends LuaLibrary {
     // --- Environment library methods.
     
     // =-- Access methods.
+    
+    static class getGlobalScheduler extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
+            return LuaSchedulerMeta.create(getEnvironmentManager().getGlobalScheduler());
+        }
+    }
     
     // hasEnvironment
     static class hasEnvironment extends LibraryFunction {
