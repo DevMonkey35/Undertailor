@@ -26,6 +26,7 @@ package me.scarlet.undertailor.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -40,8 +41,9 @@ public class MultiRenderer {
     private Color clearColor;
     private SpriteBatch batch;
     private ShapeRenderer renderer;
+    
     public MultiRenderer() {
-        this.clearColor = Color.BLACK;
+        this.setClearColor(null);
         this.batch = new SpriteBatch();
         this.renderer = new ShapeRenderer();
     }
@@ -70,10 +72,11 @@ public class MultiRenderer {
     
     public void setClearColor(Color color) {
         this.clearColor = (color == null ? Color.BLACK : color);
+        Gdx.gl.glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0F);
     }
     
     public void clear() {
-        Gdx.gl.glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0F);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
     
     public void flush() {
