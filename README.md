@@ -14,20 +14,19 @@ Undertailor is **mostly** singlethreaded as of now, and probably pretty ineffici
 
 ## Status
 
-**It's still in an early alpha!**
+**Almost a full alpha!**
 
-Right now, Undertailor's in its pretty early stages where I'm still trying to piece together stuffs. You can track what I'm aiming to do by checking this project's issue tracker. That's also where you can give me suggestions and ideas, as well as pass on pull requests to help me make the engine the best it can be.
+The overworld side of this engine is almost completely finished, as well as some base API features you'll need to build and interact with objects the engine gives you. This is only the programmatical side of things; in terms of assets, you're still on your own about trying to build them through text (with of course eventual documentation on the data structure of the asset file definitions).
 
 #### The big things that the engine can do right now...
-* **mostly** manage its own overworld
-
-## How to?
-
-Because I've mainly been focused on trying to get the engine to actually work first, there isn't a utility yet that can really help you with things like assets that can be read by the game (its in progress, I swear!). However, you can get a head start on other things; the engine revolves around **Lua scripting.** Lua's a pretty easy-to-learn language, and if you can pick it up in your spare time and get to know what you're messing with, you'll be able to use Undertailor to its full extents!
+* interpret Lua scripting and implement objects and UIs to be used in the game
+* manage its own overworld and event system
+* allow you to write your Undertale-styled cutscenes using provided stock libraries
 
 ## Documentation?
 
 Eventually. It's a pretty high priority right now, too; so you won't be waiting that long.
+Some documentation is already up, and can be checked at [this page](http://xemiru.github.io/Undertailor/luadocs/). Obviously, not done; not all API methods are addressed and documented. These docs specifically explain the workings of Undertailor's API functions, they do not necessarily tell you how they should be used. Actual usage documentation will come after the Lua API documentation. The content of the documentation pages can be tracked at [this repository](https://github.com/Xemiru/Undertailor-docs). The live site does not automagically build and pull any changes to the repository; the live site may not always be up to date with the current commit of the documentation repository.
 
 ## I wanna help out!
 
