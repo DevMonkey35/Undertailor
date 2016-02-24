@@ -29,6 +29,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.environment.Environment;
 import me.scarlet.undertailor.environment.Scheduler;
+import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.overworld.WorldObjectLoader;
 import me.scarlet.undertailor.environment.overworld.map.RoomLoader;
 import me.scarlet.undertailor.environment.ui.UIComponentLoader;
@@ -36,7 +38,7 @@ import me.scarlet.undertailor.environment.ui.UIComponentLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EnvironmentManager {
+public class EnvironmentManager implements EventReceiver {
     
     public enum ViewportType {
         STRETCH,
@@ -131,6 +133,13 @@ public class EnvironmentManager {
         if(hasEnvironment(name)) {
             environments.get(name).dispose();
             environments.remove(name);
+        }
+    }
+    
+    @Override
+    public void pushEvent(EventData data) {
+        if(this.getActiveEnvironment() != null) {
+            this.getActiveEnvironment().pushEvent(data);
         }
     }
     

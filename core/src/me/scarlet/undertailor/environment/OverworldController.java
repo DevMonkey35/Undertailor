@@ -29,6 +29,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.overworld.WorldObject;
 import me.scarlet.undertailor.environment.overworld.WorldRoom;
 import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
@@ -40,7 +42,7 @@ import me.scarlet.undertailor.util.Renderable;
 import java.util.Iterator;
 import java.util.Set;
 
-public class OverworldController implements Renderable, Disposable {
+public class OverworldController implements Renderable, Disposable, EventReceiver {
     
     public static final int RENDER_WIDTH = 640;
     public static final int RENDER_HEIGHT = 480;
@@ -290,6 +292,13 @@ public class OverworldController implements Renderable, Disposable {
         if(currentRoom != null) {
             currentRoom.forceProcess();
             if(isProcessing) currentRoom.process(delta, input);
+        }
+    }
+    
+    @Override
+    public void pushEvent(EventData data) {
+        if(this.currentRoom != null) {
+            this.currentRoom.pushEvent(data);
         }
     }
     

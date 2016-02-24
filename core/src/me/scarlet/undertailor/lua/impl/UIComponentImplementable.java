@@ -24,8 +24,8 @@
 
 package me.scarlet.undertailor.lua.impl;
 
+import me.scarlet.undertailor.environment.event.EventData;
 import me.scarlet.undertailor.environment.ui.UIComponent;
-import me.scarlet.undertailor.environment.ui.event.UIEvent;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaImplementation;
@@ -48,11 +48,11 @@ import java.util.Map;
 
 public class UIComponentImplementable implements LuaImplementable<File, UIComponentImplementation> {
 
-    public static final String IMPLFUNCTION_ONDESTROY = "onDestroy"; // onDestroy(boolean)
-    public static final String IMPLFUNCTION_ONEVENT = "onEvent";     // onEvent(uievent)
-    public static final String IMPLFUNCTION_PROCESS = "process";     // process(delta)
-    public static final String IMPLFUNCTION_CREATE = "create";       // create(uicomponent, args..)
-    public static final String IMPLFUNCTION_RENDER = "render";       // render()
+    public static final String IMPLFUNCTION_ONDESTROY = "onDestroy"; // onDestroy(self, boolean)
+    public static final String IMPLFUNCTION_ONEVENT = "onEvent";     // onEvent(self, uievent)
+    public static final String IMPLFUNCTION_PROCESS = "process";     // process(self, delta, input)
+    public static final String IMPLFUNCTION_CREATE = "create";       // create(self, args..)
+    public static final String IMPLFUNCTION_RENDER = "render";       // render(self)
     public static final String[] REQUIRED_FUNCTIONS = new String[] {IMPLFUNCTION_CREATE};
     public static final String[] FUNCTIONS = new String[] {IMPLFUNCTION_CREATE, IMPLFUNCTION_ONDESTROY, IMPLFUNCTION_ONEVENT, IMPLFUNCTION_PROCESS, IMPLFUNCTION_RENDER};
     
@@ -99,8 +99,8 @@ public class UIComponentImplementable implements LuaImplementable<File, UICompon
         }
         
         @Override
-        public void onEvent(UIEvent event) {
-            super.onEvent(event); // TODO uievent stuff
+        public void pushEvent(EventData data) {
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONEVENT, obj.get(), data.asLuaTable());
         }
     }
     

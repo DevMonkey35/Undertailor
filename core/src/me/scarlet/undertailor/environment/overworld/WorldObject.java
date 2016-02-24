@@ -29,6 +29,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import me.scarlet.undertailor.collision.Collider;
 import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
+import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
 import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
@@ -42,7 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-public abstract class WorldObject implements Collider, Layerable, Renderable, Positionable {
+public abstract class WorldObject implements Collider, Layerable, Renderable, Positionable, EventReceiver {
     
     public static BodyDef generateDefaultObjectDef() {
         BodyDef def = new BodyDef();
@@ -302,6 +304,9 @@ public abstract class WorldObject implements Collider, Layerable, Renderable, Po
             this.body.setActive(this.canCollide);
         }
     }
+    
+    @Override
+    public void pushEvent(EventData data) {}
     
     @Override public void onCollide(Collider collider) {}
     public abstract String getObjectName();

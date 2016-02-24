@@ -27,8 +27,9 @@ package me.scarlet.undertailor.environment;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.ui.UIObject;
-import me.scarlet.undertailor.environment.ui.event.UIEvent;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Renderable;
 
@@ -39,7 +40,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-public class UIController implements Renderable {
+public class UIController implements Renderable, EventReceiver {
     
     /** Next ID holder for incoming generations UI objects. */
     private static int nextUID;
@@ -85,10 +86,6 @@ public class UIController implements Renderable {
         return this.uis.remove(id) != null;
     }
     
-    public void pushEvent(UIEvent event) {
-        this.processObjects(object -> object.pushEvent(event), false);
-    }
-    
     public void process(float delta, InputData input) {
         if(uis.keySet().isEmpty()) {
             return;
@@ -105,13 +102,18 @@ public class UIController implements Renderable {
         }
     }
     
+    @Override
+    public void pushEvent(EventData data) {
+        this.processObjects(ui -> ui.pushEvent(data), true);
+    }
+    
     public void render() {
         Undertailor.getRenderer().setProjectionMatrix(camera.combined);
         this.processObjects(UIObject::render, false);
     }
     
-    private void processObjects(Consumer<UIObject> consumer, boolean all) {
-        if(all) {
+    private void processObjects(Consumer<UIObject> consumer, boolean ignoreActiveStack) {
+        if(ignoreActiveStack) {
             for(Entry<Integer, UIObject> entry : uis.entrySet()) {
                 UIObject object = entry.getValue();
                 consumer.accept(object);

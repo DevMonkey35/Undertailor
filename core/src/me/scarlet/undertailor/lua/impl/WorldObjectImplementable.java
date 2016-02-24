@@ -25,6 +25,7 @@
 package me.scarlet.undertailor.lua.impl;
 
 import me.scarlet.undertailor.collision.Collider;
+import me.scarlet.undertailor.environment.event.EventData;
 import me.scarlet.undertailor.environment.overworld.WorldObject;
 import me.scarlet.undertailor.environment.overworld.WorldRoom;
 import me.scarlet.undertailor.environment.overworld.WorldRoom.Entrypoint;
@@ -61,9 +62,10 @@ public class WorldObjectImplementable implements LuaImplementable<File, WorldObj
     public static final String IMPLFUNCTION_ONCOLLIDE = "onCollide";   // onCollide(self, object)
     public static final String IMPLFUNCTION_ONINTERACT = "onInteract"; // onInteract(self, object)
     public static final String IMPLFUNCTION_ONREGISTER = "onRegister"; // onRegister(self, id, room)
+    public static final String IMPLFUNCTION_ONEVENT = "onEvent";       // onEvent(self, data)
     
     public static final String[] REQUIRED_FUNCTIONS = {IMPLFUNCTION_CREATE};
-    public static final String[] FUNCTIONS = {IMPLFUNCTION_CREATE, IMPLFUNCTION_PROCESS, IMPLFUNCTION_ONRENDER, IMPLFUNCTION_ONCOLLIDE, IMPLFUNCTION_ONINTERACT, IMPLFUNCTION_ONPERSIST, IMPLFUNCTION_ONPAUSE, IMPLFUNCTION_ONRESUME};
+    public static final String[] FUNCTIONS = {IMPLFUNCTION_CREATE, IMPLFUNCTION_PROCESS, IMPLFUNCTION_ONRENDER, IMPLFUNCTION_ONCOLLIDE, IMPLFUNCTION_ONINTERACT, IMPLFUNCTION_ONPERSIST, IMPLFUNCTION_ONPAUSE, IMPLFUNCTION_ONRESUME, IMPLFUNCTION_ONEVENT};
     
     public static class WorldObjectImplementation extends WorldObject implements LuaImplementation {
         
@@ -128,6 +130,11 @@ public class WorldObjectImplementable implements LuaImplementable<File, WorldObj
         @Override
         public void onRegister(long id, WorldRoom room) {
             LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONREGISTER, obj.get());
+        }
+        
+        @Override
+        public void pushEvent(EventData data) {
+            LuaUtil.invokeNonNull(obj.get(), IMPLFUNCTION_ONEVENT, obj.get(), data.asLuaTable());
         }
     }
     

@@ -28,7 +28,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.environment.UIController;
-import me.scarlet.undertailor.environment.ui.event.UIEvent;
+import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
@@ -39,7 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class UIObject implements Renderable, Positionable {
+public class UIObject implements Renderable, Positionable, EventReceiver {
     
     private int id;
     private float alpha;
@@ -117,16 +118,6 @@ public class UIObject implements Renderable, Positionable {
         this.isVisible = flag;
     }
     
-    public void pushEvent(UIEvent event) {
-       this.components.forEach(component -> {
-            if(this.isComponentActive(component)) {
-                component.onEvent(event);
-            }
-        });
-       
-       cleanup();
-    }
-    
     public void process(float delta, InputData input) {
         this.components.forEach(component -> {
             if(this.isComponentActive(component)) {
@@ -135,6 +126,11 @@ public class UIObject implements Renderable, Positionable {
         });
         
         cleanup();
+    }
+    
+    @Override
+    public void pushEvent(EventData data) {
+        this.components.forEach(comp -> comp.pushEvent(data));
     }
     
     public void render() {

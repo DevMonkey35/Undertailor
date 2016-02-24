@@ -25,10 +25,12 @@
 package me.scarlet.undertailor.environment;
 
 import com.badlogic.gdx.utils.Disposable;
+import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.manager.EnvironmentManager;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 
-public class Environment implements Disposable {
+public class Environment implements Disposable, EventReceiver {
     
     private EnvironmentManager envMan;
     private String name;
@@ -54,6 +56,12 @@ public class Environment implements Disposable {
         this.scheduler.process(delta, input);
         this.ui.process(delta, input);
         this.ovw.process(delta, input);
+    }
+    
+    @Override
+    public void pushEvent(EventData data) {
+        this.ui.pushEvent(data);
+        this.ovw.pushEvent(data);
     }
     
     public void render() {

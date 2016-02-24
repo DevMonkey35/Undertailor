@@ -35,6 +35,8 @@ import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.environment.OverworldController;
+import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.overworld.map.RoomMapLayer;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
@@ -54,7 +56,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class WorldRoom implements Disposable {
+public class WorldRoom implements Disposable, EventReceiver {
     
     public static class Entrypoint implements Collider {
         
@@ -408,4 +410,9 @@ public class WorldRoom implements Disposable {
     public void onProcess(float delta, InputData input) {}
     public void onEnter(Entrypoint entrypoint) {}
     public void onExit(Entrypoint exitpoint) {}
+
+    @Override
+    public void pushEvent(EventData data) {
+        this.objects.values().forEach(obj -> obj.pushEvent(data));
+    }
 }
