@@ -25,19 +25,10 @@
 package me.scarlet.undertailor.gfx;
 
 import com.badlogic.gdx.math.Vector2;
+import me.scarlet.undertailor.lua.lib.TimeLib;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 
 public class AnimationData {
-    
-    private static double time;
-    
-    static {
-        time = 0;
-    }
-    
-    public static void advanceAnimationTime(float delta) {
-        time += delta;
-    }
     
     private double pauseTime;
     private double startTime;
@@ -82,7 +73,7 @@ public class AnimationData {
     }
     
     public void play() {
-        this.startTime = AnimationData.time;
+        this.startTime = TimeLib.getCurrentRuntime();
     }
     
     public void stop() {
@@ -92,7 +83,7 @@ public class AnimationData {
     
     public void pause() {
         if(this.startTime > 0 && pauseTime <= -1) {
-            this.pauseTime = AnimationData.time;
+            this.pauseTime = TimeLib.getCurrentRuntime();
         }
     }
     
@@ -100,7 +91,7 @@ public class AnimationData {
         if (this.startTime <= -1) {
             this.play();
         } else if(this.pauseTime > 0) {
-            this.startTime = startTime + (time - this.pauseTime);
+            this.startTime = startTime + (TimeLib.getCurrentRuntime() - this.pauseTime);
             this.pauseTime = -1;
         }
     }
@@ -109,6 +100,8 @@ public class AnimationData {
         if(startTime <= -1) {
             return 0;
         } else {
+            double time = TimeLib.getCurrentRuntime();
+            
             if(pauseTime > 0) {
                 return (time - startTime) - (time - pauseTime);
             }
@@ -118,6 +111,8 @@ public class AnimationData {
     }
     
     public void setRuntime(double runtime) {
+        double time = TimeLib.getCurrentRuntime();
+        
         if(this.pauseTime > 0) {
             this.startTime = this.pauseTime - runtime;
         } else {

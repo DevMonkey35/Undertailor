@@ -24,6 +24,7 @@
 
 package me.scarlet.undertailor.lua.lib;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaLibraryComponent;
@@ -33,15 +34,56 @@ import org.luaj.vm2.Varargs;
 
 public class TimeLib extends LuaLibrary {
     
+    private static double time;
+    private static float delta;
+    
+    static {
+        time = 0;
+    }
+    
+    public static double getCurrentRuntime() {
+        return time;
+    }
+    
+    public static void advanceTime(long millis) {
+        time += (double) (millis / 1000.0);
+    }
+    
+    public static void advanceTime(double seconds) {
+        time += seconds;
+    }
+    
+    public static float getDeltaTime() {
+        return delta;
+    }
+    
+    public static void updateDeltaTime() {
+        delta = Gdx.graphics.getDeltaTime();
+    }
+    
     public static final LuaLibraryComponent[] COMPONENTS = {
             new millis(),
             new sinceMillis(),
             new seconds(),
-            new sinceSeconds()
+            new sinceSeconds(),
+            
+            new eMillis(),
+            new eSinceMillis(),
+            new eSeconds(),
+            new eSinceSeconds()
     };
     
     public TimeLib() {
         super("time", COMPONENTS);
+    }
+    
+    static class delta extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
+            return LuaValue.valueOf(delta);
+        }
     }
     
     static class millis extends LibraryFunction {
@@ -49,7 +91,7 @@ public class TimeLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 0, 0);
             
-            return LuaValue.valueOf(TimeUtils.millis());
+            return LuaValue.valueOf((long) (time * 1000));
         }
     }
     
@@ -59,7 +101,8 @@ public class TimeLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             long millis = args.checklong(1);
-            return LuaValue.valueOf(TimeUtils.timeSinceMillis(millis));
+            long currentMillis = (long) (time * 1000);
+            return LuaValue.valueOf(currentMillis - millis);
         }
     }
     
@@ -68,11 +111,49 @@ public class TimeLib extends LuaLibrary {
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 0, 0);
             
-            return LuaValue.valueOf(TimeUtils.millis() / 1000.0);
+            return LuaValue.valueOf(time);
         }
     }
     
     static class sinceSeconds extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            double seconds = args.checkdouble(1);
+            return LuaValue.valueOf(time - seconds);
+        }
+    }
+    
+    static class eMillis extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
+            return LuaValue.valueOf(TimeUtils.millis());
+        }
+    }
+    
+    static class eSinceMillis extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            long millis = args.checklong(1);
+            return LuaValue.valueOf(TimeUtils.timeSinceMillis(millis));
+        }
+    }
+    
+    static class eSeconds extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
+            return LuaValue.valueOf(TimeUtils.millis() / 1000.0);
+        }
+    }
+    
+    static class eSinceSeconds extends LibraryFunction {
         @Override
         public Varargs execute(Varargs args) {
             LuaUtil.checkArguments(args, 1, 1);

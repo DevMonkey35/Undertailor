@@ -49,7 +49,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import me.scarlet.undertailor.environment.Environment;
-import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -58,6 +57,7 @@ import me.scarlet.undertailor.lua.impl.UIComponentImplementable;
 import me.scarlet.undertailor.lua.impl.WorldObjectImplementable;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.lua.lib.BaseLib;
+import me.scarlet.undertailor.lua.lib.TimeLib;
 import me.scarlet.undertailor.manager.AnimationManager;
 import me.scarlet.undertailor.manager.AudioManager;
 import me.scarlet.undertailor.manager.EnvironmentManager;
@@ -272,11 +272,12 @@ public class Undertailor extends ApplicationAdapter {
     
     @Override
     public void render() {
+        TimeLib.updateDeltaTime();
         InputData input = inputRetriever.getCurrentData();
         Environment activeEnv = environmentManager.getActiveEnvironment();
-        float delta = Gdx.graphics.getDeltaTime();
+        float delta = TimeLib.getDeltaTime();
         
-        AnimationData.advanceAnimationTime(delta);
+        TimeLib.advanceTime(delta);
         Undertailor.getRenderer().clear();
         
         if(activeEnv != null) {
