@@ -78,7 +78,7 @@ public class AnimationData {
     }
     
     public boolean isPlaying() {
-        return this.pauseTime > 0 && this.startTime > 0;
+        return this.pauseTime < 0 && this.startTime > 0;
     }
     
     public void play() {
