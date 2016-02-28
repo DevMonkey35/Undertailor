@@ -15,17 +15,25 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
 }
 
-jar {
-    classifier = 'base'
+project.ext.mainClassName = "me.scarlet.undertailor.desktop.DesktopLauncher"
 
+task copyAssets(type: Copy) {
+    from files('../core/src/assets/')
+    into new File(sourceSets.main.output.classesDir, "assets/")
+}
+
+task dist(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+    
     manifest {
-        attributes(
-                'Implementation-Title': rootProject.name,
-                'Implementation-Version': version,
-                'Main-Class': 'me.scarlet.undertailer.desktop.DesktopLauncher'
-        )
+        attributes 'Main-Class': project.mainClassName
     }
 }
+
+dist.dependsOn classes
+dist.dependsOn copyAssets
 
 shadowJar {
     classifier = ''
