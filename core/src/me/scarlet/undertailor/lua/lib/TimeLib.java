@@ -62,6 +62,8 @@ public class TimeLib extends LuaLibrary {
     }
     
     public static final LuaLibraryComponent[] COMPONENTS = {
+            new delta(),
+            
             new millis(),
             new sinceMillis(),
             new seconds(),
@@ -85,6 +87,8 @@ public class TimeLib extends LuaLibrary {
             return LuaValue.valueOf(delta);
         }
     }
+    
+    // Runtime/frame-based time functions.
     
     static class millis extends LibraryFunction {
         @Override
@@ -124,6 +128,8 @@ public class TimeLib extends LuaLibrary {
             return LuaValue.valueOf(time - seconds);
         }
     }
+    
+    // Epoch-based time functions.
     
     static class eMillis extends LibraryFunction {
         @Override
