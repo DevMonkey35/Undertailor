@@ -27,14 +27,12 @@ package me.scarlet.undertailor.manager;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import me.scarlet.undertailor.Undertailor;
-import me.scarlet.undertailor.audio.Audio;
 import me.scarlet.undertailor.audio.AudioResourceManager;
 import me.scarlet.undertailor.audio.MusicWrapper;
 import me.scarlet.undertailor.audio.SoundWrapper;
 import me.scarlet.undertailor.util.NumberUtil;
 
 import java.io.File;
-import java.util.Map;
 
 public class AudioManager {
     
@@ -94,7 +92,7 @@ public class AudioManager {
             return;
         }
         
-        Map<String, Audio<?>> mapping = (Map<String, Audio<?>>) (table == 0 ? soundMan.getResourceMapping() : musicMan.getResourceMapping());
+        AudioResourceManager<?> manager = table == 0 ? soundMan : musicMan;
         Undertailor.instance.log(MANAGER_TAG, "scanning directory " + dirPath + " for " + (table == 0 ? "sound" : "music"));
         for(File file : dir.listFiles()) {
             if(file.isDirectory()) {
@@ -108,20 +106,17 @@ public class AudioManager {
                 continue;
             }
             
-            if(mapping.containsKey(name)) {
+            if(manager.getResourceMapping().containsKey(name)) {
                 Undertailor.instance.log(MANAGER_TAG, "WARN: name conflict with another sound/music file of another file type detected (" + name + "); old one will be replaced with new one");
             }
             
-            Audio<?> value;
             if(table == 0) { // sound
-                value = new SoundWrapper(soundMan, file);
+                ((AudioResourceManager<SoundWrapper>) manager).loadResource(name, new SoundWrapper(soundMan, file));
                 Undertailor.instance.debug(MANAGER_TAG, "registered sound " + name);
             } else {
-                value = new MusicWrapper(name, musicMan, file);
+                ((AudioResourceManager<MusicWrapper>) manager).loadResource(name, new MusicWrapper(name, musicMan, file));
                 Undertailor.instance.debug(MANAGER_TAG, "registered music " + name);
             }
-            
-            mapping.put(name, value);
         }
     }
 }
