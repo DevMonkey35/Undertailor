@@ -136,7 +136,7 @@ public class AnimationLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 1, 1);
             
             AnimationData animation = check(args.arg(1)).getObject();
-            return LuaValue.valueOf(animation.getRuntime() / 1000.0F);
+            return LuaValue.valueOf(animation.getRuntime());
         }
     }
     
@@ -146,7 +146,7 @@ public class AnimationLib extends LuaLibrary {
             LuaUtil.checkArguments(args, 2, 2);
             
             AnimationData animation = check(args.arg(1)).getObject();
-            animation.setRuntime((long) args.checkdouble(2) * 1000);
+            animation.setRuntime(args.checkdouble(2));
             return LuaValue.NIL;
         }
     }
