@@ -49,6 +49,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import me.scarlet.undertailor.environment.Environment;
+import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -275,6 +276,7 @@ public class Undertailor extends ApplicationAdapter {
         Environment activeEnv = environmentManager.getActiveEnvironment();
         float delta = Gdx.graphics.getDeltaTime();
         
+        AnimationData.advanceAnimationTime(delta);
         Undertailor.getRenderer().clear();
         
         if(activeEnv != null) {

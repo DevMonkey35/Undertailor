@@ -25,13 +25,22 @@
 package me.scarlet.undertailor.gfx;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.TimeUtils;
 import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 
 public class AnimationData {
     
-    private long pauseTime;
-    private long startTime;
+    private static double time;
+    
+    static {
+        time = 0;
+    }
+    
+    public static void advanceAnimationTime(float delta) {
+        time += delta;
+    }
+    
+    private double pauseTime;
+    private double startTime;
     private Vector2 offset;
     private boolean looping;
     private String spriteset;
@@ -73,7 +82,7 @@ public class AnimationData {
     }
     
     public void play() {
-        this.startTime = TimeUtils.millis();
+        this.startTime = AnimationData.time;
     }
     
     public void stop() {
@@ -83,7 +92,7 @@ public class AnimationData {
     
     public void pause() {
         if(this.startTime > 0 && pauseTime <= -1) {
-            this.pauseTime = TimeUtils.millis();
+            this.pauseTime = AnimationData.time;
         }
     }
     
@@ -91,32 +100,32 @@ public class AnimationData {
         if (this.startTime <= -1) {
             this.play();
         } else if(this.pauseTime > 0) {
-            this.startTime = startTime + TimeUtils.timeSinceMillis(this.pauseTime);
+            this.startTime = startTime + (time - this.pauseTime);
             this.pauseTime = -1;
         }
     }
     
-    public long getRuntime() {
+    public double getRuntime() {
         if(startTime <= -1) {
             return 0;
         } else {
             if(pauseTime > 0) {
-                return TimeUtils.timeSinceMillis(startTime) - TimeUtils.timeSinceMillis(pauseTime);
+                return (time - startTime) - (time - pauseTime);
             }
             
-            return TimeUtils.timeSinceMillis(startTime);
+            return (time - startTime);
         }
     }
     
-    public void setRuntime(long runtime) {
+    public void setRuntime(double runtime) {
         if(this.pauseTime > 0) {
             this.startTime = this.pauseTime - runtime;
         } else {
             if(this.startTime <= -1) {
-                this.pauseTime = TimeUtils.millis();
+                this.pauseTime = time;
                 this.startTime = pauseTime - runtime;
             } else {
-                this.startTime = TimeUtils.millis() - runtime;
+                this.startTime = time - runtime;
             }
         }
     }
