@@ -35,7 +35,6 @@ import org.luaj.vm2.Varargs;
 public class GameLib extends LuaLibrary {
     
     public static final String DEFAULT_TITLE = "UNDERTAILOR";
-    public static boolean defset = false;
     
     public static final LuaLibraryComponent[] COMPONENTS = {
             new setWindowTitle(),
@@ -49,14 +48,6 @@ public class GameLib extends LuaLibrary {
     
     public GameLib() {
         super("game", COMPONENTS);
-    }
-    
-    @Override
-    public void postinit(LuaValue env, LuaValue game) {
-        if(!defset) {
-            Gdx.graphics.setTitle(DEFAULT_TITLE);
-            defset = true;
-        }
     }
     
     static class setWindowTitle extends LibraryFunction {

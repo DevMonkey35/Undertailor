@@ -60,6 +60,7 @@ public class DesktopLauncher extends Application {
             config.vSyncEnabled = true;
             config.addIcon("assets/defaultIcon_small.png", Files.FileType.Classpath);
             config.addIcon("assets/defaultIcon.png", Files.FileType.Classpath);
+            config.title = "UNDERTAILOR";
             new LwjglApplication(new Undertailor(config, assetDir), config);
         }
     }
