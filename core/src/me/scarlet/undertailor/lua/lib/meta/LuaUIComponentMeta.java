@@ -59,6 +59,7 @@ public class LuaUIComponentMeta extends LuaLibrary {
     
     public LuaUIComponentMeta() {
         super(null, COMPONENTS);
+        super.addComponents(LuaEventReceiverMeta.COMPONENTS);
     }
     
     static class getParent extends LibraryFunction {

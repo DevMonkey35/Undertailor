@@ -36,6 +36,7 @@ import me.scarlet.undertailor.collision.bbshapes.BoundingBox;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
 import me.scarlet.undertailor.environment.OverworldController;
 import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventListener;
 import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.overworld.map.RoomMapLayer;
 import me.scarlet.undertailor.exception.LuaScriptException;
@@ -56,7 +57,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class WorldRoom implements Disposable, EventReceiver {
+public class WorldRoom implements Disposable, EventReceiver, EventListener {
     
     public static class Entrypoint implements Collider {
         
@@ -225,6 +226,7 @@ public class WorldRoom implements Disposable, EventReceiver {
     private Map<Long, WorldObject> objects;
     private CollisionHandler collision;
     
+    private Map<String, EventReceiver> listeners;
     protected OverworldController currentController;
     
     public WorldRoom() {
@@ -235,6 +237,27 @@ public class WorldRoom implements Disposable, EventReceiver {
         this.roomWrapper = null;
         this.collision = new CollisionHandler();
         this.currentController = null;
+        this.listeners = new HashMap<>();
+    }
+    
+    @Override
+    public void addListener(String id, EventReceiver receiver) {
+        this.listeners.put(id, receiver);
+    }
+    
+    @Override
+    public EventReceiver getListener(String id) {
+        return this.listeners.get(id);
+    }
+    
+    @Override
+    public void removeListener(String id) {
+        this.listeners.remove(id);
+    }
+    
+    @Override
+    public void clearListeners() {
+        this.listeners.clear();
     }
     
     public OverworldController getOwningController() {
@@ -413,6 +436,7 @@ public class WorldRoom implements Disposable, EventReceiver {
 
     @Override
     public void pushEvent(EventData data) {
+        this.listeners.values().forEach(receiver -> receiver.pushEvent(data));
         this.objects.values().forEach(obj -> obj.pushEvent(data));
     }
 }

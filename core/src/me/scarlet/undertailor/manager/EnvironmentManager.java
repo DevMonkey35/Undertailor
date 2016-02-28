@@ -30,6 +30,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.environment.Environment;
 import me.scarlet.undertailor.environment.Scheduler;
 import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventListener;
 import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.overworld.WorldObjectLoader;
 import me.scarlet.undertailor.environment.overworld.map.RoomLoader;
@@ -38,7 +39,7 @@ import me.scarlet.undertailor.environment.ui.UIComponentLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EnvironmentManager implements EventReceiver {
+public class EnvironmentManager implements EventReceiver, EventListener {
     
     public enum ViewportType {
         STRETCH,
@@ -55,18 +56,39 @@ public class EnvironmentManager implements EventReceiver {
     private UIComponentLoader uiLoader;
     private WorldObjectLoader objLoader;
     private RoomLoader roomLoader;
+    private Map<String, EventReceiver> listeners;
     
     public EnvironmentManager() {
         this.renderHitboxes = true;
         this.environments = new HashMap<>();
         this.currentViewportType = ViewportType.FIT;
         
+        this.listeners = new HashMap<>();
         this.uiLoader = new UIComponentLoader();
         this.objLoader = new WorldObjectLoader();
         this.roomLoader = new RoomLoader();
         this.globalScheduler = new Scheduler(null);
     }
-
+    
+    @Override
+    public void addListener(String id, EventReceiver receiver) {
+        this.listeners.put(id, receiver);
+    }
+    
+    @Override
+    public EventReceiver getListener(String id) {
+        return this.listeners.get(id);
+    }
+    
+    @Override
+    public void removeListener(String id) {
+        this.listeners.remove(id);
+    }
+    
+    @Override
+    public void clearListeners() {
+        this.listeners.clear();
+    }
     
     public boolean isRenderingHitboxes() {
         return this.renderHitboxes;
@@ -138,6 +160,7 @@ public class EnvironmentManager implements EventReceiver {
     
     @Override
     public void pushEvent(EventData data) {
+        this.listeners.values().forEach(receiver -> receiver.pushEvent(data));
         if(this.getActiveEnvironment() != null) {
             this.getActiveEnvironment().pushEvent(data);
         }

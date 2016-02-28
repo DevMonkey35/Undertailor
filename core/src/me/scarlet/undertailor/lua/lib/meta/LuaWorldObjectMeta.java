@@ -89,6 +89,7 @@ public class LuaWorldObjectMeta extends LuaLibrary {
     
     public LuaWorldObjectMeta() {
         super(null, COMPONENTS);
+        super.addComponents(LuaEventReceiverMeta.COMPONENTS);
     }
     
     static class getID extends LibraryFunction {

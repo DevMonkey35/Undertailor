@@ -30,6 +30,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventListener;
 import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.overworld.WorldObject;
 import me.scarlet.undertailor.environment.overworld.WorldRoom;
@@ -39,10 +40,12 @@ import me.scarlet.undertailor.environment.scheduler.Task;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Renderable;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
-public class OverworldController implements Renderable, Disposable, EventReceiver {
+public class OverworldController implements Renderable, Disposable, EventReceiver, EventListener {
     
     public static final int RENDER_WIDTH = 640;
     public static final int RENDER_HEIGHT = 480;
@@ -58,6 +61,7 @@ public class OverworldController implements Renderable, Disposable, EventReceive
     private boolean renderHitboxes;
     private OrthographicCamera camera;
     private Task entryTransition, exitTransition;
+    private Map<String, EventReceiver> listeners;
     
     //private WorldObjectLoader objLoader;
     //private RoomLoader roomLoader;
@@ -77,10 +81,31 @@ public class OverworldController implements Renderable, Disposable, EventReceive
         this.renderHitboxes = true;
         this.entryTransition = null;
         this.exitTransition = null;
+        this.listeners = new HashMap<>();
         
         this.setCameraZoom(zoom);
         this.camera.position.set(0, 0, 0);
         this.camera.update();
+    }
+    
+    @Override
+    public void addListener(String id, EventReceiver receiver) {
+        this.listeners.put(id, receiver);
+    }
+    
+    @Override
+    public EventReceiver getListener(String id) {
+        return this.listeners.get(id);
+    }
+    
+    @Override
+    public void removeListener(String id) {
+        this.listeners.remove(id);
+    }
+    
+    @Override
+    public void clearListeners() {
+        this.listeners.clear();
     }
     
     public OrthographicCamera getCamera() {
@@ -297,6 +322,7 @@ public class OverworldController implements Renderable, Disposable, EventReceive
     
     @Override
     public void pushEvent(EventData data) {
+        this.listeners.values().forEach(receiver -> receiver.pushEvent(data));
         if(this.currentRoom != null) {
             this.currentRoom.pushEvent(data);
         }

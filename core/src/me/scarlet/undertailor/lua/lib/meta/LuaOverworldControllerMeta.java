@@ -72,6 +72,7 @@ public class LuaOverworldControllerMeta extends LuaLibrary {
     
     public LuaOverworldControllerMeta() {
         super(null, COMPONENTS);
+        super.addComponents(LuaEventReceiverMeta.COMPONENTS);
     }
     
     static class getOwningEnvironment extends LibraryFunction {

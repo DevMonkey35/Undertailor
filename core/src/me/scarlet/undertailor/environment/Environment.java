@@ -26,15 +26,20 @@ package me.scarlet.undertailor.environment;
 
 import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventListener;
 import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.manager.EnvironmentManager;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 
-public class Environment implements Disposable, EventReceiver {
+import java.util.HashMap;
+import java.util.Map;
+
+public class Environment implements Disposable, EventReceiver, EventListener {
     
     private EnvironmentManager envMan;
     private String name;
     
+    private Map<String, EventReceiver> listeners;
     private OverworldController ovw;
     private Scheduler scheduler;
     private UIController ui;
@@ -43,6 +48,7 @@ public class Environment implements Disposable, EventReceiver {
         this.envMan = envMan;
         this.name = name;
         
+        this.listeners = new HashMap<>();
         this.ovw = new OverworldController(this, envMan.generateViewport());
         this.ui = new UIController(this, envMan.generateViewport());
         this.scheduler = new Scheduler(this);
@@ -50,6 +56,26 @@ public class Environment implements Disposable, EventReceiver {
     
     public String getName() {
         return this.name;
+    }
+    
+    @Override
+    public void addListener(String id, EventReceiver receiver) {
+        this.listeners.put(id, receiver);
+    }
+    
+    @Override
+    public EventReceiver getListener(String id) {
+        return this.listeners.get(id);
+    }
+    
+    @Override
+    public void removeListener(String id) {
+        this.listeners.remove(id);
+    }
+    
+    @Override
+    public void clearListeners() {
+        this.listeners.clear();
     }
     
     public void process(float delta, InputData input) {
@@ -60,6 +86,7 @@ public class Environment implements Disposable, EventReceiver {
     
     @Override
     public void pushEvent(EventData data) {
+        this.listeners.values().forEach(receiver -> receiver.pushEvent(data));
         this.ui.pushEvent(data);
         this.ovw.pushEvent(data);
     }

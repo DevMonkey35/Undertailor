@@ -24,12 +24,22 @@
 
 package me.scarlet.undertailor.environment.event;
 
+import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaTable;
 
-public interface EventData {
+public class LuaEventReceiver implements EventReceiver {
     
-    String getName();
-    Object get(String key);
-    default LuaTable asLuaTable() { return null; }
+    private LuaTable impl;
+    public LuaEventReceiver(LuaTable impl) {
+        this.impl = impl;
+    }
     
+    @Override
+    public void pushEvent(EventData data) {
+        LuaUtil.invokeNonNull(impl, "pushEvent", impl, data.asLuaTable());
+    }
+    
+    public LuaTable asLuaTable() {
+        return this.impl;
+    }
 }

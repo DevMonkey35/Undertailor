@@ -26,6 +26,9 @@ package me.scarlet.undertailor.lua.lib.game;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.environment.Environment;
+import me.scarlet.undertailor.environment.event.EventReceiver;
+import me.scarlet.undertailor.environment.event.LuaEventData;
+import me.scarlet.undertailor.environment.event.LuaEventReceiver;
 import me.scarlet.undertailor.environment.ui.UIObject;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -37,6 +40,8 @@ import me.scarlet.undertailor.lua.impl.WorldObjectImplementable;
 import me.scarlet.undertailor.lua.impl.WorldObjectImplementable.WorldObjectImplementation;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable;
 import me.scarlet.undertailor.lua.impl.WorldRoomImplementable.WorldRoomImplementation;
+import me.scarlet.undertailor.lua.lib.meta.LuaEventListenerMeta;
+import me.scarlet.undertailor.lua.lib.meta.LuaEventReceiverMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaOverworldControllerMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaRoomMapMeta;
 import me.scarlet.undertailor.lua.lib.meta.LuaSchedulerMeta;
@@ -48,6 +53,7 @@ import me.scarlet.undertailor.lua.lib.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.manager.EnvironmentManager;
 import me.scarlet.undertailor.util.LuaUtil;
 import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
@@ -67,7 +73,13 @@ public class EnvironmentLib extends LuaLibrary {
             new destroyEnvironment(),
             new getActiveEnvironment(),
             new setActiveEnvironment(),
+            
+            new pushGlobalEvent(),
             new getGlobalScheduler(),
+            new addGlobalListener(),
+            new getGlobalListener(),
+            new removeGlobalListener(),
+            new clearGlobalListeners(),
             
             new newUIComponent(),
             new newUIObject(),
@@ -84,6 +96,8 @@ public class EnvironmentLib extends LuaLibrary {
     
     public EnvironmentLib() {
         super("environment", COMPONENTS);
+        super.addComponents(LuaEventReceiverMeta.COMPONENTS);
+        super.addComponents(LuaEventListenerMeta.COMPONENTS);
     }
     
     // --- Class utility methods.
@@ -95,6 +109,73 @@ public class EnvironmentLib extends LuaLibrary {
     // --- Environment library methods.
     
     // =-- Access methods.
+    
+    static class addGlobalListener extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 2, 2);
+            
+            String listenerId = args.checkjstring(1);
+            LuaTable impl = args.checktable(2);
+            
+            if(!impl.get("pushEvent").isfunction()) {
+                throw new LuaError("listener implementation must contain a pushEvent function");
+            }
+            
+            getEnvironmentManager().addListener(listenerId, new LuaEventReceiver(impl));
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class removeGlobalListener extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            String listenerId = args.checkjstring(1);
+            
+            getEnvironmentManager().removeListener(listenerId);
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class getGlobalListener extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            String listenerId = args.checkjstring(1);
+            
+            EventReceiver receiver = getEnvironmentManager().getListener(listenerId);
+            if(receiver == null || !(receiver instanceof LuaEventReceiver)) {
+                return LuaValue.NIL;
+            }
+            
+            return ((LuaEventReceiver) receiver).asLuaTable();
+        }
+    }
+    
+    static class clearGlobalListeners extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 0, 0);
+            
+            getEnvironmentManager().clearListeners();
+            return LuaValue.NIL;
+        }
+    }
+    
+    static class pushGlobalEvent extends LibraryFunction {
+        @Override
+        public Varargs execute(Varargs args) {
+            LuaUtil.checkArguments(args, 1, 1);
+            
+            LuaTable data = args.checktable(1);
+            
+            getEnvironmentManager().pushEvent(new LuaEventData(data));
+            return LuaValue.NIL;
+        }
+    }
     
     static class getGlobalScheduler extends LibraryFunction {
         @Override

@@ -28,19 +28,22 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.environment.event.EventData;
+import me.scarlet.undertailor.environment.event.EventListener;
 import me.scarlet.undertailor.environment.event.EventReceiver;
 import me.scarlet.undertailor.environment.ui.UIObject;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
 import me.scarlet.undertailor.util.Renderable;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-public class UIController implements Renderable, EventReceiver {
+public class UIController implements Renderable, EventReceiver, EventListener {
     
     /** Next ID holder for incoming generations UI objects. */
     private static int nextUID;
@@ -53,6 +56,7 @@ public class UIController implements Renderable, EventReceiver {
     }
     
     /** Map holding all headed UI objects. */
+    private Map<String, EventReceiver> listeners;
     private SortedMap<Integer, UIObject> uis;
     private OrthographicCamera camera;
     private Environment env;
@@ -60,10 +64,31 @@ public class UIController implements Renderable, EventReceiver {
     
     public UIController(Environment env, Viewport port) {
         this.env = env;
+        this.listeners = new HashMap<>();
         this.uis = new TreeMap<>(((Comparator<Integer>) Integer::compareTo));
         this.camera = new OrthographicCamera(RENDER_WIDTH, RENDER_HEIGHT);
         
         this.setViewport(port);
+    }
+    
+    @Override
+    public void addListener(String id, EventReceiver receiver) {
+        this.listeners.put(id, receiver);
+    }
+    
+    @Override
+    public EventReceiver getListener(String id) {
+        return this.listeners.get(id);
+    }
+    
+    @Override
+    public void removeListener(String id) {
+        this.listeners.remove(id);
+    }
+    
+    @Override
+    public void clearListeners() {
+        this.listeners.clear();
     }
     
     public Environment getEnvironment() {
@@ -104,6 +129,7 @@ public class UIController implements Renderable, EventReceiver {
     
     @Override
     public void pushEvent(EventData data) {
+        this.listeners.values().forEach(receiver -> receiver.pushEvent(data));
         this.processObjects(ui -> ui.pushEvent(data), true);
     }
     

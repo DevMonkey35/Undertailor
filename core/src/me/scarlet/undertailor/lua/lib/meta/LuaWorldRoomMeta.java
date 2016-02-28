@@ -60,6 +60,8 @@ public class LuaWorldRoomMeta extends LuaLibrary {
     
     public LuaWorldRoomMeta() {
         super(null, COMPONENTS);
+        super.addComponents(LuaEventReceiverMeta.COMPONENTS);
+        super.addComponents(LuaEventListenerMeta.COMPONENTS);
     }
     
     static class getOwningController extends LibraryFunction {

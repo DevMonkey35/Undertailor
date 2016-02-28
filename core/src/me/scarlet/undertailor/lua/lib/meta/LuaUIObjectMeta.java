@@ -61,6 +61,7 @@ public class LuaUIObjectMeta extends LuaLibrary {
     
     public LuaUIObjectMeta() {
         super(null, COMPONENTS);
+        super.addComponents(LuaEventReceiverMeta.COMPONENTS);
     }
     
     static class getOwningController extends LibraryFunction {
