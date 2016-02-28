@@ -140,8 +140,9 @@ public class SimpleAnimation extends Animation<SimpleKeyFrame>{
     }
     
     @Override
-    public void drawFrame(double stateTime, boolean looping, String spriteset, float posX, float posY, float offX, float offY, float scale, float rotation) {
-        Entry<Long, SimpleKeyFrame> currentFrameEntry = getFrameEntry((long) (stateTime * 1000), looping);
+    public void drawFrame(double stateTimeS, boolean looping, String spriteset, float posX, float posY, float offX, float offY, float scale, float rotation) {
+        long stateTime = (long) (stateTimeS * 1000);
+        Entry<Long, SimpleKeyFrame> currentFrameEntry = getFrameEntry(stateTime, looping);
         if(currentFrameEntry.getValue().getSpriteIndex() <= -1) {
             return;
         }
