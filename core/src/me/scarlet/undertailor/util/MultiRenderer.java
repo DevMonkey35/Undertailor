@@ -43,7 +43,6 @@ public class MultiRenderer {
     private ShapeRenderer renderer;
     
     public MultiRenderer() {
-        this.setClearColor(null);
         this.batch = new SpriteBatch();
         this.renderer = new ShapeRenderer();
     }
