@@ -158,6 +158,7 @@ public class Undertailor extends ApplicationAdapter {
     
     public static void setFrameCap(int cap) {
         int frameCap = cap < 30 ? (cap == 0 ? 0 : 30) : cap;
+        frameCap = frameCap > 120 ? 120 : frameCap;
         Undertailor.instance.config.backgroundFPS = frameCap;
         Undertailor.instance.config.foregroundFPS = frameCap;
     }
