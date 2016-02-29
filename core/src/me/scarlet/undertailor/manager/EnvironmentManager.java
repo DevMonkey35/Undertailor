@@ -24,6 +24,8 @@
 
 package me.scarlet.undertailor.manager;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -46,6 +48,8 @@ public class EnvironmentManager implements EventReceiver, EventListener {
         FIT
     }
     
+    private boolean isFullscreen;
+    private int oldWidth, oldHeight;
     private String activeEnvironment;
     private Scheduler globalScheduler;
     private Map<String, Environment> environments;
@@ -59,6 +63,7 @@ public class EnvironmentManager implements EventReceiver, EventListener {
     private Map<String, EventReceiver> listeners;
     
     public EnvironmentManager() {
+        this.isFullscreen = false;
         this.renderHitboxes = true;
         this.environments = new HashMap<>();
         this.currentViewportType = ViewportType.FIT;
@@ -68,6 +73,28 @@ public class EnvironmentManager implements EventReceiver, EventListener {
         this.objLoader = new WorldObjectLoader();
         this.roomLoader = new RoomLoader();
         this.globalScheduler = new Scheduler(null);
+    }
+    
+    public boolean isFullscreen() {
+        return this.isFullscreen;
+    }
+    
+    public void setFullscreen(boolean flag) {
+        if(flag != isFullscreen) {
+            if(flag) {
+                this.oldWidth = Gdx.graphics.getWidth();
+                this.oldHeight = Gdx.graphics.getHeight();
+                
+                System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+                DisplayMode mode = Gdx.graphics.getDesktopDisplayMode();
+                Gdx.graphics.setDisplayMode(mode.width, mode.height, false);
+            } else {
+                System.setProperty("org.lwjgl.opengl.Window.undecorated", "false");
+                Gdx.graphics.setDisplayMode(oldWidth, oldHeight, false);
+            }
+            
+            this.isFullscreen = flag;
+        }
     }
     
     @Override

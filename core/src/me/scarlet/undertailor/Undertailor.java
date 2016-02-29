@@ -298,6 +298,10 @@ public class Undertailor extends ApplicationAdapter {
         if(input.getPressData(Keys.F3).justPressed(0)) {
             this.console.show();
         }
+        
+        if(input.getPressData(Keys.F11).justPressed(0)) {
+            this.environmentManager.setFullscreen(!this.environmentManager.isFullscreen());
+        }
             
         inputRetriever.update();
     }
