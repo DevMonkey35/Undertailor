@@ -27,7 +27,6 @@ package me.scarlet.undertailor;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Box2D;
@@ -66,7 +65,6 @@ import me.scarlet.undertailor.manager.ScriptManager;
 import me.scarlet.undertailor.manager.SpriteSheetManager;
 import me.scarlet.undertailor.manager.StyleManager;
 import me.scarlet.undertailor.manager.TilemapManager;
-import me.scarlet.undertailor.texts.Font;
 import me.scarlet.undertailor.util.Blocker;
 import me.scarlet.undertailor.util.InputRetriever;
 import me.scarlet.undertailor.util.InputRetriever.InputData;
@@ -171,6 +169,7 @@ public class Undertailor extends ApplicationAdapter {
     
     private LwjglApplicationConfiguration config;
     
+    private SystemHandler system;
     private DisposerThread disposer;
     private MultiRenderer renderer;
     private Console console;
@@ -267,6 +266,7 @@ public class Undertailor extends ApplicationAdapter {
             error("tailor", "main.lua file not found; no start code was executed");
         }
         
+        this.system = new SystemHandler();
         disposer = new DisposerThread();
         disposer.start();
     }
@@ -285,30 +285,23 @@ public class Undertailor extends ApplicationAdapter {
             activeEnv.render();
         }
         
-        Font bitop = fontManager.getFont("8bitop");
-        bitop.write(Gdx.graphics.getFramesPerSecond() + "", null, null, 10, 427, 2);
-        renderer.flush();
-        
         environmentManager.getGlobalScheduler().process(delta, input);
         
         if(activeEnv != null) {
             activeEnv.process(delta, input);
         }
         
-        if(input.getPressData(Keys.F3).justPressed(0)) {
-            this.console.show();
-        }
-        
-        if(input.getPressData(Keys.F11).justPressed(0)) {
-            this.environmentManager.setFullscreen(!this.environmentManager.isFullscreen());
-        }
-            
+        this.system.process(delta, input);
         inputRetriever.update();
     }
     
     @Override
     public void resize(int width, int height) {
         this.environmentManager.resize(width, height);
+    }
+    
+    public Console getConsole() {
+        return this.console;
     }
     
     public boolean isPaused() {
