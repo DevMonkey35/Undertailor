@@ -27,6 +27,9 @@ package me.scarlet.undertailor.util;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import me.scarlet.undertailor.Undertailor;
 
@@ -53,5 +56,9 @@ public class JFXUtil {
         }
         
         return null;
+    }
+    
+    public static void setGridCommonConstraints(GridPane pane, RowConstraints row, ColumnConstraints column) {
+        
     }
 }

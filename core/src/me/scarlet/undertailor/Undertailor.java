@@ -47,6 +47,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import me.scarlet.undertailor.SystemHandler.SystemKeybind;
 import me.scarlet.undertailor.environment.Environment;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaImplementable;
@@ -157,8 +158,8 @@ public class Undertailor extends ApplicationAdapter {
     public static void setFrameCap(int cap) {
         int frameCap = cap < 30 ? (cap == 0 ? 0 : 30) : cap;
         frameCap = frameCap > 120 ? 120 : frameCap;
-        Undertailor.instance.config.backgroundFPS = frameCap;
-        Undertailor.instance.config.foregroundFPS = frameCap;
+        Undertailor.instance.lwjglConfig.backgroundFPS = frameCap;
+        Undertailor.instance.lwjglConfig.foregroundFPS = frameCap;
     }
     
     // -----
@@ -167,7 +168,8 @@ public class Undertailor extends ApplicationAdapter {
     private boolean debug;
     private boolean paused;
     
-    private LwjglApplicationConfiguration config;
+    private LaunchOptions launchOptions;
+    private LwjglApplicationConfiguration lwjglConfig;
     
     private SystemHandler system;
     private DisposerThread disposer;
@@ -185,15 +187,17 @@ public class Undertailor extends ApplicationAdapter {
     private EnvironmentManager environmentManager;
     private InputRetriever inputRetriever;
     
-    public Undertailor(LwjglApplicationConfiguration config, File assetDir) {
-        if(assetDir != null && assetDir.isDirectory()) {
-            Undertailor.ASSETS_DIRECTORY = assetDir;
-        }
-        
-        this.config = config;
+    public Undertailor(LwjglApplicationConfiguration config, LaunchOptions options) {
+        this.launchOptions = options;
+        this.lwjglConfig = config;
         this.paused = false;
-        config.foregroundFPS = 60;
-        config.backgroundFPS = 60;
+        this.strict = 1;
+        
+        this.debug = options.debug;
+        System.out.println("usecustomdir = " + options.useCustomDir);
+        if(options.useCustomDir && options.assetDir != null && options.assetDir.isDirectory()) {
+            Undertailor.ASSETS_DIRECTORY = options.assetDir;
+        }
     }
     
     @Override
@@ -210,9 +214,27 @@ public class Undertailor extends ApplicationAdapter {
     public void create() {
         Undertailor.instance = this;
         Box2D.init();
-        this.strict = 1;
-        this.debug = true;
+        
         this.console = new Console();
+        this.system = new SystemHandler();
+        this.disposer = new DisposerThread();
+        
+        this.renderer = new MultiRenderer();
+        this.environmentManager = new EnvironmentManager();
+        this.inputRetriever = new InputRetriever();
+        
+        this.scriptManager = new ScriptManager();
+        this.fontManager = new FontManager();
+        this.audioManager = new AudioManager();
+        this.styleManager = new StyleManager();
+        this.tilemapManager = new TilemapManager();
+        this.sheetManager = new SpriteSheetManager();
+        this.animationManager = new AnimationManager();
+        
+        this.environmentManager.setCurrentViewportType(launchOptions.scaling);
+        for(SystemKeybind bind : launchOptions.keybinding.keySet()) {
+            this.system.setKeybind(bind, launchOptions.keybinding.get(bind));
+        }
         
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
             if(e instanceof LuaError) {
@@ -226,18 +248,8 @@ public class Undertailor extends ApplicationAdapter {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
         }
         
-        this.renderer = new MultiRenderer();
-        
-        this.scriptManager = new ScriptManager();
         this.scriptManager.registerLibraries(LIBS);
         this.scriptManager.registerImplementables(IMPLS);
-        
-        this.fontManager = new FontManager();
-        this.audioManager = new AudioManager();
-        this.styleManager = new StyleManager();
-        this.tilemapManager = new TilemapManager();
-        this.sheetManager = new SpriteSheetManager();
-        this.animationManager = new AnimationManager();
         
         fontManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "fonts/"));
         audioManager.loadMusic(new File(Undertailor.ASSETS_DIRECTORY, "music/"));
@@ -247,15 +259,13 @@ public class Undertailor extends ApplicationAdapter {
         styleManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "fonts/styles/"));
         animationManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "animation/"));
         
-        this.environmentManager = new EnvironmentManager();
-        this.inputRetriever = new InputRetriever();
-        
         Gdx.input.setInputProcessor(inputRetriever);
         environmentManager.getUIComponentLoader().loadComponents(new File(Undertailor.ASSETS_DIRECTORY, "scripts/uicomponent/"));
         environmentManager.getWorldObjectLoader().loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "scripts/objects/"));
         environmentManager.getRoomLoader().loadScripts(new File(Undertailor.ASSETS_DIRECTORY, "scripts/rooms/"));
         environmentManager.getRoomLoader().loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "rooms/"));
         
+        renderer.setClearColor(null);
         renderer.clear();
         
         File mainFile = new File(Undertailor.ASSETS_DIRECTORY, "main.lua");
@@ -266,8 +276,6 @@ public class Undertailor extends ApplicationAdapter {
             error("tailor", "main.lua file not found; no start code was executed");
         }
         
-        this.system = new SystemHandler();
-        disposer = new DisposerThread();
         disposer.start();
     }
     
@@ -298,6 +306,10 @@ public class Undertailor extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         this.environmentManager.resize(width, height);
+    }
+    
+    public SystemHandler getSystemHandler() {
+        return this.system;
     }
     
     public Console getConsole() {

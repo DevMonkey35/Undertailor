@@ -30,92 +30,59 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import me.scarlet.undertailor.LaunchOptions;
 import me.scarlet.undertailor.Undertailor;
-
-import java.io.File;
 
 public class DesktopLauncher extends Application {
     
-    private static boolean runtimeReady;
-    
-    static {
-        runtimeReady = false;
-    }
-    
-    static class TailorThread extends Thread {
-        
-        private File assetDir;
-        
-        public TailorThread(File assetDir) {
-            this.assetDir = assetDir;
-        }
-        
-        @Override
-        public void run() {
-            while(!runtimeReady) {}
-            LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-            config.resizable = true;
-            config.backgroundFPS = 60;
-            config.foregroundFPS = 60;
-            config.vSyncEnabled = true;
-            config.addIcon("assets/defaultIcon_small.png", Files.FileType.Classpath);
-            config.addIcon("assets/defaultIcon.png", Files.FileType.Classpath);
-            config.title = "UNDERTAILOR";
-            new LwjglApplication(new Undertailor(config, assetDir), config);
-        }
-    }
+    public static DesktopLauncher instance;
     
     public static void initRuntime() {
-        if(!runtimeReady) {
-            try {
-                DesktopLauncher.class.getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
-                runtimeReady = true;
-            } catch(Exception ignored) {}
-        }
+        try {
+            DesktopLauncher.class.getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
+        } catch(Exception ignored) {}
     }
     
-    public static boolean isRuntimeReady() {
-        return runtimeReady;
-    }
-    
-    public static void main (String[] args) {
-        File assetDir = null;
-        
-        if(args.length > 0) {
-            if(args[0].equalsIgnoreCase("-dev")) {
-                assetDir = new File(System.getProperty("user.dir"));
-                System.out.println("setting asset directory to work directory");
-            } else {
-                StringBuilder builder = new StringBuilder();
-                for (String arg : args) {
-                    builder.append(arg);
-                }
-                
-                String path = builder.toString();
-                if(path.startsWith("\"")) {
-                    path = path.substring(1);
-                }
-                
-                if(path.endsWith("\"")) {
-                    path = path.substring(0, path.length() - 1);
-                }
-                
-                assetDir = new File(path);
-                if(!assetDir.exists() || !assetDir.isDirectory()) {
-                    throw new IllegalArgumentException("file at path \"" + path + "\" wasn't existing or wasn't a directory");
-                }
-                
-                System.out.println("setting asset directory to dir at path \"" + path + "\"");
-            }
-        }
-        
+    public static void main(String[] args) {
         initRuntime();
-        new TailorThread(assetDir).start();
+        
+        /*if(args.length > 0 && args[0].equalsIgnoreCase("-dev")) {
+            LaunchOptions options = new LaunchOptions();
+            options.assetDir = new File(System.getProperty("user.dir"));
+            options.debug = true;
+            
+            System.out.println("Running in development mode!");
+            launchGame(options);
+            return;
+        }*/
+        
         Application.launch(args);
     }
-
+    
+    public static void launchGame(LaunchOptions options) {
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        config.resizable = true;
+        config.backgroundFPS = options.frameCap;
+        config.foregroundFPS = options.frameCap;
+        config.vSyncEnabled = true;
+        config.addIcon("assets/defaultIcon_small.png", Files.FileType.Classpath);
+        config.addIcon("assets/defaultIcon.png", Files.FileType.Classpath);
+        config.title = "UNDERTAILOR";
+        config.width = options.windowWidth;
+        config.height = options.windowHeight;
+        
+        new LwjglApplication(new Undertailor(config, options), config);
+        Platform.setImplicitExit(false);
+    }
+    
+    public DesktopLauncher() {
+        DesktopLauncher.instance = this;
+    }
+    
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Platform.setImplicitExit(false); // we don't ever open primary stage; once we call hide on any other stages we make (console), jfx kills itself if this is true
+    public void start(Stage stage) throws Exception {
+        stage.setScene(new Launcher(stage));
+        stage.centerOnScreen();
+        stage.show();
     }
 }
