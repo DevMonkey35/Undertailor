@@ -62,6 +62,7 @@ public class Launcher extends Scene {
         AnchorPane container = new AnchorPane();
         if(bannerImageStream != null) {
             ImageView banner = new ImageView(new Image(bannerImageStream));
+            Tooltip.install(banner, new Tooltip("some squid named masno was here\nhe did the background for this banner\nreally talented kid"));
             container.setStyle("-fx-border-color: #D4D4D4;"
                              + "-fx-border-width: 4px;");
             container.setMinSize(banner.getFitWidth() + 12, banner.getFitHeight() + 12);
@@ -93,7 +94,7 @@ public class Launcher extends Scene {
         
         // launch button
         Button launchButton = new Button("Launch Game");
-        launchButton.setTooltip(new Tooltip("Launch Undertailor with the settings currently set."));
+        launchButton.setTooltip(new Tooltip("INSERT A REFERENCE INVOLVING SOME FORM OF ACTIVATION HERE\nIUNNO, GET FILLED WITH DETERMINATION OR SOMETHING"));
         launchButton.setPrefSize(170D, 36D);
         
         launchButton.setOnMouseReleased(event -> {
