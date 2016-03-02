@@ -7,7 +7,10 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -37,15 +40,16 @@ import me.scarlet.undertailor.util.JFXUtil;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Optional;
 
 public class Launcher extends Scene {
     
     private LaunchOptions options;
     
-    public Launcher(Stage stage) {
+    public Launcher(Stage stage, LaunchOptions options) {
         super(new AnchorPane());
         
-        this.options = new LaunchOptions();
+        this.options = options;
         stage.setWidth(512);
         stage.setHeight(320);
         stage.setResizable(false);
@@ -103,6 +107,24 @@ public class Launcher extends Scene {
             launchButton.setText("Launching...");
             
             this.options.save();
+            if(options.useCustomDir && options.assetDir.list((file, name) -> {
+                    return name.equals("main.lua");
+                }).length == 0) {
+                
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setHeaderText("This is gonna crash.");
+                alert.setContentText("It looks like the selected folder doesn't have a main.lua file. The game'll crash from not finding it, but press OK if you're fine with that.");
+                alert.getButtonTypes().add(ButtonType.CANCEL);
+                
+                Optional<ButtonType> response = alert.showAndWait();
+                if(!response.isPresent() || response.get() == ButtonType.CANCEL) {
+                    launchButton.setDisable(false);
+                    launchButton.setTooltip(new Tooltip("Launch Undertailor with the set options."));
+                    launchButton.setText("Launch Game");
+                    return;
+                }
+            }
+            
             DesktopLauncher.launchGame(options);
             stage.close();
         });
@@ -408,12 +430,16 @@ public class Launcher extends Scene {
         
         showDebug.setTooltip(new Tooltip("Whether or not to show messages tagged [DEBUG] in the logging console."));
         skipLauncher.setTooltip(new Tooltip("Whether or not to skip the launcher when opening the game.\n"
-                                          + "You can cancel this feature by pressing F12 in-game.\n"
-                                          + "Unimplemented.")); // TODO
+                                          + "You can cancel this feature by pressing F12 in-game."));
         
         showDebug.setSelected(this.options.debug);
         showDebug.selectedProperty().addListener((value, old, neww) -> {
             this.options.debug = neww;
+        });
+        
+        skipLauncher.setSelected(this.options.skipLauncher);
+        skipLauncher.selectedProperty().addListener((value, old, neww) -> {
+            this.options.skipLauncher = neww;
         });
         
         GridPane.setRowIndex(showDebug, 3);

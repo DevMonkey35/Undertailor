@@ -194,7 +194,6 @@ public class Undertailor extends ApplicationAdapter {
         this.strict = 1;
         
         this.debug = options.debug;
-        System.out.println("usecustomdir = " + options.useCustomDir);
         if(options.useCustomDir && options.assetDir != null && options.assetDir.isDirectory()) {
             Undertailor.ASSETS_DIRECTORY = options.assetDir;
         }
@@ -306,6 +305,10 @@ public class Undertailor extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         this.environmentManager.resize(width, height);
+    }
+    
+    public LaunchOptions getLaunchOptions() {
+        return this.launchOptions;
     }
     
     public SystemHandler getSystemHandler() {

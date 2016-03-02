@@ -33,6 +33,8 @@ import javafx.stage.Stage;
 import me.scarlet.undertailor.LaunchOptions;
 import me.scarlet.undertailor.Undertailor;
 
+import java.io.File;
+
 public class DesktopLauncher extends Application {
     
     public static DesktopLauncher instance;
@@ -46,15 +48,16 @@ public class DesktopLauncher extends Application {
     public static void main(String[] args) {
         initRuntime();
         
-        /*if(args.length > 0 && args[0].equalsIgnoreCase("-dev")) {
+        if(args.length > 0 && args[0].equalsIgnoreCase("-dev")) {
             LaunchOptions options = new LaunchOptions();
             options.assetDir = new File(System.getProperty("user.dir"));
             options.debug = true;
+            options.dev = true;
             
             System.out.println("Running in development mode!");
             launchGame(options);
             return;
-        }*/
+        }
         
         Application.launch(args);
     }
@@ -81,8 +84,14 @@ public class DesktopLauncher extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setScene(new Launcher(stage));
-        stage.centerOnScreen();
-        stage.show();
+        LaunchOptions options = new LaunchOptions();
+        if(options.skipLauncher) {
+            System.out.println("Launcher was skipped");
+            launchGame(options);
+        } else {
+            stage.setScene(new Launcher(stage, options));
+            stage.centerOnScreen();
+            stage.show();
+        }
     }
 }

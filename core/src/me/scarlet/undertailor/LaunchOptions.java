@@ -18,11 +18,14 @@ public class LaunchOptions {
     public static final String KEY_ASSET_DIRECTORY = "assetDir";
     public static final String KEY_SYSTEM_BINDS = "systemBinds";
     public static final String KEY_USE_CUSTOM_DIR = "useCustomDir";
-    
+    public static final String KEY_SKIP_LAUNCHER = "skipLauncher";
+
+    public boolean dev;
     public int frameCap;
     public File assetDir;
     public boolean debug;
     public boolean useCustomDir;
+    public boolean skipLauncher;
     public ViewportType scaling;
     public int windowWidth, windowHeight;
     public Map<SystemKeybind, Integer> keybinding;
@@ -32,6 +35,7 @@ public class LaunchOptions {
         this.scaling = ViewportType.valueOf(prefs.get(KEY_SCALING, ViewportType.FIT.name()));
         this.debug = prefs.getBoolean(KEY_DEBUG_MODE, false);
         this.frameCap = prefs.getInt(KEY_FRAMECAP, 60);
+        this.skipLauncher = prefs.getBoolean(KEY_SKIP_LAUNCHER, false);
         
         String[] windowBounds = prefs.get(KEY_WINDOW_SIZE, "640x480").split("x");
         this.windowWidth = Integer.parseInt(windowBounds[0]);
@@ -46,9 +50,16 @@ public class LaunchOptions {
         for(SystemKeybind bind : SystemKeybind.values()) {
             this.keybinding.put(bind, bindingsNode.getInt(bind.name(), bind.getDefaultKey()));
         }
+        
+        // runtime only
+        this.dev = false;
     }
     
     public void save() {
+        if(this.dev) {
+            return;
+        }
+        
         try {
             Preferences prefs = Preferences.userNodeForPackage(this.getClass());
             prefs.put(KEY_SCALING, scaling.name());
@@ -56,6 +67,7 @@ public class LaunchOptions {
             prefs.put(KEY_FRAMECAP, frameCap + "");
             prefs.put(KEY_USE_CUSTOM_DIR, useCustomDir + "");
             prefs.put(KEY_WINDOW_SIZE, windowWidth + "x" + windowHeight);
+            prefs.put(KEY_SKIP_LAUNCHER, skipLauncher + "");
             prefs.put(KEY_ASSET_DIRECTORY, assetDir == null ? "" : assetDir.getAbsolutePath());
             
             Preferences bindingsNode = prefs.node(KEY_SYSTEM_BINDS);

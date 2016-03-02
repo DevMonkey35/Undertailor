@@ -17,6 +17,13 @@ public class SystemHandler {
         CONSOLE(Keys.F3, () -> {
             Undertailor.instance.getConsole().show();
         }),
+        RESHOW_LAUNCHER(Keys.F12, () -> {
+            LaunchOptions options = Undertailor.instance.getLaunchOptions();
+            if(!options.dev && options.skipLauncher) {
+                options.skipLauncher = false;
+                options.save();
+            }
+        }),
         EXIT(Keys.ESCAPE, () -> {
             // TODO exit process
         });
