@@ -30,29 +30,39 @@ public class LaunchOptions {
     public int windowWidth, windowHeight;
     public Map<SystemKeybind, Integer> keybinding;
     
-    public LaunchOptions() {
-        Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-        this.scaling = ViewportType.valueOf(prefs.get(KEY_SCALING, ViewportType.FIT.name()));
-        this.debug = prefs.getBoolean(KEY_DEBUG_MODE, false);
-        this.frameCap = prefs.getInt(KEY_FRAMECAP, 60);
-        this.skipLauncher = prefs.getBoolean(KEY_SKIP_LAUNCHER, false);
-        
-        String[] windowBounds = prefs.get(KEY_WINDOW_SIZE, "640x480").split("x");
-        this.windowWidth = Integer.parseInt(windowBounds[0]);
-        this.windowHeight = Integer.parseInt(windowBounds[1]);
-        
-        this.useCustomDir = prefs.getBoolean(KEY_USE_CUSTOM_DIR, false);
-        String assetDirPath = prefs.get(KEY_ASSET_DIRECTORY, Undertailor.ASSETS_DIRECTORY.getAbsolutePath());
-        this.assetDir = assetDirPath.isEmpty() ? Undertailor.ASSETS_DIRECTORY : new File(assetDirPath);
-        
-        Preferences bindingsNode = prefs.node(KEY_SYSTEM_BINDS);
-        this.keybinding = new HashMap<>();
-        for(SystemKeybind bind : SystemKeybind.values()) {
-            this.keybinding.put(bind, bindingsNode.getInt(bind.name(), bind.getDefaultKey()));
+    public LaunchOptions(boolean dev) {
+        this.dev = dev;
+        if(dev) { // use all defaults and some dev options
+            this.scaling = ViewportType.FIT;
+            this.debug = true;
+            this.frameCap = 60;
+            this.skipLauncher = true;
+            this.windowWidth = 640;
+            this.windowHeight = 480;
+            this.useCustomDir = true;
+            this.assetDir = new File(System.getProperty("user.dir"));
+            this.keybinding = new HashMap<>();
+        } else {
+            Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+            this.scaling = ViewportType.valueOf(prefs.get(KEY_SCALING, ViewportType.FIT.name()));
+            this.debug = prefs.getBoolean(KEY_DEBUG_MODE, false);
+            this.frameCap = prefs.getInt(KEY_FRAMECAP, 60);
+            this.skipLauncher = prefs.getBoolean(KEY_SKIP_LAUNCHER, false);
+            
+            String[] windowBounds = prefs.get(KEY_WINDOW_SIZE, "640x480").split("x");
+            this.windowWidth = Integer.parseInt(windowBounds[0]);
+            this.windowHeight = Integer.parseInt(windowBounds[1]);
+            
+            this.useCustomDir = prefs.getBoolean(KEY_USE_CUSTOM_DIR, false);
+            String assetDirPath = prefs.get(KEY_ASSET_DIRECTORY, Undertailor.ASSETS_DIRECTORY.getAbsolutePath());
+            this.assetDir = assetDirPath.isEmpty() ? Undertailor.ASSETS_DIRECTORY : new File(assetDirPath);
+            
+            Preferences bindingsNode = prefs.node(KEY_SYSTEM_BINDS);
+            this.keybinding = new HashMap<>();
+            for(SystemKeybind bind : SystemKeybind.values()) {
+                this.keybinding.put(bind, bindingsNode.getInt(bind.name(), bind.getDefaultKey()));
+            }
         }
-        
-        // runtime only
-        this.dev = false;
     }
     
     public void save() {

@@ -49,10 +49,7 @@ public class DesktopLauncher extends Application {
         initRuntime();
         
         if(args.length > 0 && args[0].equalsIgnoreCase("-dev")) {
-            LaunchOptions options = new LaunchOptions();
-            options.assetDir = new File(System.getProperty("user.dir"));
-            options.debug = true;
-            options.dev = true;
+            LaunchOptions options = new LaunchOptions(true);
             
             System.out.println("Running in development mode!");
             launchGame(options);
@@ -84,7 +81,7 @@ public class DesktopLauncher extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        LaunchOptions options = new LaunchOptions();
+        LaunchOptions options = new LaunchOptions(false);
         if(options.skipLauncher) {
             System.out.println("Launcher was skipped");
             launchGame(options);
