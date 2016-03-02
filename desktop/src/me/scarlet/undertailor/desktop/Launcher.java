@@ -62,7 +62,7 @@ public class Launcher extends Scene {
         AnchorPane container = new AnchorPane();
         if(bannerImageStream != null) {
             ImageView banner = new ImageView(new Image(bannerImageStream));
-            Tooltip.install(banner, new Tooltip("some squid named masno was here\nhe did the background for this banner\nreally talented kid"));
+            Tooltip.install(banner, new Tooltip(":P"));
             container.setStyle("-fx-border-color: #D4D4D4;"
                              + "-fx-border-width: 4px;");
             container.setMinSize(banner.getFitWidth() + 12, banner.getFitHeight() + 12);
@@ -94,7 +94,7 @@ public class Launcher extends Scene {
         
         // launch button
         Button launchButton = new Button("Launch Game");
-        launchButton.setTooltip(new Tooltip("INSERT A REFERENCE INVOLVING SOME FORM OF ACTIVATION HERE\nIUNNO, GET FILLED WITH DETERMINATION OR SOMETHING"));
+        launchButton.setTooltip(new Tooltip("Launch Undertailor with the set options."));
         launchButton.setPrefSize(170D, 36D);
         
         launchButton.setOnMouseReleased(event -> {
@@ -148,6 +148,10 @@ public class Launcher extends Scene {
         Hyperlink underLink = generateHyperlink("Check out Undertale!", "http://store.steampowered.com/app/391540/", "defaultIcon.png");
         Hyperlink docsLink = generateHyperlink("Learn how to use the engine!", "http://xemiru.github.io/Undertailor/luadocs/", "lua.png");
         Hyperlink githubLink = generateHyperlink("Help out on GitHub!", "http://github.com/Xemiru/Undertailor", "github.png");
+        
+        underLink.setTooltip(new Tooltip("Toby Fox is a cool dood."));
+        docsLink.setTooltip(new Tooltip("Fear the wrath of Lua."));
+        githubLink.setTooltip(new Tooltip("I swear to god if you spam my issue tracker."));
         
         VBox.setVgrow(engineExp, Priority.ALWAYS);
         VBox.setVgrow(disclaimerExp, Priority.ALWAYS);
