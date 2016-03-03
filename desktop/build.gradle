@@ -22,6 +22,18 @@ task copyAssets(type: Copy) {
     into new File(sourceSets.main.output.classesDir, "assets/")
 }
 
+task run(type: JavaExec) {
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = new File("../test/")
+    ignoreExitValue = true
+	args = ["-dev"]
+}
+
+run.dependsOn classes
+run.dependsOn copyAssets
+
 task dist(type: Jar) {
     from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)

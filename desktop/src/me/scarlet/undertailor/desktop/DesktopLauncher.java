@@ -33,8 +33,6 @@ import javafx.stage.Stage;
 import me.scarlet.undertailor.LaunchOptions;
 import me.scarlet.undertailor.Undertailor;
 
-import java.io.File;
-
 public class DesktopLauncher extends Application {
     
     public static DesktopLauncher instance;
