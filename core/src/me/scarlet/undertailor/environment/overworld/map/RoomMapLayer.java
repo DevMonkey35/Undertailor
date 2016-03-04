@@ -28,12 +28,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.BadConfigurationException;
+import me.scarlet.undertailor.gfx.Animation;
+import me.scarlet.undertailor.gfx.AnimationData;
 import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.Layerable;
 import me.scarlet.undertailor.util.NumberUtil;
 import me.scarlet.undertailor.util.Positionable;
 import me.scarlet.undertailor.util.Renderable;
+import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
 
 import java.util.HashSet;
@@ -41,34 +44,13 @@ import java.util.Set;
 
 public class RoomMapLayer implements Layerable, Cloneable, Renderable {
     
-    public static class SpriteData implements Layerable, Positionable, Renderable {
-        
-        public static SpriteData fromString(RoomMap parent, String str, int z) {
-            // format: sheetid:sheetindex/posx,posy
-            String[] split = str.split("[/]");
-            String[] sheetData = split[0].split(":");
-            String[] posData = split[1].split(",");
-            
-            try {
-                return new SpriteData(
-                        Float.parseFloat(posData[0]), // x
-                        Float.parseFloat(posData[1]), // y
-                        z,
-                        parent.getSpriteSheet(Integer.parseInt(sheetData[0])).getSprite(Integer.parseInt(sheetData[1])));
-            } catch(NumberFormatException e) {
-                BadConfigurationException thrown = new BadConfigurationException("bad map data: bad sprite map object data");
-                thrown.initCause(e);
-                throw thrown;
-            }
-        }
+    public static abstract class ObjectData implements Layerable, Positionable, Renderable {
         
         private int z;
-        private Sprite sprite;
         private Vector2 position;
         
-        public SpriteData(float x, float y, int z, Sprite sprite) {
+        protected ObjectData(float x, float y, int z) {
             this.position = new Vector2(x, y);
-            this.sprite = sprite;
             this.z = z;
         }
         
@@ -86,9 +68,135 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
         @Override
         public int getPriority() { return 0; }
         
+    }
+    
+    public static class SpriteObjectData extends ObjectData {
+        
+        public static SpriteObjectData fromString(RoomMap parent, String str, int z) {
+            // format: sheetname:spriteindex/posx,posy,scale,rotation
+            // scale/rotation is optional
+            String[] split, sheetData, renderData;
+            String sheetName;
+            int spriteIndex;
+            float x, y, scale = 1F, rotation = 0F;
+            
+            try {
+                split = str.split("[/]");
+                sheetData = split[0].split(":");
+                renderData = split[1].split(",");
+                
+                sheetName = sheetData[0];
+                spriteIndex = Integer.parseInt(sheetData[1]);
+                x = Float.parseFloat(renderData[0]);
+                y = Float.parseFloat(renderData[1]);
+                
+                if(renderData.length >= 3) {
+                    scale = Float.parseFloat(renderData[2]);
+                }
+                
+                if(renderData.length >= 4) {
+                    rotation = Float.parseFloat(renderData[3]);
+                }
+            } catch(ArrayIndexOutOfBoundsException | NumberFormatException e) {
+                BadConfigurationException thrown = new BadConfigurationException("bad map data: bad sprite map object data");
+                thrown.initCause(e);
+                throw thrown;
+            }
+            
+            try {
+                return new SpriteObjectData(
+                        x,
+                        y,
+                        z,
+                        scale,
+                        rotation,
+                        parent.getSpriteSheet(sheetName).getSprite(spriteIndex));
+            } catch(NullPointerException | ArrayIndexOutOfBoundsException e) {
+                BadConfigurationException thrown = new BadConfigurationException("bad map data: data requested non-existing spritesheet index (" + sheetName + ":" + spriteIndex + ")");
+                thrown.initCause(e);
+                throw thrown;
+            }
+        }
+        
+        private Sprite sprite;
+        private float scale, rotation;
+        public SpriteObjectData(float x, float y, int z, float scale, float rotation, Sprite sprite) {
+            super(x, y, z);
+            this.sprite = sprite;
+            this.scale = scale;
+            this.rotation = rotation;
+        }
+        
         @Override
         public void render() {
-            sprite.draw(position.x, position.y, 1);
+            Vector2 position = this.getPosition();
+            sprite.draw(position.x, position.y, scale, scale, rotation);
+        }
+    }
+    
+    public static class AnimationObjectData extends ObjectData {
+        
+        public static AnimationObjectData fromString(RoomMap parent, String str, int z) {
+            // format: animsetid:animationid/posx,posy,scale,rotation
+            // scale/rotation is optional
+            String[] split, sheetData, renderData;
+            String setName, animName;
+            float x, y, scale = 1F, rotation = 0F;
+            
+            try {
+                split = str.split("[/]");
+                sheetData = split[0].split(":");
+                renderData = split[1].split(",");
+                
+                setName = sheetData[0];
+                animName = sheetData[1];
+                x = Float.parseFloat(renderData[0]);
+                y = Float.parseFloat(renderData[1]);
+                
+                if(renderData.length >= 3) {
+                    scale = Float.parseFloat(renderData[2]);
+                }
+                
+                if(renderData.length >= 4) {
+                    rotation = Float.parseFloat(renderData[3]);
+                }
+            } catch(ArrayIndexOutOfBoundsException | NumberFormatException e) {
+                BadConfigurationException thrown = new BadConfigurationException("bad map data: bad animation map object data");
+                thrown.initCause(e);
+                throw thrown;
+            }
+            
+            try {
+                return new AnimationObjectData(
+                        x,
+                        y,
+                        z,
+                        scale,
+                        rotation,
+                        parent.getAnimationSetWrapper(setName),
+                        parent.getAnimationSet(setName).getAnimation(animName));
+            } catch(NullPointerException e) {
+                BadConfigurationException thrown = new BadConfigurationException("bad map data: data requested non-existing animation");
+                thrown.initCause(e);
+                throw thrown;
+            }
+        }
+        
+        private float scale, rotation;
+        private AnimationData animData;
+        public AnimationObjectData(float x, float y, int z, float scale, float rotation, AnimationSetWrapper wrapper, Animation<?> animation) {
+            super(x, y, z);
+            this.animData = new AnimationData(wrapper, animation);
+            this.animData.play();
+            
+            this.scale = scale;
+            this.rotation = rotation;
+        }
+        
+        @Override
+        public void render() {
+            Vector2 position = this.getPosition();
+            animData.drawCurrentFrame(position.x, position.y, scale, rotation);
         }
     }
     
@@ -97,7 +205,7 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
     private int priority;
     private RoomMap parent;
     private Tile[][] mapping;
-    private Set<SpriteData> sprites;
+    private Set<ObjectData> objects;
     private float opacity;
     
     private RoomMapLayer() {} // for clones;
@@ -108,22 +216,27 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
         this.priority = ConfigurateUtil.processBoolean(layerData.getNode("wallLayer"), false) ? 1 : 0;
         this.name = layerData.getKey().toString();
         this.mapping = new Tile[parent.getSizeY()][parent.getSizeX()];
-        this.sprites = new HashSet<>();
+        this.objects = new HashSet<>();
         this.opacity = 1.0F;
         
         this.z = ConfigurateUtil.processInt(layerData.getNode("z"), 0);
         
         String[] mapping = ConfigurateUtil.processStringArray(layerData.getNode("mapping"), null);
-        for(int y = 0; y < parent.getSizeY(); y++) {
+        for(int y = 0; y < mapping.length && y < parent.getSizeY(); y++) {
             String[] tiles = mapping[y].split(",");
-            for(int x = 0; x < parent.getSizeX(); x++) {
+            for(int x = 0; x < tiles.length && x < parent.getSizeX(); x++) {
                 this.mapping[y][x] = parseTileMapping(tiles[x]);
             }
         }
         
-        String[] sprites = ConfigurateUtil.processStringArray(layerData.getNode("sprites"), null);
+        String[] sprites = ConfigurateUtil.processStringArray(layerData.getNode("sprites"), new String[0]);
         for (String sprite : sprites) {
-            this.sprites.add(SpriteData.fromString(parent, sprite, this.z));
+            this.objects.add(SpriteObjectData.fromString(parent, sprite, this.z));
+        }
+        
+        String[] animations = ConfigurateUtil.processStringArray(layerData.getNode("animations"), new String[0]);
+        for(String animation : animations) {
+            this.objects.add(AnimationObjectData.fromString(parent, animation, this.z));
         }
     }
     
@@ -199,18 +312,26 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
         }
     }
     
-    public Set<SpriteData> getSpriteObjects() {
-        return this.sprites;
+    public Set<ObjectData> getSpriteObjects() {
+        return this.objects;
     }
     
     private Tile parseTileMapping(String mapping) {
+        String tilemapName, tileName;
+        String[] mappingSplit = mapping.split(":");
+        
+        if(mappingSplit.length < 2) {
+            throw new BadConfigurationException("bad map data: bad tile mapping data");
+        }
+        
+        tilemapName = mappingSplit[0];
+        tileName = mappingSplit[1];
+        
         try {
-            String[] mappingSplit = mapping.split(":");
-            Tilemap map = parent.getTilemap(Integer.parseInt(mappingSplit[0]));
-
-            return map.getTile(mappingSplit[1]).clone();
+            Tilemap map = parent.getTilemap(tilemapName);
+            return map.getTile(tileName).clone();
         } catch(NullPointerException e) {
-            BadConfigurationException thrown = new BadConfigurationException("bad map data: data requested non-existing tilemap or tile");
+            BadConfigurationException thrown = new BadConfigurationException("bad map data: data requested non-existing tile");
             thrown.initCause(e);
             throw thrown;
         }

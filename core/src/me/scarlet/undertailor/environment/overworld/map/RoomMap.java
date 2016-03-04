@@ -33,8 +33,10 @@ import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.collision.CollisionHandler;
 import me.scarlet.undertailor.collision.bbshapes.BoundingRectangle;
+import me.scarlet.undertailor.gfx.AnimationSet;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.util.ConfigurateUtil;
+import me.scarlet.undertailor.wrappers.AnimationSetWrapper;
 import me.scarlet.undertailor.wrappers.SpriteSheetWrapper;
 import me.scarlet.undertailor.wrappers.TilemapWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -139,32 +141,6 @@ public class RoomMap implements Disposable {
         map.sizeX = ConfigurateUtil.processInt(node.getNode("sizeX"), null);
         map.sizeY = ConfigurateUtil.processInt(node.getNode("sizeY"), null);
         map.data = new TileData[map.sizeY][map.sizeX];
-        String[] tilemapNames = ConfigurateUtil.processStringArray(node.getNode("tilemaps"), null);
-        String[] spritesheetNames = ConfigurateUtil.processStringArray(node.getNode("spritesheets"), null);
-        
-        map.tilemaps = new TilemapWrapper[tilemapNames.length];
-        for(int i = 0; i < map.tilemaps.length; i++) {
-            TilemapWrapper wrapper = Undertailor.getTilemapManager().getTilemap(tilemapNames[i]);
-            if(wrapper == null) {
-                Undertailor.instance.error(RoomLoader.MANAGER_TAG, "failed to load room: map data referenced non-existing tilemap (" + tilemapNames[i] + ")");
-                return null;
-            }
-            
-            map.tilemaps[i] = wrapper;
-            wrapper.getReference(map);
-        }
-        
-        map.spritesheets = new SpriteSheetWrapper[spritesheetNames.length];
-        for(int i = 0; i < map.spritesheets.length; i++) {
-            SpriteSheetWrapper wrapper = Undertailor.getSheetManager().getSheet(spritesheetNames[i]);
-            if(wrapper == null) {
-                Undertailor.instance.error(RoomLoader.MANAGER_TAG, "failed to load room: map data referenced non-existing spritesheet (" + spritesheetNames[i] + ")");
-                return null;
-            }
-            
-            map.spritesheets[i] = wrapper;
-            wrapper.getReference(map);
-        }
         
         Map<Object, ? extends ConfigurationNode> layerMapping = node.getNode("map").getChildrenMap();
         for(Entry<Object, ? extends ConfigurationNode> entry : layerMapping.entrySet()) {
@@ -194,8 +170,9 @@ public class RoomMap implements Disposable {
     
     private int sizeX, sizeY;
     private Map<String, RoomMapLayer> layers;
-    private SpriteSheetWrapper[] spritesheets;
-    private TilemapWrapper[] tilemaps;
+    private Map<String, AnimationSetWrapper> animations;
+    private Map<String, SpriteSheetWrapper> spritesheets;
+    private Map<String, TilemapWrapper> tilemaps;
     private TileData[][] data;
 
     private Map<String, TraversableData> travPresets;
@@ -204,6 +181,9 @@ public class RoomMap implements Disposable {
     
     public RoomMap() {
         this.layers = new HashMap<>(); // don't need to organize; worldroom already tries to organize for rendering
+        this.tilemaps = new HashMap<>();
+        this.animations = new HashMap<>();
+        this.spritesheets = new HashMap<>();
         this.collision = null;
     }
     
@@ -258,21 +238,63 @@ public class RoomMap implements Disposable {
         return sizeY;
     }
     
-    public Tilemap getTilemap(int index) {
-        return tilemaps[index].getReference();
+    public AnimationSet getAnimationSet(String name) {
+        return this.getAnimationSetWrapper(name).getReference();
     }
     
-    public SpriteSheet getSpriteSheet(int index) {
-        return spritesheets[index].getReference();
+    public AnimationSetWrapper getAnimationSetWrapper(String name) {
+        if(!this.animations.containsKey(name)) {
+            AnimationSetWrapper wrapper = Undertailor.getAnimationManager().getAnimation(name);
+            if(wrapper == null) {
+                Undertailor.instance.error(RoomLoader.MANAGER_TAG, "failed to load room: map data referenced non-existing animation (\"" + name + "\")");
+                return null;
+            }
+            
+            this.animations.put(name, wrapper);
+            wrapper.getReference(this);
+            return wrapper;
+        }
+        
+        return this.animations.get(name);
+    }
+    
+    public Tilemap getTilemap(String name) {
+        if(!this.tilemaps.containsKey(name)) {
+            TilemapWrapper wrapper = Undertailor.getTilemapManager().getTilemap(name);
+            if(wrapper == null) {
+                Undertailor.instance.error(RoomLoader.MANAGER_TAG, "failed to load room: map data referenced non-existing tilemap (\"" + name + "\")");
+                return null;
+            }
+            
+            this.tilemaps.put(name, wrapper);
+            return wrapper.getReference(this);
+        }
+        
+        return this.tilemaps.get(name).getReference();
+    }
+    
+    public SpriteSheet getSpriteSheet(String name) {
+        if(!this.spritesheets.containsKey(name)) {
+            SpriteSheetWrapper wrapper = Undertailor.getSheetManager().getSheet(name);
+            if(wrapper == null) {
+                Undertailor.instance.error(RoomLoader.MANAGER_TAG, "failed to load room: map data referenced non-existing spritesheet (\"" + name + "\")");
+                return null;
+            }
+            
+            this.spritesheets.put(name, wrapper);
+            return wrapper.getReference(this);
+        }
+        
+        return this.spritesheets.get(name).getReference();
     }
     
     @Override
     public void dispose() {
-        for(TilemapWrapper wrapper : tilemaps) {
+        for(TilemapWrapper wrapper : tilemaps.values()) {
             wrapper.removeReference(this);
         }
         
-        for(SpriteSheetWrapper wrapper : spritesheets) {
+        for(SpriteSheetWrapper wrapper : spritesheets.values()) {
             wrapper.removeReference(this);
         }
     }
