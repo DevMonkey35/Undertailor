@@ -347,7 +347,7 @@ public class Undertailor extends ApplicationAdapter {
         if(strict >= 1) {
             String errMessage = "[ERRR] " + tag + ": " + message;
             errorDialog("I'm an error, weee!", errMessage, trace);
-            System.exit(0);
+            forceCrash(true);
         }
     }
     
@@ -357,7 +357,7 @@ public class Undertailor extends ApplicationAdapter {
         if(strict >= 2) {
             String errMessage = "[WARN] " + tag + ": " + message;
             errorDialog("I'm an error, weee!", errMessage, null);
-            System.exit(0);
+            forceCrash(true);
         }
     }
     
@@ -454,5 +454,14 @@ public class Undertailor extends ApplicationAdapter {
             stage.setScene(scene);
             stage.showAndWait();
         }, true);
+    }
+    
+    private void forceCrash(boolean errored) {
+        if(errored && !this.launchOptions.dev) {
+            this.launchOptions.skipLauncher = false;
+            this.launchOptions.save();
+        }
+        
+        System.exit(0);
     }
 }
