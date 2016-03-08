@@ -91,7 +91,7 @@ public class AnimationSet implements Disposable {
                     Undertailor.instance.error(AnimationManager.MANAGER_TAG, "failed to load sprite in spriteset " + spriteData[0] + ": bad configuration");
                 } else {
                     try {
-                        set[i] = sheets.get(spriteData[0]).getReference().getSprites()[Integer.parseInt(spriteData[1])];
+                        set[i] = sheets.get(spriteData[0]).getReference().getSprite(spriteData[1]);
                     } catch(NumberFormatException e) {
                         Undertailor.instance.error(AnimationManager.MANAGER_TAG, "failed to load sprite in spriteset " + spriteData[0] + ": bad configuration");
                     }

@@ -110,7 +110,7 @@ public class RoomMapLayer implements Layerable, Cloneable, Renderable {
                         z,
                         scale,
                         rotation,
-                        parent.getSpriteSheet(sheetName).getSprite(spriteIndex));
+                        parent.getSpriteSheet(sheetName).getSprite(spriteIndex + ""));
             } catch(NullPointerException | ArrayIndexOutOfBoundsException e) {
                 BadConfigurationException thrown = new BadConfigurationException("bad map data: data requested non-existing spritesheet index (" + sheetName + ":" + spriteIndex + ")");
                 thrown.initCause(e);

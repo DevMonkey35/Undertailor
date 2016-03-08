@@ -30,8 +30,8 @@ import com.badlogic.gdx.utils.Disposable;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.Sprite;
-import me.scarlet.undertailor.gfx.SpriteSheet;
-import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
+import me.scarlet.undertailor.gfx.TextureSpriteSheet;
+import me.scarlet.undertailor.gfx.TextureSpriteSheet.TextureSpriteSheetMeta;
 import me.scarlet.undertailor.manager.TilemapManager;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
@@ -63,7 +63,7 @@ public class Tilemap implements Disposable {
     }
     
     private String name;
-    private SpriteSheet sheet;
+    private TextureSpriteSheet sheet;
     private Map<String, Tile> tiles;
     
     public Tilemap(String name, File texture, File meta) throws TextureTilingException, ConfigurationException, IOException {
@@ -79,10 +79,10 @@ public class Tilemap implements Disposable {
             throw new TextureTilingException("texture does not contain 20x20 tiled sprites");
         }
         
-        SpriteSheetMeta smeta = new SpriteSheetMeta();
+        TextureSpriteSheetMeta smeta = new TextureSpriteSheetMeta();
         smeta.gridX = tx.getWidth() / 20;
         smeta.gridY = tx.getHeight() / 20;
-        this.sheet = new SpriteSheet(TILEMAP_SHEET_PREFIX + name, tx, smeta);
+        this.sheet = new TextureSpriteSheet(TILEMAP_SHEET_PREFIX + name, tx, smeta);
         
         JSONConfigurationLoader loader = JSONConfigurationLoader.builder().setFile(meta).build();
         ConfigurationNode node = loader.load();

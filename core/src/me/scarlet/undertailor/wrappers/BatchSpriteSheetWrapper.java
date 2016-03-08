@@ -24,13 +24,28 @@
 
 package me.scarlet.undertailor.wrappers;
 
+import me.scarlet.undertailor.gfx.BatchSpriteSheet;
 import me.scarlet.undertailor.gfx.SpriteSheet;
+import ninja.leaping.configurate.ConfigurationNode;
 
-public abstract class SpriteSheetWrapper extends DisposableWrapper<SpriteSheet> {
-    
+import java.io.File;
+
+public class BatchSpriteSheetWrapper extends SpriteSheetWrapper {
+
     public static final long MAX_LIFETIME = 60000; // 1 minute
     
-    protected SpriteSheetWrapper() {
-        super(null);
+    private String name;
+    private File[] textureFiles;
+    private ConfigurationNode config;
+    public BatchSpriteSheetWrapper(String name, File[] textureFiles, ConfigurationNode config) {
+        super();
+        this.name = name;
+        this.config = config;
+        this.textureFiles = textureFiles;
+    }
+
+    @Override
+    public SpriteSheet newReference() {
+        return BatchSpriteSheet.fromConfig(name, textureFiles, config);
     }
 }

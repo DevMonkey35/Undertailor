@@ -24,13 +24,38 @@
 
 package me.scarlet.undertailor.wrappers;
 
+import com.badlogic.gdx.graphics.Texture;
+import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.SpriteSheet;
+import me.scarlet.undertailor.gfx.TextureSpriteSheet;
+import me.scarlet.undertailor.manager.SpriteSheetManager;
+import me.scarlet.undertailor.util.LuaUtil;
+import ninja.leaping.configurate.ConfigurationNode;
 
-public abstract class SpriteSheetWrapper extends DisposableWrapper<SpriteSheet> {
-    
+import java.io.FileNotFoundException;
+
+public class TextureSpriteSheetWrapper extends SpriteSheetWrapper {
+
     public static final long MAX_LIFETIME = 60000; // 1 minute
     
-    protected SpriteSheetWrapper() {
-        super(null);
+    private String name;
+    private Texture texture;
+    private ConfigurationNode config;
+    public TextureSpriteSheetWrapper(String name, Texture texture, ConfigurationNode config) {
+        super();
+        this.name = name;
+        this.config = config;
+        this.texture = texture;
+    }
+
+    @Override
+    public SpriteSheet newReference() {
+        try {
+            return TextureSpriteSheet.fromConfig(name, texture, config);
+        } catch(FileNotFoundException | TextureTilingException e) {
+            Undertailor.instance.error(SpriteSheetManager.MANAGER_TAG, LuaUtil.formatJavaException(e), e);
+            return null;
+        }
     }
 }

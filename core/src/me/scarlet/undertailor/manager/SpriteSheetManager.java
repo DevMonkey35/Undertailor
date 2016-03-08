@@ -28,9 +28,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.gfx.SpriteSheet;
 import me.scarlet.undertailor.util.LuaUtil;
+import me.scarlet.undertailor.wrappers.BatchSpriteSheetWrapper;
 import me.scarlet.undertailor.wrappers.SpriteSheetWrapper;
+import me.scarlet.undertailor.wrappers.TextureSpriteSheetWrapper;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -42,6 +45,7 @@ import java.util.Map;
 public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
     
     public static final String MANAGER_TAG = "sheetman";
+    public static final String BATCH_SHEET_CONFIG = "_batchdir.spritemeta";
     
     private Map<String, SpriteSheetWrapper> sheets;
     
@@ -68,36 +72,67 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
             heading = "";
         }
         
-        Undertailor.instance.log(MANAGER_TAG, "loading sprites from directory " + dir.getAbsolutePath());
-        for(File file : dir.listFiles(file1 -> file1.getName().endsWith(".png") || file1.isDirectory())) {
-            if(file.isDirectory()) {
-                loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
-                continue;
+        // load subdirectories before continuing
+        for(File file : dir.listFiles(file1 -> file1.isDirectory())) {
+            loadObjects(file, heading + (heading.isEmpty() ? "" : ".") + file.getName());
+        }
+        
+        File batchFile;
+        try { // check if the batch definition file is there
+            batchFile = dir.listFiles(file1 -> file1.getName().equals(BATCH_SHEET_CONFIG))[0];
+        } catch(Exception e) {
+            batchFile = null;
+        }
+        
+        File[] files = dir.listFiles(file1 -> file1.getName().endsWith(".png"));
+        if(batchFile != null) { // load it as a batch of sprites
+            Undertailor.instance.log(MANAGER_TAG, "loading batch spritesheet from directory " + dir.getAbsolutePath());
+            if(heading.isEmpty()) {
+                Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheets: the root sprites/ folder cannot be used as a batch sprite directory");
             }
             
-            String sheetName = file.getName().substring(0, file.getName().length() - 4);
-            String entryName = heading + (heading.isEmpty() ? "" : ".") + sheetName;
-            File spriteDef = new File(dir, sheetName + ".spritemeta");
-            if(!spriteDef.exists()) {
-                Undertailor.instance.warn(MANAGER_TAG, "ignoring room " + sheetName + " (no sheet definition file)");
-                continue;
-            }
-            
-            if(!spriteDef.isFile()) {
-                Undertailor.instance.warn(MANAGER_TAG, "ignoring room " + sheetName + " (bad sheet definition file)");
-                continue;
-            }
+            String sheetName = heading.isEmpty() ? "sprites" : batchFile.getAbsoluteFile().getParentFile().getName();
+            String entryName = heading.isEmpty() ? "sprites" : heading;
             
             try {
-                ConfigurationLoader<ConfigurationNode> loader = JSONConfigurationLoader.builder().setFile(spriteDef).build();
+                Undertailor.instance.debug(MANAGER_TAG, "batch file is " + batchFile.getAbsolutePath() + ": " + batchFile.exists());
+                ConfigurationLoader<ConfigurationNode> loader = JSONConfigurationLoader.builder().setFile(batchFile).build();
                 ConfigurationNode root = loader.load();
-                Texture texture = new Texture(Gdx.files.absolute(file.getAbsolutePath()));
-                SpriteSheetWrapper sheet = new SpriteSheetWrapper(entryName, texture, root);
-                sheets.put(entryName, sheet);
+                SpriteSheetWrapper sheet = new BatchSpriteSheetWrapper(sheetName, files, root);
                 
-                Undertailor.instance.log(MANAGER_TAG, "loading spritesheet " + entryName);
+                sheets.put(entryName, sheet);
             } catch(Exception e) {
-                Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet: vm exception (" + LuaUtil.formatJavaException(e) + ")", e);
+                Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet \"" + entryName + "\": vm exception (" + LuaUtil.formatJavaException(e) + ")", e);
+            }
+        } else { // load it as a normal spritesheet
+            Undertailor.instance.log(MANAGER_TAG, "loading spritesheets from directory " + dir.getAbsolutePath());
+            for(File file : files) {
+                String sheetName = file.getName().substring(0, file.getName().length() - 4);
+                String entryName = heading + (heading.isEmpty() ? "" : ".") + sheetName;
+                
+                // start loading the sheet's metadata
+                File spriteDef = new File(dir, sheetName + ".spritemeta");
+                if(!spriteDef.exists()) {
+                    Undertailor.instance.warn(MANAGER_TAG, "ignoring sheet " + entryName + " (no sheet definition file)");
+                    continue;
+                }
+                
+                if(!spriteDef.isFile()) {
+                    Undertailor.instance.warn(MANAGER_TAG, "ignoring sheet " + entryName + " (bad sheet definition file)");
+                    continue;
+                }
+                
+                try {
+                    ConfigurationLoader<ConfigurationNode> loader = JSONConfigurationLoader.builder().setFile(spriteDef).build();
+                    ConfigurationNode root = loader.load();
+                    Texture texture = new Texture(Gdx.files.absolute(file.getAbsolutePath()));
+                    SpriteSheetWrapper sheet = new TextureSpriteSheetWrapper(entryName, texture, root);
+                    sheets.put(entryName, sheet);
+                    
+                    Undertailor.instance.log(MANAGER_TAG, "loading spritesheet " + entryName);
+                } catch(Exception e) {
+                    Undertailor.instance.error(MANAGER_TAG, "failed to load spritesheet \"" + entryName + "\": vm exception (" + LuaUtil.formatJavaException(e) + ")", e);
+                }
             }
         }
     }
@@ -127,13 +162,15 @@ public class SpriteSheetManager extends Manager<SpriteSheetWrapper> {
         SpriteSheet sheet = sheetRef.getReference(this);
         SpriteBatch batch = new SpriteBatch();
         batch.begin();
-        int lastSize = 0;
-        for(int i = 0; i < sheet.getSprites().length; i++) {
-            if(i != 0) {
-                lastSize += sheet.getSprite(i).getTextureRegion().getRegionWidth() * 2;
+        int lastSize = -1;
+        for(Sprite sprite : sheet.getSprites()) {
+            if(lastSize == -1) {
+                lastSize = 0;
+            } else {
+                lastSize += sprite.getTextureRegion().getRegionWidth() * 2;
             }
             
-            sheet.getSprite(i).draw(40 + lastSize, 35, 2.0F);
+            sprite.draw(40 + lastSize, 35, 2.0F);
         }
         
         batch.end();

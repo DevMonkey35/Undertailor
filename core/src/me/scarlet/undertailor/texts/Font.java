@@ -32,8 +32,8 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.TextureTilingException;
 import me.scarlet.undertailor.gfx.Sprite;
 import me.scarlet.undertailor.gfx.Sprite.SpriteMeta;
-import me.scarlet.undertailor.gfx.SpriteSheet;
-import me.scarlet.undertailor.gfx.SpriteSheet.SpriteSheetMeta;
+import me.scarlet.undertailor.gfx.TextureSpriteSheet;
+import me.scarlet.undertailor.gfx.TextureSpriteSheet.TextureSpriteSheetMeta;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 import me.scarlet.undertailor.util.ConfigurateUtil;
 import me.scarlet.undertailor.util.MultiRenderer;
@@ -210,10 +210,10 @@ public class Font {
     }
     
     private FontData data;
-    private SpriteSheet sheet;
+    private TextureSpriteSheet sheet;
     public Font(Texture spriteSheet, FontData data) throws TextureTilingException {
         this.data = data;
-        SpriteSheetMeta sheetMeta = new SpriteSheetMeta();
+        TextureSpriteSheetMeta sheetMeta = new TextureSpriteSheetMeta();
         sheetMeta.gridX = data.x;
         sheetMeta.gridY = data.y;
         sheetMeta.spriteMeta = new SpriteMeta[data.characterList.length()];
@@ -222,7 +222,7 @@ public class Font {
             sheetMeta.spriteMeta[i] = data.getCharacterMeta(data.characterList.charAt(i)).asSpriteMeta(ySize);
         }
 
-        this.sheet = new SpriteSheet("font-" + data.fontName, spriteSheet, sheetMeta);
+        this.sheet = new TextureSpriteSheet("font-" + data.fontName, spriteSheet, sheetMeta);
     }
     
     public FontData getFontData() {
