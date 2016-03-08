@@ -320,7 +320,9 @@ public class EnvironmentLib extends LuaLibrary {
                 try {
                     return getEnvironmentManager().getWorldObjectLoader().newWorldObject(objectName, args.subargs(2));
                 } catch(LuaError e) {
-                    throw new LuaError("\n" + e.getMessage(), 2);
+                    LuaError error = new LuaError("\n" + e.getMessage(), 2);
+                    error.initCause(e);
+                    throw e;
                 }
             }
         }
