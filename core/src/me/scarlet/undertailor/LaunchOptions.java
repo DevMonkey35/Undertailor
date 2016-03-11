@@ -33,6 +33,11 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+/**
+ * Retrieves and saves launch options used and set by the initial launcher that
+ * pops open before the game is launched, through the use of {@link Preferences}
+ * .
+ */
 public class LaunchOptions {
     
     public static final String KEY_SCALING = "scaling";
@@ -90,7 +95,7 @@ public class LaunchOptions {
     }
     
     public void save() {
-        if(this.dev) {
+        if(this.dev) { // we don't save options in dev mode
             return;
         }
         

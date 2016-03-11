@@ -32,6 +32,10 @@ import me.scarlet.undertailor.util.InputRetriever.InputData;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles the execution of "system tasks," tasks of which are always done by
+ * the system typically for purposes of base functionality.
+ */
 public class SystemHandler {
     
     public static enum SystemKeybind {

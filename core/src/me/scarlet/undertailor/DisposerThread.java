@@ -27,8 +27,8 @@ package me.scarlet.undertailor;
 import me.scarlet.undertailor.wrappers.DisposableWrapper;
 
 /**
- * A thread that'll handle some memory stuffs to ensure stuff that isn't used
- * doesn't stay around and hog resources for too long.
+ * Thread implementation to manage instances of {@link DisposableWrapper}s,
+ * ensuring they are disposed when no longer in immediate use.
  */
 public class DisposerThread extends Thread {
     

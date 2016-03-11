@@ -78,14 +78,20 @@ import org.luaj.vm2.LuaError;
 import java.io.File;
 import java.io.InputStream;
 
+/**
+ * The main class of the Undertailor project, handling initial preparation,
+ * startup, and game loop.
+ */
 public class Undertailor extends ApplicationAdapter {
+    
+    // statics
     
     public static Undertailor instance;
     public static File ASSETS_DIRECTORY;
     public static final Rectangle RENDER_AREA;
     public static final String MANAGER_TAG = "tailor";
-    public static final LuaLibrary[] LIBS = new LuaLibrary[] {
-            new BaseLib(),
+    public static final LuaLibrary[] LIBS = new LuaLibrary[] { // define lua libraries
+            new BaseLib(), // not a static instance cuz this lib isn't shareable
             Lua.LIB_COLORS,
             Lua.LIB_GAME,
             Lua.LIB_TEXT,
@@ -94,7 +100,7 @@ public class Undertailor extends ApplicationAdapter {
             Lua.LIB_TIME };
     
     @SuppressWarnings("rawtypes")
-    public static final LuaImplementable[] IMPLS = new LuaImplementable[] {
+    public static final LuaImplementable[] IMPLS = new LuaImplementable[] { // define lua implementables
             new StyleImplementable(),
             new UIComponentImplementable(),
             new WorldObjectImplementable(),
@@ -105,19 +111,20 @@ public class Undertailor extends ApplicationAdapter {
         RENDER_AREA = new Rectangle(0, 0, 640, 480);
         
         try {
-            // TODO allow this to be changeable through options
             ASSETS_DIRECTORY = new File(Undertailor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
         } catch(Exception e) {
             System.out.println("Failed to find jar directory. Program will exit.");
             e.printStackTrace();
             System.exit(0);
             
-            // shut the fuck up build errors it doesnt need to be initialized
-            RuntimeException thrown = new RuntimeException();
+            // shut the fuck up build errors it doesnt need to be initialized we're literally murdering the program
+            RuntimeException thrown = new RuntimeException("I GUESS THIS HAPPENED.");
             thrown.initCause(e);
             throw thrown;
         }
     }
+    
+    // self-explanatory retrieval methods
     
     public static EnvironmentManager getEnvironmentManager() {
         return Undertailor.instance.environmentManager;
@@ -155,6 +162,13 @@ public class Undertailor extends ApplicationAdapter {
         return Undertailor.instance.scriptManager;
     }
     
+    /**
+     * Sets a new frame cap for the game.
+     * 
+     * <p>The cap will be bound between 30 and 120.</p>
+     * 
+     * @param cap the new cap
+     */
     public static void setFrameCap(int cap) {
         int frameCap = cap < 30 ? (cap == 0 ? 0 : 30) : cap;
         frameCap = frameCap > 120 ? 120 : frameCap;
@@ -212,16 +226,19 @@ public class Undertailor extends ApplicationAdapter {
     @Override
     public void create() {
         Undertailor.instance = this;
-        Box2D.init();
+        Box2D.init(); // init b2d
         
+        // ready up system stuff
         this.console = new Console();
         this.system = new SystemHandler();
         this.disposer = new DisposerThread();
         
+        // ready up renderer and environments
         this.renderer = new MultiRenderer();
         this.environmentManager = new EnvironmentManager();
         this.inputRetriever = new InputRetriever();
         
+        // all the world's assets
         this.scriptManager = new ScriptManager();
         this.fontManager = new FontManager();
         this.audioManager = new AudioManager();
@@ -235,6 +252,7 @@ public class Undertailor extends ApplicationAdapter {
             this.system.setKeybind(bind, launchOptions.keybinding.get(bind));
         }
         
+        // make sure we don't flat out crash without word as to why
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
             if(e instanceof LuaError) {
                 this.error("lua", e.getMessage(), (Exception) e);
@@ -243,6 +261,7 @@ public class Undertailor extends ApplicationAdapter {
             }
         });
         
+        // show debug messages if we want them
         if(debug) {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
         }
@@ -250,6 +269,7 @@ public class Undertailor extends ApplicationAdapter {
         this.scriptManager.registerLibraries(LIBS);
         this.scriptManager.registerImplementables(IMPLS);
         
+        // load aaaaaaaaaaallllllllllllll them assets
         fontManager.loadObjects(new File(Undertailor.ASSETS_DIRECTORY, "fonts/"));
         audioManager.loadMusic(new File(Undertailor.ASSETS_DIRECTORY, "music/"));
         audioManager.loadSounds(new File(Undertailor.ASSETS_DIRECTORY, "sounds/"));
@@ -267,6 +287,7 @@ public class Undertailor extends ApplicationAdapter {
         renderer.setClearColor(null);
         renderer.clear();
         
+        // start up the primary start script
         File mainFile = new File(Undertailor.ASSETS_DIRECTORY, "main.lua");
         if(mainFile.exists()) {
             Globals globals = scriptManager.generateGlobals(true);
