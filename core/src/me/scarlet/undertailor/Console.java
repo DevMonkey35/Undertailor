@@ -43,12 +43,41 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+/**
+ * Manages the console window written in JavaFX, as an alternative to whatever
+ * terminal the program is started with, if it wasn't headless (javaw).
+ * 
+ * <p><strong>Note:</strong> Doesn't do much right now except do a crappy job at
+ * relaying what would've been printed out to a normal console window. The final
+ * outcome of this class is intended to be a full console window organizing the
+ * different kinds of messages and differentiating between system events that
+ * come from the Java programming and the Lua printouts written by a script
+ * executing the <code>print</code> global function.</p>
+ */
 public class Console {
     
+    /**
+     * The {@link OutputStream} used by {@link Console} instances. Instances of
+     * this class is also intended to stand as replacements for the program
+     * output stream.
+     * 
+     * <p>The stream keeps track of a separate {@link PrintStream} deemed as the
+     * "original" stream that was set prior to an instance to this one, to which
+     * the object will print to whenever it receives input to ensure the
+     * original stream still receives messages.</p>
+     */
     public class Output extends OutputStream {
         
         private Console console;
         private PrintStream original;
+        
+        /**
+         * Instantiates a new {@link Output} object.
+         * 
+         * @param original the original {@link PrintStream} this Output will
+         *            also relay to
+         * @param console the {@link Console} object to relay to
+         */
         public Output(PrintStream original, Console console) {
             this.original = original;
             this.console = console;
@@ -60,53 +89,21 @@ public class Console {
                 original.print((char) b);
             }
             
-            console.getThread().append(b);
-        }
-    }
-    
-    public static class ConsoleThread extends Thread {
-        
-        private boolean running;
-        private final StringBuilder buffer;
-        private Console console;
-        
-        public ConsoleThread(Console console) {
-            this.buffer = new StringBuilder();
-            this.console = console;
-            this.setDaemon(true);
-            this.running = true;
-            
-            this.setName("Tailor Console Thread");
-        }
-        
-        public synchronized void append(int b) {
-            buffer.append((char) b);
-        }
-        
-        @Override
-        public void run() {
-            while(running) {
-                try {
-                    Thread.sleep(200); // update console every 1/5th of a second
-                    synchronized(buffer) {
-                        console.appendText(buffer.toString().trim());
-                        buffer.setLength(0);
-                    }
-                } catch(InterruptedException ignored) {}
-            }
-        }
-        
-        public void kill() {
-            this.running = false;
+            console.appendText(String.valueOf((char) b));
         }
     }
 
     private Stage stage;
     private TextArea output;
-    private ConsoleThread thread;
     
+    /**
+     * Instantiates a new {@link Console} object.
+     */
     public Console() {
+        // make sure we wait for this to finish before doing anything else,
+        // so we get all the output
         Blocker.block(() -> {
+            // build that noice jfx ui
             this.stage = new Stage();
             this.output = new TextArea();
             AnchorPane pane = new AnchorPane();
@@ -154,20 +151,29 @@ public class Console {
             stage.setTitle("Undertailor Console");
         } , true);
         
-        this.thread = new ConsoleThread(this);
+        // replace the print stream and use ours
         PrintStream original = System.out;
         System.setOut(new PrintStream(new Output(original, this)));
-        thread.start();
     }
     
-    public ConsoleThread getThread() {
-        return thread;
-    }
-    
+    /**
+     * Writes text to the console object.
+     * 
+     * <p>This method may safely be called from any thread; the write will
+     * automagically be relayed to and performed on the JavaFX application
+     * thread.</p>
+     * 
+     * @param text the text to write
+     */
     void appendText(String text) {
-        output.appendText(text);
+        Platform.runLater(() -> output.appendText(text));
     }
     
+    /**
+     * Shows the console window.
+     * 
+     * <p>Results in a no-op if the window is already shown.</p>
+     */
     public void show() {
         if(!stage.isShowing()) {
             Platform.runLater(() -> stage.show());
