@@ -75,19 +75,12 @@ public class SoundWrapper extends DisposableWrapper<Sound> implements Audio<Long
     public boolean isLooping() { return loopPoint >= 0; }
     public void setLoopPoint(float loopPoint) { this.loopPoint = loopPoint; }
     
-    // # Sounds don't need to care about these.
+    // # Sounds don't need to, or can't care about these.
     
-    @Override
-    public float getPosition() { return 0; }
-    
-    @Override
-    public void setPosition(float position) {}
-
-    @Override
-    public boolean isPaused(Long unused) { return false; }
-    
-    @Override
-    public boolean isPlaying(Long unused) { return false; }
+    @Override public float getPosition() { return 0; }
+    @Override public void setPosition(float position) {}
+    @Override public boolean isPaused(Long unused) { return false; }
+    @Override public boolean isPlaying(Long unused) { return false; }
     
     // #
 

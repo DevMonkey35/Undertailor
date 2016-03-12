@@ -33,6 +33,10 @@ import org.lwjgl.openal.AL10;
 
 import java.io.File;
 
+/**
+ * {@link Audio} and {@link DisposableWrapper} implementation for {@link Music}
+ * instances.
+ */
 public class MusicWrapper extends DisposableWrapper<Music> implements Audio<String> {
 
     public static final long MAX_LIFETIME = 60000; // 1min
@@ -74,16 +78,20 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
         this.loopPoint = -1F;
     }
     
-    public String getAudioName() { return this.rescName; }
-    public float getAffectedVolume() { return manager.getAffectedVolume() * volume; }
-    public float getVolume() { return volume; }
-    public void setVolume(float volume) { this.volume = NumberUtil.boundFloat(volume, 0.0F, 1.0F); }
-    public float getPan() { return pan; }
-    public void setPan(float pan) { this.pan = NumberUtil.boundFloat(pan, -1.0F, 1.0F); }
-    public float getPitch() { return pitch; }
-    public boolean isLooping() { return loopPoint >= 0; }
-    public void setLoopPoint(float loopPoint) { this.loopPoint = loopPoint; }
-
+    // generic implementation
+    
+    @Override public String getAudioName() { return this.rescName; }
+    @Override public float getAffectedVolume() { return manager.getAffectedVolume() * volume; }
+    @Override public float getVolume() { return volume; }
+    @Override public void setVolume(float volume) { this.volume = NumberUtil.boundFloat(volume, 0.0F, 1.0F); }
+    @Override public float getPan() { return pan; }
+    @Override public void setPan(float pan) { this.pan = NumberUtil.boundFloat(pan, -1.0F, 1.0F); }
+    @Override public float getPitch() { return pitch; }
+    @Override public boolean isLooping() { return loopPoint >= 0; }
+    @Override public void setLoopPoint(float loopPoint) { this.loopPoint = loopPoint; }
+    
+    // implementation specific for Music
+    
     @Override
     public void setPitch(float pitch) {
         this.pitch = NumberUtil.boundFloat(pitch, 0.5F, 2.0F);
@@ -140,6 +148,12 @@ public class MusicWrapper extends DisposableWrapper<Music> implements Audio<Stri
         this.getReference().stop();
     }
     
+    /**
+     * Updates the looping task for this {@link MusicWrapper}.
+     * 
+     * <p>Ensures that the sound will adhere to a loop point if this
+     * MusicWrapper has one set.</p>
+     */
     void updateLoop() {
         if(loopPoint < 0) {
             this.getReference().setOnCompletionListener(null);
