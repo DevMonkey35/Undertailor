@@ -1,0 +1,42 @@
+apply plugin: "java"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+project.ext.mainClassName = "me.scarlet.undertailor.desktop.DesktopLauncher"
+
+task copyAssets(type: Copy) {
+    from files('../core/src/assets/')
+    into new File(sourceSets.main.output.classesDir, "assets/")
+}
+
+task run(type: JavaExec) {
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    
+    workingDir = new File("../test/")
+    workingDir.mkdirs()
+    ignoreExitValue = true
+}
+
+run.dependsOn project(":core").licenseFormatMain
+run.dependsOn licenseFormatMain
+run.dependsOn classes
+run.dependsOn copyAssets
+
+task dist(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+    
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+}
+
+dist.dependsOn project(":core").licenseFormatMain
+dist.dependsOn licenseFormatMain
+dist.dependsOn classes
+dist.dependsOn copyAssets
