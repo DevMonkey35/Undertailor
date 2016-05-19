@@ -57,6 +57,19 @@ public class DesktopLauncher extends Application {
         Application.launch(args);
     }
     
+    @Override
+    public void start(Stage stage) throws Exception {
+        LaunchOptions options = new LaunchOptions(false);
+        if(options.skipLauncher) {
+            System.out.println("Launcher was skipped");
+            launchGame(options);
+        } else {
+            stage.setScene(new Launcher(stage, options));
+            stage.centerOnScreen();
+            stage.show();
+        }
+    }
+    
     public static void launchGame(LaunchOptions options) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.resizable = true;
@@ -75,18 +88,5 @@ public class DesktopLauncher extends Application {
     
     public DesktopLauncher() {
         DesktopLauncher.instance = this;
-    }
-    
-    @Override
-    public void start(Stage stage) throws Exception {
-        LaunchOptions options = new LaunchOptions(false);
-        if(options.skipLauncher) {
-            System.out.println("Launcher was skipped");
-            launchGame(options);
-        } else {
-            stage.setScene(new Launcher(stage, options));
-            stage.centerOnScreen();
-            stage.show();
-        }
     }
 }

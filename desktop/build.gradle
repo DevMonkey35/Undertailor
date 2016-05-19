@@ -31,6 +31,8 @@ task run(type: JavaExec) {
 	args = ["-dev"]
 }
 
+run.dependsOn project(":core").licenseFormatMain
+run.dependsOn licenseFormatMain
 run.dependsOn classes
 run.dependsOn copyAssets
 
@@ -44,6 +46,8 @@ task dist(type: Jar) {
     }
 }
 
+dist.dependsOn project(":core").licenseFormatMain
+dist.dependsOn licenseFormatMain
 dist.dependsOn classes
 dist.dependsOn copyAssets
 

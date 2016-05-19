@@ -27,7 +27,9 @@ package me.scarlet.undertailor.texts;
 import me.scarlet.undertailor.texts.TextComponent.DisplayMeta;
 
 public interface Style {
+    
     DisplayMeta applyCharacter(int charIndex, int textLength); // called for every letter, not including spaces
     default void onNextTextRender(float delta) {} // called the next time a bit of text wants to be rendered
     Style duplicate(); // replicate the style completely
+    
 }

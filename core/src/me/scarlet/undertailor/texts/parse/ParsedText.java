@@ -40,9 +40,9 @@ public class ParsedText {
 
     /**
      * Takes an unadulterated string and properly formats it
-     * into a valid ParsedText object, with its proper pieces.
+     * into a valid {@link ParsedText} object.
      *
-     * @param input The unedited input
+     * @param input the unedited input
      * @return the valid ParsedText object
      */
     public static ParsedText of(String input) {
