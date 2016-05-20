@@ -63,7 +63,8 @@ public class AudioManager {
     private BoundedFloat soundVolume;
     private BoundedFloat musicVolume;
 
-    private Map<String, Sound> sounds;
+    private Map<String, Audio> sounds;
+    private Map<String, Audio> music;
 
     public AudioManager(Undertailor undertailor) {
         if (!AudioManager.audioReplaced) {
@@ -89,6 +90,7 @@ public class AudioManager {
         this.musicVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
         this.soundVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
         this.sounds = new HashMap<>();
+        this.music = new HashMap<>();
     }
 
     // g/s volumes
@@ -170,13 +172,34 @@ public class AudioManager {
      * <p><code>manager.getSound(
      * "voices.mettaton.mettatonSpeak" )</code></p>
      * 
-     * @param key
+     * @param key the key of the target sound
      * 
      * @return the associated Sound instance, or null if not
      *         found
      */
     public Sound getSound(String key) {
-        return this.sounds.get(key);
+        return (Sound) this.sounds.get(key);
+    }
+
+    /**
+     * Returns the music under the given key.
+     * 
+     * <p>Keys are the names of the directories traversed to
+     * get to the target source file starting from the root
+     * directory, and the name of the target source file
+     * itself with its file extension omitted. The names are
+     * separated by <code>.</code> characters.</p>
+     * 
+     * <p><code>manager.getMusic(
+     * "combat.bosses.asgore" )</code></p>
+     * 
+     * @param key the key of the target music
+     * 
+     * @return the associated Music instance, or null if not
+     *         found
+     */
+    public Music getMusic(String key) {
+        return (Music) this.music.get(key);
     }
 
     /**
@@ -186,29 +209,60 @@ public class AudioManager {
      * @param rootDirectory the directory to load from
      */
     public void loadSounds(File rootDirectory) {
-        log.info("Loading sounds from directory " + rootDirectory.getAbsolutePath());
+        this.load(rootDirectory, Sound.class);
+    }
+
+    /**
+     * Loads music from the provided root directory into
+     * the audio manager.
+     * 
+     * @param rootDirectory the directory to load from
+     */
+    public void loadMusic(File rootDirectory) {
+        this.load(rootDirectory, Music.class);
+    }
+    
+    /**
+     * Internal method.
+     * 
+     * <p>Handles loading both music and sounds from
+     * directories.</p>
+     */
+    private void load(File rootDirectory, Class<? extends Audio> audioClass) {
+        String resourceName = audioClass == Music.class ? "Music" : "Sound";
+        String resourceNamePlural = audioClass == Music.class ? "Music" : "Sound(s)";
+        log.info("Loading " + resourceNamePlural.toLowerCase() + " from directory " + rootDirectory.getAbsolutePath());
+        
         Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
             String fileName = file.getName();
             return fileName.endsWith(".ogg") || fileName.endsWith(".wav")
                 || fileName.endsWith(".mp3");
         });
 
+        Map<String, Audio> targetMap;
+        if(audioClass == Music.class) {
+            targetMap = this.music;
+        } else {
+            targetMap = this.sounds;
+        }
+        
         for (String key : files.keySet()) {
-            File soundFile = files.get(key);
+            File audioFile = files.get(key);
             try {
-                if (this.sounds.containsKey(key)) {
-                    log.warn("Sound file " + soundFile.getAbsolutePath()
+                if (targetMap.containsKey(key)) {
+                    log.warn(resourceName + " file " + audioFile.getAbsolutePath()
                         + " is replacing a previous entry under the key " + key);
                 }
 
-                this.sounds.put(key, new Sound(this, key, soundFile));
-                log.debug("Loaded sound " + soundFile.getName() + " under key " + key);
+                targetMap.put(key,
+                    audioClass == Music.class ? new Music(this, key, audioFile) : new Sound(this, key, audioFile));
+                log.debug("Loaded " + resourceName.toLowerCase() + " " + audioFile.getName() + " under key " + key);
             } catch (UnsupportedAudioFileException e) {
-                log.error("Failed to load sound file " + soundFile.getAbsolutePath()
+                log.error("Failed to load " + resourceName.toLowerCase() + " file " + audioFile.getAbsolutePath()
                     + " (unsupported filetype, .ogg/.wav/.mp3 only)");
             }
         }
-
-        log.info(this.sounds.size() + " total sounds loaded.");
+        
+        log.info(targetMap.size() + " " + resourceNamePlural.toLowerCase() + " loaded.");
     }
 }
