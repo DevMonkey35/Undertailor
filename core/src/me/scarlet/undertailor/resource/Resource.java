@@ -3,23 +3,29 @@
  *
  * Copyright (c) 2016 Tellerva, Marc Lawrence
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any
+ * person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the
+ * Software without restriction, including without
+ * limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software
+ * is furnished to do so, subject to the following
+ * conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+ * KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  */
 package me.scarlet.undertailor.resource;
 
@@ -59,17 +65,17 @@ import java.util.WeakHashMap;
  * for the functionality of the former.</p>
  */
 public abstract class Resource<T extends Disposable> {
-    
+
     static Map<Class<? extends Disposable>, Long> lifetimeMapping;
     protected static Map<Disposable, WeakReference<Resource<?>>> livingResources;
-    
+
     public static final long DEFAULT_LIFETIME = 3000; // 3s
-    
+
     static {
         Resource.lifetimeMapping = new HashMap<>();
         Resource.livingResources = new WeakHashMap<>();
     }
-    
+
     /**
      * Returns the lifetime for resources of the given type.
      * 
@@ -84,13 +90,13 @@ public abstract class Resource<T extends Disposable> {
      *         provided type
      */
     public static long getLifetimeForResource(Class<? extends Disposable> clazz) {
-        if(Resource.lifetimeMapping.containsKey(clazz)) {
+        if (Resource.lifetimeMapping.containsKey(clazz)) {
             return Resource.lifetimeMapping.get(clazz);
         }
-        
+
         return Resource.DEFAULT_LIFETIME;
     }
-    
+
     /**
      * Sets the lifetime for resources of the given type.
      * 
@@ -104,21 +110,22 @@ public abstract class Resource<T extends Disposable> {
      *        milliseconds, for the provided type
      */
     public static void setLifetimeForResource(Class<? extends Disposable> clazz, long lifetime) {
-        if(lifetime <= 100) { // Should not be less than 100ms.
-            if(Resource.lifetimeMapping.containsKey(clazz)) Resource.lifetimeMapping.remove(clazz);
+        if (lifetime <= 100) { // Should not be less than 100ms.
+            if (Resource.lifetimeMapping.containsKey(clazz))
+                Resource.lifetimeMapping.remove(clazz);
         } else {
             Resource.lifetimeMapping.put(clazz, lifetime);
         }
     }
-    
+
     private T disposable;
     private long lastAccessTime;
-    
+
     protected Resource() {
         this.disposable = null;
         this.lastAccessTime = TimeUtils.millis();
     }
-    
+
     /**
      * Returns the raw instance of the resource, which may
      * or may not be null.
@@ -131,7 +138,7 @@ public abstract class Resource<T extends Disposable> {
     protected final T getRawReference() {
         return this.disposable;
     }
-    
+
     /**
      * Returns an instance of the resource, of which may not
      * be the same since the last time it was accessed.
@@ -139,14 +146,14 @@ public abstract class Resource<T extends Disposable> {
      * @return an instance of the resource
      */
     protected final T getReference() {
-        if(this.disposable == null) {
+        if (this.disposable == null) {
             this.createReference();
         }
-        
+
         this.lastAccessTime = TimeUtils.millis();
         return this.disposable;
     }
-    
+
     /**
      * Returns the count of milliseconds since the last time
      * this resource was accessed.
@@ -157,27 +164,27 @@ public abstract class Resource<T extends Disposable> {
     protected final long getTimeSinceLastAccess() {
         return TimeUtils.timeSinceMillis(this.lastAccessTime);
     }
-    
+
     /**
      * Disposes of the underlying resource, allowing the
      * system to reclaim the memory used by the former.
      */
     public final void dispose() {
         this.onDispose();
-        if(this.disposable != null) {
+        if (this.disposable != null) {
             Resource.livingResources.remove(this.disposable);
             this.disposable.dispose();
             this.disposable = null;
             this.lastAccessTime = -1;
         }
     }
-    
+
     /**
      * Called right before the system disposes of the
      * underlying resource.
      */
     protected void onDispose() {};
-    
+
     /**
      * Generates a new reference to the underlying resource.
      * 
@@ -188,14 +195,14 @@ public abstract class Resource<T extends Disposable> {
      * previously disposed.</p>
      */
     protected abstract T newReference();
-    
+
     /**
      * Returns the class type of the underlying resouce.
      * 
      * @return the class of the underlying disposable object
      */
     protected abstract Class<T> getResourceClass();
-    
+
     /**
      * Queries whether or not the underlying resource is
      * disposable, that is, ready to be reclaimed.
@@ -214,10 +221,10 @@ public abstract class Resource<T extends Disposable> {
      * </pre>
      */
     protected boolean isDisposable() {
-        return this.disposable != null
-            && TimeUtils.timeSinceMillis(this.lastAccessTime) > Resource.getLifetimeForResource(disposable.getClass());
+        return this.disposable != null && TimeUtils.timeSinceMillis(this.lastAccessTime) > Resource
+            .getLifetimeForResource(disposable.getClass());
     }
-    
+
     private void createReference() {
         this.disposable = this.newReference();
         Resource.livingResources.put(this.disposable, new WeakReference<>(this));

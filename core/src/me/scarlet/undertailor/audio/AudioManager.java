@@ -61,7 +61,7 @@ public class AudioManager {
     private BoundedFloat masterVolume;
     private BoundedFloat soundVolume;
     private BoundedFloat musicVolume;
-    
+
     private Map<String, Sound> sounds;
 
     public AudioManager(Undertailor undertailor) {
@@ -74,7 +74,7 @@ public class AudioManager {
             if (!LwjglApplicationConfiguration.disableAudio) {
                 try {
                     AL.destroy();
-                    
+
                     LwjglApplicationConfiguration config =
                         undertailor.getApplicationConfiguration();
                     Gdx.audio = new OpenALAudio(config.audioDeviceSimultaneousSources,
@@ -153,9 +153,9 @@ public class AudioManager {
     public void setSoundVolume(float volume) {
         this.soundVolume.set(volume);
     }
-    
+
     // loading methods
-    
+
     /**
      * Returns the sound under the given key.
      * 
@@ -176,7 +176,7 @@ public class AudioManager {
     public Sound getSound(String key) {
         return this.sounds.get(key);
     }
-    
+
     /**
      * Loads sounds from the provided root directory into
      * the audio manager.
@@ -187,23 +187,26 @@ public class AudioManager {
         log.info("Loading sounds from directory " + rootDirectory.getAbsolutePath());
         Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
             String fileName = file.getName();
-            return fileName.endsWith(".ogg") || fileName.endsWith(".wav") || fileName.endsWith(".mp3");
+            return fileName.endsWith(".ogg") || fileName.endsWith(".wav")
+                || fileName.endsWith(".mp3");
         });
-        
-        for(String key : files.keySet()) {
+
+        for (String key : files.keySet()) {
             File soundFile = files.get(key);
             try {
-                if(this.sounds.containsKey(key)) {
-                    log.warn("Sound file " + soundFile.getAbsolutePath() + " is replacing a previous entry under the key " + key);
+                if (this.sounds.containsKey(key)) {
+                    log.warn("Sound file " + soundFile.getAbsolutePath()
+                        + " is replacing a previous entry under the key " + key);
                 }
-                
+
                 this.sounds.put(key, new Sound(this, key, soundFile));
                 log.debug("Loaded sound " + soundFile.getName() + " under key " + key);
             } catch (UnsupportedAudioFileException e) {
-                log.error("Failed to load sound file " + soundFile.getAbsolutePath() + " (unsupported filetype, .ogg/.wav/.mp3 only)");
+                log.error("Failed to load sound file " + soundFile.getAbsolutePath()
+                    + " (unsupported filetype, .ogg/.wav/.mp3 only)");
             }
         }
-        
+
         log.info(this.sounds.size() + " total sounds loaded.");
     }
 }

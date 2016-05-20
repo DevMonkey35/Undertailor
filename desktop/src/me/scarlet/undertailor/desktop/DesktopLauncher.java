@@ -27,6 +27,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,7 @@ public class DesktopLauncher extends Application {
     public static void main(String[] args) {
         initRuntime();
         
+        BasicConfigurator.configure();
         String devCheck = System.getenv("tailor-dev-mode");
         if(devCheck != null && devCheck.equalsIgnoreCase("true")) {
             LaunchOptions options = new LaunchOptions(true);
@@ -68,7 +70,13 @@ public class DesktopLauncher extends Application {
     
     public static void launchGame(LaunchOptions options) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        new LwjglApplication(new Undertailor(), config);
+        
+        config.backgroundFPS = options.frameCap;
+        config.foregroundFPS = options.frameCap;
+        config.height = options.windowHeight;
+        config.width = options.windowWidth;
+        
+        new LwjglApplication(new Undertailor(options, config), config);
     }
     
     // TODO -- Override the launcher options using command-line options.

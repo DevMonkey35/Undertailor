@@ -9,7 +9,7 @@ import java.util.Map;
  * Utility class for interaction with files.
  */
 public class FileUtil {
-    
+
     /**
      * Returns a mapping of identifier strings and files
      * loaded from the given root folder.
@@ -57,7 +57,7 @@ public class FileUtil {
     public static Map<String, File> loadWithIdentifiers(File root, FileFilter filter) {
         return loadWithIdentifiers(new HashMap<>(), null, root, filter);
     }
-    
+
     /**
      * Internal method.
      * 
@@ -67,18 +67,20 @@ public class FileUtil {
      * 
      * @see #loadWithIdentifiers(File, FileFilter)
      */
-    private static Map<String, File> loadWithIdentifiers(Map<String, File> parentMap, String append, File root, FileFilter filter) {
-        for(File file : root.listFiles((FileFilter) file -> {
+    private static Map<String, File> loadWithIdentifiers(Map<String, File> parentMap, String append,
+        File root, FileFilter filter) {
+        for (File file : root.listFiles((FileFilter) file -> {
             return file.isDirectory() || (filter != null ? filter.accept(file) : true);
         })) {
-            String identifier = (append == null ? "" : append + ".") + file.getName().split("\\.")[0];
-            if(file.isDirectory()) {
+            String identifier =
+                (append == null ? "" : append + ".") + file.getName().split("\\.")[0];
+            if (file.isDirectory()) {
                 loadWithIdentifiers(parentMap, identifier, file, filter);
             } else {
                 parentMap.put(identifier, file);
             }
         }
-        
+
         return parentMap;
     }
 }

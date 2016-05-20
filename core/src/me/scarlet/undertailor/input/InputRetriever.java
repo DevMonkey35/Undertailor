@@ -3,23 +3,29 @@
  *
  * Copyright (c) 2016 Tellerva, Marc Lawrence
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any
+ * person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the
+ * Software without restriction, including without
+ * limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software
+ * is furnished to do so, subject to the following
+ * conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+ * KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  */
 
 package me.scarlet.undertailor.input;
@@ -89,16 +95,16 @@ public class InputRetriever implements InputProcessor {
      * @see Keys
      */
     public static class InputData {
-        
+
         private long currentTick;
         private boolean isConsumed;
         private Map<Integer, PressData> pressData;
-        
+
         private InputData(Map<Integer, PressData> pressData) {
             this.isConsumed = false;
             this.pressData = pressData;
         }
-        
+
         /**
          * Returns the {@link PressData} stored under the
          * provided keycode (see {@link Keys}).
@@ -117,10 +123,10 @@ public class InputRetriever implements InputProcessor {
             if (!pressData.containsKey(keycode)) {
                 pressData.put(keycode, new PressData(this));
             }
-            
+
             return pressData.get(keycode);
         }
-        
+
         /**
          * Returns whether or not this {@link InputData} has
          * been "consumed" for the current frame; that is,
@@ -134,7 +140,7 @@ public class InputRetriever implements InputProcessor {
         public boolean isConsumed() {
             return isConsumed;
         }
-        
+
         /**
          * Marks this {@link InputData} as consumed for the
          * current frame.
@@ -146,14 +152,14 @@ public class InputRetriever implements InputProcessor {
             this.isConsumed = true; // not a no-op cuz it still tries to change something
         }
     }
-    
+
     /**
      * Withholds input relevant to a single hardware key,
      * caught by the {@link InputRetriever} owning its
      * parent {@link InputData}.
      */
     public static class PressData {
-        
+
         private long holdTime;
         private InputData parent;
         private boolean isPressed;
@@ -161,7 +167,7 @@ public class InputRetriever implements InputProcessor {
         private long lastPressTime;
         private long lastReleaseTick;
         private long lastReleaseTime;
-        
+
         public PressData(InputData parent) {
             this.isPressed = false;
             this.parent = parent;
@@ -171,7 +177,7 @@ public class InputRetriever implements InputProcessor {
             this.lastReleaseTick = -1;
             this.lastPressTick = -1;
         }
-        
+
         /**
          * Returns how long its been since the key
          * represented by this {@link PressData} instance
@@ -181,13 +187,13 @@ public class InputRetriever implements InputProcessor {
          *         released in ms
          */
         public long getLastReleaseTime() {
-            if(lastReleaseTime <= -1) {
+            if (lastReleaseTime <= -1) {
                 return 0;
             }
-            
+
             return TimeUtils.timeSinceMillis(lastReleaseTime);
         }
-        
+
         /**
          * Returns whether or not the key represented by
          * this {@link PressData} was released within the
@@ -199,13 +205,13 @@ public class InputRetriever implements InputProcessor {
          *         within the given timeframe
          */
         public boolean justReleased(long time) {
-            if(time <= 0)  {
+            if (time <= 0) {
                 return this.lastReleaseTick == parent.currentTick;
             }
-            
+
             return this.lastReleaseTime >= 0 && this.getLastReleaseTime() < time;
         }
-        
+
         /**
          * Returns how long its been since the key
          * represented by this {@link PressData} instance
@@ -215,13 +221,13 @@ public class InputRetriever implements InputProcessor {
          *         pressed in ms
          */
         public long getLastPressTime() {
-            if(lastPressTime <= -1) {
+            if (lastPressTime <= -1) {
                 return 0;
             }
-            
+
             return TimeUtils.timeSinceMillis(lastPressTime);
         }
-        
+
         /**
          * Returns whether or not the key represented by
          * this {@link PressData} was pressed within the
@@ -233,13 +239,13 @@ public class InputRetriever implements InputProcessor {
          *         within the given timeframe
          */
         public boolean justPressed(long time) {
-            if(time <= 0)  {
+            if (time <= 0) {
                 return this.lastPressTick == parent.currentTick;
             }
-            
+
             return this.lastPressTime >= 0 && this.getLastPressTime() < time;
         }
-        
+
         /**
          * Returns how long the key represented by this
          * {@link PressData} has been held down for if it is
@@ -254,17 +260,17 @@ public class InputRetriever implements InputProcessor {
          *         before
          */
         public long getHoldTime() {
-            if(holdTime <= -1) {
+            if (holdTime <= -1) {
                 return 0;
             }
-            
-            if(!isPressed) {
+
+            if (!isPressed) {
                 return holdTime;
             }
-            
+
             return TimeUtils.timeSinceMillis(holdTime);
         }
-        
+
         /**
          * Returns whether or not the key represented by
          * this {@link PressData} is currently pressed.
@@ -274,7 +280,7 @@ public class InputRetriever implements InputProcessor {
         public boolean isPressed() {
             return isPressed;
         }
-        
+
         /**
          * Internal method.
          * 
@@ -287,7 +293,7 @@ public class InputRetriever implements InputProcessor {
             this.lastReleaseTick = parent.currentTick;
             this.lastReleaseTime = TimeUtils.millis();
         }
-        
+
         /**
          * Internal method.
          * 
@@ -301,17 +307,17 @@ public class InputRetriever implements InputProcessor {
             this.lastPressTime = TimeUtils.millis();
         }
     }
-    
+
     private long tick;
     private InputData currentData;
     private Map<Integer, PressData> pressData;
-    
+
     public InputRetriever() {
         this.tick = 0;
         this.pressData = new HashMap<>();
         this.currentData = new InputData(pressData);
     }
-    
+
     /**
      * Returns the current {@link InputData} tracked by this
      * {@link InputRetriever}.
@@ -321,7 +327,7 @@ public class InputRetriever implements InputProcessor {
     public InputData getCurrentData() {
         return currentData;
     }
-    
+
     /**
      * Updates the state of this {@link InputRetriever} and
      * renews the underlying {@link InputData}.
@@ -331,7 +337,7 @@ public class InputRetriever implements InputProcessor {
         currentData.isConsumed = false;
         currentData.currentTick = tick;
     }
-    
+
     /**
      * {@inheritDoc}
      * 
@@ -341,14 +347,14 @@ public class InputRetriever implements InputProcessor {
      */
     @Override
     public boolean keyDown(int keycode) {
-        if(!pressData.containsKey(keycode)) {
+        if (!pressData.containsKey(keycode)) {
             pressData.put(keycode, new PressData(currentData));
         }
-        
+
         pressData.get(keycode).down();
         return true;
     }
-    
+
     /**
      * {@inheritDoc}
      * 
@@ -358,18 +364,41 @@ public class InputRetriever implements InputProcessor {
      */
     @Override
     public boolean keyUp(int keycode) {
-        if(!pressData.containsKey(keycode)) {
+        if (!pressData.containsKey(keycode)) {
             pressData.put(keycode, new PressData(currentData));
         }
-        
+
         pressData.get(keycode).up();
         return true;
     }
-    
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
-    @Override public boolean keyTyped(char character) { return false; }
-    @Override public boolean scrolled(int amount) { return false; }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
 }

@@ -21,8 +21,8 @@ task run(type: JavaExec) {
     ignoreExitValue = true
 }
 
-run.dependsOn project(":core").licenseFormatMain
-run.dependsOn licenseFormatMain
+run.dependsOn project(":core").licenseMain
+run.dependsOn licenseMain
 run.dependsOn classes
 run.dependsOn copyAssets
 
@@ -36,7 +36,7 @@ task dist(type: Jar) {
     }
 }
 
-dist.dependsOn project(":core").licenseFormatMain
-dist.dependsOn licenseFormatMain
+dist.dependsOn project(":core").licenseMain
+dist.dependsOn licenseMain
 dist.dependsOn classes
 dist.dependsOn copyAssets

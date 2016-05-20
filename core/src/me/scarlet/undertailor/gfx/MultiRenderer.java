@@ -3,23 +3,29 @@
  *
  * Copyright (c) 2016 Tellerva, Marc Lawrence
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any
+ * person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the
+ * Software without restriction, including without
+ * limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software
+ * is furnished to do so, subject to the following
+ * conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice
+ * shall be included in all copies or substantial portions
+ * of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+ * KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  */
 
 package me.scarlet.undertailor.gfx;
@@ -41,16 +47,16 @@ import com.badlogic.gdx.math.Vector2;
  * entire program.
  */
 public class MultiRenderer {
-    
+
     private Color clearColor;
     private SpriteBatch batch;
     private ShapeRenderer renderer;
-    
+
     public MultiRenderer() {
         this.batch = new SpriteBatch();
         this.renderer = new ShapeRenderer();
     }
-    
+
     /**
      * Sets the projection matrices for the underlying
      * {@link SpriteBatch} and {@link ShapeRenderer}s.
@@ -61,7 +67,7 @@ public class MultiRenderer {
         this.setBatchProjectionMatrix(matrix);
         this.setShapeProjectionMatrix(matrix);
     }
-    
+
     /**
      * Sets the transform matrices for the underlying
      * {@link SpriteBatch} and {@link ShapeRenderer}.
@@ -72,7 +78,7 @@ public class MultiRenderer {
         this.setBatchTransformMatrix(matrix);
         this.setShapeTransformMatrix(matrix);
     }
-    
+
     /**
      * Returns the underlying {@link SpriteBatch} used by
      * this {@link MultiRenderer}.
@@ -92,7 +98,7 @@ public class MultiRenderer {
     public ShapeRenderer getShapeRenderer() {
         return renderer;
     }
-    
+
     /**
      * Returns the currently used {@link Color} for clearing
      * the screen with every frame.
@@ -104,7 +110,7 @@ public class MultiRenderer {
     public Color getClearColor() {
         return this.clearColor;
     }
-    
+
     /**
      * Sets the {@link Color} used to clear the screen with
      * every frame.
@@ -115,29 +121,29 @@ public class MultiRenderer {
         this.clearColor = (color == null ? Color.BLACK : color);
         Gdx.gl.glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0F);
     }
-    
+
     /**
      * Clears the screen.
      */
     public void clear() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
-    
+
     /**
      * Ensures that the current drawings are flushed.
      */
     public void flush() {
-        if(batch.isDrawing()) {
+        if (batch.isDrawing()) {
             batch.end();
         }
-        
-        if(renderer.isDrawing()) {
+
+        if (renderer.isDrawing()) {
             renderer.end();
         }
     }
-    
+
     // ### SpriteBatch methods
-    
+
     /**
      * Internal method.
      * 
@@ -147,16 +153,16 @@ public class MultiRenderer {
      * drawings.</p>
      */
     private void startDrawingSprite() {
-        if(renderer.isDrawing()) {
+        if (renderer.isDrawing()) {
             renderer.end();
         }
-        
-        if(!batch.isDrawing()) {
+
+        if (!batch.isDrawing()) {
             //batch.enableBlending();
             batch.begin();
         }
     }
-    
+
     /**
      * Returns the projection matrix of the underlying
      * {@link SpriteBatch}.
@@ -166,7 +172,7 @@ public class MultiRenderer {
     public Matrix4 getBatchProjectionMatrix() {
         return batch.getProjectionMatrix();
     }
-    
+
     /**
      * Sets the projection matrix of the underlying
      * {@link SpriteBatch}.
@@ -177,7 +183,7 @@ public class MultiRenderer {
     public void setBatchProjectionMatrix(Matrix4 matrix) {
         batch.setProjectionMatrix(matrix);
     }
-    
+
     /**
      * Returns the transform matrix of the underlying
      * {@link SpriteBatch}.
@@ -187,7 +193,7 @@ public class MultiRenderer {
     public Matrix4 getBatchTransformMatrix() {
         return batch.getTransformMatrix();
     }
-    
+
     /**
      * Sets the transform matrix of the underlying
      * {@link SpriteBatch}.
@@ -198,7 +204,7 @@ public class MultiRenderer {
     public void setBatchTransformMatrix(Matrix4 matrix) {
         batch.setTransformMatrix(matrix);
     }
-    
+
     /**
      * Returns whether or not the underlying
      * {@link SpriteBatch} has blending enabled.
@@ -208,7 +214,7 @@ public class MultiRenderer {
     public boolean isBatchBlending() {
         return batch.isBlendingEnabled();
     }
-    
+
     /**
      * Sets whether or not the underlying
      * {@link SpriteBatch} uses blending.
@@ -219,17 +225,17 @@ public class MultiRenderer {
      * @param flag new state of blending
      */
     public void setBatchBlending(boolean flag) {
-        if(batch.isBlendingEnabled() == flag) {
+        if (batch.isBlendingEnabled() == flag) {
             return;
         }
-        
-        if(flag) {
+
+        if (flag) {
             batch.enableBlending();
         } else {
             batch.disableBlending();
         }
     }
-    
+
     /**
      * Returns the {@link Color} used to draw with by the
      * underlying {@link SpriteBatch}.
@@ -239,7 +245,7 @@ public class MultiRenderer {
     public Color getBatchColor() {
         return batch.getColor();
     }
-    
+
     /**
      * Sets the {@link Color} used to draw with by the
      * underlying {@link SpriteBatch}.
@@ -249,7 +255,7 @@ public class MultiRenderer {
     public void setBatchColor(Color color) {
         batch.setColor(color);
     }
-    
+
     /**
      * Sets the {@link Color} used to draw with by the
      * underlying {@link SpriteBatch}.
@@ -261,7 +267,7 @@ public class MultiRenderer {
         color.a = alpha;
         batch.setColor(color);
     }
-    
+
     /**
      * Returns the {@link ShaderProgram} used by the
      * underlying {@link SpriteBatch}.
@@ -271,7 +277,7 @@ public class MultiRenderer {
     public ShaderProgram getBatchShader() {
         return batch.getShader();
     }
-    
+
     /**
      * Sets the {@link ShaderProgram} used by the underlying
      * {@link SpriteBatch}.
@@ -282,7 +288,7 @@ public class MultiRenderer {
     public void setBatchShader(ShaderProgram shader) {
         batch.setShader(shader);
     }
-    
+
     /**
      * Draws a texture at the given position.
      * 
@@ -294,52 +300,62 @@ public class MultiRenderer {
         this.startDrawingSprite();
         batch.draw(texture, x, y);
     }
-    
+
     /**
-     * @see SpriteBatch#draw(TextureRegion, float, float, float, float, float, float, float, float, float)
+     * @see SpriteBatch#draw(TextureRegion, float, float,
+     *      float, float, float, float, float, float, float)
      */
     public void draw(TextureRegion region, float x, float y) {
         draw(region, x, y, 0, 0);
     }
-    
+
     /**
-     * @see SpriteBatch#draw(TextureRegion, float, float, float, float, float, float, float, float, float)
+     * @see SpriteBatch#draw(TextureRegion, float, float,
+     *      float, float, float, float, float, float, float)
      */
     public void draw(TextureRegion region, float x, float y, float originX, float originY) {
         draw(region, x, y, originX, originY, region.getRegionWidth(), region.getRegionHeight());
     }
-    
+
     /**
-     * @see SpriteBatch#draw(TextureRegion, float, float, float, float, float, float, float, float, float)
+     * @see SpriteBatch#draw(TextureRegion, float, float,
+     *      float, float, float, float, float, float, float)
      */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY, float width, float height) {
+    public void draw(TextureRegion region, float x, float y, float originX, float originY,
+        float width, float height) {
         draw(region, x, y, originX, originY, width, height, 1F);
     }
-    
+
     /**
-     * @see SpriteBatch#draw(TextureRegion, float, float, float, float, float, float, float, float, float)
+     * @see SpriteBatch#draw(TextureRegion, float, float,
+     *      float, float, float, float, float, float, float)
      */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY, float width, float height, float scale) {
+    public void draw(TextureRegion region, float x, float y, float originX, float originY,
+        float width, float height, float scale) {
         draw(region, x, y, originX, originY, width, height, scale, scale);
     }
-    
+
     /**
-     * @see SpriteBatch#draw(TextureRegion, float, float, float, float, float, float, float, float, float)
+     * @see SpriteBatch#draw(TextureRegion, float, float,
+     *      float, float, float, float, float, float, float)
      */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY) {
+    public void draw(TextureRegion region, float x, float y, float originX, float originY,
+        float width, float height, float scaleX, float scaleY) {
         draw(region, x, y, originX, originY, width, height, scaleX, scaleY, 0F);
     }
-    
+
     /**
-     * @see SpriteBatch#draw(TextureRegion, float, float, float, float, float, float, float, float, float)
+     * @see SpriteBatch#draw(TextureRegion, float, float,
+     *      float, float, float, float, float, float, float)
      */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
+    public void draw(TextureRegion region, float x, float y, float originX, float originY,
+        float width, float height, float scaleX, float scaleY, float rotation) {
         this.startDrawingSprite();
         batch.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
     }
-    
+
     // ### ShapeRenderer methods
-    
+
     /**
      * Internal method.
      * 
@@ -348,18 +364,18 @@ public class MultiRenderer {
      * prepared to take shape drawings.</p>
      */
     private void startDrawingShape() {
-        if(batch.isDrawing()) {
+        if (batch.isDrawing()) {
             batch.end();
         }
-        
-        if(!renderer.isDrawing()) {
+
+        if (!renderer.isDrawing()) {
             //Gdx.gl.glEnable(GL20.GL_BLEND);
             //Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             renderer.setAutoShapeType(true);
             renderer.begin(ShapeType.Filled);
         }
     }
-    
+
     /**
      * Returns the projection matrix of the underlying
      * {@link ShapeRenderer}.
@@ -369,7 +385,7 @@ public class MultiRenderer {
     public Matrix4 getShapeProjectionMatrix() {
         return renderer.getProjectionMatrix();
     }
-    
+
     /**
      * Sets the projection matrix of the underlying
      * {@link ShapeRenderer}.
@@ -379,7 +395,7 @@ public class MultiRenderer {
     public void setShapeProjectionMatrix(Matrix4 matrix) {
         renderer.setProjectionMatrix(matrix);
     }
-    
+
     /**
      * Returns the transform matrix of the underlying
      * {@link ShapeRenderer}.
@@ -389,7 +405,7 @@ public class MultiRenderer {
     public Matrix4 getShapeTransformMatrix() {
         return renderer.getTransformMatrix();
     }
-    
+
     /**
      * Sets the transform matrix of the underlying
      * {@link ShapeRenderer}.
@@ -399,7 +415,7 @@ public class MultiRenderer {
     public void setShapeTransformMatrix(Matrix4 matrix) {
         renderer.setTransformMatrix(matrix);
     }
-    
+
     /**
      * Returns the {@link Color} used to draw with by the
      * underlying {@link ShapeRenderer}.
@@ -409,7 +425,7 @@ public class MultiRenderer {
     public Color getShapeColor() {
         return renderer.getColor();
     }
-    
+
     /**
      * Sets the {@link Color} used to draw with by the
      * underlying {@link ShapeRenderer}.
@@ -419,7 +435,7 @@ public class MultiRenderer {
     public void setShapeColor(Color color) {
         renderer.setColor(color);
     }
-    
+
     /**
      * Sets the {@link Color} used to draw with by the
      * underlying {@link ShapeRenderer}.
@@ -431,7 +447,7 @@ public class MultiRenderer {
         color.a = alpha;
         renderer.setColor(color);
     }
-    
+
     /**
      * Draws a line between the two points provided with a
      * given thickness.
@@ -442,13 +458,13 @@ public class MultiRenderer {
      */
     public void drawLine(Vector2 begin, Vector2 end, float thickness) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         renderer.rectLine(begin, end, thickness);
     }
-    
+
     /**
      * Draws an arc centered at the given position with a
      * specified radius, start point and length.
@@ -461,13 +477,13 @@ public class MultiRenderer {
      */
     public void drawArc(Vector2 pos, float radius, float start, float degrees) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         renderer.arc(pos.x, pos.y, radius, start, degrees);
     }
-    
+
     /**
      * Draws an arc centered at the given position with a
      * specified radius, start point, length, and
@@ -483,39 +499,39 @@ public class MultiRenderer {
      */
     public void drawArc(Vector2 pos, float radius, float start, float degrees, int segments) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         renderer.arc(pos.x, pos.y, radius, start, degrees, segments);
     }
-    
+
     /**
      * Draws a filled polygon.
      * 
      * @param points the vertices of the polygon
      */
-    public void drawFilledPolygon(Vector2... points) {
-        if(points.length < 3) {
+    public void drawFilledPolygon(Vector2... points){
+    if (points.length < 3) {
             return;
         }
-        
+
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         float vertices[] = new float[points.length * 2];
-        for(int i = 0; i < points.length; i++) {
+        for (int i = 0; i < points.length; i++) {
             Vector2 point = points[i];
             int index = i * 2;
             vertices[index] = point.x;
             vertices[index + 1] = point.y;
         }
-        
+
         this.renderer.polygon(vertices);
     }
-    
+
     /**
      * Draws the outline of a polygon by drawing a line
      * between each of the provided points. The polygon will
@@ -525,59 +541,58 @@ public class MultiRenderer {
      * @param lineThickness the thickness of the drawn line
      * @param points the vertices of the polygon
      */
-    public void drawPolygon(float lineThickness, Vector2... points) {
-        this.drawPolygonOutline(lineThickness, true, points);
-    }
-    
-    /**
-     * Draws the outline of a polygon by drawing a line
-     * between each of the provided points. The polygon will
-     * be left open, leaving a missing edge connecting the
-     * last and first points.
-     * 
-     * @param lineThickness the thickness of the drawn line
-     * @param points the vertices of the polygon
-     */
-    public void drawOpenPolygon(float lineThickness, Vector2... points) {
-        this.drawPolygonOutline(lineThickness, false, points);
-    }
-    
-    /**
-     * Internal method.
-     * 
-     * <p>Implements drawing the outline of an open and closed
-     * polygon outline.</p>
-     * 
-     * @see #drawPolygon(float, Vector2...)
-     * @see #drawOpenPolygon(float, Vector2...)
-     */
-    private void drawPolygonOutline(float lineThickness, boolean close, Vector2... points) {
-        if(points.length < 3) {
+    public void drawPolygon(float lineThickness, Vector2... points){
+    this.drawPolygonOutline(lineThickness, true, points);}
+
+/**
+ * Draws the outline of a polygon by drawing a line between
+ * each of the provided points. The polygon will be left
+ * open, leaving a missing edge connecting the last and
+ * first points.
+ * 
+ * @param lineThickness the thickness of the drawn line
+ * @param points the vertices of the polygon
+ */
+public void drawOpenPolygon(float lineThickness, Vector2... points) {
+    this.drawPolygonOutline(lineThickness, false, points);}
+
+/**
+ * Internal method.
+ * 
+ * <p>Implements drawing the outline of an open and closed
+ * polygon outline.</p>
+ * 
+ * @see #drawPolygon(float, Vector2...)
+ * @see #drawOpenPolygon(float, Vector2...)
+ */
+private void drawPolygonOutline(float lineThickness, boolean close, Vector2... points) {
+    if (points.length < 3) {
             return; // Won't draw anything; does not have at least 3 edges.
         }
-        
+
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         Vector2 startPoint = null;
         Vector2 lastPoint = null;
-        for(int i = 0; i < points.length; i++) {
-            if(startPoint == null) {
+        for (int i = 0; i < points.length; i++) {
+            if (startPoint == null) {
                 startPoint = points[i];
             }
-            
-            if(lastPoint != null) {
+
+            if (lastPoint != null) {
                 this.drawLine(lastPoint, points[i], lineThickness);
             }
-            
+
             lastPoint = points[i];
         }
-        
-        if(close) this.drawLine(lastPoint, startPoint, lineThickness);
+
+        if (close)
+            this.drawLine(lastPoint, startPoint, lineThickness);
     }
-    
+
     /**
      * Draws a rectangular outline anchored at the given
      * point with a specified width, height and edge
@@ -595,21 +610,23 @@ public class MultiRenderer {
      */
     public void drawRectangle(Vector2 pos, float width, float height, float lineThickness) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         Vector2 bR = new Vector2(pos.x + width, pos.y);
         Vector2 tL = new Vector2(pos.x, pos.y + height);
         Vector2 tR = new Vector2(bR.x, tL.y);
-        
+
         this.drawPolygon(lineThickness, pos, bR, tR, tL);
-        /*this.drawLine(tL, tR, lineThickness);
-        this.drawLine(tR, bR, lineThickness);
-        this.drawLine(bR, pos, lineThickness);
-        this.drawLine(pos, tL, lineThickness);*/
+        /*
+         * this.drawLine(tL, tR, lineThickness);
+         * this.drawLine(tR, bR, lineThickness);
+         * this.drawLine(bR, pos, lineThickness);
+         * this.drawLine(pos, tL, lineThickness);
+         */
     }
-    
+
     /**
      * Draws a filled rectangle anchored at the given point
      * with a specified width and height.
@@ -621,13 +638,13 @@ public class MultiRenderer {
      */
     public void drawFilledRectangle(Vector2 pos, float width, float height) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         renderer.rect(pos.x, pos.y, width, height);
     }
-    
+
     /**
      * Draws a circle outline centered at the given position
      * with a specified radius.
@@ -637,13 +654,13 @@ public class MultiRenderer {
      */
     public void drawCircle(Vector2 pos, float radius) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Line) {
+        if (renderer.getCurrentType() != ShapeType.Line) {
             renderer.set(ShapeType.Line);
         }
-        
+
         renderer.circle(pos.x, pos.y, radius);
     }
-    
+
     /**
      * Draws a filled circle centered at the given position
      * with a specified radius.
@@ -653,13 +670,13 @@ public class MultiRenderer {
      */
     public void drawFilledCircle(Vector2 pos, float radius) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         renderer.circle(pos.x, pos.y, radius);
     }
-    
+
     /**
      * Draws a triangular outline with edges at the given
      * points.
@@ -672,16 +689,18 @@ public class MultiRenderer {
      */
     public void drawTriangle(Vector2 vx1, Vector2 vx2, Vector2 vx3, float lineThickness) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
-        /*this.drawLine(vx1, vx2, lineThickness);
-        this.drawLine(vx2, vx3, lineThickness);
-        this.drawLine(vx3, vx1, lineThickness);*/
+
+        /*
+         * this.drawLine(vx1, vx2, lineThickness);
+         * this.drawLine(vx2, vx3, lineThickness);
+         * this.drawLine(vx3, vx1, lineThickness);
+         */
         this.drawPolygon(lineThickness, vx1, vx2, vx3);
     }
-    
+
     /**
      * Draws a triangle.
      * 
@@ -691,10 +710,10 @@ public class MultiRenderer {
      */
     public void drawFilledTriangle(Vector2 vx1, Vector2 vx2, Vector2 vx3) {
         this.startDrawingShape();
-        if(renderer.getCurrentType() != ShapeType.Filled) {
+        if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
-        
+
         renderer.triangle(vx1.x, vx1.y, vx2.x, vx2.y, vx3.x, vx3.y);
     }
 }
