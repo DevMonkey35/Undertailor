@@ -38,6 +38,12 @@ import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.util.BoundedFloat;
+import me.scarlet.undertailor.util.FileUtil;
+
+import java.io.File;
+import java.util.Map;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  * Manager class for instances of audio.
@@ -55,6 +61,8 @@ public class AudioManager {
     private BoundedFloat masterVolume;
     private BoundedFloat soundVolume;
     private BoundedFloat musicVolume;
+    
+    private Map<String, Sound> sounds;
 
     public AudioManager(Undertailor undertailor) {
         this.masterVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
@@ -144,5 +152,58 @@ public class AudioManager {
      */
     public void setSoundVolume(float volume) {
         this.soundVolume.set(volume);
+    }
+    
+    // loading methods
+    
+    /**
+     * Returns the sound under the given key.
+     * 
+     * <p>Keys are the names of the directories traversed to
+     * get to the target source file starting from the root
+     * directory, and the name of the target source file
+     * itself with its file extension omitted. The names are
+     * separated by <code>.</code> characters.</p>
+     * 
+     * <p><code>manager.getSound(
+     * "voices.mettaton.mettatonSpeak" )</code></p>
+     * 
+     * @param key
+     * 
+     * @return the associated Sound instance, or null if not
+     *         found
+     */
+    public Sound getSound(String key) {
+        return this.sounds.get(key);
+    }
+    
+    /**
+     * Loads sounds from the provided root directory into
+     * the audio manager.
+     * 
+     * @param rootDirectory the directory to load from
+     */
+    public void loadSounds(File rootDirectory) {
+        log.info("Loading sounds from directory " + rootDirectory.getAbsolutePath());
+        Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
+            String fileName = file.getName();
+            return fileName.endsWith(".ogg") || fileName.endsWith(".wav") || fileName.endsWith(".mp3");
+        });
+        
+        for(String key : files.keySet()) {
+            File soundFile = files.get(key);
+            try {
+                if(this.sounds.containsKey(key)) {
+                    log.warn("Sound file " + soundFile.getAbsolutePath() + " is replacing a previous entry under the key " + key);
+                }
+                
+                this.sounds.put(key, new Sound(this, key, soundFile));
+                log.debug("Loaded sound " + soundFile.getName() + " under key " + key);
+            } catch (UnsupportedAudioFileException e) {
+                log.error("Failed to load sound file " + soundFile.getAbsolutePath() + " (unsupported filetype, .ogg/.wav/.mp3 only)");
+            }
+        }
+        
+        log.info(this.sounds.size() + " total sounds loaded.");
     }
 }
