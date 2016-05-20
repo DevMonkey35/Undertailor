@@ -34,7 +34,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 /**
  * A pre-made texture that can be drawn on-screen.
  */
-public class Sprite {
+public class Sprite implements Renderable {
 
     // ---------------- static classes ----------------
 
@@ -115,31 +115,25 @@ public class Sprite {
     }
 
     public void draw(float posX, float posY, float scaleX, float scaleY) {
-        this.draw(posX, posY, scaleX, scaleY, 0F);
+        this.draw(posX, posY, scaleX, scaleY, false, false);
     }
 
-    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation) {
-        this.draw(posX, posY, scaleX, scaleY, rotation, false);
+    public void draw(float posX, float posY, float scaleX, float scaleY, boolean flipX, boolean flipY) {
+        this.draw(posX, posY, scaleX, scaleY, flipX, flipY, 0F);
     }
 
-    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation,
-        boolean flipX) {
-        this.draw(posX, posY, scaleX, scaleY, rotation, flipX, false);
-    }
-
-    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation,
-        boolean flipX, boolean flipY) {
-        this.draw(posX, posY, scaleX, scaleY, rotation, flipX, flipY, region.getRegionWidth(),
+    public void draw(float posX, float posY, float scaleX, float scaleY, boolean flipX, boolean flipY, float rotation) {
+        this.draw(posX, posY, scaleX, scaleY, flipX, flipY, rotation, region.getRegionWidth(),
             region.getRegionHeight());
     }
 
-    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation,
-        boolean flipX, boolean flipY, int sizeX, int sizeY) {
-        this.draw(posX, posY, scaleX, scaleY, rotation, flipX, flipY, sizeX, sizeY, false);
+    public void draw(float posX, float posY, float scaleX, float scaleY,
+        boolean flipX, boolean flipY, float rotation, int sizeX, int sizeY) {
+        this.draw(posX, posY, scaleX, scaleY, flipX, flipY, rotation, sizeX, sizeY, false);
     }
 
-    public void draw(float posX, float posY, float scaleX, float scaleY, float rotation,
-        boolean flipX, boolean flipY, int sizeX, int sizeY, boolean ensureBottomLeft) { // for texts
+    public void draw(float posX, float posY, float scaleX, float scaleY,
+        boolean flipX, boolean flipY, float rotation, int sizeX, int sizeY, boolean ensureBottomLeft) { // for texts
         float originX = 0, originY = 0;
         int offX = 0, offY = 0;
         if (meta != null) {
