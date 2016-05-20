@@ -39,6 +39,8 @@ allprojects {
             java = "PHP"
         }
         
+        exclude "mod/**"
+        strictCheck = true
         header rootProject.file("LICENSE")
     }
 }
