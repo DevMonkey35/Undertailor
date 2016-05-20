@@ -176,7 +176,7 @@ public abstract class Resource<T extends Disposable> {
      * Called right before the system disposes of the
      * underlying resource.
      */
-    protected abstract void onDispose();
+    protected void onDispose() {};
     
     /**
      * Generates a new reference to the underlying resource.
