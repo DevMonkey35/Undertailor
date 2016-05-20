@@ -41,6 +41,7 @@ import me.scarlet.undertailor.util.BoundedFloat;
 import me.scarlet.undertailor.util.FileUtil;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -65,10 +66,6 @@ public class AudioManager {
     private Map<String, Sound> sounds;
 
     public AudioManager(Undertailor undertailor) {
-        this.masterVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
-        this.musicVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
-        this.soundVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
-
         if (!AudioManager.audioReplaced) {
             log.info("Manager will now try to replace the audio system.");
             if (!LwjglApplicationConfiguration.disableAudio) {
@@ -87,6 +84,11 @@ public class AudioManager {
                 }
             }
         }
+        
+        this.masterVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
+        this.musicVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
+        this.soundVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
+        this.sounds = new HashMap<>();
     }
 
     // g/s volumes
