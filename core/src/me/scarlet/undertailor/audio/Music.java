@@ -93,6 +93,15 @@ public class Music extends Resource<com.badlogic.gdx.audio.Music> implements Aud
     protected Class<com.badlogic.gdx.audio.Music> getResourceClass() {
         return com.badlogic.gdx.audio.Music.class;
     }
+    
+    @Override
+    protected boolean isDisposable() {
+        if(this.checkReference()) {
+            return this.getReference().isPlaying() && super.isDisposable();
+        }
+        
+        return super.isDisposable();
+    }
 
     // ---------------- g/s audio parameters ----------------
 
@@ -288,10 +297,14 @@ public class Music extends Resource<com.badlogic.gdx.audio.Music> implements Aud
      */
     private void refreshLoop() {
         if (this.checkReference()) {
-            this.getReference().setOnCompletionListener(music -> {
-                music.setPosition(this.loopPoint);
-                music.play();
-            });
+            if(this.loopPoint >= 0) {
+                this.getReference().setOnCompletionListener(music -> {
+                    music.setPosition(this.loopPoint);
+                    music.play();
+                });
+            } else {
+                this.getReference().setOnCompletionListener(null);
+            }
         }
     }
 
