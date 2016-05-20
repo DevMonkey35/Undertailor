@@ -124,10 +124,13 @@ public class Undertailor extends ApplicationAdapter {
         this.renderer = new MultiRenderer();
 
         this.audioManager = new AudioManager(this);
+        
+        // -------- loading --------
     }
 
     @Override
     public void render() {
+        this.audioManager.update(); // update audio
         this.input.update(); // Prepare input for current frame.
 
         this.renderer.flush(); // Flush graphics for next frame.

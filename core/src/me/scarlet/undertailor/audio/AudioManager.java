@@ -32,7 +32,6 @@ package me.scarlet.undertailor.audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import mod.com.badlogic.gdx.backends.lwjgl.audio.OpenALAudio;
-import org.lwjgl.openal.AL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +70,7 @@ public class AudioManager {
             log.info("Manager will now try to replace the audio system.");
             if (!LwjglApplicationConfiguration.disableAudio) {
                 try {
-                    AL.destroy();
+                    ((com.badlogic.gdx.backends.lwjgl.audio.OpenALAudio) Gdx.audio).dispose();
 
                     LwjglApplicationConfiguration config =
                         undertailor.getApplicationConfiguration();
@@ -220,6 +219,17 @@ public class AudioManager {
      */
     public void loadMusic(File rootDirectory) {
         this.load(rootDirectory, Music.class);
+    }
+
+    // ---------------- functional methods ----------------
+
+    /**
+     * Due to the replacement of the audio system, this
+     * method needs to be called at the beginning of every
+     * frame to keep audio running.
+     */
+    public void update() {
+        ((OpenALAudio) Gdx.audio).update();
     }
 
     // ---------------- internal methods ----------------
