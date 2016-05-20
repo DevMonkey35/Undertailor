@@ -85,7 +85,7 @@ public class AudioManager {
                 }
             }
         }
-        
+
         this.masterVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
         this.musicVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
         this.soundVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
@@ -190,8 +190,8 @@ public class AudioManager {
      * itself with its file extension omitted. The names are
      * separated by <code>.</code> characters.</p>
      * 
-     * <p><code>manager.getMusic(
-     * "combat.bosses.asgore" )</code></p>
+     * <p><code>manager.getMusic( "combat.bosses.asgore"
+     * )</code></p>
      * 
      * @param key the key of the target music
      * 
@@ -213,15 +213,15 @@ public class AudioManager {
     }
 
     /**
-     * Loads music from the provided root directory into
-     * the audio manager.
+     * Loads music from the provided root directory into the
+     * audio manager.
      * 
      * @param rootDirectory the directory to load from
      */
     public void loadMusic(File rootDirectory) {
         this.load(rootDirectory, Music.class);
     }
-    
+
     /**
      * Internal method.
      * 
@@ -231,8 +231,9 @@ public class AudioManager {
     private void load(File rootDirectory, Class<? extends Audio> audioClass) {
         String resourceName = audioClass == Music.class ? "Music" : "Sound";
         String resourceNamePlural = audioClass == Music.class ? "Music" : "Sound(s)";
-        log.info("Loading " + resourceNamePlural.toLowerCase() + " from directory " + rootDirectory.getAbsolutePath());
-        
+        log.info("Loading " + resourceNamePlural.toLowerCase() + " from directory "
+            + rootDirectory.getAbsolutePath());
+
         Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
             String fileName = file.getName();
             return fileName.endsWith(".ogg") || fileName.endsWith(".wav")
@@ -240,12 +241,12 @@ public class AudioManager {
         });
 
         Map<String, Audio> targetMap;
-        if(audioClass == Music.class) {
+        if (audioClass == Music.class) {
             targetMap = this.music;
         } else {
             targetMap = this.sounds;
         }
-        
+
         for (String key : files.keySet()) {
             File audioFile = files.get(key);
             try {
@@ -254,15 +255,16 @@ public class AudioManager {
                         + " is replacing a previous entry under the key " + key);
                 }
 
-                targetMap.put(key,
-                    audioClass == Music.class ? new Music(this, key, audioFile) : new Sound(this, key, audioFile));
-                log.debug("Loaded " + resourceName.toLowerCase() + " " + audioFile.getName() + " under key " + key);
+                targetMap.put(key, audioClass == Music.class ? new Music(this, key, audioFile)
+                    : new Sound(this, key, audioFile));
+                log.debug("Loaded " + resourceName.toLowerCase() + " " + audioFile.getName()
+                    + " under key " + key);
             } catch (UnsupportedAudioFileException e) {
-                log.error("Failed to load " + resourceName.toLowerCase() + " file " + audioFile.getAbsolutePath()
-                    + " (unsupported filetype, .ogg/.wav/.mp3 only)");
+                log.error("Failed to load " + resourceName.toLowerCase() + " file "
+                    + audioFile.getAbsolutePath() + " (unsupported filetype, .ogg/.wav/.mp3 only)");
             }
         }
-        
+
         log.info(targetMap.size() + " " + resourceNamePlural.toLowerCase() + " loaded.");
     }
 }
