@@ -49,31 +49,31 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * Wrapping implementation of short sound effects.
  */
 public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Audio {
-    
+
     /**
      * Tracks data for a specified ID under a Sound
      * instance.
      */
     public static class SoundData {
-        
+
         private long id;
         private Sound parent;
-        
+
         private BoundedFloat volume;
         private BoundedFloat pitch;
         private BoundedFloat pan;
         private boolean looping;
-        
+
         private SoundData(Sound parent, long id) {
             this.id = id;
             this.parent = parent;
-            
+
             this.volume = new BoundedFloat(0.0F, 1.0F, 1.0F);
             this.pitch = new BoundedFloat(0.5F, 2.0F, 1.0F);
             this.pan = new BoundedFloat(-1.0F, 1.0F, 0.0F);
             this.looping = false;
         }
-        
+
         /**
          * Returns the volume of the sound.
          * 
@@ -82,7 +82,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
         public float getVolume() {
             return this.volume.get();
         }
-        
+
         /**
          * Sets the volume of the sound.
          * 
@@ -92,7 +92,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
             this.volume.set(volume);
             this.parent.getReference().setVolume(this.id, parent.getFinalVolume(this.volume.get()));
         }
-        
+
         /**
          * Returns the pitch of the sound.
          * 
@@ -101,7 +101,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
         public float getPitch() {
             return this.pitch.get();
         }
-        
+
         /**
          * Sets the pitch of the sound.
          * 
@@ -111,7 +111,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
             this.pitch.set(pitch);
             this.parent.getReference().setPitch(this.id, this.pitch.get());
         }
-        
+
         /**
          * Returns the pan of the sound.
          * 
@@ -120,7 +120,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
         public float getPan() {
             return this.pan.get();
         }
-        
+
         /**
          * Sets the pan of the sound.
          * 
@@ -128,9 +128,10 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
          */
         public void setPan(float pan) {
             this.pan.set(pan);
-            this.parent.getReference().setPan(this.id, this.pan.get(), this.volume.get());
+            this.parent.getReference().setPan(this.id, this.pan.get(),
+                parent.getFinalVolume(this.volume.get()));
         }
-        
+
         /**
          * Returns whether or not the sound is looping.
          * 
@@ -139,7 +140,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
         public boolean isLooping() {
             return this.looping;
         }
-        
+
         /**
          * Sets whether or not the sound is looping.
          * 
@@ -149,19 +150,21 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
             this.looping = flag;
             this.parent.getReference().setLooping(this.id, flag);
         }
-        
+
         /**
-         * Returns whether or not this sound is still playing.
+         * Returns whether or not this sound is still
+         * playing.
          * 
          * @return if the sound is playing
          */
         public boolean isPlaying() {
             int sourceId = ((OpenALAudio) Gdx.audio).getSoundSourceId(this.id);
-            if(sourceId == -1) return false;
-            
+            if (sourceId == -1)
+                return false;
+
             return AL10.alGetSourcei(sourceId, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
         }
-        
+
         /**
          * Stops the sound's playback.
          */
@@ -169,49 +172,51 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
             this.parent.getReference().stop(this.id);
         }
     }
-    
+
     public static final long RESOURCE_LIFETIME = 3000;
-    
+
     static {
-        Resource.setLifetimeForResource(com.badlogic.gdx.audio.Sound.class, Sound.RESOURCE_LIFETIME);
+        Resource.setLifetimeForResource(com.badlogic.gdx.audio.Sound.class,
+            Sound.RESOURCE_LIFETIME);
     }
-    
+
     // resource variables
     private File soundFile;
     private String soundName;
     private AudioManager manager;
     private Map<Long, WeakReference<SoundData>> soundData;
-    
-    public Sound(AudioManager manager, String soundName, File soundFile) throws UnsupportedAudioFileException {
+
+    public Sound(AudioManager manager, String soundName, File soundFile)
+        throws UnsupportedAudioFileException {
         this.manager = manager;
         this.soundName = soundName;
         this.soundFile = soundFile;
         this.soundData = new HashMap<>();
-        
+
         try {
             Gdx.audio.newSound(Gdx.files.absolute(this.soundFile.getAbsolutePath()));
-        } catch(GdxRuntimeException exception) {
+        } catch (GdxRuntimeException exception) {
             UnsupportedAudioFileException thrown = new UnsupportedAudioFileException();
             thrown.initCause(exception);
             throw thrown;
         }
     }
-    
+
     @Override
     protected com.badlogic.gdx.audio.Sound newReference() {
         return Gdx.audio.newSound(Gdx.files.absolute(this.soundFile.getAbsolutePath()));
     }
-    
+
     @Override
     protected boolean isDisposable() {
         return super.isDisposable() && !this.isPlaying();
     }
-    
+
     @Override
     protected Class<com.badlogic.gdx.audio.Sound> getResourceClass() {
         return com.badlogic.gdx.audio.Sound.class;
     }
-    
+
     @Override
     protected void onDispose() {
         this.soundData.clear();
@@ -221,7 +226,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     public String getAudioName() {
         return this.soundName;
     }
-    
+
     /**
      * Plays a new instance of the underlying
      * {@link com.badlogic.gdx.audio.Sound}, looping.
@@ -236,17 +241,17 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     public SoundData loop(float volume, float pitch, float pan) {
         float finalVolume = this.getFinalVolume(volume);
         long id = this.getReference().loop(finalVolume, pitch, pan);
-        
+
         SoundData data = new SoundData(this, id);
         data.volume.set(volume);
         data.pitch.set(pitch);
         data.pan.set(pan);
         data.looping = true;
-        
+
         this.soundData.put(id, new WeakReference<>(data));
         return data;
     }
-    
+
     /**
      * Plays a new instance of the underlying
      * {@link com.badlogic.gdx.audio.Sound}, looping,
@@ -258,7 +263,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     public SoundData loop() {
         return this.loop(1.0F, 1.0F, 0.0F);
     }
-    
+
     /**
      * Plays a new instance of the underlying
      * {@link com.badlogic.gdx.audio.Sound}.
@@ -273,17 +278,16 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     public SoundData play(float volume, float pitch, float pan) {
         float finalVolume = this.getFinalVolume(volume);
         long id = this.getReference().play(finalVolume, pitch, pan);
-        
+
         SoundData data = new SoundData(this, id);
         data.volume.set(volume);
         data.pitch.set(pitch);
         data.pan.set(pan);
-        
+
         this.soundData.put(id, new WeakReference<>(data));
         return data;
     }
 
-    
     /**
      * Plays a new instance of the underlying
      * {@link com.badlogic.gdx.audio.Sound}, providing
@@ -295,7 +299,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     public SoundData play() {
         return this.play(1.0F, 1.0F, 0.0F);
     }
-    
+
     /**
      * Stops all running instances of the underlying
      * {@link com.badlogic.gdx.audio.Sound}.
@@ -303,7 +307,7 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     public void stop() {
         this.getReference().stop();
     }
-    
+
     /**
      * Internal method.
      * 
@@ -315,25 +319,26 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     private boolean isPlaying() {
         Iterator<Long> keySet = this.soundData.keySet().iterator();
         long current = -1;
-        while(keySet.hasNext()) {
+        while (keySet.hasNext()) {
             current = keySet.next();
-            
-            if(this.soundData.get(current).get() == null) {
+
+            if (this.soundData.get(current).get() == null) {
                 keySet.remove();
                 continue;
             }
-            
+
             int sourceId = ((OpenALAudio) Gdx.audio).getSoundSourceId(current);
-            if(sourceId != -1 && AL10.alGetSourcei(sourceId, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING) {
+            if (sourceId != -1
+                && AL10.alGetSourcei(sourceId, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING) {
                 return true;
             } else {
                 keySet.remove();
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Internal method.
      * 
