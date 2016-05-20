@@ -317,6 +317,12 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
         long current = -1;
         while(keySet.hasNext()) {
             current = keySet.next();
+            
+            if(this.soundData.get(current).get() == null) {
+                keySet.remove();
+                continue;
+            }
+            
             int sourceId = ((OpenALAudio) Gdx.audio).getSoundSourceId(current);
             if(sourceId != -1 && AL10.alGetSourcei(sourceId, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING) {
                 return true;
