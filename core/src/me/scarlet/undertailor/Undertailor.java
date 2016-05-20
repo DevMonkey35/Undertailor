@@ -44,7 +44,7 @@ import me.scarlet.undertailor.resource.ResourceHandler;
  */
 public class Undertailor extends ApplicationAdapter {
 
-    // System variables -- Core variables.
+    // ---------------- System variables -- Core variables. ----------------
 
     private LaunchOptions options;
     private LwjglApplicationConfiguration lwjglConfig;
@@ -52,7 +52,7 @@ public class Undertailor extends ApplicationAdapter {
     private InputRetriever input;
     private MultiRenderer renderer;
 
-    // System variables 2 -- Managers, misc.
+    // ---------------- System variables 2 -- Managers, misc. ----------------
 
     private AudioManager audioManager;
 
@@ -64,7 +64,7 @@ public class Undertailor extends ApplicationAdapter {
         resourceHandler.start();
     }
 
-    // g/s core variables
+    // ---------------- g/s core variables ----------------
 
     /**
      * Returns the launch configuration that was used to
@@ -106,7 +106,7 @@ public class Undertailor extends ApplicationAdapter {
         return this.renderer;
     }
 
-    // g/s managers, misc.
+    // ---------------- g/s managers, misc. ----------------
 
     /**
      * Returns the {@link AudioManager}, responsible for

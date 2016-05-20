@@ -93,7 +93,7 @@ public class AudioManager {
         this.music = new HashMap<>();
     }
 
-    // g/s volumes
+    // ---------------- g/s volumes ----------------
 
     /**
      * Returns the master volume of the game.
@@ -158,7 +158,7 @@ public class AudioManager {
         this.soundVolume.set(volume);
     }
 
-    // loading methods
+    // ---------------- loading methods ----------------
 
     /**
      * Returns the sound under the given key.
@@ -221,6 +221,8 @@ public class AudioManager {
     public void loadMusic(File rootDirectory) {
         this.load(rootDirectory, Music.class);
     }
+
+    // ---------------- internal methods ----------------
 
     /**
      * Internal method.

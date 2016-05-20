@@ -57,6 +57,8 @@ public class MultiRenderer {
         this.renderer = new ShapeRenderer();
     }
 
+    // ---------------- object-global methods ----------------
+
     /**
      * Sets the projection matrices for the underlying
      * {@link SpriteBatch} and {@link ShapeRenderer}s.
@@ -142,7 +144,7 @@ public class MultiRenderer {
         }
     }
 
-    // ### SpriteBatch methods
+    // ---------------- spritebatch methods ----------------
 
     /**
      * Internal method.
@@ -289,6 +291,8 @@ public class MultiRenderer {
         batch.setShader(shader);
     }
 
+    // ---------------- batch draw methods ----------------
+
     /**
      * Draws a texture at the given position.
      * 
@@ -354,7 +358,7 @@ public class MultiRenderer {
         batch.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
     }
 
-    // ### ShapeRenderer methods
+    // ---------------- renderer methods ----------------
 
     /**
      * Internal method.
@@ -447,6 +451,8 @@ public class MultiRenderer {
         color.a = alpha;
         renderer.setColor(color);
     }
+
+    // ---------------- shape draw methods ----------------
 
     /**
      * Draws a line between the two points provided with a
@@ -541,32 +547,34 @@ public class MultiRenderer {
      * @param lineThickness the thickness of the drawn line
      * @param points the vertices of the polygon
      */
-    public void drawPolygon(float lineThickness, Vector2... points){
-    this.drawPolygonOutline(lineThickness, true, points);}
+    public void drawPolygon(float lineThickness, Vector2... points) {
+        this.drawPolygonOutline(lineThickness, true, points);
+    }
 
-/**
- * Draws the outline of a polygon by drawing a line between
- * each of the provided points. The polygon will be left
- * open, leaving a missing edge connecting the last and
- * first points.
- * 
- * @param lineThickness the thickness of the drawn line
- * @param points the vertices of the polygon
- */
-public void drawOpenPolygon(float lineThickness, Vector2... points) {
-    this.drawPolygonOutline(lineThickness, false, points);}
+    /**
+     * Draws the outline of a polygon by drawing a line between
+     * each of the provided points. The polygon will be left
+     * open, leaving a missing edge connecting the last and
+     * first points.
+     * 
+     * @param lineThickness the thickness of the drawn line
+     * @param points the vertices of the polygon
+     */
+    public void drawOpenPolygon(float lineThickness, Vector2... points) {
+        this.drawPolygonOutline(lineThickness, false, points);
+    }
 
-/**
- * Internal method.
- * 
- * <p>Implements drawing the outline of an open and closed
- * polygon outline.</p>
- * 
- * @see #drawPolygon(float, Vector2...)
- * @see #drawOpenPolygon(float, Vector2...)
- */
-private void drawPolygonOutline(float lineThickness, boolean close, Vector2... points) {
-    if (points.length < 3) {
+    /**
+     * Internal method.
+     * 
+     * <p>Implements drawing the outline of an open and closed
+     * polygon outline.</p>
+     * 
+     * @see #drawPolygon(float, Vector2...)
+     * @see #drawOpenPolygon(float, Vector2...)
+     */
+    private void drawPolygonOutline(float lineThickness, boolean close, Vector2... points) {
+        if (points.length < 3) {
             return; // Won't draw anything; does not have at least 3 edges.
         }
 

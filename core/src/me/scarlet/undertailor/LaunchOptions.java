@@ -40,7 +40,10 @@ import java.util.prefs.Preferences;
 /**
  * Retrieves and saves launch options used and set by the
  * initial launcher that pops open before the game is
- * launched, through the use of {@link Preferences}.
+ * launched, through the use of {@link Preferences}. The
+ * options are loaded from disk and stored by any new
+ * instances of this class, assuming the dev flag passed to
+ * the constructor isn't true.
  * 
  * <p>Usage is intended to be through accessing the public
  * variables of the instance and reading/modifying as

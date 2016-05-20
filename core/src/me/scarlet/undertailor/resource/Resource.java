@@ -66,6 +66,8 @@ import java.util.WeakHashMap;
  */
 public abstract class Resource<T extends Disposable> {
 
+    // ---------------- static variables and initializer ----------------
+
     static Map<Class<? extends Disposable>, Long> lifetimeMapping;
     protected static Map<Disposable, WeakReference<Resource<?>>> livingResources;
 
@@ -75,6 +77,8 @@ public abstract class Resource<T extends Disposable> {
         Resource.lifetimeMapping = new HashMap<>();
         Resource.livingResources = new WeakHashMap<>();
     }
+
+    // ---------------- static methods ----------------
 
     /**
      * Returns the lifetime for resources of the given type.
@@ -117,6 +121,8 @@ public abstract class Resource<T extends Disposable> {
             Resource.lifetimeMapping.put(clazz, lifetime);
         }
     }
+
+    // ---------------- object ----------------
 
     private T disposable;
     private long lastAccessTime;
@@ -186,24 +192,6 @@ public abstract class Resource<T extends Disposable> {
     protected void onDispose() {};
 
     /**
-     * Generates a new reference to the underlying resource.
-     * 
-     * <p>This method is called when the resource is not
-     * currently active in memory and has to be recreated
-     * for usage, an event that only occurs during the
-     * wrapper's first instantiation or after it has been
-     * previously disposed.</p>
-     */
-    protected abstract T newReference();
-
-    /**
-     * Returns the class type of the underlying resouce.
-     * 
-     * @return the class of the underlying disposable object
-     */
-    protected abstract Class<T> getResourceClass();
-
-    /**
      * Queries whether or not the underlying resource is
      * disposable, that is, ready to be reclaimed.
      * 
@@ -229,4 +217,24 @@ public abstract class Resource<T extends Disposable> {
         this.disposable = this.newReference();
         Resource.livingResources.put(this.disposable, new WeakReference<>(this));
     }
+
+    // ---------------- abstract declarations ----------------
+
+    /**
+     * Generates a new reference to the underlying resource.
+     * 
+     * <p>This method is called when the resource is not
+     * currently active in memory and has to be recreated
+     * for usage, an event that only occurs during the
+     * wrapper's first instantiation or after it has been
+     * previously disposed.</p>
+     */
+    protected abstract T newReference();
+
+    /**
+     * Returns the class type of the underlying resouce.
+     * 
+     * @return the class of the underlying disposable object
+     */
+    protected abstract Class<T> getResourceClass();
 }

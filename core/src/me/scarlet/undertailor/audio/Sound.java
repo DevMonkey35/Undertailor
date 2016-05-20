@@ -50,6 +50,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Audio {
 
+    // ---------------- static classes ----------------
+
     /**
      * Tracks data for a specified ID under a Sound
      * instance.
@@ -173,12 +175,16 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
         }
     }
 
+    // ---------------- static variables and initializer ----------------
+
     public static final long RESOURCE_LIFETIME = 3000;
 
     static {
         Resource.setLifetimeForResource(com.badlogic.gdx.audio.Sound.class,
             Sound.RESOURCE_LIFETIME);
     }
+
+    // ---------------- object ----------------
 
     // resource variables
     private File soundFile;
@@ -201,6 +207,8 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
             throw thrown;
         }
     }
+
+    // ---------------- abstract method implementation ----------------
 
     @Override
     protected com.badlogic.gdx.audio.Sound newReference() {
@@ -226,6 +234,8 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     public String getAudioName() {
         return this.soundName;
     }
+
+    // ---------------- playback methods ----------------
 
     /**
      * Plays a new instance of the underlying
@@ -307,6 +317,8 @@ public class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Aud
     public void stop() {
         this.getReference().stop();
     }
+
+    // ---------------- internal methods ----------------
 
     /**
      * Internal method.

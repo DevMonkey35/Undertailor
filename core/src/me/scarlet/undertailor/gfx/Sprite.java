@@ -36,6 +36,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class Sprite {
 
+    // ---------------- static classes ----------------
+
     /**
      * Metadata for sprite rendering offsets.
      */
@@ -67,6 +69,8 @@ public class Sprite {
         }
     }
 
+    // ---------------- object ----------------
+
     private SpriteMeta meta;
     private TextureRegion region;
     private MultiRenderer renderer;
@@ -76,6 +80,8 @@ public class Sprite {
         this.region = sprite;
         this.meta = meta;
     }
+
+    // ---------------- g/s ---------------- 
 
     /**
      * Returns the {@link TextureRegion} drawn by this
@@ -97,6 +103,8 @@ public class Sprite {
     public SpriteMeta getMeta() {
         return meta;
     }
+
+    // ---------------- draw methods ----------------
 
     public void draw(float posX, float posY) {
         this.draw(posX, posY, 1.0F);

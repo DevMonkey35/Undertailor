@@ -87,6 +87,8 @@ import java.util.Map;
  */
 public class InputRetriever implements InputProcessor {
 
+    // ---------------- static classes ----------------
+
     /**
      * Withholds all data relevant to input caught by its
      * owning {@link InputRetriever}.
@@ -308,6 +310,8 @@ public class InputRetriever implements InputProcessor {
         }
     }
 
+    // ---------------- object ----------------
+
     private long tick;
     private InputData currentData;
     private Map<Integer, PressData> pressData;
@@ -317,6 +321,8 @@ public class InputRetriever implements InputProcessor {
         this.pressData = new HashMap<>();
         this.currentData = new InputData(pressData);
     }
+
+    // ---------------- g/s ----------------
 
     /**
      * Returns the current {@link InputData} tracked by this
@@ -328,6 +334,8 @@ public class InputRetriever implements InputProcessor {
         return currentData;
     }
 
+    // ---------------- functional methods ----------------
+
     /**
      * Updates the state of this {@link InputRetriever} and
      * renews the underlying {@link InputData}.
@@ -337,6 +345,8 @@ public class InputRetriever implements InputProcessor {
         currentData.isConsumed = false;
         currentData.currentTick = tick;
     }
+
+    // ---------------- abstract method implementation ----------------
 
     /**
      * {@inheritDoc}

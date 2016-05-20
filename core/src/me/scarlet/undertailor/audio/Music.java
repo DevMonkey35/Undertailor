@@ -47,6 +47,8 @@ public class Music extends Resource<com.badlogic.gdx.audio.Music> implements Aud
         this.loopPoint = -1;
     }
 
+    // ---------------- abstract method implementation ----------------
+
     @Override
     public String getAudioName() {
         return this.musicName;
@@ -61,6 +63,8 @@ public class Music extends Resource<com.badlogic.gdx.audio.Music> implements Aud
     protected Class<com.badlogic.gdx.audio.Music> getResourceClass() {
         return com.badlogic.gdx.audio.Music.class;
     }
+
+    // ---------------- g/s audio parameters ----------------
 
     /**
      * Returns the volume of the music.
@@ -123,38 +127,6 @@ public class Music extends Resource<com.badlogic.gdx.audio.Music> implements Aud
     }
 
     /**
-     * Returns whether or not this music is playing.
-     * 
-     * @return if the music is playing
-     */
-    public boolean isPlaying() {
-        return this.getReference() != null && this.getReference().isPlaying();
-    }
-
-    /**
-     * Plays the music with its current parameters.
-     */
-    public void play() {
-        this.play(this.volume.get(), this.pitch.get(), this.pan.get());
-    }
-
-    /**
-     * Plays the music with the given parameters.
-     * 
-     * @param volume the volume of the music
-     * @param pitch the pitch of the music
-     * @param pan the pan of the music
-     */
-    public void play(float volume, float pitch, float pan) {
-        this.getReference().play();
-        this.setVolume(volume);
-        this.setPitch(pitch);
-        this.setPan(pan);
-
-        this.refreshLoop();
-    }
-
-    /**
      * Returns whether or not the music is looping.
      * 
      * @return if this music is looping
@@ -206,6 +178,40 @@ public class Music extends Resource<com.badlogic.gdx.audio.Music> implements Aud
         this.loopPoint = loopPoint;
     }
 
+    // ---------------- playback methods ---------------- 
+
+    /**
+     * Returns whether or not this music is playing.
+     * 
+     * @return if the music is playing
+     */
+    public boolean isPlaying() {
+        return this.getReference() != null && this.getReference().isPlaying();
+    }
+
+    /**
+     * Plays the music with its current parameters.
+     */
+    public void play() {
+        this.play(this.volume.get(), this.pitch.get(), this.pan.get());
+    }
+
+    /**
+     * Plays the music with the given parameters.
+     * 
+     * @param volume the volume of the music
+     * @param pitch the pitch of the music
+     * @param pan the pan of the music
+     */
+    public void play(float volume, float pitch, float pan) {
+        this.getReference().play();
+        this.setVolume(volume);
+        this.setPitch(pitch);
+        this.setPan(pan);
+
+        this.refreshLoop();
+    }
+
     /**
      * Plays the music with its current parameters, looping.
      */
@@ -241,6 +247,8 @@ public class Music extends Resource<com.badlogic.gdx.audio.Music> implements Aud
         this.setLoopPoint(loopPoint);
         this.play(volume, pitch, pan);
     }
+
+    // ---------------- internal methods ----------------
 
     /**
      * Internal method.
