@@ -1,0 +1,18 @@
+{ // cfg version 0
+	"version": 0,
+	"sprites": {
+		"grid": {
+			"sizeX": 30,
+			"sizeY": 15
+		},
+		"meta": {
+			"0": { // bunch of metas
+				"originX": 12,
+				"wrapX": 4
+			},
+			"1": {
+				"wrapY": 13
+			}
+		}
+	}
+}
