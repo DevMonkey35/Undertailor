@@ -27,9 +27,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-package me.scarlet.undertailor.gfx;
+package me.scarlet.undertailor.gfx.spritesheet;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import me.scarlet.undertailor.gfx.MultiRenderer;
+import me.scarlet.undertailor.gfx.Renderable;
 
 /**
  * A pre-made texture that can be drawn on-screen.
@@ -74,6 +77,7 @@ public class Sprite implements Renderable {
     private SpriteMeta meta;
     private TextureRegion region;
     private MultiRenderer renderer;
+    protected SpriteSheet sourceSheet;
 
     public Sprite(MultiRenderer renderer, TextureRegion sprite, SpriteMeta meta) {
         this.renderer = renderer;
