@@ -342,8 +342,11 @@ public class MultiRenderer {
      * Draws a {@link TextureRegion} using the underlying
      * {@link SpriteBatch}.
      * 
-     * @param x the x position of the sprite
-     * @param y the y position of the sprite
+     * <p>By default, libGDX places the anchor point at the
+     * bottom left of the sprite.</p>
+     * 
+     * @param x the x position of the sprite's anchor point
+     * @param y the y position of the sprite's anchor point
      * @param scaleX the scaling of the sprite horizontally
      * @param scaleY the scaling of the sprite vertically
      * @param originX the offset of the anchor point, from
