@@ -106,32 +106,27 @@ public class Sprite implements Renderable {
 
     // ---------------- draw methods ----------------
 
-    public void draw(float posX, float posY) {
-        this.draw(posX, posY, 1.0F);
-    }
-
-    public void draw(float posX, float posY, float scale) {
-        this.draw(posX, posY, scale, scale);
-    }
-
-    public void draw(float posX, float posY, float scaleX, float scaleY) {
-        this.draw(posX, posY, scaleX, scaleY, false, false);
-    }
-
-    public void draw(float posX, float posY, float scaleX, float scaleY, boolean flipX, boolean flipY) {
-        this.draw(posX, posY, scaleX, scaleY, flipX, flipY, 0F);
-    }
-
+    @Override
     public void draw(float posX, float posY, float scaleX, float scaleY, boolean flipX, boolean flipY, float rotation) {
-        this.draw(posX, posY, scaleX, scaleY, flipX, flipY, rotation, region.getRegionWidth(),
-            region.getRegionHeight());
+        float originX = 0, originY = 0;
+        int offX = 0, offY = 0;
+        
+        if(meta != null) {
+            originX = meta.originX;
+            originY = meta.originY;
+            offX = meta.offX;
+            offY = meta.offY;
+        }
+        
+        float x = posX + (offX * scaleX);
+        float y = posY + (offY * scaleY); 
+        
+        region.flip(flipX, flipY);
+        renderer.draw(this.region, x, y, scaleX, scaleY, originX, originY, rotation);
+        region.flip(flipX, flipY);
     }
 
-    public void draw(float posX, float posY, float scaleX, float scaleY,
-        boolean flipX, boolean flipY, float rotation, int sizeX, int sizeY) {
-        this.draw(posX, posY, scaleX, scaleY, flipX, flipY, rotation, sizeX, sizeY, false);
-    }
-
+    /*
     public void draw(float posX, float posY, float scaleX, float scaleY,
         boolean flipX, boolean flipY, float rotation, int sizeX, int sizeY, boolean ensureBottomLeft) { // for texts
         float originX = 0, originY = 0;
@@ -156,5 +151,5 @@ public class Sprite implements Renderable {
         region.flip(flipX, flipY);
         renderer.draw(region, x, y, originX, originY, sizeX, sizeY, scaleX, scaleY, rotation);
         region.flip(flipX, flipY);
-    }
+    }*/
 }
