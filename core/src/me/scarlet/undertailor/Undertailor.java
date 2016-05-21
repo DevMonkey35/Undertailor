@@ -31,6 +31,8 @@ package me.scarlet.undertailor;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.audio.AudioManager;
 import me.scarlet.undertailor.gfx.MultiRenderer;
@@ -43,6 +45,8 @@ import me.scarlet.undertailor.resource.ResourceHandler;
  * <p>Let's be a little cleaner this time, shall we?</p>
  */
 public class Undertailor extends ApplicationAdapter {
+
+    static Logger log = LoggerFactory.getLogger(Undertailor.class);
 
     // ---------------- System variables -- Core variables. ----------------
 
@@ -124,13 +128,14 @@ public class Undertailor extends ApplicationAdapter {
         this.renderer = new MultiRenderer();
 
         this.audioManager = new AudioManager(this);
-        
+
         // -------- loading --------
     }
 
     @Override
     public void render() {
         this.audioManager.update(); // update audio
+        this.renderer.clear();
         this.input.update(); // Prepare input for current frame.
 
         this.renderer.flush(); // Flush graphics for next frame.
