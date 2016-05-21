@@ -310,52 +310,57 @@ public class MultiRenderer {
      *      float, float, float, float, float, float, float)
      */
     public void draw(TextureRegion region, float x, float y) {
-        draw(region, x, y, 0, 0);
+        draw(region, x, y, 1);
     }
 
     /**
      * @see SpriteBatch#draw(TextureRegion, float, float,
      *      float, float, float, float, float, float, float)
      */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY) {
-        draw(region, x, y, originX, originY, region.getRegionWidth(), region.getRegionHeight());
+    public void draw(TextureRegion region, float x, float y, float scale) {
+        draw(region, x, y, scale, scale);
     }
 
     /**
      * @see SpriteBatch#draw(TextureRegion, float, float,
      *      float, float, float, float, float, float, float)
      */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY,
-        float width, float height) {
-        draw(region, x, y, originX, originY, width, height, 1F);
+    public void draw(TextureRegion region, float x, float y, float scaleX, float scaleY) {
+        draw(region, x, y, scaleX, scaleY, 0, 0);
     }
 
     /**
      * @see SpriteBatch#draw(TextureRegion, float, float,
      *      float, float, float, float, float, float, float)
      */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY,
-        float width, float height, float scale) {
-        draw(region, x, y, originX, originY, width, height, scale, scale);
+    public void draw(TextureRegion region, float x, float y, float scaleX, float scaleY,
+        float originX, float originY) {
+        draw(region, x, y, scaleX, scaleY, originX, originY, 0F);
     }
 
     /**
-     * @see SpriteBatch#draw(TextureRegion, float, float,
-     *      float, float, float, float, float, float, float)
+     * Draws a {@link TextureRegion} using the underlying
+     * {@link SpriteBatch}.
+     * 
+     * @param x the x position of the sprite
+     * @param y the y position of the sprite
+     * @param scaleX the scaling of the sprite horizontally
+     * @param scaleY the scaling of the sprite vertically
+     * @param originX the offset of the anchor point, from
+     *        the bottom-left of the sprite
+     * @param originY the offset of the anchor point, from
+     *        the bottom-left of the sprite
+     * @param rotation the rotation of the sprite, anchored
+     *        at the anchor point defined by the origin
+     *        offset values
      */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY,
-        float width, float height, float scaleX, float scaleY) {
-        draw(region, x, y, originX, originY, width, height, scaleX, scaleY, 0F);
-    }
-
-    /**
-     * @see SpriteBatch#draw(TextureRegion, float, float,
-     *      float, float, float, float, float, float, float)
-     */
-    public void draw(TextureRegion region, float x, float y, float originX, float originY,
-        float width, float height, float scaleX, float scaleY, float rotation) {
+    public void draw(TextureRegion region, float x, float y, float scaleX, float scaleY,
+        float originX, float originY, float rotation) {
         this.startDrawingSprite();
-        batch.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
+        float mOriginX = originX * scaleX;
+        float mOriginY = originY * scaleY;
+        batch.draw(region, x - mOriginX, y - mOriginY, mOriginX, mOriginY,
+            region.getRegionWidth() * scaleX, region.getRegionHeight() * scaleY, 1F, 1F, rotation);
     }
 
     // ---------------- renderer methods ----------------
@@ -547,34 +552,32 @@ public class MultiRenderer {
      * @param lineThickness the thickness of the drawn line
      * @param points the vertices of the polygon
      */
-    public void drawPolygon(float lineThickness, Vector2... points) {
-        this.drawPolygonOutline(lineThickness, true, points);
-    }
+    public void drawPolygon(float lineThickness, Vector2... points){
+    this.drawPolygonOutline(lineThickness, true, points);}
 
-    /**
-     * Draws the outline of a polygon by drawing a line between
-     * each of the provided points. The polygon will be left
-     * open, leaving a missing edge connecting the last and
-     * first points.
-     * 
-     * @param lineThickness the thickness of the drawn line
-     * @param points the vertices of the polygon
-     */
-    public void drawOpenPolygon(float lineThickness, Vector2... points) {
-        this.drawPolygonOutline(lineThickness, false, points);
-    }
+/**
+ * Draws the outline of a polygon by drawing a line between
+ * each of the provided points. The polygon will be left
+ * open, leaving a missing edge connecting the last and
+ * first points.
+ * 
+ * @param lineThickness the thickness of the drawn line
+ * @param points the vertices of the polygon
+ */
+public void drawOpenPolygon(float lineThickness, Vector2... points) {
+    this.drawPolygonOutline(lineThickness, false, points);}
 
-    /**
-     * Internal method.
-     * 
-     * <p>Implements drawing the outline of an open and closed
-     * polygon outline.</p>
-     * 
-     * @see #drawPolygon(float, Vector2...)
-     * @see #drawOpenPolygon(float, Vector2...)
-     */
-    private void drawPolygonOutline(float lineThickness, boolean close, Vector2... points) {
-        if (points.length < 3) {
+/**
+ * Internal method.
+ * 
+ * <p>Implements drawing the outline of an open and closed
+ * polygon outline.</p>
+ * 
+ * @see #drawPolygon(float, Vector2...)
+ * @see #drawOpenPolygon(float, Vector2...)
+ */
+private void drawPolygonOutline(float lineThickness, boolean close, Vector2... points) {
+    if (points.length < 3) {
             return; // Won't draw anything; does not have at least 3 edges.
         }
 
