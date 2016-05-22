@@ -2,11 +2,11 @@
 	"version": 0,
 	"sprites": {
 		"grid": {
-			"sizeX": 30,
-			"sizeY": 15
+			"sizeX": 30, // horizontal size of the sheet grid
+			"sizeY": 15 // vertical size of the sheet grid
 		},
 		"meta": {
-			"0": { // bunch of metas
+			"0": { // bunch of SpriteMetas, key defines target sprite index
 				"originX": 12,
 				"wrapX": 4
 			},
