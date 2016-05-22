@@ -109,7 +109,7 @@ public class LaunchOptions {
      */
     public int frameCap;
     /**
-     * The directory of the game scripts to launch (where
+     * The directory of the game files to launch with (where
      * main.lua is).
      */
     public File assetDir;
