@@ -162,15 +162,6 @@ public class AudioManager {
     /**
      * Returns the sound under the given key.
      * 
-     * <p>Keys are the names of the directories traversed to
-     * get to the target source file starting from the root
-     * directory, and the name of the target source file
-     * itself with its file extension omitted. The names are
-     * separated by <code>.</code> characters.</p>
-     * 
-     * <p><code>manager.getSound(
-     * "voices.mettaton.mettatonSpeak" )</code></p>
-     * 
      * @param key the key of the target sound
      * 
      * @return the associated Sound instance, or null if not
@@ -183,15 +174,6 @@ public class AudioManager {
     /**
      * Returns the music under the given key.
      * 
-     * <p>Keys are the names of the directories traversed to
-     * get to the target source file starting from the root
-     * directory, and the name of the target source file
-     * itself with its file extension omitted. The names are
-     * separated by <code>.</code> characters.</p>
-     * 
-     * <p><code>manager.getMusic( "combat.bosses.asgore"
-     * )</code></p>
-     * 
      * @param key the key of the target music
      * 
      * @return the associated Music instance, or null if not
@@ -202,8 +184,8 @@ public class AudioManager {
     }
 
     /**
-     * Loads sounds from the provided root directory into
-     * the audio manager.
+     * Loads sounds from the provided root directory and its
+     * subfolders into the audio manager.
      * 
      * @param rootDirectory the directory to load from
      */
@@ -212,8 +194,8 @@ public class AudioManager {
     }
 
     /**
-     * Loads music from the provided root directory into the
-     * audio manager.
+     * Loads music from the provided root directory and its
+     * subfolders into the audio manager.
      * 
      * @param rootDirectory the directory to load from
      */
