@@ -34,7 +34,6 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.scarlet.undertailor.audio.AudioManager;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.input.InputRetriever;
 import me.scarlet.undertailor.resource.ResourceHandler;
@@ -55,10 +54,7 @@ public class Undertailor extends ApplicationAdapter {
 
     private InputRetriever input;
     private MultiRenderer renderer;
-
-    // ---------------- System variables 2 -- Managers, misc. ----------------
-
-    private AudioManager audioManager;
+    private AssetManager assets;
 
     public Undertailor(LaunchOptions options, LwjglApplicationConfiguration lwjglConfig) {
         this.options = options;
@@ -110,31 +106,31 @@ public class Undertailor extends ApplicationAdapter {
         return this.renderer;
     }
 
-    // ---------------- g/s managers, misc. ----------------
-
     /**
-     * Returns the {@link AudioManager}, responsible for
-     * global volumes and tracking audio assets.
+     * Returns the {@link AssetManager} used to direct all
+     * other managers handling loading and tracking of
+     * assets.
      * 
-     * @return the AudioManager
+     * @return the AssetManager
      */
-    public AudioManager getAudioManager() {
-        return this.audioManager;
+    public AssetManager getAssetManager() {
+        return this.assets;
     }
+
+    // ---------------- abstract method implementation ----------------
 
     @Override
     public void create() {
         this.input = new InputRetriever();
         this.renderer = new MultiRenderer();
 
-        this.audioManager = new AudioManager(this);
-
-        // -------- loading --------
+        this.assets = new AssetManager(this);
+        this.assets.loadAll(this.options.assetDir);
     }
 
     @Override
     public void render() {
-        this.audioManager.update(); // update audio
+        this.assets.getAudioManager().update(); // update audio
         this.renderer.clear();
         this.input.update(); // Prepare input for current frame.
 
