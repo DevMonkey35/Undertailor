@@ -99,6 +99,14 @@ public class FileUtil {
      */
     private static Map<String, File> loadWithIdentifiers(Map<String, File> parentMap, String append,
         File root, FileFilter filter) {
+        if (!root.exists()) {
+            root.mkdirs();
+        }
+
+        if (!root.isDirectory()) {
+            throw new IllegalArgumentException("Provided File reference was not a directory");
+        }
+
         for (File file : root.listFiles((FileFilter) file -> {
             return file.isDirectory() || (filter != null ? filter.accept(file) : true);
         })) {
