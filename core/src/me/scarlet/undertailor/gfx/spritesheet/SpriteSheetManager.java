@@ -88,8 +88,8 @@ public class SpriteSheetManager {
             try {
                 this.sheets.put(key,
                     new PackagedSpriteSheet(renderer, key, new ZipFile(targetFile)));
-                log.info("Loaded packaged spritesheet at " + targetFile.getAbsolutePath()
-                    + " under key " + key);
+                log.info(
+                    "Loaded packaged spritesheet " + targetFile.getName() + " under key " + key);
             } catch (Exception e) {
                 String message = "Could not load spritesheet at spritesheet file "
                     + targetFile.getAbsolutePath();
@@ -98,5 +98,7 @@ public class SpriteSheetManager {
                 log.error(message, e);
             }
         }
+
+        log.info(this.sheets.size() + " spritesheet(s) loaded.");
     }
 }

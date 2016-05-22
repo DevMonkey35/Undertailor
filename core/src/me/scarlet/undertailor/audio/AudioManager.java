@@ -259,6 +259,6 @@ public class AudioManager {
             }
         }
 
-        log.info(targetMap.size() + " " + resourceNamePlural.toLowerCase() + " loaded.");
+        log.info(targetMap.size() + " " + resourceNamePlural.toLowerCase() + (audioClass == Music.class ? " tracks(s)" : "") + " loaded.");
     }
 }
