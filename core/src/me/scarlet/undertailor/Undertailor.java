@@ -62,6 +62,10 @@ public class Undertailor extends ApplicationAdapter {
 
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.start();
+
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            System.exit(0);
+        });
     }
 
     // ---------------- g/s core variables ----------------
