@@ -27,7 +27,6 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,6 @@ public class DesktopLauncher extends Application {
     public static void main(String[] args) {
         initRuntime();
         
-        BasicConfigurator.configure();
         String devCheck = System.getenv("tailor-dev-mode");
         if(devCheck != null && devCheck.equalsIgnoreCase("true")) {
             LaunchOptions options = new LaunchOptions(true);
