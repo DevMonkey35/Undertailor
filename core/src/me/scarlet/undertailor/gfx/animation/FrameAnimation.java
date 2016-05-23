@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.animation.FrameAnimation.KeyFrame.KeyFrameData;
 import me.scarlet.undertailor.util.NumberUtil;
+import me.scarlet.undertailor.util.NumberUtil.Interpolator;
 import me.scarlet.undertailor.util.Pair;
 
 import java.util.TreeMap;
@@ -24,6 +25,10 @@ public class FrameAnimation extends Animation {
          * .
          */
         public static class KeyFrameData {
+
+            public static enum Interpolation {
+                LINEAR, EASE_IN, EASE_OUT
+            }
 
             public float x;
             public float y;
@@ -81,14 +86,16 @@ public class FrameAnimation extends Animation {
             public float[] interpolateValues(KeyFrameData to, float progress) {
                 float[] returned = new float[5];
 
-                returned[0] = NumberUtil.interpolateLinearly(this.x, to.x, progress).floatValue();
-                returned[1] = NumberUtil.interpolateLinearly(this.y, to.y, progress).floatValue();
+                Interpolator interpolator = NumberUtil.INTERPOLATOR_LINEAR;
+
+                returned[0] = interpolator.interpolate(this.x, to.x, progress).floatValue();
+                returned[1] = interpolator.interpolate(this.y, to.y, progress).floatValue();
                 returned[2] =
-                    NumberUtil.interpolateLinearly(this.scaleX, to.scaleX, progress).floatValue();
+                    interpolator.interpolate(this.scaleX, to.scaleX, progress).floatValue();
                 returned[3] =
-                    NumberUtil.interpolateLinearly(this.scaleY, to.scaleY, progress).floatValue();
-                returned[4] = NumberUtil.interpolateLinearly(this.rotation, to.rotation, progress)
-                    .floatValue();
+                    interpolator.interpolate(this.scaleY, to.scaleY, progress).floatValue();
+                returned[4] =
+                    interpolator.interpolate(this.rotation, to.rotation, progress).floatValue();
                 return returned;
             }
 
@@ -170,15 +177,17 @@ public class FrameAnimation extends Animation {
 
         this.length = this.frames.firstKey();
     }
-    
+
     public long getRealRuntime() {
         long runtime = this.getRuntime();
         if (this.isLooping()) {
-            if(runtime > this.length) runtime -= this.length * Math.floor((runtime / this.length));
+            if (runtime > this.length)
+                runtime -= this.length * Math.floor((runtime / this.length));
         } else {
-            if(runtime > this.length) runtime = this.length;
+            if (runtime > this.length)
+                runtime = this.length;
         }
-        
+
         return runtime;
     }
 
@@ -233,7 +242,8 @@ public class FrameAnimation extends Animation {
             KeyFrameData first = drawn.getFrameData();
             KeyFrameData second = frames.getSecond().getFrameData();
             long realRuntime = this.getRealRuntime();
-            float currentFrameProgress = (float) (realRuntime - frames.getFirst().getKeyTime()) / (frames.getSecond().getKeyTime() - frames.getFirst().getKeyTime());
+            float currentFrameProgress = (float) (realRuntime - frames.getFirst().getKeyTime())
+                / (frames.getSecond().getKeyTime() - frames.getFirst().getKeyTime());
 
             log.info("Interpolation progress: " + currentFrameProgress);
             float[] interpolation = first.interpolateValues(second, currentFrameProgress);
