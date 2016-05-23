@@ -221,13 +221,9 @@ public class FrameAnimation extends Animation {
     @Override
     public void draw(float x, float y, float scaleX, float scaleY, boolean flipX, boolean flipY,
         float rotation) {
-
-        log.info("Runtime: " + this.getRuntime());
-
         Pair<KeyFrame> frames = this.getCurrentFrame();
         KeyFrame drawn = frames.getFirst();
         if (frames.getSecond() == null) { // last frame? just draw it
-            log.info("Last frame.");
             KeyFrameData data = frames.getFirst().getFrameData();
 
             x += data.x;
@@ -244,9 +240,8 @@ public class FrameAnimation extends Animation {
             long realRuntime = this.getRealRuntime();
             float currentFrameProgress = (float) (realRuntime - frames.getFirst().getKeyTime())
                 / (frames.getSecond().getKeyTime() - frames.getFirst().getKeyTime());
-
-            log.info("Interpolation progress: " + currentFrameProgress);
             float[] interpolation = first.interpolateValues(second, currentFrameProgress);
+            
             x += interpolation[0];
             y += interpolation[1];
             scaleX += interpolation[2];
