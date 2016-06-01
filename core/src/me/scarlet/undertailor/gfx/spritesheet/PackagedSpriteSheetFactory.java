@@ -238,7 +238,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
         if (version != 0) {
             String message = version == -1
                 ? "Cannot continue with an unknown PackagedSpriteSheet configuration version"
-                : "Current version does not support PackagedSpriteSheet configuration version "
+                : "This Undertailor version does not support PackagedSpriteSheet configuration version "
                     + version;
             throw new UnsupportedOperationException(message);
         }
