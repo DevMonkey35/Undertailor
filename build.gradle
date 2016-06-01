@@ -41,7 +41,8 @@ allprojects {
         
         excludes([
             "mod/**",
-            "**/package-info.java"
+            "**/package-info.java",
+            "**/log4j.properties"
         ])
         
         header rootProject.file("LICENSE")
