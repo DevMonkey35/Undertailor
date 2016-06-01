@@ -50,7 +50,7 @@ public class SpriteSheetManager {
     private static Logger log = LoggerFactory.getLogger(SpriteSheetManager.class);
 
     private MultiRenderer renderer;
-    private Map<String, SpriteSheet> sheets;
+    private Map<String, SpriteSheetFactory> sheets;
 
     public SpriteSheetManager(MultiRenderer renderer) {
         this.renderer = renderer;
@@ -67,7 +67,7 @@ public class SpriteSheetManager {
      *         found
      */
     public SpriteSheet getSheet(String name) {
-        return this.sheets.get(name);
+        return this.sheets.get(name).getResource();
     }
 
     /**
@@ -87,7 +87,7 @@ public class SpriteSheetManager {
             File targetFile = files.get(key);
             try {
                 this.sheets.put(key,
-                    new PackagedSpriteSheet(renderer, key, new ZipFile(targetFile)));
+                    new PackagedSpriteSheetFactory(key, renderer, new ZipFile(targetFile)));
                 log.info(
                     "Loaded packaged spritesheet " + targetFile.getName() + " under key " + key);
             } catch (Exception e) {

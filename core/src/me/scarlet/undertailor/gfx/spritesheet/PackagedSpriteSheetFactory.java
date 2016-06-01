@@ -41,26 +41,98 @@ import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.exception.BadAssetException;
 import me.scarlet.undertailor.gfx.MultiRenderer;
+import me.scarlet.undertailor.gfx.spritesheet.PackagedSpriteSheetFactory.PackagedSpriteSheet;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite.SpriteMeta;
 import me.scarlet.undertailor.resource.Resource;
+import me.scarlet.undertailor.resource.ResourceFactory;
 import me.scarlet.undertailor.util.StreamUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.zip.ZipFile;
 
 /**
- * The default format for spritesheets, where the sheet and
- * the accompanying data is packaged inside a zip file.
+ * {@link ResourceFactory} implementation for generating
+ * {@link PackagedSpriteSheetFactory.PackagedSpriteSheet}
+ * instances.
  */
-public class PackagedSpriteSheet extends Resource<Texture> implements SpriteSheet {
+public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, PackagedSpriteSheet>
+    implements SpriteSheetFactory {
 
-    static Logger log = LoggerFactory.getLogger(PackagedSpriteSheet.class);
+    /**
+     * {@link Resource} implementation for interfacing with
+     * {@link Texture} images split into separate regions to
+     * form {@link Sprite}s.
+     */
+    public static class PackagedSpriteSheet extends Resource<Texture> implements SpriteSheet {
+
+        private PackagedSpriteSheetFactory factory;
+        private Map<Integer, WeakReference<Sprite>> sprites;
+
+        public PackagedSpriteSheet(PackagedSpriteSheetFactory factory) {
+            this.factory = factory;
+            this.sprites = new WeakHashMap<>();
+        }
+
+        // ---------------- abstract method implementation ----------------
+
+        @Override
+        public String getSheetName() {
+            return factory.name;
+        }
+
+        /*
+         * Why?
+         * 
+         * You could just return factory.sprites.get(index)!
+         * 
+         * ----
+         * 
+         * The issue there is that the sprites stored by the
+         * factory are not owned by any SpriteSheet.
+         * Ownership is determined by that single
+         * sourceSheet variable. The reason that variable
+         * exists is to keep the SpriteSheet from becoming
+         * weakly reachable while the Sprite object is in
+         * use, as if it becomes weakly reachable then the
+         * ResourceHandler determines it as garbage,
+         * disposing the Texture too early.
+         */
+        @Override
+        public Sprite getSprite(int index) {
+            if (sprites.get(index) == null || sprites.get(index).get() == null) {
+                Sprite original = factory.sprites.get(index);
+                Sprite newSprite =
+                    new Sprite(factory.renderer, original.getTextureRegion(), original.getMeta());
+                newSprite.sourceSheet = this;
+                sprites.put(index, new WeakReference<>(newSprite));
+            }
+
+            return sprites.get(index).get();
+        }
+
+        @Override
+        public Collection<Sprite> getSprites() {
+            Set<Sprite> sprites = new HashSet<Sprite>();
+            for (int i = 0; i < factory.sprites.size(); i++) {
+                sprites.add(this.getSprite(i));
+            }
+
+            return sprites;
+        }
+    }
+
+    static Logger log = LoggerFactory.getLogger(PackagedSpriteSheetFactory.class);
 
     public static final String ENTRY_SPRITESHEET = "spritesheet.png";
     public static final String ENTRY_SHEETCONFIG = "spritesheet.json";
@@ -71,10 +143,11 @@ public class PackagedSpriteSheet extends Resource<Texture> implements SpriteShee
     private List<Sprite> sprites;
     private ConfigurationNode sheetConfig;
 
-    public PackagedSpriteSheet(MultiRenderer renderer, String name, ZipFile sourceFile) {
+    public PackagedSpriteSheetFactory(String name, MultiRenderer renderer, ZipFile sourceFile) {
         this.name = name;
         this.renderer = renderer;
         this.sourceFile = sourceFile;
+
         this.sprites = new ArrayList<>();
 
         InputStream configStream = null; // load the configuration json inside the archive for later reading
@@ -96,12 +169,7 @@ public class PackagedSpriteSheet extends Resource<Texture> implements SpriteShee
     // ---------------- abstract method implementation ----------------
 
     @Override
-    protected void onDispose() {
-        this.sprites.clear();
-    }
-
-    @Override
-    protected Texture newReference() {
+    protected Texture newDisposable() {
         InputStream textureStream = null;
         try { // load the spritesheet here
             textureStream = sourceFile.getInputStream(sourceFile.getEntry(ENTRY_SPRITESHEET));
@@ -122,25 +190,23 @@ public class PackagedSpriteSheet extends Resource<Texture> implements SpriteShee
     }
 
     @Override
-    protected Class<Texture> getResourceClass() {
-        return Texture.class;
+    protected PackagedSpriteSheet newResource() {
+        return new PackagedSpriteSheet(this);
     }
 
     @Override
-    public String getSheetName() {
-        return this.name;
+    protected void onDispose() {
+        this.sprites.clear();
     }
 
     @Override
-    public Sprite getSprite(int index) {
-        this.getReference();
-        return this.sprites.get(index);
+    protected boolean disposeOnGameThread() {
+        return true;
     }
 
     @Override
-    public Collection<Sprite> getSprites() {
-        this.getReference();
-        return this.sprites;
+    public boolean isDisposable(Texture disposable) {
+        return true;
     }
 
     // ---------------- configuration loader ----------------
@@ -170,9 +236,10 @@ public class PackagedSpriteSheet extends Resource<Texture> implements SpriteShee
     private void loadSheet(Texture texture) throws BadAssetException { // implementing version 0
         int version = this.sheetConfig.getNode(KEY_VERSION).getInt(-1);
         if (version != 0) {
-            String message = version == -1 ?
-                "Cannot continue with an unknown PackagedSpriteSheet configuration version"
-                : "Current version does not support PackagedSpriteSheet configuration version " + version;
+            String message = version == -1
+                ? "Cannot continue with an unknown PackagedSpriteSheet configuration version"
+                : "Current version does not support PackagedSpriteSheet configuration version "
+                    + version;
             throw new UnsupportedOperationException(message);
         }
 
@@ -207,11 +274,8 @@ public class PackagedSpriteSheet extends Resource<Texture> implements SpriteShee
                     wrapY = meta.wrapY;
                 }
 
-                Sprite added = new Sprite(
-                    this.renderer, new TextureRegion(texture, x * spriteWidth,
-                        y * spriteHeight, spriteWidth - wrapX, spriteHeight - wrapY),
-                    meta);
-                added.sourceSheet = this; // prevents weakly-reachable state if in use
+                Sprite added = new Sprite(this.renderer, new TextureRegion(texture, x * spriteWidth,
+                    y * spriteHeight, spriteWidth - wrapX, spriteHeight - wrapY), meta);
                 this.sprites.add(added);
             }
         }

@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.audio.MusicFactory.Music;
+import me.scarlet.undertailor.audio.SoundFactory.Sound;
 import me.scarlet.undertailor.util.BoundedFloat;
 import me.scarlet.undertailor.util.FileUtil;
 
@@ -168,7 +170,7 @@ public class AudioManager {
      *         found
      */
     public Sound getSound(String key) {
-        return (Sound) this.sounds.get(key);
+        return (Sound) ((SoundFactory) this.sounds.get(key)).getResource();
     }
 
     /**
@@ -180,7 +182,7 @@ public class AudioManager {
      *         found
      */
     public Music getMusic(String key) {
-        return (Music) this.music.get(key);
+        return (Music) ((MusicFactory) this.music.get(key)).getResource();
     }
 
     /**
@@ -249,8 +251,8 @@ public class AudioManager {
                         + " is replacing a previous entry under the key " + key);
                 }
 
-                targetMap.put(key, audioClass == Music.class ? new Music(this, key, audioFile)
-                    : new Sound(this, key, audioFile));
+                targetMap.put(key, audioClass == Music.class ? new MusicFactory(key, this, audioFile)
+                    : new SoundFactory(key, this, audioFile));
                 log.debug("Loaded " + resourceName.toLowerCase() + " " + audioFile.getName()
                     + " under key " + key);
             } catch (UnsupportedAudioFileException e) {
