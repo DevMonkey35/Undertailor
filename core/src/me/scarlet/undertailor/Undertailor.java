@@ -60,8 +60,7 @@ public class Undertailor extends ApplicationAdapter {
         this.options = options;
         this.lwjglConfig = lwjglConfig;
 
-        ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.start();
+        new ResourceHandler().start();
 
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             log.error("Uncaught exception. Program will close.", e);
