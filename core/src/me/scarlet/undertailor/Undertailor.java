@@ -64,7 +64,7 @@ public class Undertailor extends ApplicationAdapter {
 
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             log.error("Uncaught exception. Program will close.", e);
-            System.exit(0);
+            this.exit();
         });
     }
 
@@ -139,5 +139,11 @@ public class Undertailor extends ApplicationAdapter {
         this.input.update(); // Prepare input for current frame.
 
         this.renderer.flush(); // Flush graphics for next frame.
+    }
+
+    // ---------------- methods ----------------
+
+    void exit() {
+        System.exit(0); // TODO proper exit
     }
 }
