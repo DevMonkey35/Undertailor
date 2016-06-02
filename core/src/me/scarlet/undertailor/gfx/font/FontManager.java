@@ -88,6 +88,8 @@ public class FontManager {
             try {
                 Font font = new Font(key, this.renderer, new ZipFile(fontFile));
                 this.fonts.put(key, font);
+                
+                log.info("Loaded font " + fontFile.getName() + " under key " + key);
             } catch (Exception e) {
                 String message = "Could not load font at font file " + fontFile.getAbsolutePath();
                 if (e instanceof IOException)
