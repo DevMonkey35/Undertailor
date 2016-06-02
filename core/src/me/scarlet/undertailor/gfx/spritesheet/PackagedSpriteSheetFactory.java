@@ -251,7 +251,8 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
         int gridX = this.sheetConfig.getNode(KEY_GRID_SIZE_X).getInt(0);
         int gridY = this.sheetConfig.getNode(KEY_GRID_SIZE_Y).getInt(0);
 
-        if (texture.getWidth() % gridX != 0 || texture.getHeight() % gridY != 0) {
+        if (gridX <= 0 || gridY <= 0 || texture.getWidth() % gridX != 0
+            || texture.getHeight() % gridY != 0) {
             throw new BadAssetException("Incorrectly configured spritesheet with bad grid size");
         }
 
