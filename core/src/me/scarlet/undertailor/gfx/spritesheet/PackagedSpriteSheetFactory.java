@@ -271,17 +271,19 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
                 if (!metaNode.isVirtual()) {
                     meta = new SpriteMeta(metaNode.getNode(KEY_META_ORIGINX).getFloat(0),
                         metaNode.getNode(KEY_META_ORIGINY).getFloat(0),
-                        metaNode.getNode(KEY_META_WRAPX).getInt(0),
-                        metaNode.getNode(KEY_META_WRAPY).getInt(0),
                         metaNode.getNode(KEY_META_OFFX).getInt(0),
-                        metaNode.getNode(KEY_META_OFFY).getInt(0));
+                        metaNode.getNode(KEY_META_OFFY).getInt(0),
+                        metaNode.getNode(KEY_META_WRAPX).getInt(0),
+                        metaNode.getNode(KEY_META_WRAPY).getInt(0));
 
                     wrapX = meta.wrapX;
                     wrapY = meta.wrapY;
                 }
 
-                Sprite added = new Sprite(this.renderer, new TextureRegion(texture, x * spriteWidth,
-                    y * spriteHeight, spriteWidth - wrapX, spriteHeight - wrapY), meta);
+                Sprite added = new Sprite(
+                    this.renderer, new TextureRegion(texture, x * spriteWidth,
+                        (y * spriteHeight) + wrapY, spriteWidth - wrapX, spriteHeight - wrapY),
+                    meta);
                 this.sprites.add(added);
             }
         }
