@@ -111,7 +111,7 @@ public class FileUtil {
             return file.isDirectory() || (filter != null ? filter.accept(file) : true);
         })) {
             String identifier =
-                (append == null ? "" : append + ".") + file.getName().split("\\.")[0];
+                (append == null ? "" : append + ".") + file.getName().split("\\.")[0].replaceAll(" ", "_");
             if (file.isDirectory()) {
                 loadWithIdentifiers(parentMap, identifier, file, filter);
             } else {
