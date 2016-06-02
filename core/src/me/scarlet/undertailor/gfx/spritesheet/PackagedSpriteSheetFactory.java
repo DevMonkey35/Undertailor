@@ -133,7 +133,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
 
         @Override
         public int getSpriteCount() {
-            return 0;
+            return factory.sprites.size();
         }
     }
 
