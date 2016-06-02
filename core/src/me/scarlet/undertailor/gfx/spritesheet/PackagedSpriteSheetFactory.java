@@ -130,6 +130,11 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
 
             return sprites;
         }
+
+        @Override
+        public int getSpriteCount() {
+            return 0;
+        }
     }
 
     static Logger log = LoggerFactory.getLogger(PackagedSpriteSheetFactory.class);

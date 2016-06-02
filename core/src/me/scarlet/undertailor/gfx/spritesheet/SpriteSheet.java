@@ -36,7 +36,7 @@ import java.util.Collection;
  * Skeleton implementation of a spritesheet.
  */
 public interface SpriteSheet {
-    
+
     /**
      * Returns the name assigned to this {@link SpriteSheet}
      * .
@@ -44,7 +44,7 @@ public interface SpriteSheet {
      * @return the name of this SpriteSheet
      */
     public String getSheetName();
-    
+
     /**
      * Returns the sprite stored at the given index of this
      * {@link SpriteSheet}.
@@ -55,7 +55,7 @@ public interface SpriteSheet {
      *         null if not found
      */
     public Sprite getSprite(int index);
-    
+
     /**
      * Returns a read-only collection of all the sprites
      * held by this {@link SpriteSheet}.
@@ -63,4 +63,19 @@ public interface SpriteSheet {
      * @return a Collection of Sprites
      */
     public Collection<Sprite> getSprites();
+
+    /**
+     * Returns the number of {@link Sprite}s held by this
+     * {@link SpriteSheet}.
+     * 
+     * <p>For factory-generated SpriteSheets, this method
+     * proves more efficient than simply calling
+     * {@link Collection#size()} on the value returned by
+     * {@link #getSprites()}, since the sheet can simply
+     * return the count of sprites held by its factory.</p>
+     * 
+     * @return the number of Sprites this SpriteSheet
+     *         contains
+     */
+    public int getSpriteCount();
 }
