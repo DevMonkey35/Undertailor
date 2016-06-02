@@ -266,7 +266,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
                 int wrapY = 0;
 
                 SpriteMeta meta = null;
-                KEY_META_LIST[2] = pos;
+                KEY_META_LIST[2] = "" + pos;
                 ConfigurationNode metaNode = this.sheetConfig.getNode(KEY_META_LIST);
                 if (!metaNode.isVirtual()) {
                     meta = new SpriteMeta(metaNode.getNode(KEY_META_ORIGINX).getFloat(0),
