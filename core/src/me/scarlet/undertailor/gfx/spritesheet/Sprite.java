@@ -41,6 +41,8 @@ public class Sprite implements Renderable {
 
     // ---------------- static classes ----------------
 
+    public static final SpriteMeta DEFAULT_META = new SpriteMeta();
+
     /**
      * Metadata for sprite rendering offsets.
      */
@@ -82,7 +84,7 @@ public class Sprite implements Renderable {
     public Sprite(MultiRenderer renderer, TextureRegion sprite, SpriteMeta meta) {
         this.renderer = renderer;
         this.region = sprite;
-        this.meta = meta;
+        this.meta = meta == null ? DEFAULT_META : meta;
     }
 
     // ---------------- g/s ---------------- 
