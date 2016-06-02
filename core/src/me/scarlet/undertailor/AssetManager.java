@@ -31,6 +31,7 @@
 package me.scarlet.undertailor;
 
 import me.scarlet.undertailor.audio.AudioManager;
+import me.scarlet.undertailor.gfx.font.FontManager;
 import me.scarlet.undertailor.gfx.spritesheet.SpriteSheetManager;
 
 import java.io.File;
@@ -39,21 +40,24 @@ import java.io.File;
  * Manager class for all the managers.
  */
 public class AssetManager {
-    
+
     public static final String DIR_AUDIO_SOUND = "sounds";
     public static final String DIR_AUDIO_MUSIC = "music";
     public static final String DIR_SPRITES = "sprites";
-    
+    public static final String DIR_FONTS = "fonts";
+
+    private FontManager font;
     private AudioManager audio;
     private SpriteSheetManager sprites;
-    
+
     public AssetManager(Undertailor undertailor) {
+        this.font = new FontManager(undertailor.getRenderer());
         this.audio = new AudioManager(undertailor);
         this.sprites = new SpriteSheetManager(undertailor.getRenderer());
     }
-    
+
     // ---------------- functional methods ----------------
-    
+
     /**
      * Directs underlying managers to load all their assets
      * from their specified folders within the given root
@@ -65,10 +69,11 @@ public class AssetManager {
         this.audio.loadSounds(new File(rootDirectory, DIR_AUDIO_MUSIC));
         this.audio.loadMusic(new File(rootDirectory, DIR_AUDIO_MUSIC));
         this.sprites.loadSpriteSheets(new File(rootDirectory, DIR_SPRITES));
+        this.font.loadFonts(new File(rootDirectory, DIR_FONTS));
     }
-    
+
     // ---------------- g/s managers ----------------
-    
+
     /**
      * Returns the underlying {@link AudioManager}.
      * 
@@ -77,7 +82,7 @@ public class AssetManager {
     public AudioManager getAudioManager() {
         return this.audio;
     }
-    
+
     /**
      * Returns the underlying {@link SpriteSheetManager}.
      * 
@@ -85,5 +90,14 @@ public class AssetManager {
      */
     public SpriteSheetManager getSpriteSheetManager() {
         return this.sprites;
+    }
+
+    /**
+     * Returns the underlying {@link FontManager}.
+     * 
+     * @return the FontManager
+     */
+    public FontManager getFontManager() {
+        return this.font;
     }
 }

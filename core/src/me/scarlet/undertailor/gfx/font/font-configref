@@ -1,0 +1,15 @@
+{ // cfg version 0
+	"version": 0,
+	"font" {
+		"characterSet": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`1234567890-=[]\\;',./~!@#$%^&*()_+{}|:\"<>?",
+		"letterSpacing": 2,
+		"spaceLength": 8,
+		"meta": {
+			"A": {
+				"letterSpacing": 2, // specific letter spacing for certain characters, for each side of the letter
+				"letterSpacingLeft": 2, // specific letter spacing to the left for this character
+				"letterSpacingRight": 2 // specific letter spacing to the right for this character
+			}
+		}
+	}
+}
