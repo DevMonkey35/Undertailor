@@ -4,6 +4,7 @@
 		"characterSet": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`1234567890-=[]\\;',./~!@#$%^&*()_+{}|:\"<>?",
 		"letterSpacing": 2,
 		"spaceLength": 8,
+		"lineSize": 13,
 		"meta": {
 			"A": {
 				"letterSpacing": 2, // specific letter spacing for certain characters, for each side of the letter

@@ -67,6 +67,7 @@ public class Font {
 
     private PackagedSpriteSheet sheet;
 
+    private int lineSize;
     private int spaceLength;
     private String characterList;
     private Pair<Integer> defaultLetterSpacing;
@@ -102,6 +103,16 @@ public class Font {
     }
 
     // ---------------- g/s font variables ----------------
+
+    /**
+     * Returns the count of vertical units to preserve for a
+     * single line.
+     * 
+     * @return the size of a line written in this font
+     */
+    public int getLineSize() {
+        return this.lineSize;
+    }
 
     /**
      * Returns the count of units to skip to represent a
@@ -166,6 +177,7 @@ public class Font {
     private static Object[] KEY_CHARACTER_SET = {"font", "characterSet"};
     private static Object[] KEY_LETTER_SPACING = {"font", "letterSpacing"};
     private static Object[] KEY_SPACE_LENGTH = {"font", "spaceLength"};
+    private static Object[] KEY_LINE_SIZE = {"font", "lineSize"};
 
     private static Object[] KEY_META_LIST = {"font", "meta", null};
     // inside a meta block
@@ -224,6 +236,16 @@ public class Font {
                 return "Unsupported space length value (cannot be < 0)";
             }
 
+            return null;
+        });
+
+        // font.lineSize
+        checkExists(rootNode.getNode(KEY_LINE_SIZE));
+        this.lineSize = checkValue(rootNode.getNode(KEY_LINE_SIZE).getInt(-1), value -> {
+            if(value <= 0) {
+                return "Unsupported line size value (cannot be <= 0)";
+            }
+            
             return null;
         });
 
