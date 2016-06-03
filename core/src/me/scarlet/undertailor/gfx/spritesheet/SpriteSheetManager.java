@@ -67,7 +67,11 @@ public class SpriteSheetManager {
      *         found
      */
     public SpriteSheet getSheet(String name) {
-        return this.sheets.get(name).getResource();
+        if (this.sheets.containsKey(name)) {
+            return this.sheets.get(name).getResource();
+        }
+
+        return null;
     }
 
     /**

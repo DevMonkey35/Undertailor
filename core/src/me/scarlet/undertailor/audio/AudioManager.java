@@ -170,7 +170,11 @@ public class AudioManager {
      *         found
      */
     public Sound getSound(String key) {
-        return (Sound) ((SoundFactory) this.sounds.get(key)).getResource();
+        if (this.sounds.containsKey(key)) {
+            return (Sound) ((SoundFactory) this.sounds.get(key)).getResource();
+        }
+
+        return null;
     }
 
     /**
@@ -182,7 +186,11 @@ public class AudioManager {
      *         found
      */
     public Music getMusic(String key) {
-        return (Music) ((MusicFactory) this.music.get(key)).getResource();
+        if (this.music.containsKey(key)) {
+            return (Music) ((MusicFactory) this.music.get(key)).getResource();
+        }
+
+        return null;
     }
 
     /**
@@ -251,8 +259,9 @@ public class AudioManager {
                         + " is replacing a previous entry under the key " + key);
                 }
 
-                targetMap.put(key, audioClass == Music.class ? new MusicFactory(key, this, audioFile)
-                    : new SoundFactory(key, this, audioFile));
+                targetMap.put(key,
+                    audioClass == Music.class ? new MusicFactory(key, this, audioFile)
+                        : new SoundFactory(key, this, audioFile));
                 log.debug("Loaded " + resourceName.toLowerCase() + " " + audioFile.getName()
                     + " under key " + key);
             } catch (UnsupportedAudioFileException e) {
@@ -261,6 +270,7 @@ public class AudioManager {
             }
         }
 
-        log.info(targetMap.size() + " " + resourceNamePlural.toLowerCase() + (audioClass == Music.class ? " tracks(s)" : "") + " loaded.");
+        log.info(targetMap.size() + " " + resourceNamePlural.toLowerCase()
+            + (audioClass == Music.class ? " tracks(s)" : "") + " loaded.");
     }
 }
