@@ -65,6 +65,7 @@ public class Font {
     static final Logger log = LoggerFactory.getLogger(Font.class);
     public static final String ENTRY_FONT_CONFIG = "font.json";
 
+    private MultiRenderer renderer;
     private PackagedSpriteSheet sheet;
 
     private int lineSize;
@@ -79,6 +80,7 @@ public class Font {
             new PackagedSpriteSheetFactory("#fnt-" + fontName, renderer, sourceFile);
         this.sheet = sheetFactory.getResource();
         this.letterSpacing = new HashMap<>();
+        this.renderer = renderer;
 
         InputStream configStream = null; // load the configuration json inside the archive for later reading
         try {
@@ -100,6 +102,16 @@ public class Font {
         } finally {
             StreamUtil.closeQuietly(configStream);
         }
+    }
+
+    // ---------------- g/s core variables ----------------
+
+    /**
+     * Returns the {@link MultiRenderer} assigned to this
+     * {@link Font}.
+     */
+    public MultiRenderer getRenderer() {
+        return renderer;
     }
 
     // ---------------- g/s font variables ----------------
