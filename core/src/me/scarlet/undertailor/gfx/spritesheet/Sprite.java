@@ -33,6 +33,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
+import me.scarlet.undertailor.gfx.Transform;
 
 /**
  * A pre-made texture that can be drawn on-screen.
@@ -113,7 +114,8 @@ public class Sprite implements Renderable {
     // ---------------- draw methods ----------------
 
     @Override
-    public void draw(float posX, float posY, float scaleX, float scaleY, boolean flipX, boolean flipY, float rotation) {
+    public void draw(float posX, float posY, Transform transform) {
+        if(transform == null) transform = Transform.DUMMY;
         float originX = 0, originY = 0;
         int offX = 0, offY = 0;
         
@@ -124,11 +126,11 @@ public class Sprite implements Renderable {
             offY = meta.offY;
         }
         
-        float x = posX + (offX * scaleX);
-        float y = posY + (offY * scaleY); 
+        float x = posX + (offX * transform.getScaleX());
+        float y = posY + (offY * transform.getScaleY()); 
         
-        region.flip(flipX, flipY);
-        renderer.draw(this.region, x, y, scaleX, scaleY, originX, originY, rotation);
-        region.flip(flipX, flipY);
+        region.flip(transform.getFlipX(), transform.getFlipY());
+        renderer.draw(this.region, x, y, transform.getScaleX(), transform.getScaleY(), originX, originY, transform.getRotation());
+        region.flip(transform.getFlipX(), transform.getFlipY());
     }
 }

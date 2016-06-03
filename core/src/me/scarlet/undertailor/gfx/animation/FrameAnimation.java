@@ -30,10 +30,8 @@
 
 package me.scarlet.undertailor.gfx.animation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import me.scarlet.undertailor.gfx.Renderable;
+import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.gfx.animation.FrameAnimation.KeyFrame.KeyFrameData;
 import me.scarlet.undertailor.util.NumberUtil;
 import me.scarlet.undertailor.util.NumberUtil.Interpolator;
@@ -201,6 +199,12 @@ public class FrameAnimation extends Animation {
         }
     }
 
+    private static final Transform PROXY_TRANSFORM;
+
+    static {
+        PROXY_TRANSFORM = new Transform();
+    }
+
     private long length;
     private TreeMap<Long, KeyFrame> frames;
     private Pair<KeyFrame> returnBuffer;
@@ -256,11 +260,12 @@ public class FrameAnimation extends Animation {
         return returnBuffer;
     }
 
-    static Logger log = LoggerFactory.getLogger(FrameAnimation.class);
-
     @Override
-    public void draw(float x, float y, float scaleX, float scaleY, boolean flipX, boolean flipY,
-        float rotation) {
+    public void draw(float x, float y, Transform transform) {
+        if (transform == null)
+            transform = Transform.DUMMY;
+
+        Transform drawnTransform = transform.copy(PROXY_TRANSFORM);
         Pair<KeyFrame> frames = this.getCurrentFrame();
         KeyFrame drawn = frames.getFirst();
         if (frames.getSecond() == null) { // last frame? just draw it
@@ -268,11 +273,11 @@ public class FrameAnimation extends Animation {
 
             x += data.x;
             y += data.y;
-            scaleX += data.scaleX;
-            scaleY += data.scaleY;
-            flipX = flipX && data.flipX;
-            flipY = flipY && data.flipY;
-            rotation += data.rotation;
+            drawnTransform.addScaleX(data.scaleX);
+            drawnTransform.addScaleY(data.scaleY);
+            drawnTransform.setFlipX(transform.getFlipX() && data.flipX);
+            drawnTransform.setFlipY(transform.getFlipY() && data.flipY);
+            drawnTransform.addRotation(data.rotation);
         } else {
             // interpolation
             KeyFrameData first = drawn.getFrameData();
@@ -281,17 +286,17 @@ public class FrameAnimation extends Animation {
             float currentFrameProgress = (float) (realRuntime - frames.getFirst().getKeyTime())
                 / (frames.getSecond().getKeyTime() - frames.getFirst().getKeyTime());
             float[] interpolation = first.interpolateValues(second, currentFrameProgress);
-            
+
             x += interpolation[0];
             y += interpolation[1];
-            scaleX += interpolation[2];
-            scaleY += interpolation[3];
-            rotation += interpolation[4];
+            drawnTransform.addScaleX(interpolation[2]);
+            drawnTransform.addScaleY(interpolation[3]);
+            drawnTransform.addRotation(interpolation[4]);
 
-            flipX = flipX && first.flipX;
-            flipY = flipY && first.flipY;
+            drawnTransform.setFlipX(transform.getFlipX() && first.flipX);
+            drawnTransform.setFlipY(transform.getFlipY() && first.flipY);
         }
 
-        drawn.getFrame().draw(x, y, scaleX, scaleY, flipX, flipY, rotation);
+        drawn.getFrame().draw(x, y, drawnTransform);
     }
 }
