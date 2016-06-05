@@ -44,6 +44,21 @@ public interface TextStyle {
 
         public float offX, offY, scaleX, scaleY, rotation;
 
+        public DisplayMeta() {
+            this.reset();
+        }
+
+        /**
+         * Resets the values within this {@link DisplayMeta}
+         * to their defaults.
+         */
+        public void reset() {
+            this.offX = 0;
+            this.offY = 0;
+            this.scaleX = 1;
+            this.scaleY = 1;
+            this.rotation = 0;
+        }
     }
 
     /**
@@ -67,5 +82,5 @@ public interface TextStyle {
      * @param textLength the length of the entire Text that
      *        the owning component belongs to
      */
-    void applyCharacter(DisplayMeta meta, long time, char character, int charIndex, int textLength);
+    void apply(DisplayMeta meta, long time, char character, int charIndex, int textLength);
 }

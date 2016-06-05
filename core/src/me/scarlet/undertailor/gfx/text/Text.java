@@ -31,11 +31,13 @@
 package me.scarlet.undertailor.gfx.text;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite.SpriteMeta;
+import me.scarlet.undertailor.gfx.text.TextStyle.DisplayMeta;
 import me.scarlet.undertailor.util.Pair;
 
 import java.util.Collection;
@@ -132,6 +134,17 @@ public class Text extends TextComponent implements Renderable {
         }
     }
 
+    private static final DisplayMeta DISPLAY_META;
+
+    static {
+        DISPLAY_META = new DisplayMeta();
+    }
+
+    static DisplayMeta generateDisplayMeta() {
+        DISPLAY_META.reset();
+        return DISPLAY_META;
+    }
+
     /**
      * Returns a new {@link Builder} instance to build a new
      * {@link Text}.
@@ -147,17 +160,26 @@ public class Text extends TextComponent implements Renderable {
     private int lineCount;
     private Transform transform;
     private Pair<Float> spaceTaken;
+    private long instantiationTime;
     private Pair<Integer> stringBounds;
     private TreeMap<Integer, TextComponent> components; // integer marks start index of the component
+
+    // objects held so we don't spam new objects
+    private Pair<Integer> m_valuePair;
+    private Transform m_drawnTransform;
 
     private Text() {
         this.components = new TreeMap<>((Integer i1, Integer i2) -> {
             return Integer.compare(i1, i2);
         });
 
+        this.instantiationTime = TimeUtils.millis();
         this.stringBounds = new Pair<>(-1, -1);
         this.spaceTaken = new Pair<>(-1F, -1F);
         this.transform = new Transform();
+
+        this.m_valuePair = new Pair<>();
+        this.m_drawnTransform = new Transform();
     }
 
     // ---------------- abstract method implementation ----------------
@@ -185,7 +207,7 @@ public class Text extends TextComponent implements Renderable {
         dY = y;
 
         this.processCharacters((localIndex, component) -> {
-            char character = component.getText().charAt(localIndex);
+            char character = component.getText().charAt(localIndex.getSecond());
 
             if (character == ' ') {
                 dX += font.getSpaceLength() * transform.getScaleX();
@@ -194,24 +216,57 @@ public class Text extends TextComponent implements Renderable {
                 dY -= font.getLineSize() * transform.getScaleY();
             } else {
                 Sprite sprite = this.font.getCharacterSprite(character);
-                SpriteMeta meta = sprite.getMeta();
+                SpriteMeta sMeta = sprite.getMeta();
                 Pair<Float> letterSpacing = font.getLetterSpacing(character);
+                this.m_drawnTransform = this.transform.copy(this.m_drawnTransform);
 
-                if (letterSpacing.getFirst() > spacing) {
-                    dX += letterSpacing.getFirst() - spacing;
+                DisplayMeta dMeta = Text.generateDisplayMeta();
+                if (!component.getStyles().isEmpty()) {
+                    component.getStyles().forEach(style -> {
+                        style.apply(dMeta, this.instantiationTime, character,
+                            localIndex.getFirst() + localIndex.getSecond(),
+                            this.getText().length());
+                    });
+
+                    this.m_drawnTransform
+                        .setScaleX(this.m_drawnTransform.getScaleX() * dMeta.scaleX);
+                    this.m_drawnTransform
+                        .setScaleY(this.m_drawnTransform.getScaleY() * dMeta.scaleY);
+                    this.m_drawnTransform
+                        .setRotation(this.m_drawnTransform.getRotation() + dMeta.rotation);
                 }
 
-                sprite.draw(dX + (meta.originX * transform.getScaleX()),
-                    dY + (meta.originY * transform.getScaleY()), transform);
+                if (letterSpacing.getFirst() > spacing) {
+                    dX += (letterSpacing.getFirst() - spacing) * m_drawnTransform.getScaleX();
+                }
+
+                sprite.draw(dX + ((sMeta.originX + dMeta.offX) * (m_drawnTransform.getScaleX())),
+                    dY + ((sMeta.originY + dMeta.offY) * (m_drawnTransform.getScaleY())),
+                    m_drawnTransform);
 
                 spacing = letterSpacing.getSecond();
-                dX +=
-                    (sprite.getTextureRegion().getRegionWidth() + spacing) * transform.getScaleX();
+                dX += (sprite.getTextureRegion().getRegionWidth() + spacing)
+                    * m_drawnTransform.getScaleX();
             }
         });
     }
 
     // ---------------- getters: immutable/calculated ----------------
+
+    /**
+     * Returns the text of this {@link Text} after applying
+     * its string bounds.
+     * 
+     * @return this Text's bounded text
+     * 
+     * @see #getStringBounds()
+     */
+    public String getBoundedText() {
+        return this.getText().substring(
+            this.getStringBounds().getFirst() == -1 ? 0 : this.getStringBounds().getFirst(),
+            this.getStringBounds().getSecond() == -1 ? this.getText().length()
+                : this.getStringBounds().getSecond());
+    }
 
     /**
      * Returns all the child {@link TextComponent}
@@ -329,8 +384,10 @@ public class Text extends TextComponent implements Renderable {
      * <p>Responsible for DRYing the process of iterating
      * through each character within the string bounds.</p>
      * 
-     * <p>The consumer takes an integer and a TextComponent.
-     * The integer is the index of the current character,
+     * <p>The consumer takes a pair of integers and a
+     * TextComponent. The first integer is the index of the
+     * component's first character in the entire text. The
+     * second integer is the index of the current character,
      * local to the scope of the current TextComponent.</p>
      * 
      * <p>Assume a component with the text content <code>
@@ -343,7 +400,7 @@ public class Text extends TextComponent implements Renderable {
      * @param consumer the consumer that processes each
      *        character
      */
-    private void processCharacters(BiConsumer<Integer, TextComponent> consumer) {
+    private void processCharacters(BiConsumer<Pair<Integer>, TextComponent> consumer) {
         int boundL = this.getStringBounds().getFirst();
         int boundR = this.getStringBounds().getSecond();
 
@@ -363,8 +420,10 @@ public class Text extends TextComponent implements Renderable {
                 localIndex += boundL - entry.getKey();
             }
 
+            this.m_valuePair.setFirst(entry.getKey());
             for (int ind = localIndex; ind < entry.getValue().getText().length(); ind++) {
-                consumer.accept(ind, entry.getValue());
+                this.m_valuePair.setSecond(ind);
+                consumer.accept(this.m_valuePair, entry.getValue());
 
                 if (boundR != -1 && entry.getKey() + ind >= boundR) {
                     return;
@@ -403,7 +462,7 @@ public class Text extends TextComponent implements Renderable {
         dY = font.getLineSize();
 
         this.processCharacters((localIndex, component) -> {
-            char character = component.getText().charAt(localIndex);
+            char character = component.getText().charAt(localIndex.getSecond());
 
             if (character == ' ') {
                 dX += font.getSpaceLength();
@@ -440,14 +499,7 @@ public class Text extends TextComponent implements Renderable {
         if (this.getText().trim().isEmpty()) {
             this.lineCount = 0;
         } else {
-            this.lineCount =
-                this.getText()
-                    .substring(
-                        this.getStringBounds().getFirst() == -1 ? 0
-                            : this.getStringBounds().getFirst(),
-                        this.getStringBounds().getSecond() == -1 ? this.getText().length()
-                            : this.getStringBounds().getSecond())
-                    .trim().split("\n").length;
+            this.lineCount = this.getBoundedText().trim().split("\n").length;
         }
     }
 }
