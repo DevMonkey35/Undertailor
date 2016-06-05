@@ -39,6 +39,10 @@ import me.scarlet.undertailor.util.Pair;
 
 import java.util.TreeMap;
 
+/**
+ * Implementation of an {@link Animation} for frame-by-frame
+ * animations.
+ */
 public class FrameAnimation extends Animation {
 
     /**
@@ -279,6 +283,7 @@ public class FrameAnimation extends Animation {
 
     // ---------------- methods ----------------
 
+    // TODO probably integrate into the base animation class
     public long getRealRuntime() {
         long runtime = this.getRuntime();
         if (this.isLooping()) {
