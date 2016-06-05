@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.gfx;
 
+import com.badlogic.gdx.math.Vector2;
+
 /**
  * Skeleton implementation of something that can be drawn.
  */
@@ -57,11 +59,44 @@ public interface Renderable {
     /**
      * Draws this {@link Renderable} object at the given
      * position.
+     * 
+     * @param pos the position to draw at
+     */
+    public default void draw(Vector2 pos) {
+        this.draw(pos.x, pos.y);
+    }
+
+    /**
+     * Draws this {@link Renderable} object at the given
+     * position.
+     * 
+     * @param x the x coordinate of the position to draw at
+     * @param y the y coordinate of the position to draw at
      */
     public default void draw(float x, float y) {
         this.draw(x, y, this.getTransform());
     }
 
-    public void draw(float x, float y, Transform transform);
+    /**
+     * Draws this {@link Renderable} object at the given
+     * position and the provided {@link Transform}.
+     * 
+     * @param pos the position to draw at
+     * @param transform the transformations to apply to the
+     *        drawn object
+     */
+    public default void draw(Vector2 pos, Transform transform) {
+        this.draw(pos.x, pos.y, transform);
+    }
 
+    /**
+     * Draws this {@link Renderable} object at the given
+     * position and the provided {@link Transform}.
+     * 
+     * @param x the x coordinate of the position to draw at
+     * @param y the y coordinate of the position to draw at
+     * @param transform the transformations to apply to the
+     *        drawn object
+     */
+    public void draw(float x, float y, Transform transform);
 }
