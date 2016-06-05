@@ -208,6 +208,7 @@ public class FrameAnimation extends Animation {
     private long length;
     private TreeMap<Long, KeyFrame> frames;
     private Pair<KeyFrame> returnBuffer;
+    private Transform transform;
 
     public FrameAnimation(KeyFrame... frames) {
         this.returnBuffer = new Pair<>();
@@ -220,7 +221,63 @@ public class FrameAnimation extends Animation {
         }
 
         this.length = this.frames.firstKey();
+        this.transform = new Transform();
     }
+
+    // ---------------- abstract method implementation ----------------
+
+    @Override
+    public Transform getTransform() {
+        return this.transform;
+    }
+
+    @Override
+    public void setTransform(Transform transform) {
+        if(transform == null) {
+            this.transform = Transform.DUMMY.copy(this.transform);
+        } else {
+            this.transform = transform;
+        }
+    }
+
+    @Override
+    public void draw(float x, float y, Transform transform) {
+        Transform drawnTransform = transform.copy(PROXY_TRANSFORM);
+        Pair<KeyFrame> frames = this.getCurrentFrame();
+        KeyFrame drawn = frames.getFirst();
+        if (frames.getSecond() == null) { // last frame? just draw it
+            KeyFrameData data = frames.getFirst().getFrameData();
+
+            x += data.x;
+            y += data.y;
+            drawnTransform.addScaleX(data.scaleX);
+            drawnTransform.addScaleY(data.scaleY);
+            drawnTransform.setFlipX(drawnTransform.getFlipX() && data.flipX);
+            drawnTransform.setFlipY(drawnTransform.getFlipY() && data.flipY);
+            drawnTransform.addRotation(data.rotation);
+        } else {
+            // interpolation
+            KeyFrameData first = drawn.getFrameData();
+            KeyFrameData second = frames.getSecond().getFrameData();
+            long realRuntime = this.getRealRuntime();
+            float currentFrameProgress = (float) (realRuntime - frames.getFirst().getKeyTime())
+                / (frames.getSecond().getKeyTime() - frames.getFirst().getKeyTime());
+            float[] interpolation = first.interpolateValues(second, currentFrameProgress);
+
+            x += interpolation[0];
+            y += interpolation[1];
+            drawnTransform.addScaleX(interpolation[2]);
+            drawnTransform.addScaleY(interpolation[3]);
+            drawnTransform.addRotation(interpolation[4]);
+
+            drawnTransform.setFlipX(drawnTransform.getFlipX() && first.flipX);
+            drawnTransform.setFlipY(drawnTransform.getFlipY() && first.flipY);
+        }
+
+        drawn.getFrame().draw(x, y, drawnTransform);
+    }
+
+    // ---------------- methods ----------------
 
     public long getRealRuntime() {
         long runtime = this.getRuntime();
@@ -258,45 +315,5 @@ public class FrameAnimation extends Animation {
         }
 
         return returnBuffer;
-    }
-
-    @Override
-    public void draw(float x, float y, Transform transform) {
-        if (transform == null)
-            transform = Transform.DUMMY;
-
-        Transform drawnTransform = transform.copy(PROXY_TRANSFORM);
-        Pair<KeyFrame> frames = this.getCurrentFrame();
-        KeyFrame drawn = frames.getFirst();
-        if (frames.getSecond() == null) { // last frame? just draw it
-            KeyFrameData data = frames.getFirst().getFrameData();
-
-            x += data.x;
-            y += data.y;
-            drawnTransform.addScaleX(data.scaleX);
-            drawnTransform.addScaleY(data.scaleY);
-            drawnTransform.setFlipX(transform.getFlipX() && data.flipX);
-            drawnTransform.setFlipY(transform.getFlipY() && data.flipY);
-            drawnTransform.addRotation(data.rotation);
-        } else {
-            // interpolation
-            KeyFrameData first = drawn.getFrameData();
-            KeyFrameData second = frames.getSecond().getFrameData();
-            long realRuntime = this.getRealRuntime();
-            float currentFrameProgress = (float) (realRuntime - frames.getFirst().getKeyTime())
-                / (frames.getSecond().getKeyTime() - frames.getFirst().getKeyTime());
-            float[] interpolation = first.interpolateValues(second, currentFrameProgress);
-
-            x += interpolation[0];
-            y += interpolation[1];
-            drawnTransform.addScaleX(interpolation[2]);
-            drawnTransform.addScaleY(interpolation[3]);
-            drawnTransform.addRotation(interpolation[4]);
-
-            drawnTransform.setFlipX(transform.getFlipX() && first.flipX);
-            drawnTransform.setFlipY(transform.getFlipY() && first.flipY);
-        }
-
-        drawn.getFrame().draw(x, y, drawnTransform);
     }
 }

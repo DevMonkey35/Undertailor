@@ -36,12 +36,32 @@ package me.scarlet.undertailor.gfx;
 public interface Renderable {
 
     /**
-     * @see #draw(float, float, Transform)
+     * Returns the {@link Transform} object used to render
+     * this {@link Renderable} with.
+     * 
+     * @return this Renderable's transform
+     */
+    public Transform getTransform();
+
+    /**
+     * Sets a new {@link Transform} object used to render
+     * this {@link Renderable} with.
+     * 
+     * <p>If null is provided, the {@link Renderable} will
+     * assume a Transform object with default values.</p>
+     * 
+     * @param transform the new Transform object
+     */
+    public void setTransform(Transform transform);
+
+    /**
+     * Draws this {@link Renderable} object at the given
+     * position.
      */
     public default void draw(float x, float y) {
-        this.draw(x, y, null);
+        this.draw(x, y, this.getTransform());
     }
-    
+
     public void draw(float x, float y, Transform transform);
 
 }

@@ -38,7 +38,7 @@ import me.scarlet.undertailor.gfx.Transform;
 /**
  * A pre-made texture that can be drawn on-screen.
  */
-public class Sprite implements Renderable {
+public class Sprite implements Renderable, Cloneable {
 
     // ---------------- static classes ----------------
 
@@ -78,6 +78,7 @@ public class Sprite implements Renderable {
     // ---------------- object ----------------
 
     private SpriteMeta meta;
+    private Transform transform;
     private TextureRegion region;
     private MultiRenderer renderer;
     protected SpriteSheet sourceSheet;
@@ -86,6 +87,52 @@ public class Sprite implements Renderable {
         this.renderer = renderer;
         this.region = sprite;
         this.meta = meta == null ? DEFAULT_META : meta;
+        this.transform = new Transform();
+    }
+
+    // ---------------- abstract method implementation ----------------
+
+    @Override
+    public Transform getTransform() {
+        return this.transform;
+    }
+
+    @Override
+    public void setTransform(Transform transform) {
+        if (transform == null) {
+            this.transform = Transform.DUMMY.copy(this.transform);
+        } else {
+            this.transform = transform;
+        }
+    }
+
+    @Override
+    public void draw(float posX, float posY, Transform transform) {
+        float originX = 0, originY = 0;
+        int offX = 0, offY = 0;
+
+        if (meta != null) {
+            originX = meta.originX;
+            originY = meta.originY;
+            offX = meta.offX;
+            offY = meta.offY;
+        }
+
+        float x = posX + (offX * transform.getScaleX());
+        float y = posY + (offY * transform.getScaleY());
+
+        region.flip(transform.getFlipX(), transform.getFlipY());
+        renderer.draw(this.region, x, y, transform.getScaleX(), transform.getScaleY(), originX,
+            originY, transform.getRotation());
+        region.flip(transform.getFlipX(), transform.getFlipY());
+    }
+
+    @Override
+    public Sprite clone() {
+        Sprite returned = new Sprite(this.renderer, this.region, this.meta);
+        returned.transform = this.transform;
+
+        return returned;
     }
 
     // ---------------- g/s ---------------- 
@@ -109,28 +156,5 @@ public class Sprite implements Renderable {
      */
     public SpriteMeta getMeta() {
         return meta;
-    }
-
-    // ---------------- draw methods ----------------
-
-    @Override
-    public void draw(float posX, float posY, Transform transform) {
-        if(transform == null) transform = Transform.DUMMY;
-        float originX = 0, originY = 0;
-        int offX = 0, offY = 0;
-        
-        if(meta != null) {
-            originX = meta.originX;
-            originY = meta.originY;
-            offX = meta.offX;
-            offY = meta.offY;
-        }
-        
-        float x = posX + (offX * transform.getScaleX());
-        float y = posY + (offY * transform.getScaleY()); 
-        
-        region.flip(transform.getFlipX(), transform.getFlipY());
-        renderer.draw(this.region, x, y, transform.getScaleX(), transform.getScaleY(), originX, originY, transform.getRotation());
-        region.flip(transform.getFlipX(), transform.getFlipY());
     }
 }
