@@ -68,11 +68,11 @@ public class Font {
     private MultiRenderer renderer;
     private PackagedSpriteSheet sheet;
 
-    private int lineSize;
-    private int spaceLength;
+    private float lineSize;
+    private float spaceLength;
     private String characterList;
-    private Pair<Integer> defaultLetterSpacing;
-    private Map<Character, Pair<Integer>> letterSpacing;
+    private Pair<Float> defaultLetterSpacing;
+    private Map<Character, Pair<Float>> letterSpacing;
 
     public Font(String fontName, MultiRenderer renderer, ZipFile sourceFile)
         throws BadAssetException {
@@ -122,7 +122,7 @@ public class Font {
      * 
      * @return the size of a line written in this font
      */
-    public int getLineSize() {
+    public float getLineSize() {
         return this.lineSize;
     }
 
@@ -130,7 +130,7 @@ public class Font {
      * Returns the count of units to skip to represent a
      * space.
      */
-    public int getSpaceLength() {
+    public float getSpaceLength() {
         return this.spaceLength;
     }
 
@@ -145,7 +145,7 @@ public class Font {
      * @return a Pair holding letter spacing for the
      *         character
      */
-    public Pair<Integer> getLetterSpacing(char character) {
+    public Pair<Float> getLetterSpacing(char character) {
         if (this.letterSpacing.containsKey(character)) {
             return this.letterSpacing.get(character);
         }
@@ -231,8 +231,8 @@ public class Font {
 
         // font.letterSpacing
         checkExists(rootNode.getNode(KEY_LETTER_SPACING));
-        int defaultLetterSpacing =
-            checkValue(rootNode.getNode(KEY_LETTER_SPACING).getInt(0), value -> {
+        float defaultLetterSpacing =
+            checkValue(rootNode.getNode(KEY_LETTER_SPACING).getFloat(0), value -> {
                 if (value < 0) {
                     return "Cannot use negative letter spacing";
                 }
@@ -243,7 +243,7 @@ public class Font {
 
         // font.spaceLength
         checkExists(rootNode.getNode(KEY_SPACE_LENGTH));
-        this.spaceLength = checkValue(rootNode.getNode(KEY_SPACE_LENGTH).getInt(-1), value -> {
+        this.spaceLength = checkValue(rootNode.getNode(KEY_SPACE_LENGTH).getFloat(-1), value -> {
             if (value < 0) {
                 return "Unsupported space length value (cannot be < 0)";
             }
@@ -253,11 +253,11 @@ public class Font {
 
         // font.lineSize
         checkExists(rootNode.getNode(KEY_LINE_SIZE));
-        this.lineSize = checkValue(rootNode.getNode(KEY_LINE_SIZE).getInt(-1), value -> {
-            if(value <= 0) {
-                return "Unsupported line size value (cannot be <= 0)";
+        this.lineSize = checkValue(rootNode.getNode(KEY_LINE_SIZE).getFloat(-1), value -> {
+            if (value <= 0) {
+                return "Unsupported line size value (cannot be < 0)";
             }
-            
+
             return null;
         });
 
@@ -265,9 +265,8 @@ public class Font {
         for (ConfigurationNode node : rootNode.getNode(KEY_META_LIST).getChildrenMap().values()) {
             char character = node.getKey().toString().charAt(0);
 
-            int letterSpacing = checkValue(
-                node.getNode(KEY_META_LETTER_SPACING).getInt(this.defaultLetterSpacing.getFirst()),
-                value -> {
+            float letterSpacing = checkValue(node.getNode(KEY_META_LETTER_SPACING)
+                .getFloat(this.defaultLetterSpacing.getFirst()), value -> {
                     if (value < 0) {
                         return "Cannot use negative letter spacing";
                     }
@@ -275,9 +274,9 @@ public class Font {
                     return null;
                 });
 
-            Pair<Integer> spacingPair = new Pair<>();
+            Pair<Float> spacingPair = new Pair<>();
             spacingPair.setFirst(checkValue(
-                node.getNode(KEY_META_LETTER_SPACING_LEFT).getInt(letterSpacing), value -> {
+                node.getNode(KEY_META_LETTER_SPACING_LEFT).getFloat(letterSpacing), value -> {
                     if (value < 0) {
                         return "Cannot use negative letter spacing";
                     }
@@ -286,7 +285,7 @@ public class Font {
                 }));
 
             spacingPair.setSecond(checkValue(
-                node.getNode(KEY_META_LETTER_SPACING_RIGHT).getInt(letterSpacing), value -> {
+                node.getNode(KEY_META_LETTER_SPACING_RIGHT).getFloat(letterSpacing), value -> {
                     if (value < 0) {
                         return "Cannot use negative letter spacing";
                     }
