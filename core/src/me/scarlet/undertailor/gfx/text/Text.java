@@ -232,8 +232,7 @@ public class Text extends TextComponent implements Renderable {
                         .setScaleX(this.m_drawnTransform.getScaleX() * dMeta.scaleX);
                     this.m_drawnTransform
                         .setScaleY(this.m_drawnTransform.getScaleY() * dMeta.scaleY);
-                    this.m_drawnTransform
-                        .setRotation(this.m_drawnTransform.getRotation() + dMeta.rotation);
+                    this.m_drawnTransform.addRotation(dMeta.rotation);
                 }
 
                 if (letterSpacing.getFirst() > spacing) {
