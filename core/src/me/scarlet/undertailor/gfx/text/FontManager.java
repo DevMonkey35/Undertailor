@@ -28,7 +28,7 @@
  * IN THE SOFTWARE.
  */
 
-package me.scarlet.undertailor.gfx.font;
+package me.scarlet.undertailor.gfx.text;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

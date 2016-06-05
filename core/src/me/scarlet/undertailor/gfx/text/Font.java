@@ -28,7 +28,7 @@
  * IN THE SOFTWARE.
  */
 
-package me.scarlet.undertailor.gfx.font;
+package me.scarlet.undertailor.gfx.text;
 
 import static me.scarlet.undertailor.util.ConfigUtil.checkExists;
 import static me.scarlet.undertailor.util.ConfigUtil.checkValue;

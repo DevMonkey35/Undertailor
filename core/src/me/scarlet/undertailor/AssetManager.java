@@ -31,8 +31,8 @@
 package me.scarlet.undertailor;
 
 import me.scarlet.undertailor.audio.AudioManager;
-import me.scarlet.undertailor.gfx.font.FontManager;
 import me.scarlet.undertailor.gfx.spritesheet.SpriteSheetManager;
+import me.scarlet.undertailor.gfx.text.FontManager;
 
 import java.io.File;
 
