@@ -398,19 +398,92 @@ public class Text extends TextComponent implements Renderable {
 
     /**
      * Substrings the contents of this {@link Text} object
-     * into a new instance (NYI).
+     * into a new instance.
      * 
      * @param start the first boundary
      * @param end the second boundary
      * 
      * @return a duplicate Text object including only the
      *         characters bounded by the provided indices
-     * 
-     * @deprecated not yet implemented
      */
-    @Deprecated
     public Text substring(int start, int end) {
-        return null; // TODO
+        int boundL = start;
+        int boundR = end;
+
+        if (boundL < 0) {
+            boundL = this.getText().length() - Math.abs(boundL);
+        }
+
+        if (boundR < 0) {
+            boundR = this.getText().length() - Math.abs(boundR);
+        }
+
+        Builder builder = Text.builder();
+        builder.copy(this);
+
+        TextComponent first = boundL == 0 ? null : this.getTextComponentAt(boundL);
+        TextComponent last = boundR == 0 ? null : this.getTextComponentAt(boundR);
+
+        if (boundL == 0 && boundR == 0) {
+            this.components.values().forEach(builder::addComponents);
+        } else if (this.components.size() == 1) {
+            TextComponent.Builder compBuilder = TextComponent.builder();
+            TextComponent source = this.components.firstEntry().getValue();
+            compBuilder.copy(source);
+            compBuilder.setText(source.getText().substring(start, end));
+            builder.addComponents(compBuilder.build());
+        } else {
+            for (Entry<Integer, TextComponent> entry : this.components.entrySet()) {
+                if (first != null) { // if first is null, we've found the first component to iterate through
+                    if (entry.getValue() != first) {
+                        continue;
+                    }
+                }
+
+                if (entry.getValue() == first || entry.getValue() == last) {
+                    if(entry.getValue() == first && entry.getValue() == last) {
+                        TextComponent.Builder compBuilder = TextComponent.builder();
+                        int leftStringBound = boundL - entry.getKey();
+                        
+                        compBuilder.copy(entry.getValue());
+                        compBuilder.setText(
+                            entry.getValue().getText().substring(leftStringBound, leftStringBound + (boundR - boundL)));
+                        builder.addComponents(compBuilder.build());
+                        break;
+                    } else {
+                        if (entry.getValue() == first) {
+                            if (boundL != -1 && entry.getKey() < boundL) {
+                                TextComponent.Builder compBuilder = TextComponent.builder();
+    
+                                compBuilder.copy(entry.getValue());
+                                compBuilder.setText(
+                                    entry.getValue().getText().substring(boundL - entry.getKey()));
+                                builder.addComponents(compBuilder.build());
+                            }
+    
+                            first = null;
+                        }
+    
+                        if (entry.getValue() == last && boundR != -1
+                            && entry.getKey() + entry.getValue().text.length() > boundR) {
+                            String newText = entry.getValue().text;
+                            TextComponent.Builder compBuilder = TextComponent.builder();
+    
+                            newText = newText.substring(0,
+                                newText.length() - (newText.length() + entry.getKey() - boundR));
+                            compBuilder.copy(entry.getValue());
+                            compBuilder.setText(newText);
+                            builder.addComponents(compBuilder.build());
+                            break;
+                        }
+                    }
+                } else {
+                    builder.addComponents(entry.getValue());
+                }
+            }
+        }
+
+        return builder.build();
     }
 
     // ---------------- internal methods ----------------
@@ -441,11 +514,11 @@ public class Text extends TextComponent implements Renderable {
         int boundL = this.getStringBounds().getFirst();
         int boundR = this.getStringBounds().getSecond();
 
-        if(boundL < 0) {
+        if (boundL < 0) {
             boundL = this.getText().length() - Math.abs(boundL);
         }
 
-        if(boundR < 0) {
+        if (boundR < 0) {
             boundR = this.getText().length() - Math.abs(boundR);
         }
 
