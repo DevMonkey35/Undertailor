@@ -170,6 +170,27 @@ public class TextComponent {
         }
 
         /**
+         * Copies all the parameters of the provided
+         * {@link TextComponent} into the one to be
+         * generated.
+         * 
+         * @param source the source component to copy from
+         * 
+         * @return this Builder
+         */
+        public Builder copy(TextComponent source) {
+            this.component.color = source.color == null ? null : new Color(source.color);
+            this.component.delay = source.delay;
+            this.component.font = source.font;
+            this.component.segmentSize = source.segmentSize;
+            this.component.sound = source.sound;
+            this.component.speed = source.speed;
+            this.component.styles.addAll(source.styles);
+
+            return this;
+        }
+
+        /**
          * Builds the {@link TextComponent} with the
          * parameters assigned to this {@link Builder} and
          * returns it.
@@ -231,10 +252,10 @@ public class TextComponent {
         piece.getParams().entrySet().forEach(entry -> {
             TextParam paramType = entry.getKey();
             String value = entry.getValue();
-            if(value == null || value.trim().isEmpty()) {
+            if (value == null || value.trim().isEmpty()) {
                 return;
             }
-            
+
             switch (paramType) {
                 case FONT:
                     Font font = tailor.getAssetManager().getFontManager().getFont(value);
@@ -256,26 +277,28 @@ public class TextComponent {
                 case SEGMENTSIZE:
                 case SPEED:
                     try {
-                        if(paramType == TextParam.COLOR) {
+                        if (paramType == TextParam.COLOR) {
                             String[] rgb = value.trim().split(",");
                             if (rgb.length > 1) {
                                 Color color = new Color();
                                 color.set(Float.valueOf(rgb[0]), Float.valueOf(rgb[1]),
-                                    Float.valueOf(rgb[2]), rgb.length >= 4 ? Float.valueOf(rgb[3]) : 255F);
+                                    Float.valueOf(rgb[2]),
+                                    rgb.length >= 4 ? Float.valueOf(rgb[3]) : 255F);
                             } else {
                                 builder.setColor(Color.valueOf(value));
                             }
-                        } else if(paramType == TextParam.DELAY) {
+                        } else if (paramType == TextParam.DELAY) {
                             builder.setDelay(Float.valueOf(value));
-                        } else if(paramType == TextParam.SEGMENTSIZE) {
+                        } else if (paramType == TextParam.SEGMENTSIZE) {
                             builder.setSegmentSize(Integer.valueOf(value));
-                        } else if(paramType == TextParam.SPEED) {
+                        } else if (paramType == TextParam.SPEED) {
                             builder.setSpeed(Float.valueOf(value));
                         }
-                    } catch(NumberFormatException e) {
-                        logger.warn("Invalid value " + value + " for parameter " + paramType.toString());
+                    } catch (NumberFormatException e) {
+                        logger.warn(
+                            "Invalid value " + value + " for parameter " + paramType.toString());
                     }
-                    
+
                     break;
                 default:
                     break;
