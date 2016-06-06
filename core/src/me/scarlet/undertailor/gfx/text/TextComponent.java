@@ -183,9 +183,17 @@ public class TextComponent {
         }
     }
 
+    /**
+     * Returns a new {@link Builder} instance to build a new
+     * {@link TextComponent}.
+     * 
+     * @return a Text Builder
+     */
     public static Builder builder() {
         return new Builder();
     }
+
+    // ---------------- object ----------------
 
     protected Text parent;
 
