@@ -33,6 +33,7 @@ package me.scarlet.undertailor;
 import me.scarlet.undertailor.audio.AudioManager;
 import me.scarlet.undertailor.gfx.spritesheet.SpriteSheetManager;
 import me.scarlet.undertailor.gfx.text.FontManager;
+import me.scarlet.undertailor.gfx.text.TextStyleManager;
 
 import java.io.File;
 
@@ -44,15 +45,18 @@ public class AssetManager {
     public static final String DIR_AUDIO_SOUND = "sounds";
     public static final String DIR_AUDIO_MUSIC = "music";
     public static final String DIR_SPRITES = "sprites";
+    public static final String DIR_STYLES = "fonts/styles";
     public static final String DIR_FONTS = "fonts";
 
     private FontManager font;
     private AudioManager audio;
+    private TextStyleManager styles;
     private SpriteSheetManager sprites;
 
     public AssetManager(Undertailor undertailor) {
         this.font = new FontManager(undertailor.getRenderer());
         this.audio = new AudioManager(undertailor);
+        this.styles = new TextStyleManager();
         this.sprites = new SpriteSheetManager(undertailor.getRenderer());
     }
 
@@ -69,6 +73,7 @@ public class AssetManager {
         this.audio.loadSounds(new File(rootDirectory, DIR_AUDIO_MUSIC));
         this.audio.loadMusic(new File(rootDirectory, DIR_AUDIO_MUSIC));
         this.sprites.loadSpriteSheets(new File(rootDirectory, DIR_SPRITES));
+        this.styles.loadStyles(new File(rootDirectory, DIR_STYLES));
         this.font.loadFonts(new File(rootDirectory, DIR_FONTS));
     }
 
@@ -99,5 +104,14 @@ public class AssetManager {
      */
     public FontManager getFontManager() {
         return this.font;
+    }
+
+    /**
+     * Returns the underlying {@link TextStyleManager}.
+     * 
+     * @return the TextStyleManager
+     */
+    public TextStyleManager getStyleManager() {
+        return this.styles;
     }
 }

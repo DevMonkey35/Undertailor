@@ -85,10 +85,14 @@ public class FontManager {
 
         for (String key : files.keySet()) {
             File fontFile = files.get(key);
+            if (rootDirectory.toPath().relativize(fontFile.toPath()).startsWith("styles")) {
+                continue;
+            }
+
             try {
                 Font font = new Font(key, this.renderer, new ZipFile(fontFile));
                 this.fonts.put(key, font);
-                
+
                 log.info("Loaded font " + fontFile.getName() + " under key " + key);
             } catch (Exception e) {
                 String message = "Could not load font at font file " + fontFile.getAbsolutePath();
