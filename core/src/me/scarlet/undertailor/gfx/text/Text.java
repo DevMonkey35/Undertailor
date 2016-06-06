@@ -211,7 +211,7 @@ public class Text extends TextComponent implements Renderable {
         });
 
         this.instantiationTime = TimeUtils.millis();
-        this.stringBounds = new Pair<>(-1, -1);
+        this.stringBounds = new Pair<>(0, 0);
         this.spaceTaken = new Pair<>(-1F, -1F);
         this.transform = new Transform();
 
@@ -441,8 +441,16 @@ public class Text extends TextComponent implements Renderable {
         int boundL = this.getStringBounds().getFirst();
         int boundR = this.getStringBounds().getSecond();
 
-        TextComponent first = boundL == -1 ? null : this.getTextComponentAt(boundL);
-        TextComponent last = boundR == -1 ? null : this.getTextComponentAt(boundR);
+        if(boundL < 0) {
+            boundL = this.getText().length() - Math.abs(boundL);
+        }
+
+        if(boundR < 0) {
+            boundR = this.getText().length() - Math.abs(boundR);
+        }
+
+        TextComponent first = boundL == 0 ? null : this.getTextComponentAt(boundL);
+        TextComponent last = boundR == 0 ? null : this.getTextComponentAt(boundR);
         for (Entry<Integer, TextComponent> entry : this.components.entrySet()) {
             if (first != null) { // if first is null, we've found the first component to iterate through
                 if (entry.getValue() != first) {
