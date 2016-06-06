@@ -85,7 +85,7 @@ public class FontManager {
 
         for (String key : files.keySet()) {
             File fontFile = files.get(key);
-            if (rootDirectory.toPath().relativize(fontFile.toPath()).startsWith("styles")) {
+            if (key.startsWith("styles.")) {
                 continue;
             }
 
