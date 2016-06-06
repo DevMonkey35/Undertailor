@@ -31,8 +31,13 @@
 package me.scarlet.undertailor.gfx.text;
 
 import com.badlogic.gdx.graphics.Color;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.audio.SoundFactory.Sound;
+import me.scarlet.undertailor.gfx.text.parse.TextParam;
+import me.scarlet.undertailor.gfx.text.parse.TextPiece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,6 +188,8 @@ public class TextComponent {
         }
     }
 
+    static final Logger logger = LoggerFactory.getLogger(TextComponent.class);
+
     /**
      * Returns a new {@link Builder} instance to build a new
      * {@link TextComponent}.
@@ -191,6 +198,89 @@ public class TextComponent {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * Generates a new {@link TextComponent} using the
+     * properties set upon the given {@link TextPiece}.
+     * 
+     * @param tailor the current Undertailor instance
+     * @param piece the TextPiece to read from
+     * 
+     * @return a new TextComponent
+     */
+    public static TextComponent of(Undertailor tailor, TextPiece piece) {
+        Builder builder = TextComponent.builder();
+        TextComponent.applyParameters(builder, tailor, piece);
+        builder.setText(piece.getMessage());
+        return builder.build();
+    }
+
+    /**
+     * Internal method.
+     * 
+     * <p>Applies the parameters found on a single
+     * {@link TextPiece} onto the provided {@link Builder}
+     * .</p>
+     * 
+     * @param builder the Builder to apply parameters to
+     * @param tailor the current Undertailor instance
+     * @param piece the TextPiece to read from
+     */
+    protected static void applyParameters(Builder builder, Undertailor tailor, TextPiece piece) {
+        piece.getParams().entrySet().forEach(entry -> {
+            TextParam paramType = entry.getKey();
+            String value = entry.getValue();
+            if(value == null || value.trim().isEmpty()) {
+                return;
+            }
+            
+            switch (paramType) {
+                case FONT:
+                    Font font = tailor.getAssetManager().getFontManager().getFont(value);
+                    if (font == null && (value != null && !value.trim().isEmpty()))
+                        logger.warn("Could find font " + value + " to assign to text");
+                    builder.setFont(font);
+                    break;
+                case SOUND:
+                    Sound sound = tailor.getAssetManager().getAudioManager().getSound(value);
+                    if (sound == null)
+                        logger.warn("Could find sound " + value + " to assign to text");
+                    builder.setSound(sound);
+                    break;
+                case STYLE:
+                    // TODO Style manager.
+                    break;
+                case COLOR:
+                case DELAY:
+                case SEGMENTSIZE:
+                case SPEED:
+                    try {
+                        if(paramType == TextParam.COLOR) {
+                            String[] rgb = value.trim().split(",");
+                            if (rgb.length > 1) {
+                                Color color = new Color();
+                                color.set(Float.valueOf(rgb[0]), Float.valueOf(rgb[1]),
+                                    Float.valueOf(rgb[2]), rgb.length >= 4 ? Float.valueOf(rgb[3]) : 255F);
+                            } else {
+                                builder.setColor(Color.valueOf(value));
+                            }
+                        } else if(paramType == TextParam.DELAY) {
+                            builder.setDelay(Float.valueOf(value));
+                        } else if(paramType == TextParam.SEGMENTSIZE) {
+                            builder.setSegmentSize(Integer.valueOf(value));
+                        } else if(paramType == TextParam.SPEED) {
+                            builder.setSpeed(Float.valueOf(value));
+                        }
+                    } catch(NumberFormatException e) {
+                        logger.warn("Invalid value " + value + " for parameter " + paramType.toString());
+                    }
+                    
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     // ---------------- object ----------------

@@ -32,12 +32,16 @@ package me.scarlet.undertailor.gfx.text;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite.SpriteMeta;
 import me.scarlet.undertailor.gfx.text.TextStyle.DisplayMeta;
+import me.scarlet.undertailor.gfx.text.parse.ParsedText;
 import me.scarlet.undertailor.util.Pair;
 
 import java.util.Collection;
@@ -135,11 +139,18 @@ public class Text extends TextComponent implements Renderable {
     }
 
     private static final DisplayMeta DISPLAY_META;
+    static final Logger logger = LoggerFactory.getLogger(Text.class);
 
     static {
         DISPLAY_META = new DisplayMeta();
     }
 
+    /**
+     * Generates a clean {@link DisplayMeta} object to pass
+     * to {@link TextStyle}s.
+     * 
+     * @return a clean DisplayMeta
+     */
     static DisplayMeta generateDisplayMeta() {
         DISPLAY_META.reset();
         return DISPLAY_META;
@@ -153,6 +164,32 @@ public class Text extends TextComponent implements Renderable {
      */
     public static Text.Builder builder() {
         return new Text.Builder();
+    }
+
+    /**
+     * Generates a new {@link Text} object based on the
+     * provided parameterized strings.
+     * 
+     * @param tailor the current Undertailor instance
+     * @param baseParams the parameterized string containing
+     *        the properties of the base Text
+     * @param components the parameterized string containing
+     *        all components to add
+     * 
+     * @return a new Text object
+     */
+    public static Text of(Undertailor tailor, String baseParams, String components) {
+        Builder builder = Text.builder();
+        if (baseParams != null && !baseParams.trim().isEmpty()) {
+            TextComponent.applyParameters(builder, tailor,
+                ParsedText.of(baseParams).getPieces().get(0));
+        }
+
+        ParsedText.of(components).getPieces().forEach(piece -> {
+            builder.addComponents(TextComponent.of(tailor, piece));
+        });
+
+        return builder.build();
     }
 
     // ---------------- object ----------------
@@ -239,6 +276,7 @@ public class Text extends TextComponent implements Renderable {
                     dX += (letterSpacing.getFirst() - spacing) * m_drawnTransform.getScaleX();
                 }
 
+                font.getRenderer().setBatchColor(component.getColor());
                 sprite.draw(dX + ((sMeta.originX + dMeta.offX) * (m_drawnTransform.getScaleX())),
                     dY + ((sMeta.originY + dMeta.offY) * (m_drawnTransform.getScaleY())),
                     m_drawnTransform);
