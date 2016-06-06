@@ -270,7 +270,15 @@ public class TextComponent {
                     builder.setSound(sound);
                     break;
                 case STYLE:
-                    // TODO Style manager.
+                    String[] split = value.split(",");
+                    for (String styleValue : split) {
+                        TextStyle style =
+                            tailor.getAssetManager().getStyleManager().getStyle(styleValue);
+                        if (style == null)
+                            logger.warn("Could find style " + value + " to assign to text");
+                        builder.addStyles(style);
+                    }
+
                     break;
                 case COLOR:
                 case DELAY:
