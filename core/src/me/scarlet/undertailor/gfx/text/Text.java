@@ -534,7 +534,7 @@ public class Text extends TextComponent implements Renderable {
             }
 
             int localIndex = 0;
-            if (boundL != -1 && entry.getKey() < boundL) {
+            if (boundL != 0 && entry.getKey() < boundL) {
                 localIndex += boundL - entry.getKey();
             }
 
@@ -543,7 +543,7 @@ public class Text extends TextComponent implements Renderable {
                 this.m_valuePair.setSecond(ind);
                 consumer.accept(this.m_valuePair, entry.getValue());
 
-                if (boundR != -1 && entry.getKey() + ind >= boundR) {
+                if (boundR != 0 && entry.getKey() + ind >= boundR) {
                     return;
                 }
             }
