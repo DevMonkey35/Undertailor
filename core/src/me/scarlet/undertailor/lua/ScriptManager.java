@@ -53,21 +53,15 @@ import java.util.List;
 
 public class ScriptManager {
 
-    private static final List<LuaLibrary> BASE_LIBRARIES;
-
-    static {
-        BASE_LIBRARIES = new ArrayList<>();
-    }
-
-    public static void registerBaseLibrary(LuaLibrary library) {
-        if (!ScriptManager.BASE_LIBRARIES.contains(library))
-            ScriptManager.BASE_LIBRARIES.add(library);
-    }
-
-    private List<LuaLibrary> libraries;
+    private List<LuaValue> libraries;
 
     public ScriptManager() {
         this.libraries = new ArrayList<>();
+
+        libraries.add(new Bit32Lib());
+        libraries.add(new TableLib());
+        libraries.add(new StringLib());
+        libraries.add(new JseMathLib());
     }
 
     public void registerLibrary(LuaLibrary library) {
@@ -79,18 +73,12 @@ public class ScriptManager {
         Globals returned = new Globals();
         returned.load(new JseBaseLib());
         returned.load(new PackageLib());
-        returned.load(new Bit32Lib());
-        returned.load(new TableLib());
-        returned.load(new StringLib());
-        returned.load(new JseMathLib());
 
         returned.set("debug", LuaValue.NIL);
         LoadState.install(returned);
         LuaC.install(returned);
 
-        for (LuaLibrary library : this.libraries) {
-            returned.load(library);
-        }
+        this.libraries.forEach(returned::load);
 
         return returned;
     }
