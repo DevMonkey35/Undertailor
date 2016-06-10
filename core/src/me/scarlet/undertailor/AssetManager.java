@@ -110,6 +110,15 @@ public class AssetManager {
     }
 
     /**
+     * Returns the underlying {@link ScriptManager}.
+     * 
+     * @return the ScriptManager
+     */
+    public ScriptManager getScriptManager() {
+        return this.scripts;
+    }
+
+    /**
      * Returns the underlying {@link TextStyleManager}.
      * 
      * @return the TextStyleManager
