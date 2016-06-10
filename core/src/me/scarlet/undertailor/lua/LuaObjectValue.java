@@ -65,7 +65,8 @@ public class LuaObjectValue<T> extends LuaTable {
      * 
      * @param object the Object for the value to hold
      * 
-     * @return the LuaObjectValue holding the provided object
+     * @return the LuaObjectValue holding the provided
+     *         object
      */
     @SuppressWarnings("unchecked")
     public static <T> LuaObjectValue<T> of(T object) {
@@ -89,7 +90,11 @@ public class LuaObjectValue<T> extends LuaTable {
         if (meta != null) {
             this.meta = meta;
             this.typename = meta.getTypeName();
-            if(meta.getMetatable() != null) this.setmetatable(meta.getMetatable());
+        }
+
+        LuaTable metatable = Lua.generateMetatable(object);
+        if (metatable != null) {
+            this.setmetatable(metatable);
         }
 
         if (object instanceof LuaImplementable) {

@@ -30,10 +30,12 @@
 
 package me.scarlet.undertailor.lua;
 
+import org.luaj.vm2.LuaTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
+import me.scarlet.undertailor.util.LuaUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,9 +48,11 @@ public class Lua {
 
     static final Logger log = LoggerFactory.getLogger(Lua.class);
     private static final Map<Class<?>, LuaObjectMeta> META;
+    private static final Map<Class<?>, LuaTable> METATABLES;
 
     static {
         META = new HashMap<>();
+        METATABLES = new HashMap<>();
 
         loadMeta(LuaTextStyleMeta.class);
     }
@@ -87,6 +91,55 @@ public class Lua {
         }
 
         return null;
+    }
+
+    /**
+     * Generates a metatable containing metafunctions for a
+     * given object type using the currently registered
+     * {@link LuaObjectMeta}s.
+     * 
+     * <p>This method will only generate one metatable per
+     * class type; the mapping of already made metatables
+     * will not be cleared at any point during runtime. If a
+     * metatable had already been generated, that metatable
+     * is returned.</p>
+     * 
+     * <p>It is possible for functions within each object
+     * meta to override each other when this method
+     * generates a new metatable.</p>
+     * 
+     * <p>If there are no suitable meta objects for the
+     * provided object or none of the applicable meta
+     * objects have any metafunctions to register, null is
+     * returned.</p>
+     * 
+     * @param obj the Object to generate a metatable for
+     * 
+     * @return the metatable for the given Object
+     */
+    public static LuaTable generateMetatable(Object obj) {
+        if (Lua.METATABLES.containsKey(obj.getClass())) {
+            return Lua.METATABLES.get(obj.getClass());
+        }
+
+        LuaTable functable = new LuaTable();
+        for (LuaObjectMeta meta : Lua.META.values()) {
+            if (meta.getTargetObjectClass().isInstance(obj)) {
+                LuaUtil.iterateTable(meta.getMetatable(), vargs -> {
+                    functable.set(vargs.arg(1), vargs.arg(2));
+                });
+            }
+        }
+
+        if(functable.len().toint() > 0) {
+            LuaTable metatable = new LuaTable();
+            metatable.set("__index", functable);
+            Lua.METATABLES.put(obj.getClass(), metatable);
+            return metatable;
+        } else {
+            Lua.METATABLES.put(obj.getClass(), null);
+            return null;
+        }
     }
 
     /**
