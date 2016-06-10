@@ -60,7 +60,7 @@ public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
 
     public LuaTextStyle(ScriptManager manager, File luaFile)
         throws FileNotFoundException, LuaScriptException {
-        this.luaObj = new LuaObjectValue<TextStyle>(this);
+        this.luaObj = LuaObjectValue.of(this);
         this.luaObj.load(manager, luaFile);
     }
 

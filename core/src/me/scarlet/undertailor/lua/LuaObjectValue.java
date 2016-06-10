@@ -81,7 +81,7 @@ public class LuaObjectValue<T> extends LuaTable {
     private WeakReference<T> ref;
 
     @SuppressWarnings("unchecked")
-    public LuaObjectValue(T object) {
+    private LuaObjectValue(T object) {
         this.ref = new WeakReference<>(object);
 
         LuaObjectValue.STORED.put(object, this);
