@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.lua;
 
+import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -40,6 +41,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * A collection of actions executable by reference of a Lua
+ * script.
+ */
 public class LuaLibrary extends TwoArgFunction {
 
     private String name;
@@ -50,15 +55,15 @@ public class LuaLibrary extends TwoArgFunction {
         this.functions = new HashMap<>();
     }
 
-    public final void registerFunction(String funcId, Function<Varargs, Varargs> func) {
-        functions.put(funcId, new VarArgFunction() {
-            @Override
-            public Varargs invoke(Varargs args) {
-                return func.apply(args);
-            }
-        });
-    }
-
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Pertaining to loading a {@link LuaLibrary}, if the
+     * name of the library was set to null then its
+     * functions are loaded into the provided environment.
+     * Otherwise, the functions are loaded into the
+     * environment within a table of the library's name.</p>
+     */
     @Override
     public final LuaValue call(LuaValue modname, LuaValue env) {
         if (name == null) {
@@ -77,11 +82,45 @@ public class LuaLibrary extends TwoArgFunction {
         }
     }
 
-    public final void inject(LuaTable table) {
-        functions.keySet().forEach(key -> {
-            table.set(key, functions.get(key));;
+    /**
+     * Registers a function into this {@link LuaLibrary}.
+     * 
+     * @param funcId the id to give the function
+     * @param func the function
+     */
+    public final void registerFunction(String funcId, Function<Varargs, Varargs> func) {
+        functions.put(funcId, new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs args) {
+                return func.apply(args);
+            }
         });
     }
 
+    /**
+     * Injects the functions of this {@link LuaLibrary} into
+     * the provided {@link LuaTable}.
+     * 
+     * @param table the table to inject into
+     */
+    public final void inject(LuaTable table) {
+        functions.keySet().forEach(key -> {
+            table.set(key, functions.get(key));
+        });
+    }
+
+    /**
+     * Called whenever this {@link LuaLibrary} is properly
+     * initialized within a {@link Globals} object by the
+     * means of {@link Globals#load(LuaValue)}.
+     * 
+     * <p>If this library's name was set to null,
+     * <code>table</code> and <code>environment</code> are
+     * both the environment table.</p>
+     * 
+     * @param table the table containing this LuaLibrary's
+     *        functions
+     * @param environment the environment holding the table
+     */
     public void postinit(LuaTable table, LuaValue environment) {}
 }
