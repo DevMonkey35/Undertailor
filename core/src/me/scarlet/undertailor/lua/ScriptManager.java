@@ -101,16 +101,7 @@ public class ScriptManager {
         LuaC.install(returned);
 
         this.libraries.forEach(returned::load);
-
-        LuaValue osLib = returned.get("os");
-        if(osLib.istable()) {
-            osLib.set("execute", LuaValue.NIL);
-            osLib.set("exit", LuaValue.NIL);
-            osLib.set("remove", LuaValue.NIL);
-            osLib.set("rename", LuaValue.NIL);
-            osLib.set("setlocale", LuaValue.NIL);
-            osLib.set("tmpname", LuaValue.NIL);
-        }
+        this.cleanGlobals(returned);
 
         return returned;
     }
@@ -170,5 +161,28 @@ public class ScriptManager {
         } else {
             throw new LuaScriptException("Script does not resolve as a module");
         }
+    }
+
+    /**
+     * Internal method.
+     * 
+     * <p>Removes disallowed functions from the provided
+     * {@link Globals} object.</p>
+     */
+    private void cleanGlobals(Globals globals) {
+        LuaValue lib = globals.get("os");
+        if (lib.istable()) {
+            lib.set("execute", LuaValue.NIL);
+            lib.set("exit", LuaValue.NIL);
+            lib.set("remove", LuaValue.NIL);
+            lib.set("rename", LuaValue.NIL);
+            lib.set("setlocale", LuaValue.NIL);
+            lib.set("tmpname", LuaValue.NIL);
+        }
+
+        globals.set("load", LuaValue.NIL);
+        globals.set("dofile", LuaValue.NIL);
+        globals.set("loadfile", LuaValue.NIL);
+        globals.set("collectgarbage", LuaValue.NIL);
     }
 }
