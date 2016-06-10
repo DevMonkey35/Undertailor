@@ -34,6 +34,7 @@ import me.scarlet.undertailor.audio.AudioManager;
 import me.scarlet.undertailor.gfx.spritesheet.SpriteSheetManager;
 import me.scarlet.undertailor.gfx.text.FontManager;
 import me.scarlet.undertailor.gfx.text.TextStyleManager;
+import me.scarlet.undertailor.lua.ScriptManager;
 
 import java.io.File;
 
@@ -50,13 +51,15 @@ public class AssetManager {
 
     private FontManager font;
     private AudioManager audio;
+    private ScriptManager scripts;
     private TextStyleManager styles;
     private SpriteSheetManager sprites;
 
     public AssetManager(Undertailor undertailor) {
         this.font = new FontManager(undertailor.getRenderer());
         this.audio = new AudioManager(undertailor);
-        this.styles = new TextStyleManager();
+        this.scripts = new ScriptManager();
+        this.styles = new TextStyleManager(this.scripts);
         this.sprites = new SpriteSheetManager(undertailor.getRenderer());
     }
 
