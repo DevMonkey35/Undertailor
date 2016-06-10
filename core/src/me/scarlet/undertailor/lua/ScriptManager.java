@@ -213,5 +213,6 @@ public class ScriptManager {
         globals.set("collectgarbage", LuaValue.NIL);
 
         globals.set("debug", LuaValue.NIL);
+        globals.set("package", LuaValue.NIL);
     }
 }
