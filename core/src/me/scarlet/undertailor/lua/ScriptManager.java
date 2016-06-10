@@ -137,13 +137,6 @@ public class ScriptManager {
      */
     public LuaTable loadAsModule(File luaFile, LuaTable store)
         throws FileNotFoundException, LuaScriptException {
-        LuaTable table;
-        if (store == null) {
-            table = new LuaTable();
-        } else {
-            table = store;
-        }
-
         Globals globals = this.generateGlobals();
         InputStream stream = globals.finder.findResource(luaFile.getAbsolutePath());
         if (stream == null) {
@@ -153,13 +146,17 @@ public class ScriptManager {
         String chunkname = "@" + luaFile.getName();
         LuaValue value = globals.load(stream, chunkname, "bt", globals).invoke().arg(1);
         if (value.istable()) {
+            if (store == null) {
+                return (LuaTable) value;
+            }
+
             LuaUtil.iterateTable((LuaTable) value, vargs -> {
-                table.set(vargs.arg(1), vargs.arg(2));
+                store.set(vargs.arg(1), vargs.arg(2));
             });
+
+            return store;
         } else {
             throw new LuaScriptException("Script does not resolve as a module");
         }
-
-        return table;
     }
 }
