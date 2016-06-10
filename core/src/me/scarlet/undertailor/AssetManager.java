@@ -48,6 +48,7 @@ public class AssetManager {
     public static final String DIR_SPRITES = "sprites";
     public static final String DIR_STYLES = "fonts/styles";
     public static final String DIR_FONTS = "fonts";
+    public static final String DIR_SCRIPTS = "scripts";
 
     private FontManager font;
     private AudioManager audio;
@@ -78,6 +79,7 @@ public class AssetManager {
         this.sprites.loadSpriteSheets(new File(rootDirectory, DIR_SPRITES));
         this.styles.loadStyles(new File(rootDirectory, DIR_STYLES));
         this.font.loadFonts(new File(rootDirectory, DIR_FONTS));
+        this.scripts.setScriptPath(new File(rootDirectory, DIR_SCRIPTS).getAbsolutePath());
     }
 
     // ---------------- g/s managers ----------------

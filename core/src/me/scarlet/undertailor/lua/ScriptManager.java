@@ -45,6 +45,7 @@ import org.luaj.vm2.lib.jse.JseMathLib;
 import org.luaj.vm2.lib.jse.JseOsLib;
 
 import me.scarlet.undertailor.exception.LuaScriptException;
+import me.scarlet.undertailor.lua.lib.BaseLib;
 import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
@@ -60,16 +61,30 @@ import java.util.List;
  */
 public class ScriptManager {
 
+    private BaseLib baseLib;
     private List<LuaValue> libraries;
 
     public ScriptManager() {
         this.libraries = new ArrayList<>();
+        this.baseLib = new BaseLib();
 
+        libraries.add(this.baseLib);
         libraries.add(new Bit32Lib());
         libraries.add(new TableLib());
         libraries.add(new StringLib());
         libraries.add(new JseMathLib());
         libraries.add(new JseOsLib());
+    }
+
+    /**
+     * Sets the path where scripts should only be loaded
+     * from.
+     * 
+     * @param scriptPath the path containing the game's
+     *        scripts
+     */
+    public void setScriptPath(String scriptPath) {
+        this.baseLib.setScriptPath(scriptPath);
     }
 
     /**
