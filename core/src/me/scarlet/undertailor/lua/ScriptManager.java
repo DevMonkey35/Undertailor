@@ -36,6 +36,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.Bit32Lib;
+import org.luaj.vm2.lib.DebugLib;
 import org.luaj.vm2.lib.PackageLib;
 import org.luaj.vm2.lib.StringLib;
 import org.luaj.vm2.lib.TableLib;
@@ -95,6 +96,7 @@ public class ScriptManager {
         Globals returned = new Globals();
         returned.load(new JseBaseLib());
         returned.load(new PackageLib());
+        returned.load(new DebugLib());
 
         returned.set("debug", LuaValue.NIL);
         LoadState.install(returned);
