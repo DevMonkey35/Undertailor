@@ -260,13 +260,13 @@ public class TextComponent {
                 case FONT:
                     Font font = tailor.getAssetManager().getFontManager().getFont(value);
                     if (font == null && (value != null && !value.trim().isEmpty()))
-                        logger.warn("Could find font " + value + " to assign to text");
+                        logger.warn("Couldn't find font " + value + " to assign to text");
                     builder.setFont(font);
                     break;
                 case SOUND:
                     Sound sound = tailor.getAssetManager().getAudioManager().getSound(value);
                     if (sound == null)
-                        logger.warn("Could find sound " + value + " to assign to text");
+                        logger.warn("Couldn't find sound " + value + " to assign to text");
                     builder.setSound(sound);
                     break;
                 case STYLE:
@@ -275,7 +275,7 @@ public class TextComponent {
                         TextStyle style =
                             tailor.getAssetManager().getStyleManager().getStyle(styleValue);
                         if (style == null)
-                            logger.warn("Could find style " + value + " to assign to text");
+                            logger.warn("Couldn't find style " + value + " to assign to text");
                         builder.addStyles(style);
                     }
 
