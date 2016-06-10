@@ -260,8 +260,8 @@ public class Text extends TextComponent implements Renderable {
                 DisplayMeta dMeta = Text.generateDisplayMeta();
                 if (!component.getStyles().isEmpty()) {
                     component.getStyles().forEach(style -> {
-                        style.apply(dMeta, this.instantiationTime, character,
-                            localIndex.getFirst() + localIndex.getSecond(),
+                        style.apply(dMeta, TimeUtils.timeSinceMillis(this.instantiationTime),
+                            character, localIndex.getFirst() + localIndex.getSecond(),
                             this.getText().length());
                     });
 
@@ -441,34 +441,34 @@ public class Text extends TextComponent implements Renderable {
                 }
 
                 if (entry.getValue() == first || entry.getValue() == last) {
-                    if(entry.getValue() == first && entry.getValue() == last) {
+                    if (entry.getValue() == first && entry.getValue() == last) {
                         TextComponent.Builder compBuilder = TextComponent.builder();
                         int leftStringBound = boundL - entry.getKey();
-                        
+
                         compBuilder.copy(entry.getValue());
-                        compBuilder.setText(
-                            entry.getValue().getText().substring(leftStringBound, leftStringBound + (boundR - boundL)));
+                        compBuilder.setText(entry.getValue().getText().substring(leftStringBound,
+                            leftStringBound + (boundR - boundL)));
                         builder.addComponents(compBuilder.build());
                         break;
                     } else {
                         if (entry.getValue() == first) {
                             if (boundL != -1 && entry.getKey() < boundL) {
                                 TextComponent.Builder compBuilder = TextComponent.builder();
-    
+
                                 compBuilder.copy(entry.getValue());
                                 compBuilder.setText(
                                     entry.getValue().getText().substring(boundL - entry.getKey()));
                                 builder.addComponents(compBuilder.build());
                             }
-    
+
                             first = null;
                         }
-    
+
                         if (entry.getValue() == last && boundR != -1
                             && entry.getKey() + entry.getValue().text.length() > boundR) {
                             String newText = entry.getValue().text;
                             TextComponent.Builder compBuilder = TextComponent.builder();
-    
+
                             newText = newText.substring(0,
                                 newText.length() - (newText.length() + entry.getKey() - boundR));
                             compBuilder.copy(entry.getValue());
