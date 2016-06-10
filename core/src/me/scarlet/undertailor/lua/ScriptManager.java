@@ -43,6 +43,8 @@ import org.luaj.vm2.lib.TableLib;
 import org.luaj.vm2.lib.jse.JseBaseLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
 import org.luaj.vm2.lib.jse.JseOsLib;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.BaseLib;
@@ -61,14 +63,20 @@ import java.util.List;
  */
 public class ScriptManager {
 
-    private BaseLib baseLib;
+    static final Logger log = LoggerFactory.getLogger(ScriptManager.class);
+
     private List<LuaValue> libraries;
+    private List<Class<? extends LuaValue>> baseLibraries;
 
     public ScriptManager() {
         this.libraries = new ArrayList<>();
-        this.baseLib = new BaseLib();
+        this.baseLibraries = new ArrayList<>();
 
-        libraries.add(this.baseLib);
+        baseLibraries.add(JseBaseLib.class);
+        baseLibraries.add(PackageLib.class);
+        baseLibraries.add(DebugLib.class);
+        baseLibraries.add(BaseLib.class);
+
         libraries.add(new Bit32Lib());
         libraries.add(new TableLib());
         libraries.add(new StringLib());
@@ -84,7 +92,7 @@ public class ScriptManager {
      *        scripts
      */
     public void setScriptPath(String scriptPath) {
-        this.baseLib.setScriptPath(scriptPath);
+        BaseLib.setScriptPath(scriptPath);
     }
 
     /**
@@ -109,13 +117,16 @@ public class ScriptManager {
      */
     public Globals generateGlobals() {
         Globals returned = new Globals();
-        returned.load(new JseBaseLib());
-        returned.load(new PackageLib());
-        returned.load(new DebugLib());
-
         LoadState.install(returned);
         LuaC.install(returned);
 
+        this.baseLibraries.forEach(clazz -> {
+            try {
+                returned.load(clazz.newInstance());
+            } catch (Exception e) {
+                log.error("Failed to load base library of class " + clazz.getSimpleName(), e);
+            }
+        });
         this.libraries.forEach(returned::load);
         this.cleanGlobals(returned);
 
