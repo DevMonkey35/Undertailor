@@ -39,10 +39,37 @@ import org.luaj.vm2.LuaTable;
  */
 public interface LuaObjectMeta {
 
+    /**
+     * Returns the class type an object held by a
+     * {@link LuaObjectValue} needs to be to consider this
+     * {@link LuaObjectMeta} as possible metadata for the
+     * former.
+     */
     public Class<?> getTargetObjectClass();
 
+    /**
+     * Returns the metatable to apply to applicable
+     * {@link LuaObjectValue}s.
+     * 
+     * <p>The metatable should only be a table of
+     * metamethods, the script manager will handle
+     * conversion into <code>{__index = table}</code>
+     * form.</p>
+     * 
+     * @return the metatable for this {@link LuaObjectMeta}
+     */
     public LuaTable getMetatable();
 
+    /**
+     * Returns the typename to return when the
+     * <code>type()</code> function is called with a
+     * {@link LuaObjectValue} holding this
+     * {@link LuaObjectMeta} as metadata passed as a
+     * parameter.
+     * 
+     * @return the typename for objects primarily
+     *         identifying with this {@link LuaObjectMeta}
+     */
     public String getTypeName();
 
 }
