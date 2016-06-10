@@ -30,9 +30,16 @@
 
 package me.scarlet.undertailor.gfx.text;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import me.scarlet.undertailor.exception.LuaScriptException;
+import me.scarlet.undertailor.lua.ScriptManager;
+import me.scarlet.undertailor.lua.impl.LuaTextStyle;
 import me.scarlet.undertailor.util.FileUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,11 +48,14 @@ import java.util.Map;
  */
 public class TextStyleManager {
 
+    static final Logger log = LoggerFactory.getLogger(TextStyleManager.class);
     public static final char INTERNAL_STYLE_PREFIX = '#';
 
+    private ScriptManager scripts;
     private Map<String, TextStyle> styles;
 
-    public TextStyleManager() {
+    public TextStyleManager(ScriptManager scripts) {
+        this.scripts = scripts;
         this.styles = new HashMap<>();
     }
 
@@ -96,7 +106,17 @@ public class TextStyleManager {
         });
 
         files.keySet().forEach(key -> {
-            // TODO Lua stuff.
+            File scriptFile = files.get(key);
+            try {
+                this.styles.put(key, new LuaTextStyle(scripts, scriptFile));
+            } catch (Exception e) {
+                String message = "Could not load style at script file " + scriptFile.getAbsolutePath();
+                if(e instanceof FileNotFoundException) message += " (file not found)";
+                if(e instanceof LuaScriptException) message += " (implementation error)";
+                log.error(message, e);
+            }
         });
+
+        log.info(this.styles.size() + " style(s) loaded.");
     }
 }
