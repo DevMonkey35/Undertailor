@@ -113,7 +113,6 @@ public class ScriptManager {
         returned.load(new PackageLib());
         returned.load(new DebugLib());
 
-        returned.set("debug", LuaValue.NIL);
         LoadState.install(returned);
         LuaC.install(returned);
 
@@ -201,5 +200,7 @@ public class ScriptManager {
         globals.set("dofile", LuaValue.NIL);
         globals.set("loadfile", LuaValue.NIL);
         globals.set("collectgarbage", LuaValue.NIL);
+
+        globals.set("debug", LuaValue.NIL);
     }
 }
