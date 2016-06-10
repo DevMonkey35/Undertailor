@@ -51,6 +51,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manager class responsible for generating {@link Globals}
+ * objects with their appropriate libraries to load Lua
+ * scripts with.
+ */
 public class ScriptManager {
 
     private List<LuaValue> libraries;
@@ -64,11 +69,26 @@ public class ScriptManager {
         libraries.add(new JseMathLib());
     }
 
+    /**
+     * Registers a {@link LuaLibrary} to be registered into
+     * any {@link Globals} object this {@link ScriptManager}
+     * generates.
+     * 
+     * @param library a LuaLibrary to register
+     */
     public void registerLibrary(LuaLibrary library) {
         if (!this.libraries.contains(library))
             this.libraries.add(library);
     }
 
+    /**
+     * Generates a {@link Globals} object with most default
+     * Lua libraries and any LuaLibraries (
+     * {@link LuaLibrary}) registered with this
+     * {@link ScriptManager}.
+     * 
+     * @return a new Globals object
+     */
     public Globals generateGlobals() {
         Globals returned = new Globals();
         returned.load(new JseBaseLib());
@@ -83,10 +103,38 @@ public class ScriptManager {
         return returned;
     }
 
+    /**
+     * Returns a {@link LuaTable} representative of the
+     * module loaded from the provided Lua script file.
+     * 
+     * @param luaFile the Lua script File to load from
+     * 
+     * @return the module loaded from the given File
+     * 
+     * @throws FileNotFoundException if the file wasn't
+     *         found
+     * @throws LuaScriptException if the script isn't
+     *         written as a module
+     */
     public LuaTable loadAsModule(File luaFile) throws FileNotFoundException, LuaScriptException {
         return this.loadAsModule(luaFile, null);
     }
 
+    /**
+     * Returns the provided {@link LuaTable} injected with
+     * the contents of the module loaded from the provided
+     * Lua script file.
+     * 
+     * @param luaFile the Lua script File to load from
+     * @param store the LuaTable to inject the module into
+     * 
+     * @return the module loaded from the given File
+     * 
+     * @throws FileNotFoundException if the file wasn't
+     *         found
+     * @throws LuaScriptException if the script isn't
+     *         written as a module
+     */
     public LuaTable loadAsModule(File luaFile, LuaTable store)
         throws FileNotFoundException, LuaScriptException {
         LuaTable table;

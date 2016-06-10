@@ -32,6 +32,11 @@ package me.scarlet.undertailor.lua;
 
 import org.luaj.vm2.LuaTable;
 
+/**
+ * Skeleton implementation for metadata associated with
+ * {@link LuaObjectValue}s who store specific types of
+ * objects.
+ */
 public interface LuaObjectMeta {
 
     public Class<?> getTargetObjectClass();

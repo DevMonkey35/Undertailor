@@ -30,17 +30,18 @@
 
 package me.scarlet.undertailor.exception;
 
+/**
+ * Exception thrown for issues associated with the
+ * implementation within a Lua script file.
+ */
 public class LuaScriptException extends Exception {
-    
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -4860795568973357877L;
 
     public LuaScriptException() {}
-    
+
     public LuaScriptException(String message) {
         super(message);
     }
-    
+
 }

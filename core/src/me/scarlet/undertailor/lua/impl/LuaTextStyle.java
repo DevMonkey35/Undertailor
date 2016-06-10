@@ -43,6 +43,9 @@ import me.scarlet.undertailor.lua.ScriptManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+/**
+ * Implementation of a Lua-implemented {@link TextStyle}.
+ */
 public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
 
     public static final String FUNC_APPLY = "apply";

@@ -40,6 +40,12 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+/**
+ * Generic container for Java objects to be passable as Lua
+ * objects.
+ *
+ * @param <T> the type of the Java object to contain
+ */
 public class LuaObjectValue<T> extends LuaTable {
 
     static final Map<Object, LuaObjectValue<?>> STORED;
@@ -48,6 +54,19 @@ public class LuaObjectValue<T> extends LuaTable {
         STORED = new WeakHashMap<>();
     }
 
+    /**
+     * Returns a {@link LuaObjectValue} holding the provided
+     * object.
+     * 
+     * <p>If the given object is already held by an existing
+     * object value, the existing instance is returned.
+     * Otherwise, a new one is generated, registered and
+     * returned.</p>
+     * 
+     * @param object the Object for the value to hold
+     * 
+     * @return the LuaObjectValue holding the provided object
+     */
     @SuppressWarnings("unchecked")
     public static <T> LuaObjectValue<T> of(T object) {
         if (LuaObjectValue.STORED.containsKey(object)) {
@@ -87,14 +106,50 @@ public class LuaObjectValue<T> extends LuaTable {
         return super.typename();
     }
 
+    /**
+     * Returns the Java object held by this
+     * {@link LuaObjectValue}.
+     * 
+     * <p>The Java object is weakly referenced by this
+     * object value; it is possible for this to return null
+     * should the Java object no longer be in use.</p>
+     * 
+     * @return the Java object held by this value
+     */
     public T getObject() {
         return this.ref.get();
     }
 
+    /**
+     * Returns the {@link LuaObjectMeta} assigned to this
+     * {@link LuaObjectValue} as its primary identifier.
+     * 
+     * @return the LuaObjectMeta assigned to this object
+     *         value
+     */
     public LuaObjectMeta getMeta() {
         return this.meta;
     }
 
+    /**
+     * Loads the given Lua script File into this
+     * {@link LuaObjectValue}.
+     * 
+     * <p>LuaObjectValue scripts are <strong>strictly
+     * modules</strong>, that is, if the script does not
+     * implement itself as a module by storing its functions
+     * and relevant variables in a table and returning the
+     * latter, a {@link LuaScriptException} is raised.</p>
+     * 
+     * @param manager the ScriptManager used to load the
+     *        script
+     * @param luaFile the Lua script file to load
+     * 
+     * @throws FileNotFoundException if the file was not
+     *         found
+     * @throws LuaScriptException if the script was not
+     *         implemented as a module
+     */
     public void load(ScriptManager manager, File luaFile)
         throws FileNotFoundException, LuaScriptException {
         manager.loadAsModule(luaFile, this);

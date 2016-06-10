@@ -30,15 +30,16 @@
 
 package me.scarlet.undertailor.exception;
 
+/**
+ * Exception thrown for issues associated with bad data
+ * within an asset file.
+ */
 public class BadAssetException extends Exception {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6802714225399589649L;
-    
+
     public BadAssetException() {}
-    
+
     public BadAssetException(String message) {
         super(message);
     }

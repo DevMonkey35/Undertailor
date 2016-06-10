@@ -36,8 +36,27 @@ import org.luaj.vm2.Varargs;
 
 import java.util.function.Consumer;
 
+/**
+ * Utility class for interaction with lua-based objects.
+ */
 public class LuaUtil {
 
+    /**
+     * Iterates through a given {@link LuaTable}, passing
+     * each key/value pair as {@link Varargs} to the
+     * provided {@link Consumer}.
+     * 
+     * <p>Assuming the table is used as a table (as in, not
+     * an array), the first arg within the Varargs
+     * (<code>varargs.arg(1)</code>) is the key. The second
+     * (<code>varargs.arg(2)</code>) is the value. If the
+     * table is an array, then the first arg refers to the
+     * value, while the second remains nil.</p>
+     * 
+     * @param table the table to iterate through
+     * @param consumer the consumer processing each table
+     *        entry
+     */
     public static void iterateTable(LuaTable table, Consumer<Varargs> consumer) {
         LuaValue key = LuaValue.NIL;
         while (true) {
@@ -49,9 +68,5 @@ public class LuaUtil {
             consumer.accept(pair);
             key = pair.arg1();
         }
-    }
-
-    public static Varargs varargsOf(LuaValue... values) {
-        return LuaValue.varargsOf(values);
     }
 }

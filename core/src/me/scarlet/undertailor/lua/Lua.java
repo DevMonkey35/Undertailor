@@ -38,6 +38,10 @@ import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Static implementation of a class that holds meta data for
+ * {@link LuaObjectValue}s.
+ */
 public class Lua {
 
     static final Logger log = LoggerFactory.getLogger(Lua.class);
@@ -49,6 +53,20 @@ public class Lua {
         loadMeta(LuaTextStyleMeta.class);
     }
 
+    /**
+     * Returns the {@link LuaObjectMeta} associated with the
+     * provided object.
+     * 
+     * <p>If the provided object is an instance of
+     * {@link LuaImplementable} and has a primary
+     * identifying class, the meta associated with that
+     * class is scanned for first.</p>
+     * 
+     * @param obj the Object to query with
+     * 
+     * @return the LuaObjectMeta associated with the
+     *         provided object, or null if one was not found
+     */
     public static LuaObjectMeta getMeta(Object obj) {
         if (obj instanceof LuaImplementable
             && ((LuaImplementable<?>) obj).getPrimaryIdentifyingClass() != null) {
@@ -71,6 +89,12 @@ public class Lua {
         return null;
     }
 
+    /**
+     * Internal method.
+     * 
+     * <p>Used to quickly load {@link LuaObjectMeta}
+     * instances by passing the class.</p>
+     */
     static void loadMeta(Class<? extends LuaObjectMeta> metaClass) {
         try {
             LuaObjectMeta meta = metaClass.newInstance();

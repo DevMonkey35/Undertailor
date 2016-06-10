@@ -35,6 +35,9 @@ import org.luaj.vm2.LuaTable;
 import me.scarlet.undertailor.gfx.text.TextStyle;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 
+/**
+ * Metadata for Lua-implemented {@link TextStyle}s.
+ */
 public class LuaTextStyleMeta implements LuaObjectMeta {
 
     @Override
