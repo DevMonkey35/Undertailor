@@ -41,6 +41,7 @@ import org.luaj.vm2.lib.StringLib;
 import org.luaj.vm2.lib.TableLib;
 import org.luaj.vm2.lib.jse.JseBaseLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
+import org.luaj.vm2.lib.jse.JseOsLib;
 
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -67,6 +68,7 @@ public class ScriptManager {
         libraries.add(new TableLib());
         libraries.add(new StringLib());
         libraries.add(new JseMathLib());
+        libraries.add(new JseOsLib());
     }
 
     /**
@@ -99,6 +101,16 @@ public class ScriptManager {
         LuaC.install(returned);
 
         this.libraries.forEach(returned::load);
+
+        LuaValue osLib = returned.get("os");
+        if(osLib.istable()) {
+            osLib.set("execute", LuaValue.NIL);
+            osLib.set("exit", LuaValue.NIL);
+            osLib.set("remove", LuaValue.NIL);
+            osLib.set("rename", LuaValue.NIL);
+            osLib.set("setlocale", LuaValue.NIL);
+            osLib.set("tmpname", LuaValue.NIL);
+        }
 
         return returned;
     }
