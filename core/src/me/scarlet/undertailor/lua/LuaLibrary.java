@@ -36,6 +36,7 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.VarArgFunction;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -46,6 +47,7 @@ public class LuaLibrary extends TwoArgFunction {
 
     public LuaLibrary(String name) {
         this.name = name;
+        this.functions = new HashMap<>();
     }
 
     public final void registerFunction(String funcId, Function<Varargs, Varargs> func) {
