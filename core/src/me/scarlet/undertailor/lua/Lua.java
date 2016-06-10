@@ -124,7 +124,7 @@ public class Lua {
 
         LuaTable functable = new LuaTable();
         for (LuaObjectMeta meta : Lua.META.values()) {
-            if (meta.getTargetObjectClass().isInstance(obj)) {
+            if (meta.getTargetObjectClass().isInstance(obj) && meta.getMetatable() != null) {
                 LuaUtil.iterateTable(meta.getMetatable(), vargs -> {
                     functable.set(vargs.arg(1), vargs.arg(2));
                 });
