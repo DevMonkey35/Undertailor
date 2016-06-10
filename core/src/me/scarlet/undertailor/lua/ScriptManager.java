@@ -41,7 +41,6 @@ import org.luaj.vm2.lib.StringLib;
 import org.luaj.vm2.lib.TableLib;
 import org.luaj.vm2.lib.jse.JseBaseLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
-import org.luaj.vm2.lib.jse.JsePlatform;
 
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -78,7 +77,6 @@ public class ScriptManager {
 
     public Globals generateGlobals() {
         Globals returned = new Globals();
-        JsePlatform.standardGlobals();
         returned.load(new JseBaseLib());
         returned.load(new PackageLib());
         returned.load(new Bit32Lib());
