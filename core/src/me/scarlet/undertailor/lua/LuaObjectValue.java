@@ -48,7 +48,7 @@ import java.util.WeakHashMap;
  */
 public class LuaObjectValue<T> extends LuaTable {
 
-    static final Map<Object, LuaObjectValue<?>> STORED;
+    static final Map<Object, WeakReference<LuaObjectValue<?>>> STORED;
 
     static {
         STORED = new WeakHashMap<>();
@@ -71,7 +71,11 @@ public class LuaObjectValue<T> extends LuaTable {
     @SuppressWarnings("unchecked")
     public static <T> LuaObjectValue<T> of(T object) {
         if (LuaObjectValue.STORED.containsKey(object)) {
-            return (LuaObjectValue<T>) LuaObjectValue.STORED.get(object);
+            if (LuaObjectValue.STORED.get(object).get() != null) {
+                return (LuaObjectValue<T>) LuaObjectValue.STORED.get(object).get();
+            }
+
+            LuaObjectValue.STORED.remove(object);
         }
 
         return new LuaObjectValue<>(object);
@@ -81,13 +85,13 @@ public class LuaObjectValue<T> extends LuaTable {
 
     private String typename;
     private LuaObjectMeta meta;
-    private WeakReference<T> ref;
+    private T ref;
 
     @SuppressWarnings("unchecked")
     private LuaObjectValue(T object) {
-        this.ref = new WeakReference<>(object);
+        this.ref = object;
 
-        LuaObjectValue.STORED.put(object, this);
+        LuaObjectValue.STORED.put(object, new WeakReference<>(this));
         LuaObjectMeta meta = Lua.getMeta(object);
         if (meta != null) {
             this.meta = meta;
@@ -121,14 +125,10 @@ public class LuaObjectValue<T> extends LuaTable {
      * Returns the Java object held by this
      * {@link LuaObjectValue}.
      * 
-     * <p>The Java object is weakly referenced by this
-     * object value; it is possible for this to return null
-     * should the Java object no longer be in use.</p>
-     * 
      * @return the Java object held by this value
      */
     public T getObject() {
-        return this.ref.get();
+        return this.ref;
     }
 
     /**

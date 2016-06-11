@@ -94,10 +94,6 @@ public class Lua {
 
         if (value instanceof LuaObjectValue) {
             LuaObjectValue<?> objectValue = ((LuaObjectValue<?>) value);
-            if (objectValue.getObject() == null) { // might happen, the check below just returns false if it does, so if it ever happens we need to know
-                throw new LuaError("Object value has expired");
-            }
-
             if (meta.getTargetObjectClass().isInstance(objectValue.getObject())) {
                 return (LuaObjectValue<T>) objectValue;
             }
