@@ -42,6 +42,7 @@ import me.scarlet.undertailor.util.BoundedFloat;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -319,6 +320,7 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
 
     public SoundFactory(String audioName, AudioManager manager, File soundFile)
         throws UnsupportedAudioFileException {
+        this.soundData = new HashMap<>();
         this.audioName = audioName;
         this.soundFile = soundFile;
         this.manager = manager;
