@@ -77,6 +77,8 @@ public class LuaObjectValue<T> extends LuaTable {
         return new LuaObjectValue<>(object);
     }
 
+    // ---------------- object ----------------
+
     private String typename;
     private LuaObjectMeta meta;
     private WeakReference<T> ref;
@@ -102,6 +104,8 @@ public class LuaObjectValue<T> extends LuaTable {
         }
     }
 
+    // ---------------- abstract method implementation ----------------
+
     @Override
     public String typename() {
         if (this.typename != null) {
@@ -110,6 +114,8 @@ public class LuaObjectValue<T> extends LuaTable {
 
         return super.typename();
     }
+
+    // ---------------- g/s object params ----------------
 
     /**
      * Returns the Java object held by this
@@ -135,6 +141,8 @@ public class LuaObjectValue<T> extends LuaTable {
     public LuaObjectMeta getMeta() {
         return this.meta;
     }
+
+    // ---------------- functional methods ----------------
 
     /**
      * Loads the given Lua script File into this

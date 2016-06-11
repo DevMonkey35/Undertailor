@@ -190,6 +190,8 @@ public class ScriptManager {
         }
     }
 
+    // ---------------- internal methods ----------------
+
     /**
      * Internal method.
      * 

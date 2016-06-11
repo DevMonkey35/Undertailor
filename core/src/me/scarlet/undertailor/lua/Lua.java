@@ -57,6 +57,8 @@ public class Lua {
         loadMeta(LuaTextStyleMeta.class);
     }
 
+    // ---------------- functional methods ----------------
+
     /**
      * Returns the {@link LuaObjectMeta} associated with the
      * provided object.
@@ -141,6 +143,8 @@ public class Lua {
             return null;
         }
     }
+
+    // ---------------- internal methods ----------------
 
     /**
      * Internal method.

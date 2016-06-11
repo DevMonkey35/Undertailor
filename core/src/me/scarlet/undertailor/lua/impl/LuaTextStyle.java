@@ -64,6 +64,8 @@ public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
         this.luaObj.load(manager, luaFile);
     }
 
+    // ---------------- abstract method implementation ----------------
+
     @Override
     public Class<?> getPrimaryIdentifyingClass() {
         return TextStyle.class;

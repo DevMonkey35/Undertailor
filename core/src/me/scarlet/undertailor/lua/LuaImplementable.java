@@ -42,6 +42,8 @@ import org.luaj.vm2.Varargs;
  */
 public interface LuaImplementable<T> {
 
+    // ---------------- implementable methods ----------------
+
     /**
      * Returns the {@link LuaObjectValue} representing this
      * {@link LuaImplementable} as a Lua object.
@@ -64,6 +66,8 @@ public interface LuaImplementable<T> {
      */
     void setObjectValue(LuaObjectValue<T> value);
 
+    // ---------------- optional methods ----------------
+
     /**
      * Returns the {@link Class} that this
      * {@link LuaImplementable} primarily identifies itself
@@ -79,6 +83,8 @@ public interface LuaImplementable<T> {
     default Class<?> getPrimaryIdentifyingClass() {
         return null;
     }
+
+    // ---------------- default functional methods ----------------
 
     /**
      * Convenience method for invoking a function held by

@@ -55,6 +55,8 @@ public class LuaLibrary extends TwoArgFunction {
         this.functions = new HashMap<>();
     }
 
+    // ---------------- abstract method implementation ----------------
+
     /**
      * {@inheritDoc}
      * 
@@ -82,6 +84,8 @@ public class LuaLibrary extends TwoArgFunction {
         }
     }
 
+    // ---------------- functional methods ----------------
+
     /**
      * Registers a function into this {@link LuaLibrary}.
      * 
@@ -108,6 +112,8 @@ public class LuaLibrary extends TwoArgFunction {
             table.set(key, functions.get(key));
         });
     }
+
+    // ---------------- optional implementable methods ----------------
 
     /**
      * Called whenever this {@link LuaLibrary} is properly
