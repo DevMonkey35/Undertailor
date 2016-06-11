@@ -37,6 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.lua.meta.LuaAudioMeta;
+import me.scarlet.undertailor.lua.meta.LuaSoundDataMeta;
+import me.scarlet.undertailor.lua.meta.LuaSoundMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
 import me.scarlet.undertailor.util.LuaUtil;
 
@@ -60,6 +62,8 @@ public class Lua {
 
         loadMeta(LuaTextStyleMeta.class);
         loadMeta(LuaAudioMeta.class);
+        loadMeta(LuaSoundMeta.class);
+        loadMeta(LuaSoundDataMeta.class);
     }
 
     // ---------------- functional methods ----------------
@@ -90,7 +94,7 @@ public class Lua {
 
         if (value instanceof LuaObjectValue) {
             LuaObjectValue<?> objectValue = ((LuaObjectValue<?>) value);
-            if (objectValue.getObject() == null) { // might happen, the check below just returns false if it does so if it ever happens we need to know
+            if (objectValue.getObject() == null) { // might happen, the check below just returns false if it does, so if it ever happens we need to know
                 throw new LuaError("Object value has expired");
             }
 
