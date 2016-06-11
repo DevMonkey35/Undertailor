@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.lua;
 
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
 
 /**
  * Skeleton implementation for metadata associated with
@@ -72,4 +73,19 @@ public interface LuaObjectMeta {
      */
     public String getTypeName();
 
+    // ---------------- convenience methods because i'm an ass ----------------
+
+    /**
+     * Convenience method to forward value setting on this
+     * {@link LuaObjectMeta}'s metatable.
+     * 
+     * <p>This will raise a {@link NullPointerException}
+     * should {@link #getMetatable()} return null.</p>
+     * 
+     * @param key the key
+     * @param value the value
+     */
+    default void set(String key, LuaValue value) {
+        this.getMetatable().set(key, value);
+    }
 }

@@ -30,10 +30,13 @@
 
 package me.scarlet.undertailor.lua;
 
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.lua.meta.LuaAudioMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
 import me.scarlet.undertailor.util.LuaUtil;
 
@@ -49,15 +52,55 @@ public class Lua {
     static final Logger log = LoggerFactory.getLogger(Lua.class);
     private static final Map<Class<?>, LuaObjectMeta> META;
     private static final Map<Class<?>, LuaTable> METATABLES;
+    private static final String INVALID_TYPE_MSG = "bad argument: %s expected, got %s";
 
     static {
         META = new HashMap<>();
         METATABLES = new HashMap<>();
 
         loadMeta(LuaTextStyleMeta.class);
+        loadMeta(LuaAudioMeta.class);
     }
 
     // ---------------- functional methods ----------------
+
+    /**
+     * Returns the given {@link LuaValue} as the appropriate
+     * type of {@link LuaObjectValue}, directed by the
+     * provided {@link LuaObjectMeta} type.
+     * 
+     * <p>If the provided value is not of the appropriate
+     * type, a {@link LuaError} is raised.</p>
+     * 
+     * @param value the LuaValue to check
+     * @param clazz the target LuaObjectMeta type to check
+     *        with
+     * 
+     * @return the appropriately typed LuaValue as a
+     *         LuaObjectValue
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> LuaObjectValue<T> checkType(LuaValue value,
+        Class<? extends LuaObjectMeta> clazz) {
+        LuaObjectMeta meta = Lua.getMeta(clazz);
+        if (meta == null) {
+            throw new IllegalArgumentException(
+                "Meta class " + clazz.getSimpleName() + " isn't registered");
+        }
+
+        if (value instanceof LuaObjectValue) {
+            LuaObjectValue<?> objectValue = ((LuaObjectValue<?>) value);
+            if (objectValue.getObject() == null) { // might happen, the check below just returns false if it does so if it ever happens we need to know
+                throw new LuaError("Object value has expired");
+            }
+
+            if (meta.getTargetObjectClass().isInstance(objectValue.getObject())) {
+                return (LuaObjectValue<T>) objectValue;
+            }
+        }
+
+        throw new LuaError(String.format(INVALID_TYPE_MSG, meta.getTypeName(), value.typename()));
+    }
 
     /**
      * Returns the {@link LuaObjectMeta} associated with the
@@ -165,5 +208,21 @@ public class Lua {
         } catch (Exception e) {
             log.error("Failed to load meta for meta class " + metaClass.getSimpleName(), e);
         }
+    }
+
+    /**
+     * Internal method.
+     * 
+     * <p>Returns a stored {@link LuaObjectMeta}
+     * instance.</p>
+     */
+    static LuaObjectMeta getMeta(Class<? extends LuaObjectMeta> metaClass) {
+        for (LuaObjectMeta meta : Lua.META.values()) {
+            if (meta.getClass() == metaClass) {
+                return meta;
+            }
+        }
+
+        return null;
     }
 }
