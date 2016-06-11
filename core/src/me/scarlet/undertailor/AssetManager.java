@@ -74,7 +74,7 @@ public class AssetManager {
      * @param rootDirectory the root directory to load from
      */
     public void loadAll(File rootDirectory) {
-        this.audio.loadSounds(new File(rootDirectory, DIR_AUDIO_MUSIC));
+        this.audio.loadSounds(new File(rootDirectory, DIR_AUDIO_SOUND));
         this.audio.loadMusic(new File(rootDirectory, DIR_AUDIO_MUSIC));
         this.sprites.loadSpriteSheets(new File(rootDirectory, DIR_SPRITES));
         this.styles.loadStyles(new File(rootDirectory, DIR_STYLES));
