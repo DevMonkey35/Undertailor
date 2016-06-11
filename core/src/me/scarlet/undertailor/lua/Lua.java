@@ -176,7 +176,7 @@ public class Lua {
             }
         }
 
-        if(functable.len().toint() > 0) {
+        if (LuaUtil.getTableSize(functable) > 0) {
             LuaTable metatable = new LuaTable();
             metatable.set("__index", functable);
             Lua.METATABLES.put(obj.getClass(), metatable);
