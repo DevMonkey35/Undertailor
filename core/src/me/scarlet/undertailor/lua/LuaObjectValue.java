@@ -70,6 +70,10 @@ public class LuaObjectValue<T> extends LuaTable {
      */
     @SuppressWarnings("unchecked")
     public static <T> LuaObjectValue<T> of(T object) {
+        if(object == null) {
+            return null;
+        }
+
         if (LuaObjectValue.STORED.containsKey(object)) {
             if (LuaObjectValue.STORED.get(object).get() != null) {
                 return (LuaObjectValue<T>) LuaObjectValue.STORED.get(object).get();

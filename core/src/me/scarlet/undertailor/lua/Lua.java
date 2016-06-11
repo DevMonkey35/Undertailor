@@ -117,6 +117,10 @@ public class Lua {
      *         provided object, or null if one was not found
      */
     public static LuaObjectMeta getMeta(Object obj) {
+        if(obj == null) {
+            return null;
+        }
+
         if (obj instanceof LuaImplementable
             && ((LuaImplementable<?>) obj).getPrimaryIdentifyingClass() != null) {
             Class<?> target = ((LuaImplementable<?>) obj).getPrimaryIdentifyingClass();
