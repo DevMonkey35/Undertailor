@@ -191,6 +191,13 @@ public class Lua {
         }
     }
 
+    /**
+     * Logs a message as the Lua class.
+     */
+    public static void log(String message) {
+        log.info(message);
+    }
+
     // ---------------- internal methods ----------------
 
     /**

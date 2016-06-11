@@ -37,6 +37,7 @@ import org.luaj.vm2.Varargs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 
 import java.io.File;
@@ -113,7 +114,7 @@ public class BaseLib extends LuaLibrary {
 
         // print(string) -- Prints to console.
         this.registerFunction("print", vargs -> {
-            log.info("[print] " + vargs.arg(1).tojstring());
+            Lua.log("[print] " + vargs.arg(1).tojstring());
             return LuaValue.NIL;
         });
 
