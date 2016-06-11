@@ -38,6 +38,8 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.input.InputRetriever;
 import me.scarlet.undertailor.resource.ResourceHandler;
 
+import java.io.File;
+
 /**
  * The entrypoint class to the base game.
  * 
@@ -130,6 +132,13 @@ public class Undertailor extends ApplicationAdapter {
 
         this.assets = new AssetManager(this);
         this.assets.loadAll(this.options.assetDir);
+        File mainFile = new File(this.options.assetDir, "main.lua");
+        if (mainFile.exists()) {
+            this.assets.getScriptManager().generateGlobals().loadfile(mainFile.getAbsolutePath())
+                .invoke();
+        } else {
+            log.warn("main.lua was not found in game directory; no start code was executed");
+        }
     }
 
     @Override
