@@ -365,6 +365,16 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
         return this.audioName;
     }
 
+    /**
+     * Forcefully stops sound from any instance spawned by
+     * this {@link SoundFactory}.
+     */
+    public void stop() {
+        if (this.getDisposable() != null) {
+            this.getDisposable().stop();
+        }
+    }
+
     // ---------------- internal methods ----------------
 
     /**

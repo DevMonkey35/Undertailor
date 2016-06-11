@@ -351,4 +351,14 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
     public boolean isDisposable(com.badlogic.gdx.audio.Music music) {
         return !music.isPlaying();
     }
+
+    /**
+     * Forcefully stops music coming from any instance
+     * spawned by this {@link MusicFactory}.
+     */
+    public void stop() {
+        if(this.getDisposable() != null) {
+            this.getDisposable().stop();
+        }
+    }
 }

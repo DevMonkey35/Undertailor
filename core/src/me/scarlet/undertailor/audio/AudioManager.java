@@ -224,6 +224,19 @@ public class AudioManager {
         ((OpenALAudio) Gdx.audio).update();
     }
 
+    /**
+     * Kills any running audio.
+     */
+    public void stopAllAudio() {
+        this.music.values().forEach(music -> {
+            ((MusicFactory) music).stop();
+        });
+
+        this.sounds.values().forEach(sound -> {
+            ((SoundFactory) sound).stop();
+        });
+    }
+
     // ---------------- internal methods ----------------
 
     /**
