@@ -31,11 +31,13 @@
 package me.scarlet.undertailor.lua;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.VarArgFunction;
+
+import me.scarlet.undertailor.util.LuaUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +50,7 @@ import java.util.function.Function;
 public class LuaLibrary extends TwoArgFunction {
 
     private String name;
-    private Map<String, VarArgFunction> functions;
+    private Map<String, LuaFunction> functions;
 
     public LuaLibrary(String name) {
         this.name = name;
@@ -93,12 +95,7 @@ public class LuaLibrary extends TwoArgFunction {
      * @param func the function
      */
     public final void registerFunction(String funcId, Function<Varargs, Varargs> func) {
-        functions.put(funcId, new VarArgFunction() {
-            @Override
-            public Varargs invoke(Varargs args) {
-                return func.apply(args);
-            }
-        });
+        functions.put(funcId, LuaUtil.asFunction(func));
     }
 
     /**

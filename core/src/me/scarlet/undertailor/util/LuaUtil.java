@@ -30,16 +30,27 @@
 
 package me.scarlet.undertailor.util;
 
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.VarArgFunction;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Utility class for interaction with lua-based objects.
  */
 public class LuaUtil {
+
+    static final Set<Object> MISC_SET;
+
+    static {
+        MISC_SET = new HashSet<>();
+    }
 
     /**
      * Iterates through a given {@link LuaTable}, passing
@@ -68,5 +79,39 @@ public class LuaUtil {
             consumer.accept(pair);
             key = pair.arg1();
         }
+    }
+
+    /**
+     * Generates a new anonymously-typed {@link LuaFunction}
+     * object from the provided {@link Function}.
+     * 
+     * @param func the function processing the Lua function
+     *        call
+     * 
+     * @return a LuaFunction wrapping the call to the
+     *         provided function
+     */
+    public static LuaFunction asFunction(Function<Varargs, Varargs> func) {
+        return new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs args) {
+                return func.apply(args);
+            }
+        };
+    }
+
+    /**
+     * Returns the count of entries within the provided
+     * {@link LuaTable}.
+     * 
+     * @param table the table to count entries for
+     * 
+     * @return how many entries exist within the given table
+     */ // because y'kno, all the length methods for LuaTable assumed integer keys
+    public static int getTableSize(LuaTable table) {
+        MISC_SET.clear();
+        iterateTable(table, MISC_SET::add);
+
+        return MISC_SET.size();
     }
 }
