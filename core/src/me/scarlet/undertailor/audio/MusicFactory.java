@@ -258,6 +258,15 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
             this.play(volume, pitch, pan);
         }
 
+        /**
+         * Stops the music from playing.
+         */
+        public void stop() {
+            if(this.isPlaying()) {
+                this.getReference().stop();
+            }
+        }
+
         // ---------------- internal methods ----------------
 
         /**
