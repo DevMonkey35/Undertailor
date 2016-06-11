@@ -36,6 +36,8 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 
+import me.scarlet.undertailor.lua.LuaObjectValue;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -113,5 +115,14 @@ public class LuaUtil {
         iterateTable(table, MISC_SET::add);
 
         return MISC_SET.size();
+    }
+
+    public static LuaValue valueOrNil(Object value) {
+        LuaObjectValue<?> val = LuaObjectValue.of(value);
+        if(val == null) {
+            return LuaValue.NIL;
+        }
+
+        return val;
     }
 }
