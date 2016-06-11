@@ -102,6 +102,10 @@ public class LuaLibrary extends TwoArgFunction {
      * Injects the functions of this {@link LuaLibrary} into
      * the provided {@link LuaTable}.
      * 
+     * <p>This directly injects into the target table unlike
+     * normal installation through
+     * {@link #call(LuaValue, LuaValue)}.</p>
+     * 
      * @param table the table to inject into
      */
     public final void inject(LuaTable table) {
