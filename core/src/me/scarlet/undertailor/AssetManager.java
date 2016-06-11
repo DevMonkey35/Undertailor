@@ -59,7 +59,7 @@ public class AssetManager {
     public AssetManager(Undertailor undertailor) {
         this.font = new FontManager(undertailor.getRenderer());
         this.audio = new AudioManager(undertailor);
-        this.scripts = new ScriptManager();
+        this.scripts = new ScriptManager(undertailor);
         this.styles = new TextStyleManager(this.scripts);
         this.sprites = new SpriteSheetManager(undertailor.getRenderer());
     }
@@ -74,12 +74,18 @@ public class AssetManager {
      * @param rootDirectory the root directory to load from
      */
     public void loadAll(File rootDirectory) {
+        // anything that doesn't have a dependency on scripts first
         this.audio.loadSounds(new File(rootDirectory, DIR_AUDIO_SOUND));
         this.audio.loadMusic(new File(rootDirectory, DIR_AUDIO_MUSIC));
         this.sprites.loadSpriteSheets(new File(rootDirectory, DIR_SPRITES));
-        this.styles.loadStyles(new File(rootDirectory, DIR_STYLES));
         this.font.loadFonts(new File(rootDirectory, DIR_FONTS));
+
+        // script manager
         this.scripts.setScriptPath(new File(rootDirectory, DIR_SCRIPTS).getAbsolutePath());
+        this.scripts.load();
+
+        // anything that uses scripts
+        this.styles.loadStyles(new File(rootDirectory, DIR_STYLES));
     }
 
     // ---------------- g/s managers ----------------

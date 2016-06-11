@@ -46,8 +46,10 @@ import org.luaj.vm2.lib.jse.JseOsLib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.BaseLib;
+import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
@@ -65,13 +67,17 @@ public class ScriptManager {
 
     static final Logger log = LoggerFactory.getLogger(ScriptManager.class);
 
+    private Undertailor undertailor;
     private List<LuaValue> libraries;
     private List<Class<? extends LuaValue>> baseLibraries;
 
-    public ScriptManager() {
+    public ScriptManager(Undertailor undertailor) {
         this.libraries = new ArrayList<>();
         this.baseLibraries = new ArrayList<>();
+        this.undertailor = undertailor;
+    }
 
+    public void load() {
         baseLibraries.add(JseBaseLib.class);
         baseLibraries.add(PackageLib.class);
         baseLibraries.add(DebugLib.class);
@@ -82,6 +88,9 @@ public class ScriptManager {
         libraries.add(new StringLib());
         libraries.add(new JseMathLib());
         libraries.add(new JseOsLib());
+        
+        libraries.add(new BaseLib());
+        libraries.add(new GameLib(undertailor));
     }
 
     /**
