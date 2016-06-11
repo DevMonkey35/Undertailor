@@ -81,6 +81,16 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
         }
 
         /**
+         * Return the {@link Sound} that created this
+         * {@link SoundData}.
+         * 
+         * @return the parent Sound
+         */
+        public Sound getParent() {
+            return this.parent;
+        }
+
+        /**
          * Returns the volume of the sound.
          * 
          * @return the volume
