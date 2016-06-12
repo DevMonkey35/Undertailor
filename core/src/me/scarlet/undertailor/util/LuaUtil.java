@@ -117,6 +117,24 @@ public class LuaUtil {
         return MISC_SET.size();
     }
 
+    /**
+     * Returns a {@link Varargs} instance containing the
+     * provided {@link LuaValue}s in their given order.
+     * 
+     * <p>Convenience method replacing
+     * {@link LuaValue#varargsOf(LuaValue[])} so we can
+     * actually make varargs <strong>with</strong>
+     * varargs.</p>
+     * 
+     * @param values the values to contain within the
+     *        Varargs to generate
+     * 
+     * @return a Varargs instance
+     */
+    public static Varargs varargsOf(LuaValue... values) {
+        return LuaValue.varargsOf(values);
+    }
+
     public static LuaValue valueOrNil(Object value) {
         LuaObjectValue<?> val = LuaObjectValue.of(value);
         if(val == null) {
