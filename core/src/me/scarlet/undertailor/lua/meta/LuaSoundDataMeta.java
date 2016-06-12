@@ -74,7 +74,7 @@ public class LuaSoundDataMeta implements LuaObjectMeta {
 
         // soundData:setVolume(nVolume)
         set("setVolume", asFunction(vargs -> {
-            obj(vargs.arg(1)).setVolume(vargs.arg(2).checknumber().tofloat());
+            obj(vargs).setVolume(vargs.arg(2).checknumber().tofloat());
             return NIL;
         }));
 
