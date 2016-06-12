@@ -77,7 +77,7 @@ public class LuaFontMeta implements LuaObjectMeta {
 
         // font:getLetterSpacing(char)
         set("getLetterSpacing", asFunction(vargs -> {
-            String str = vargs.checkjstring(1);
+            String str = vargs.checkjstring(2);
             if (str.trim().length() <= 0) {
                 return NIL;
             }
@@ -93,7 +93,7 @@ public class LuaFontMeta implements LuaObjectMeta {
 
         // font:getCharacterSprite(char)
         set("getCharacterSprite", asFunction(vargs -> {
-            String str = vargs.checkjstring(1);
+            String str = vargs.checkjstring(2);
             if (str.trim().length() <= 0) {
                 return NIL;
             }
