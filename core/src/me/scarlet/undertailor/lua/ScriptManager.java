@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.lib.BaseLib;
+import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.util.LuaUtil;
 
@@ -91,6 +92,7 @@ public class ScriptManager {
         
         libraries.add(new BaseLib());
         libraries.add(new GameLib(undertailor));
+        libraries.add(new ColorsLib());
     }
 
     /**

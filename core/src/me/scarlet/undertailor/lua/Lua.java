@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.lua.meta.LuaAudioMeta;
+import me.scarlet.undertailor.lua.meta.LuaColorMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
@@ -64,6 +65,7 @@ public class Lua {
         loadMeta(LuaAudioMeta.class);
         loadMeta(LuaSoundMeta.class);
         loadMeta(LuaSoundDataMeta.class);
+        loadMeta(LuaColorMeta.class);
     }
 
     // ---------------- functional methods ----------------
