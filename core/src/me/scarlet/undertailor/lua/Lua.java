@@ -38,11 +38,17 @@ import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.lua.meta.LuaAudioMeta;
 import me.scarlet.undertailor.lua.meta.LuaColorMeta;
+import me.scarlet.undertailor.lua.meta.LuaFontMeta;
 import me.scarlet.undertailor.lua.meta.LuaInputDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaPressDataMeta;
+import me.scarlet.undertailor.lua.meta.LuaRenderableMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundMeta;
+import me.scarlet.undertailor.lua.meta.LuaSpriteMeta;
+import me.scarlet.undertailor.lua.meta.LuaTextComponentMeta;
+import me.scarlet.undertailor.lua.meta.LuaTextMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
+import me.scarlet.undertailor.lua.meta.LuaTransformMeta;
 import me.scarlet.undertailor.util.LuaUtil;
 
 import java.util.HashMap;
@@ -63,13 +69,19 @@ public class Lua {
         META = new HashMap<>();
         METATABLES = new HashMap<>();
 
-        loadMeta(LuaTextStyleMeta.class);
         loadMeta(LuaAudioMeta.class);
-        loadMeta(LuaSoundMeta.class);
-        loadMeta(LuaSoundDataMeta.class);
         loadMeta(LuaColorMeta.class);
+        loadMeta(LuaFontMeta.class);
         loadMeta(LuaInputDataMeta.class);
         loadMeta(LuaPressDataMeta.class);
+        loadMeta(LuaRenderableMeta.class);
+        loadMeta(LuaSoundDataMeta.class);
+        loadMeta(LuaSoundMeta.class);
+        loadMeta(LuaSpriteMeta.class);
+        loadMeta(LuaTextComponentMeta.class);
+        loadMeta(LuaTextMeta.class);
+        loadMeta(LuaTextStyleMeta.class);
+        loadMeta(LuaTransformMeta.class);
     }
 
     // ---------------- functional methods ----------------
