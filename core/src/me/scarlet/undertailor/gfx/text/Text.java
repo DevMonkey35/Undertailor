@@ -400,6 +400,14 @@ public class Text extends TextComponent implements Renderable {
      * Substrings the contents of this {@link Text} object
      * into a new instance.
      * 
+     * <p>This method is large, and should not be called
+     * every frame. String bounds substitute for this
+     * method's functionality should the purpose only be to
+     * cut off unneeded characters, though if a new Text
+     * instance need to be created then this method suits
+     * the use case, however it is advised to generate it in
+     * a space that is not called that often.</p>
+     * 
      * @param start the first boundary
      * @param end the second boundary
      * 
