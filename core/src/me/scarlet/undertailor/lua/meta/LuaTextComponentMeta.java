@@ -94,7 +94,7 @@ public class LuaTextComponentMeta implements LuaObjectMeta {
                 returned[i] = of(styles.get(i));
             }
 
-            return LuaUtil.varargsOf(returned);
+            return LuaUtil.arrayOf(returned);
         }));
 
         // textComponent:getTextSpeed()

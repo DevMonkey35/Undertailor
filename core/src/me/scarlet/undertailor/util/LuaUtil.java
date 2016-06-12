@@ -118,6 +118,28 @@ public class LuaUtil {
     }
 
     /**
+     * Generates an array of values from the provided set of
+     * {@link LuaValue}s.
+     * 
+     * <p>That is, each value provided is a new entry
+     * assigned an integer key, the key being the index it
+     * was listed in.</p>
+     * 
+     * @param values the values of the array
+     * 
+     * @return the {@link LuaTable} containing the value
+     *         array
+     */
+    public static LuaTable arrayOf(LuaValue... values) {
+        LuaTable array = new LuaTable();
+        for(int i = 0; i < values.length; i++) {
+            array.set(i + 1, values[i]);
+        }
+
+        return array;
+    }
+
+    /**
      * Returns a {@link Varargs} instance containing the
      * provided {@link LuaValue}s in their given order.
      * 

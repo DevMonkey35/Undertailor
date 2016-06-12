@@ -33,6 +33,7 @@ package me.scarlet.undertailor.lua.meta;
 import static me.scarlet.undertailor.lua.LuaObjectValue.of;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static me.scarlet.undertailor.util.LuaUtil.varargsOf;
+import static me.scarlet.undertailor.util.LuaUtil.arrayOf;
 import static org.luaj.vm2.LuaValue.NIL;
 import static org.luaj.vm2.LuaValue.valueOf;
 
@@ -80,7 +81,7 @@ public class LuaTextMeta implements LuaObjectMeta {
                 returned[i] = of(components[i]);
             }
 
-            return varargsOf(returned);
+            return arrayOf(returned);
         }));
 
         // text:getSpaceTaken()
