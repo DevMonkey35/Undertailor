@@ -31,8 +31,8 @@
 package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
-import static org.luaj.vm2.LuaValue.valueOf;
 import static org.luaj.vm2.LuaValue.NIL;
+import static org.luaj.vm2.LuaValue.valueOf;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -43,6 +43,10 @@ import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
+/**
+ * Metadata for {@link LuaObjectValue}s holding
+ * {@link SoundData} objects.
+ */
 public class LuaSoundDataMeta implements LuaObjectMeta {
 
     static LuaObjectValue<SoundData> convert(LuaValue value) {

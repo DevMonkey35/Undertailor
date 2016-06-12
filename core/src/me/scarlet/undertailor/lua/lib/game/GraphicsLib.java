@@ -39,6 +39,11 @@ import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.meta.LuaColorMeta;
 
+/**
+ * Graphics library accessible by Lua.
+ * 
+ * <p>Wraps around {@link MultiRenderer}.</p>
+ */
 public class GraphicsLib extends LuaLibrary {
 
     public GraphicsLib(MultiRenderer renderer) {

@@ -39,6 +39,11 @@ import org.luaj.vm2.LuaValue;
 
 import me.scarlet.undertailor.lua.LuaLibrary;
 
+/**
+ * Colors library accessible by Lua.
+ * 
+ * <p>Wraps around {@link Color}.</p>
+ */
 public class ColorsLib extends LuaLibrary {
 
     public ColorsLib() {

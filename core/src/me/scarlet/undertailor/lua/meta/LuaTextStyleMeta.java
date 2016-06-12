@@ -34,9 +34,11 @@ import org.luaj.vm2.LuaTable;
 
 import me.scarlet.undertailor.gfx.text.TextStyle;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 
 /**
- * Metadata for Lua-implemented {@link TextStyle}s.
+ * Metadata for {@link LuaObjectValue}s holding
+ * {@link TextStyle} objects.
  */
 public class LuaTextStyleMeta implements LuaObjectMeta {
 

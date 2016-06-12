@@ -42,6 +42,10 @@ import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
+/**
+ * Metadata for {@link LuaObjectValue}s holding
+ * {@link Color} objects.
+ */
 public class LuaColorMeta implements LuaObjectMeta {
 
     static LuaObjectValue<Color> convert(LuaValue value) {

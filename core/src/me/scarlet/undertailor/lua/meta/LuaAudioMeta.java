@@ -40,6 +40,10 @@ import me.scarlet.undertailor.audio.Audio;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
+/**
+ * Metadata for {@link LuaObjectValue}s holding
+ * {@link Audio} objects.
+ */
 public class LuaAudioMeta implements LuaObjectMeta {
 
     private LuaTable metatable;

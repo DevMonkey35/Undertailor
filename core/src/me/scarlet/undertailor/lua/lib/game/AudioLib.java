@@ -35,6 +35,11 @@ import static me.scarlet.undertailor.util.LuaUtil.valueOrNil;
 import me.scarlet.undertailor.audio.AudioManager;
 import me.scarlet.undertailor.lua.LuaLibrary;
 
+/**
+ * Audio library accessible by Lua.
+ * 
+ * <p>Wraps around {@link AudioManager}.</p>
+ */
 public class AudioLib extends LuaLibrary {
 
     public AudioLib(AudioManager manager) {

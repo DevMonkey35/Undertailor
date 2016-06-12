@@ -42,6 +42,9 @@ import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Game library accessible through Lua.
+ */
 public class GameLib extends LuaLibrary {
 
     private Undertailor undertailor;
