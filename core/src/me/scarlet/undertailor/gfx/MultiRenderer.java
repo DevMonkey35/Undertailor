@@ -40,7 +40,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
 
 /**
  * Implementation of a global renderer to be used by the
@@ -466,36 +465,45 @@ public class MultiRenderer {
      * Draws a line between the two points provided with a
      * given thickness.
      * 
-     * @param begin the start point of the line
-     * @param end the end point of the line
+     * @param x1 the x-coordinate of the start point of the
+     *        line
+     * @param y1 the y-coordinate of the start point of the
+     *        line
+     * @param x2 the x-coordinate of the end point of the
+     *        line
+     * @param y2 the y-coordinate of the end point of the
+     *        line
      * @param thickness the thickness of the line
      */
-    public void drawLine(Vector2 begin, Vector2 end, float thickness) {
+    public void drawLine(float x1, float y1, float x2, float y2, float thickness) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
 
-        renderer.rectLine(begin, end, thickness);
+        renderer.rectLine(x1, y1, x2, y2, thickness);
     }
 
     /**
      * Draws an arc centered at the given position with a
      * specified radius, start point and length.
      * 
-     * @param pos the centerpoint of the arc
+     * @param x the x-coordinate of the centerpoint of the
+     *        arc
+     * @param y the y-coordinate of the centerpoint of the
+     *        arc
      * @param radius the radius of the arc
      * @param start the start point of the arc, in degrees;
      *        0 being the top
      * @param degrees the length of the arc, in degrees
      */
-    public void drawArc(Vector2 pos, float radius, float start, float degrees) {
+    public void drawArc(float x, float y, float radius, float start, float degrees) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
 
-        renderer.arc(pos.x, pos.y, radius, start, degrees);
+        renderer.arc(x, y, radius, start, degrees);
     }
 
     /**
@@ -503,7 +511,10 @@ public class MultiRenderer {
      * specified radius, start point, length, and
      * smoothness.
      * 
-     * @param pos the centerpoint of the arc
+     * @param x the x-coordinate of the centerpoint of the
+     *        arc
+     * @param y the y-coordinate of the centerpoint of the
+     *        arc
      * @param radius the radius of the arc
      * @param start the start point of the arc, in degrees;
      *        0 being the top
@@ -511,13 +522,13 @@ public class MultiRenderer {
      * @param segments the count of segments creating the
      *        arc; the "smoothness"
      */
-    public void drawArc(Vector2 pos, float radius, float start, float degrees, int segments) {
+    public void drawArc(float x, float y, float radius, float start, float degrees, int segments) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
 
-        renderer.arc(pos.x, pos.y, radius, start, degrees, segments);
+        renderer.arc(x, y, radius, start, degrees, segments);
     }
 
     /**
@@ -525,8 +536,8 @@ public class MultiRenderer {
      * 
      * @param points the vertices of the polygon
      */
-    public void drawFilledPolygon(Vector2... points){
-    if (points.length < 3) {
+    public void drawFilledPolygon(float... points) {
+        if (points.length < 6) {
             return;
         }
 
@@ -535,15 +546,7 @@ public class MultiRenderer {
             renderer.set(ShapeType.Filled);
         }
 
-        float vertices[] = new float[points.length * 2];
-        for (int i = 0; i < points.length; i++) {
-            Vector2 point = points[i];
-            int index = i * 2;
-            vertices[index] = point.x;
-            vertices[index + 1] = point.y;
-        }
-
-        this.renderer.polygon(vertices);
+        this.renderer.polygon(points);
     }
 
     /**
@@ -555,33 +558,39 @@ public class MultiRenderer {
      * @param lineThickness the thickness of the drawn line
      * @param points the vertices of the polygon
      */
-    public void drawPolygon(float lineThickness, Vector2... points){
-    this.drawPolygonOutline(lineThickness, true, points);}
+    public void drawPolygon(float lineThickness, float... points) {
+        this.drawPolygonOutline(lineThickness, true, points);
+    }
 
-/**
- * Draws the outline of a polygon by drawing a line between
- * each of the provided points. The polygon will be left
- * open, leaving a missing edge connecting the last and
- * first points.
- * 
- * @param lineThickness the thickness of the drawn line
- * @param points the vertices of the polygon
- */
-public void drawOpenPolygon(float lineThickness, Vector2... points) {
-    this.drawPolygonOutline(lineThickness, false, points);}
+    /**
+     * Draws the outline of a polygon by drawing a line
+     * between each of the provided points. The polygon will
+     * be left open, leaving a missing edge connecting the
+     * last and first points.
+     * 
+     * @param lineThickness the thickness of the drawn line
+     * @param points the vertices of the polygon
+     */
+    public void drawOpenPolygon(float lineThickness, float... points) {
+        this.drawPolygonOutline(lineThickness, false, points);
+    }
 
-/**
- * Internal method.
- * 
- * <p>Implements drawing the outline of an open and closed
- * polygon outline.</p>
- * 
- * @see #drawPolygon(float, Vector2...)
- * @see #drawOpenPolygon(float, Vector2...)
- */
-private void drawPolygonOutline(float lineThickness, boolean close, Vector2... points) {
-    if (points.length < 3) {
+    /**
+     * Internal method.
+     * 
+     * <p>Implements drawing the outline of an open and
+     * closed polygon outline.</p>
+     * 
+     * @see #drawPolygon(float, float...)
+     * @see #drawOpenPolygon(float, float...)
+     */
+    private void drawPolygonOutline(float lineThickness, boolean close, float... points) {
+        if (points.length < 3) {
             return; // Won't draw anything; does not have at least 3 edges.
+        }
+
+        if (points.length % 2 != 0) {
+            throw new IllegalArgumentException("uneven point");
         }
 
         this.startDrawingShape();
@@ -589,22 +598,16 @@ private void drawPolygonOutline(float lineThickness, boolean close, Vector2... p
             renderer.set(ShapeType.Filled);
         }
 
-        Vector2 startPoint = null;
-        Vector2 lastPoint = null;
-        for (int i = 0; i < points.length; i++) {
-            if (startPoint == null) {
-                startPoint = points[i];
+        for (int i = 2; i < points.length; i++) {
+            if (i % 2 == 0) {
+                this.drawLine(points[i - 2], points[i - 1], points[i], points[i + 1],
+                    lineThickness);
             }
-
-            if (lastPoint != null) {
-                this.drawLine(lastPoint, points[i], lineThickness);
-            }
-
-            lastPoint = points[i];
         }
 
         if (close)
-            this.drawLine(lastPoint, startPoint, lineThickness);
+            this.drawLine(points[points.length - 2], points[points.length - 1], points[0],
+                points[1], lineThickness);
     }
 
     /**
@@ -615,24 +618,22 @@ private void drawPolygonOutline(float lineThickness, boolean close, Vector2... p
      * <p>The anchor point denotes the bottom-left corner of
      * the rectangle.</p>
      * 
-     * @param pos the position of the bottom-left corner of
-     *        the rectangle
+     * @param x the x-coordinate of the bottom-left corner
+     *        of the rectangle
+     * @param y the y-coordinate of the bottom-left corner
+     *        of the rectangle
      * @param width the width of the rectangle
      * @param height the height of the rectangle
      * @param lineThickness the thickness of the rectangle's
      *        edges
      */
-    public void drawRectangle(Vector2 pos, float width, float height, float lineThickness) {
+    public void drawRectangle(float x, float y, float width, float height, float lineThickness) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
 
-        Vector2 bR = new Vector2(pos.x + width, pos.y);
-        Vector2 tL = new Vector2(pos.x, pos.y + height);
-        Vector2 tR = new Vector2(bR.x, tL.y);
-
-        this.drawPolygon(lineThickness, pos, bR, tR, tL);
+        this.drawPolygon(lineThickness, x, y, x + width, y, x + width, y + height, x, y + height);
         /*
          * this.drawLine(tL, tR, lineThickness);
          * this.drawLine(tR, bR, lineThickness);
@@ -645,63 +646,77 @@ private void drawPolygonOutline(float lineThickness, boolean close, Vector2... p
      * Draws a filled rectangle anchored at the given point
      * with a specified width and height.
      * 
-     * @param pos the position of the bottom-left corner of
-     *        the rectangle
+     * @param x the x-coordinate of the bottom-left corner
+     *        of the rectangle
+     * @param y the y-coordinate of the bottom-left corner
+     *        of the rectangle
      * @param width the width of the rectangle
      * @param height the height of the rectangle
      */
-    public void drawFilledRectangle(Vector2 pos, float width, float height) {
+    public void drawFilledRectangle(float x, float y, float width, float height) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
 
-        renderer.rect(pos.x, pos.y, width, height);
+        renderer.rect(x, y, width, height);
     }
 
     /**
      * Draws a circle outline centered at the given position
      * with a specified radius.
      * 
-     * @param pos the position of the center of the circle
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
      * @param radius the radius of the circle
      */
-    public void drawCircle(Vector2 pos, float radius) {
+    public void drawCircle(float x, float y, float radius) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Line) {
             renderer.set(ShapeType.Line);
         }
 
-        renderer.circle(pos.x, pos.y, radius);
+        renderer.circle(x, y, radius);
     }
 
     /**
      * Draws a filled circle centered at the given position
      * with a specified radius.
      * 
-     * @param pos the position of the center of the circle
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
      * @param radius the radius of the circle
      */
-    public void drawFilledCircle(Vector2 pos, float radius) {
+    public void drawFilledCircle(float x, float y, float radius) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
 
-        renderer.circle(pos.x, pos.y, radius);
+        renderer.circle(x, y, radius);
     }
 
     /**
      * Draws a triangular outline with edges at the given
      * points.
      * 
-     * @param vx1 the first point of the triangle
-     * @param vx2 the second point of the triangle
-     * @param vx3 the third point of the triangle
+     * @param x1 the x-coordinate of the first point of the
+     *        triangle
+     * @param y1 the y-coordinate of the first point of the
+     *        triangle
+     * @param x2 the x-coordinate of the second point of the
+     *        triangle
+     * @param y2 the y-coordinate of the second point of the
+     *        triangle
+     * @param x3 the x-coordinate of the third point of the
+     *        triangle
+     * @param y3 the y-coordinate of the third point of the
+     *        triangle
      * @param lineThickness the thickness of the triangle's
      *        edges
      */
-    public void drawTriangle(Vector2 vx1, Vector2 vx2, Vector2 vx3, float lineThickness) {
+    public void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3,
+        float lineThickness) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
@@ -712,22 +727,31 @@ private void drawPolygonOutline(float lineThickness, boolean close, Vector2... p
          * this.drawLine(vx2, vx3, lineThickness);
          * this.drawLine(vx3, vx1, lineThickness);
          */
-        this.drawPolygon(lineThickness, vx1, vx2, vx3);
+        this.drawPolygon(lineThickness, x1, y1, x2, y2, x3, y3);
     }
 
     /**
      * Draws a triangle.
      * 
-     * @param vx1 the first point of the triangle
-     * @param vx2 the second point of the triangle
-     * @param vx3 the third point of the triangle
+     * @param x1 the x-coordinate of the first point of the
+     *        triangle
+     * @param y1 the y-coordinate of the first point of the
+     *        triangle
+     * @param x2 the x-coordinate of the second point of the
+     *        triangle
+     * @param y2 the y-coordinate of the second point of the
+     *        triangle
+     * @param x3 the x-coordinate of the third point of the
+     *        triangle
+     * @param y3 the y-coordinate of the third point of the
+     *        triangle
      */
-    public void drawFilledTriangle(Vector2 vx1, Vector2 vx2, Vector2 vx3) {
+    public void drawFilledTriangle(float x1, float y1, float x2, float y2, float x3, float y3) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
 
-        renderer.triangle(vx1.x, vx1.y, vx2.x, vx2.y, vx3.x, vx3.y);
+        renderer.triangle(x1, y1, x2, y2, x3, y3);
     }
 }
