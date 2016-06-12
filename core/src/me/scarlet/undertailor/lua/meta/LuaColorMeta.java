@@ -32,6 +32,7 @@ package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.lua.LuaObjectValue.of;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+import static org.luaj.vm2.LuaValue.valueOf;
 
 import com.badlogic.gdx.graphics.Color;
 import org.luaj.vm2.LuaTable;
@@ -128,7 +129,7 @@ public class LuaColorMeta implements LuaObjectMeta {
 
         // color:toHex()
         set("toHex", asFunction(vargs -> {
-            return of(obj(vargs).toString());
+            return valueOf(obj(vargs).toString());
         }));
     }
 

@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.lua;
 
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
 
 import me.scarlet.undertailor.exception.LuaScriptException;
 
@@ -83,6 +84,26 @@ public class LuaObjectValue<T> extends LuaTable {
         }
 
         return new LuaObjectValue<>(object);
+    }
+
+    /**
+     * Returns the {@link LuaObjectValue} representation of
+     * a Java object, or nil if it could not be created.
+     * 
+     * <p>Used for anything wanting to ensure null object
+     * values don't cause an exception.</p>
+     * 
+     * @param obj the object to wrap
+     * 
+     * @return a LuaObjectValue, or nil
+     */
+    public static LuaValue orNil(Object obj) {
+        LuaObjectValue<?> val = LuaObjectValue.of(obj);
+        if(val == null) {
+            return LuaValue.NIL;
+        }
+
+        return val;
     }
 
     // ---------------- object ----------------

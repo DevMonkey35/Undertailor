@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.lua.LuaObjectValue.of;
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.valueOf;
 
@@ -73,17 +74,17 @@ public class LuaTextComponentMeta implements LuaObjectMeta {
 
         // textComponent:getFont()
         set("getFont", asFunction(vargs -> {
-            return of(obj(vargs).getFont());
+            return orNil(obj(vargs).getFont());
         }));
 
         // textComponent:getColor()
         set("getColor", asFunction(vargs -> {
-            return of(obj(vargs).getColor());
+            return orNil(obj(vargs).getColor());
         }));
 
         // textComponent:getSound()
         set("getSound", asFunction(vargs -> {
-            return of(obj(vargs).getSound());
+            return orNil(obj(vargs).getSound());
         }));
 
         // textComponent:getStyles()

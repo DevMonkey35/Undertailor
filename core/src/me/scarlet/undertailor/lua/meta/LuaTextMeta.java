@@ -31,9 +31,10 @@
 package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.lua.LuaObjectValue.of;
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
+import static me.scarlet.undertailor.util.LuaUtil.arrayOf;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static me.scarlet.undertailor.util.LuaUtil.varargsOf;
-import static me.scarlet.undertailor.util.LuaUtil.arrayOf;
 import static org.luaj.vm2.LuaValue.NIL;
 import static org.luaj.vm2.LuaValue.valueOf;
 
@@ -110,13 +111,13 @@ public class LuaTextMeta implements LuaObjectMeta {
         // text:getTextComponentAt(iIndex)
         // tries to match Lua's 1-based stuff by negating 1 from the provided index
         set("getTextComponentAt", asFunction(vargs -> {
-            return of(obj(vargs).getTextComponentAt(vargs.checkint(2) - 1));
+            return orNil(obj(vargs).getTextComponentAt(vargs.checkint(2) - 1));
         }));
 
         // text:substring(iFirst, iSecond)
         // tries to match Lua's 1-based stuff by negating 1 from the first bound
         set("substring", asFunction(vargs -> {
-            return of(obj(vargs).substring(vargs.checkint(2) - 1, vargs.checkint(3)));
+            return orNil(obj(vargs).substring(vargs.checkint(2) - 1, vargs.checkint(3)));
         }));
     }
 

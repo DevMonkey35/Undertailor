@@ -30,7 +30,7 @@
 
 package me.scarlet.undertailor.lua.lib.game;
 
-import static me.scarlet.undertailor.util.LuaUtil.valueOrNil;
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 
 import me.scarlet.undertailor.audio.AudioManager;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -84,12 +84,12 @@ public class AudioLib extends LuaLibrary {
 
         // audio.getSound(sKey)
         registerFunction("getSound", vargs -> {
-            return valueOrNil(manager.getSound(vargs.checkjstring(1)));
+            return orNil(manager.getSound(vargs.checkjstring(1)));
         });
 
         // audio.getMusic(sKey)
         registerFunction("getMusic", vargs -> {
-            return valueOrNil(manager.getMusic(vargs.checkjstring(1)));
+            return orNil(manager.getMusic(vargs.checkjstring(1)));
         });
 
         // ---------------- functional methods ----------------

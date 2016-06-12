@@ -30,7 +30,7 @@
 
 package me.scarlet.undertailor.lua.meta;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.of;
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static me.scarlet.undertailor.util.LuaUtil.varargsOf;
 import static org.luaj.vm2.LuaValue.NIL;
@@ -98,7 +98,7 @@ public class LuaFontMeta implements LuaObjectMeta {
                 return NIL;
             }
 
-            return of(obj(vargs).getCharacterSprite(str.charAt(0)));
+            return orNil(obj(vargs).getCharacterSprite(str.charAt(0)));
         }));
     }
 

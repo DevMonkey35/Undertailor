@@ -30,7 +30,7 @@
 
 package me.scarlet.undertailor.lua.lib.game;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.of;
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 
 import com.badlogic.gdx.graphics.Color;
 
@@ -53,7 +53,7 @@ public class GraphicsLib extends LuaLibrary {
 
         // graphics.getClearColor()
         registerFunction("getClearColor", vargs -> {
-            return of(renderer.getClearColor());
+            return orNil(renderer.getClearColor());
         });
 
         // graphics.setClearColor(color)
@@ -67,7 +67,7 @@ public class GraphicsLib extends LuaLibrary {
 
         // graphics.getBatchColor()
         registerFunction("getBatchColor", vargs -> {
-            return of(renderer.getBatchColor());
+            return orNil(renderer.getBatchColor());
         });
 
         // graphics.setBatchColor(color)
@@ -79,7 +79,7 @@ public class GraphicsLib extends LuaLibrary {
 
         // graphics.getShapeColor()
         registerFunction("getShapeColor", vargs -> {
-            return of(renderer.getShapeColor());
+            return orNil(renderer.getShapeColor());
         });
 
         // graphics.setShapeColor(color)

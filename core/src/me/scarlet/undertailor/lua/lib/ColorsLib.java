@@ -34,6 +34,7 @@ import static me.scarlet.undertailor.lua.LuaObjectValue.of;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Colors;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
@@ -50,7 +51,12 @@ public class ColorsLib extends LuaLibrary {
         super("colors");
 
         registerFunction("fromHex", vargs -> {
-            return of(Color.valueOf(vargs.checkjstring(1)));
+            String hex = vargs.checkjstring(1);
+            if(hex.length() < 6) {
+                throw new LuaError("bad argument: bad hex color string (must be at least 6 hexadecimal characters)");
+            }
+
+            return of(Color.valueOf(hex));
         });
 
         registerFunction("fromRGB", vargs -> {
