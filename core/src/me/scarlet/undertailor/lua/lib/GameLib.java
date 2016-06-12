@@ -7,12 +7,16 @@ import org.luaj.vm2.LuaValue;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.lib.game.AudioLib;
+import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class GameLib extends LuaLibrary {
 
     private Undertailor undertailor;
 
-    private AudioLib audio;
+    private Set<LuaLibrary> childLibraries;
 
     public GameLib(Undertailor undertailor) {
         super("game");
@@ -26,7 +30,11 @@ public class GameLib extends LuaLibrary {
 
     @Override
     public void postinit(LuaTable table, LuaValue environment) {
-        this.audio = new AudioLib(undertailor.getAssetManager().getAudioManager());
-        this.audio.call(null, table);
+        this.childLibraries = new HashSet<>();
+        
+        childLibraries.add(new AudioLib(undertailor.getAssetManager().getAudioManager()));
+        childLibraries.add(new GraphicsLib(undertailor.getRenderer()));
+
+        childLibraries.forEach(lib -> lib.call(null, table));
     }
 }
