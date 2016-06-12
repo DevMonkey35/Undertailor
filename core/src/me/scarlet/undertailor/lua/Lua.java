@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.lua.meta.LuaAudioMeta;
 import me.scarlet.undertailor.lua.meta.LuaColorMeta;
+import me.scarlet.undertailor.lua.meta.LuaInputDataMeta;
+import me.scarlet.undertailor.lua.meta.LuaPressDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
@@ -66,6 +68,8 @@ public class Lua {
         loadMeta(LuaSoundMeta.class);
         loadMeta(LuaSoundDataMeta.class);
         loadMeta(LuaColorMeta.class);
+        loadMeta(LuaInputDataMeta.class);
+        loadMeta(LuaPressDataMeta.class);
     }
 
     // ---------------- functional methods ----------------

@@ -37,6 +37,7 @@ import org.luaj.vm2.LuaValue;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.lib.game.AudioLib;
+import me.scarlet.undertailor.lua.lib.game.ControlLib;
 import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
 
 import java.util.HashSet;
@@ -67,6 +68,7 @@ public class GameLib extends LuaLibrary {
         
         childLibraries.add(new AudioLib(undertailor.getAssetManager().getAudioManager()));
         childLibraries.add(new GraphicsLib(undertailor.getRenderer()));
+        childLibraries.add(new ControlLib(undertailor.getInput()));
 
         childLibraries.forEach(lib -> lib.call(null, table));
     }
