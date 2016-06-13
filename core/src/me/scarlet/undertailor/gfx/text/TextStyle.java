@@ -62,6 +62,19 @@ public interface TextStyle {
     }
 
     /**
+     * Returns the name of this {@link TextStyle}.
+     * 
+     * <p>By default, returns the name of the implementing
+     * class. Lua implementations should probably override
+     * this.</p>
+     * 
+     * @return the name of this TextStyle
+     */
+    default String getStyleName() {
+        return this.getClass().getSimpleName();
+    }
+
+    /**
      * Modifies a {@link DisplayMeta} instance in order to
      * provide visual effects to a specific character in a
      * {@link TextComponent}.

@@ -56,12 +56,14 @@ public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
         DM_PROXY = new LuaTable();
     }
 
+    private String styleName;
     private LuaObjectValue<TextStyle> luaObj;
 
-    public LuaTextStyle(ScriptManager manager, File luaFile)
+    public LuaTextStyle(ScriptManager manager, File luaFile, String key)
         throws FileNotFoundException, LuaScriptException {
         this.luaObj = LuaObjectValue.of(this);
         this.luaObj.load(manager, luaFile);
+        this.styleName = key;
     }
 
     // ---------------- abstract method implementation ----------------
@@ -79,6 +81,11 @@ public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
     @Override
     public void setObjectValue(LuaObjectValue<TextStyle> value) {
         this.luaObj = value;
+    }
+
+    @Override
+    public String getStyleName() {
+        return this.styleName;
     }
 
     @Override

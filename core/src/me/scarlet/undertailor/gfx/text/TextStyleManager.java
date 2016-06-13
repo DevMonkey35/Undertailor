@@ -108,7 +108,7 @@ public class TextStyleManager {
         files.keySet().forEach(key -> {
             File scriptFile = files.get(key);
             try {
-                this.styles.put(key, new LuaTextStyle(scripts, scriptFile));
+                this.styles.put(key, new LuaTextStyle(scripts, scriptFile, key));
             } catch (Exception e) {
                 String message = "Could not load style at script file " + scriptFile.getAbsolutePath();
                 if(e instanceof FileNotFoundException) message += " (file not found)";
