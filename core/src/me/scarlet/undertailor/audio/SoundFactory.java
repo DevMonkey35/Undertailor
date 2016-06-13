@@ -61,7 +61,7 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
      * Tracks data for a specified ID under a Sound
      * instance.
      */
-    public static class SoundData {
+    public static class SoundData implements AudioData {
 
         private long id;
         private Sound parent;
@@ -91,89 +91,52 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
             return this.parent;
         }
 
-        /**
-         * Returns the volume of the sound.
-         * 
-         * @return the volume
-         */
+        @Override
         public float getVolume() {
             return this.volume.get();
         }
 
-        /**
-         * Sets the volume of the sound.
-         * 
-         * @param volume the new volume
-         */
+        @Override
         public void setVolume(float volume) {
             this.volume.set(volume);
             this.parent.getReference().setVolume(this.id, parent.getFinalVolume(this.volume.get()));
         }
 
-        /**
-         * Returns the pitch of the sound.
-         * 
-         * @return the pitch
-         */
+        @Override
         public float getPitch() {
             return this.pitch.get();
         }
 
-        /**
-         * Sets the pitch of the sound.
-         * 
-         * @param pitch the new pitch
-         */
+        @Override
         public void setPitch(float pitch) {
             this.pitch.set(pitch);
             this.parent.getReference().setPitch(this.id, this.pitch.get());
         }
 
-        /**
-         * Returns the pan of the sound.
-         * 
-         * @return the pan
-         */
+        @Override
         public float getPan() {
             return this.pan.get();
         }
 
-        /**
-         * Sets the pan of the sound.
-         * 
-         * @param pan the new pan
-         */
+        @Override
         public void setPan(float pan) {
             this.pan.set(pan);
             this.parent.getReference().setPan(this.id, this.pan.get(),
                 parent.getFinalVolume(this.volume.get()));
         }
 
-        /**
-         * Returns whether or not the sound is looping.
-         * 
-         * @return looping?
-         */
+        @Override
         public boolean isLooping() {
             return this.looping;
         }
 
-        /**
-         * Sets whether or not the sound is looping.
-         * 
-         * @param flag new looping state
-         */
+        @Override
         public void setLooping(boolean flag) {
             this.looping = flag;
             this.parent.getReference().setLooping(this.id, flag);
         }
 
-        /**
-         * Returns whether or not this sound is still
-         * playing.
-         * 
-         * @return if the sound is playing
-         */
+        @Override
         public boolean isPlaying() {
             int sourceId = ((OpenALAudio) Gdx.audio).getSoundSourceId(this.id);
             if (sourceId == -1)
@@ -182,9 +145,7 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
             return AL10.alGetSourcei(sourceId, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
         }
 
-        /**
-         * Stops the sound's playback.
-         */
+        @Override
         public void stop() {
             this.parent.getReference().stop(this.id);
         }
@@ -195,7 +156,7 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
      * short tracks of audio (
      * {@link com.badlogic.gdx.audio.Sound}).
      */
-    public static class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Audio {
+    public static class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Audio, AudioPlayable<SoundData> {
 
         private String audioName;
         private AudioManager manager;
@@ -217,17 +178,7 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
             return super.getReference();
         }
 
-        /**
-         * Plays a new instance of the underlying
-         * {@link com.badlogic.gdx.audio.Sound}, looping.
-         * 
-         * @param volume the volume to play the sound at
-         * @param pitch the pitch to play the sound at
-         * @param pan the pan to play the sound with
-         * 
-         * @return the SoundData associated with the
-         *         now-playing sound
-         */
+        @Override
         public SoundData loop(float volume, float pitch, float pan) {
             float finalVolume = this.getFinalVolume(volume);
             long id = this.getReference().loop(finalVolume, pitch, pan);
@@ -242,29 +193,7 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
             return data;
         }
 
-        /**
-         * Plays a new instance of the underlying
-         * {@link com.badlogic.gdx.audio.Sound}, looping,
-         * providing default parameters.
-         * 
-         * @return the SoundData associated with the
-         *         now-playing sound
-         */
-        public SoundData loop() {
-            return this.loop(1.0F, 1.0F, 0.0F);
-        }
-
-        /**
-         * Plays a new instance of the underlying
-         * {@link com.badlogic.gdx.audio.Sound}.
-         * 
-         * @param volume the volume to play the sound at
-         * @param pitch the pitch to play the sound at
-         * @param pan the pan to play the sound with
-         * 
-         * @return the SoundData associated with the
-         *         now-playing sound
-         */
+        @Override
         public SoundData play(float volume, float pitch, float pan) {
             float finalVolume = this.getFinalVolume(volume);
             long id = this.getReference().play(finalVolume, pitch, pan);
@@ -278,22 +207,7 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
             return data;
         }
 
-        /**
-         * Plays a new instance of the underlying
-         * {@link com.badlogic.gdx.audio.Sound}, providing
-         * default parameters.
-         * 
-         * @return the SoundData associated with the
-         *         now-playing sound
-         */
-        public SoundData play() {
-            return this.play(1.0F, 1.0F, 0.0F);
-        }
-
-        /**
-         * Stops all running instances of the underlying
-         * {@link com.badlogic.gdx.audio.Sound}.
-         */
+        @Override
         public void stop() {
             this.getReference().stop();
         }

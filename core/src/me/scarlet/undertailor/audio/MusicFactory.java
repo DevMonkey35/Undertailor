@@ -54,7 +54,7 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
      * long tracks of audio (
      * {@link com.badlogic.gdx.audio.Music}).
      */
-    public static class Music extends Resource<com.badlogic.gdx.audio.Music> implements Audio {
+    public static class Music extends Resource<com.badlogic.gdx.audio.Music> implements Audio, AudioData, AudioPlayable<Void> {
 
         private String audioName;
         private AudioManager manager;
@@ -73,83 +73,47 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
             return this.audioName;
         }
 
-        // ---------------- g/s audio parameters ----------------
+        // -------- g/s audio parameters --------
 
-        /**
-         * Returns the volume of the music.
-         * 
-         * @return the volume of the music
-         */
+        @Override
         public float getVolume() {
             return factory.volume.get();
         }
 
-        /**
-         * Sets the volume of the music.
-         * 
-         * @param volume the new volume of the music
-         */
+        @Override
         public void setVolume(float volume) {
             factory.volume.set(volume);
             this.getReference().setVolume(this.getFinalVolume(volume));
         }
 
-        /**
-         * Returns the pitch of the music.
-         * 
-         * @return the pitch of the music
-         */
+        @Override
         public float getPitch() {
             return factory.pitch.get();
         }
 
-        /**
-         * Sets the pitch value of the music.
-         * 
-         * @param pitch the new pitch of the music
-         */
+        @Override
         public void setPitch(float pitch) {
             factory.pitch.set(pitch);
             ((OpenALMusic) this.getReference()).setPitch(factory.pitch.get());
         }
 
-        /**
-         * Returns the panning value of the music.
-         * 
-         * @return the pan of the music
-         */
+        @Override
         public float getPan() {
             return factory.pan.get();
         }
 
-        /**
-         * Sets the panning value of the music.
-         * 
-         * @param pan the new pan of the music
-         */
+        @Override
         public void setPan(float pan) {
             factory.pan.set(pan);
             this.getReference().setPan(pan, this.getFinalVolume(this.getVolume()));
         }
 
-        /**
-         * Returns whether or not the music is looping.
-         * 
-         * @return if this music is looping
-         */
+        @Override
         public boolean isLooping() {
             return factory.loopPoint >= 0;
         }
 
-        /**
-         * Sets whether or not the music is looping.
-         * 
-         * <p>When activated through this method, the loop
-         * point is set to the beginning of the music
-         * track.</p>
-         * 
-         * @param flag whether or not the music is looping
-         */
+        @Override
         public void setLooping(boolean flag) {
             if (flag) {
                 factory.loopPoint = 0;
@@ -157,6 +121,43 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
                 factory.loopPoint = -1;
             }
         }
+
+        // -------- playback methods -------- 
+
+        @Override
+        public boolean isPlaying() {
+            return this.getReference() != null && this.getReference().isPlaying();
+        }
+
+        @Override
+        public Void play(float volume, float pitch, float pan) {
+            this.getReference().play();
+            this.setVolume(volume);
+            this.setPitch(pitch);
+            this.setPan(pan);
+
+            this.refreshLoop();
+            return null;
+        }
+
+        @Override
+        public Void loop(float volume, float pitch, float pan) {
+            if (!this.isLooping()) {
+                this.setLooping(true);
+            }
+
+            this.play(volume, pitch, pan);
+            return null;
+        }
+
+        @Override
+        public void stop() {
+            if(this.isPlaying()) {
+                this.getReference().stop();
+            }
+        }
+
+        // ---------------- object methods ----------------
 
         /**
          * Returns the looping point of the music.
@@ -185,64 +186,6 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
             factory.loopPoint = loopPoint;
         }
 
-        // ---------------- playback methods ---------------- 
-
-        /**
-         * Returns whether or not this music is playing.
-         * 
-         * @return if the music is playing
-         */
-        public boolean isPlaying() {
-            return this.getReference() != null && this.getReference().isPlaying();
-        }
-
-        /**
-         * Plays the music with its current parameters.
-         */
-        public void play() {
-            this.play(factory.volume.get(), factory.pitch.get(), factory.pan.get());
-        }
-
-        /**
-         * Plays the music with the given parameters.
-         * 
-         * @param volume the volume of the music
-         * @param pitch the pitch of the music
-         * @param pan the pan of the music
-         */
-        public void play(float volume, float pitch, float pan) {
-            this.getReference().play();
-            this.setVolume(volume);
-            this.setPitch(pitch);
-            this.setPan(pan);
-
-            this.refreshLoop();
-        }
-
-        /**
-         * Plays the music with its current parameters,
-         * looping.
-         */
-        public void loop() {
-            this.loop(this.getVolume(), this.getPitch(), this.getPan());
-        }
-
-        /**
-         * Plays the music with the given parameters,
-         * looping.
-         * 
-         * @param volume the volume of the music
-         * @param pitch the pitch of the music
-         * @param pan the pan of the music
-         */
-        public void loop(float volume, float pitch, float pan) {
-            if (!this.isLooping()) {
-                this.setLooping(true);
-            }
-
-            this.play(volume, pitch, pan);
-        }
-
         /**
          * Plays the music with the given parameters,
          * looping.
@@ -256,15 +199,6 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
         public void loop(float loopPoint, float volume, float pitch, float pan) {
             this.setLoopPoint(loopPoint);
             this.play(volume, pitch, pan);
-        }
-
-        /**
-         * Stops the music from playing.
-         */
-        public void stop() {
-            if(this.isPlaying()) {
-                this.getReference().stop();
-            }
         }
 
         // ---------------- internal methods ----------------

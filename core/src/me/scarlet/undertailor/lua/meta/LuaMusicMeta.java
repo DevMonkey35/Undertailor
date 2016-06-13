@@ -30,30 +30,60 @@
 
 package me.scarlet.undertailor.lua.meta;
 
-import org.luaj.vm2.LuaTable;
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+import static org.luaj.vm2.LuaValue.NIL;
+import static org.luaj.vm2.LuaValue.valueOf;
 
-import me.scarlet.undertailor.audio.SoundFactory.Sound;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
+
+import me.scarlet.undertailor.audio.MusicFactory.Music;
+import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
 /**
  * Metadata for {@link LuaObjectValue}s holding
- * {@link Sound} objects.
+ * {@link Music} objects.
  */
-public class LuaSoundMeta implements LuaObjectMeta {
+public class LuaMusicMeta implements LuaObjectMeta {
+
+    static LuaObjectValue<Music> convert(LuaValue value) {
+        return Lua.checkType(value, LuaMusicMeta.class);
+    }
+
+    static Music obj(Varargs args) {
+        return convert(args.arg1()).getObject();
+    }
+
+    private LuaTable metatable;
+
+    public LuaMusicMeta() {
+        this.metatable = new LuaTable();
+
+        set("getLoopPoint", asFunction(vargs -> {
+            return valueOf(obj(vargs).getLoopPoint());
+        }));
+
+        set("setLoopPoint", asFunction(vargs -> {
+            obj(vargs).setLoopPoint(vargs.checknumber(2).tofloat());
+            return NIL;
+        }));
+    }
 
     @Override
     public Class<?> getTargetObjectClass() {
-        return Sound.class;
+        return Music.class;
     }
 
     @Override
     public LuaTable getMetatable() {
-        return null; // done by Audio, AudioData, and AudioPlayable
+        return this.metatable;
     }
 
     @Override
     public String getTypeName() {
-        return "sound";
+        return "music";
     }
 }

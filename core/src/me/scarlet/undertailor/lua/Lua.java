@@ -36,10 +36,13 @@ import org.luaj.vm2.LuaValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.lua.meta.LuaAudioDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaAudioMeta;
+import me.scarlet.undertailor.lua.meta.LuaAudioPlayableMeta;
 import me.scarlet.undertailor.lua.meta.LuaColorMeta;
 import me.scarlet.undertailor.lua.meta.LuaFontMeta;
 import me.scarlet.undertailor.lua.meta.LuaInputDataMeta;
+import me.scarlet.undertailor.lua.meta.LuaMusicMeta;
 import me.scarlet.undertailor.lua.meta.LuaPressDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaRenderableMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundDataMeta;
@@ -69,10 +72,13 @@ public class Lua {
         META = new HashMap<>();
         METATABLES = new HashMap<>();
 
+        loadMeta(LuaAudioDataMeta.class);
         loadMeta(LuaAudioMeta.class);
+        loadMeta(LuaAudioPlayableMeta.class);
         loadMeta(LuaColorMeta.class);
         loadMeta(LuaFontMeta.class);
         loadMeta(LuaInputDataMeta.class);
+        loadMeta(LuaMusicMeta.class);
         loadMeta(LuaPressDataMeta.class);
         loadMeta(LuaRenderableMeta.class);
         loadMeta(LuaSoundDataMeta.class);
