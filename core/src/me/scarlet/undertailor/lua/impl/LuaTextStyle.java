@@ -83,15 +83,17 @@ public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
 
     @Override
     public void apply(DisplayMeta meta, long time, char character, int charIndex, int textLength) {
-        DM_PROXY.set("offX", meta.offX);
-        DM_PROXY.set("offY", meta.offY);
-        DM_PROXY.set("scaleX", meta.scaleX);
-        DM_PROXY.set("scaleY", meta.scaleY);
-        this.invokeSelf(FUNC_APPLY, DM_PROXY, valueOf(time), valueOf(character), valueOf(charIndex),
-            valueOf(textLength));
-        meta.offX = DM_PROXY.get("offX").tofloat();
-        meta.offY = DM_PROXY.get("offY").tofloat();
-        meta.scaleX = DM_PROXY.get("scaleX").tofloat();
-        meta.scaleY = DM_PROXY.get("scaleY").tofloat();
+        if(this.hasFunction(FUNC_APPLY)) {
+            DM_PROXY.set("offX", meta.offX);
+            DM_PROXY.set("offY", meta.offY);
+            DM_PROXY.set("scaleX", meta.scaleX);
+            DM_PROXY.set("scaleY", meta.scaleY);
+            this.invokeSelf(FUNC_APPLY, DM_PROXY, valueOf(time), valueOf(character), valueOf(charIndex),
+                valueOf(textLength));
+            meta.offX = DM_PROXY.get("offX").tofloat();
+            meta.offY = DM_PROXY.get("offY").tofloat();
+            meta.scaleX = DM_PROXY.get("scaleX").tofloat();
+            meta.scaleY = DM_PROXY.get("scaleY").tofloat();
+        }
     }
 }

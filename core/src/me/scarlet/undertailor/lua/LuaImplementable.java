@@ -87,6 +87,19 @@ public interface LuaImplementable<T> {
     // ---------------- default functional methods ----------------
 
     /**
+     * Returns whether or not the Lua script implementing
+     * this {@link LuaImplementable} registered a specific
+     * function on its object value.
+     * 
+     * @param funcName the name of the function
+     * 
+     * @return if the function exists
+     */
+    default boolean hasFunction(String funcName) {
+        return !this.getObjectValue().get(funcName).isnil();
+    }
+
+    /**
      * Convenience method for invoking a function held by
      * the implementing Lua script.
      * 
