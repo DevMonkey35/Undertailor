@@ -42,6 +42,8 @@ import me.scarlet.undertailor.lua.ScriptManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Implementation of a Lua-implemented {@link TextStyle}.
@@ -57,12 +59,14 @@ public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
     }
 
     private String styleName;
+    private Set<String> checkCache;
     private LuaObjectValue<TextStyle> luaObj;
 
     public LuaTextStyle(ScriptManager manager, File luaFile, String key)
         throws FileNotFoundException, LuaScriptException {
         this.luaObj = LuaObjectValue.of(this);
         this.luaObj.load(manager, luaFile);
+        this.checkCache = new HashSet<>();
         this.styleName = key;
     }
 
@@ -87,10 +91,15 @@ public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
     public String getStyleName() {
         return this.styleName;
     }
+    
+    @Override
+    public String getIdentifier() {
+        return this.getStyleName();
+    }
 
     @Override
     public void apply(DisplayMeta meta, long time, char character, int charIndex, int textLength) {
-        if(this.hasFunction(FUNC_APPLY)) {
+        if(this.checkFunction(FUNC_APPLY, this.checkCache)) {
             DM_PROXY.set("offX", meta.offX);
             DM_PROXY.set("offY", meta.offY);
             DM_PROXY.set("scaleX", meta.scaleX);

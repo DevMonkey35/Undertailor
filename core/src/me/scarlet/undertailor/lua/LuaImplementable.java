@@ -33,6 +33,8 @@ package me.scarlet.undertailor.lua;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
+import java.util.Set;
+
 /**
  * Skeleton implementation for an object that can be
  * implemented by a Lua script.
@@ -84,6 +86,19 @@ public interface LuaImplementable<T> {
         return null;
     }
 
+    /**
+     * Returns the name by which this Lua-implemented object
+     * is identified.
+     * 
+     * <p>By default, returns null.</p>
+     * 
+     * @return this {@link LuaImplementable} object's
+     *         identifier, if it has one
+     */
+    default String getIdentifier() {
+        return null;
+    }
+
     // ---------------- default functional methods ----------------
 
     /**
@@ -97,6 +112,35 @@ public interface LuaImplementable<T> {
      */
     default boolean hasFunction(String funcName) {
         return !this.getObjectValue().get(funcName).isnil();
+    }
+
+    /**
+     * Provides the same functionality as
+     * {@link #hasFunction(String)}, and logs a warning if
+     * the function of the provided name was not found.
+     * 
+     * @param funcName the name of the function
+     * @param checkSet the set caching functions we've
+     *        checked so as to not spam the log
+     * 
+     * @return if the function exists
+     */
+    default boolean checkFunction(String funcName, Set<String> checkSet) {
+        boolean returned = !this.getObjectValue().get(funcName).isnil();
+        if(!returned && !checkSet.contains(funcName)) {
+            if(this.getIdentifier() == null) {
+                Lua.log.warn("Lua object of type " + this.getObjectValue().typename()
+                    + " does not implement system-called function \"" + funcName + "\"");
+            } else {
+                Lua.log.warn("Lua object " + this.getIdentifier() + " of type "
+                    + this.getObjectValue().typename()
+                    + " does not implement system-called function \"" + funcName + "\"");
+            }
+
+            checkSet.add(funcName);
+        }
+
+        return returned;
     }
 
     /**
