@@ -30,9 +30,15 @@
 
 package me.scarlet.undertailor.lua.meta;
 
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+import static org.luaj.vm2.LuaValue.valueOf;
+
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.gfx.text.TextStyle;
+import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
@@ -42,6 +48,24 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaTextStyleMeta implements LuaObjectMeta {
 
+    static LuaObjectValue<TextStyle> convert(LuaValue value) {
+        return Lua.checkType(value, LuaTextStyleMeta.class);
+    }
+
+    static TextStyle obj(Varargs args) {
+        return convert(args.arg1()).getObject();
+    }
+
+    private LuaTable metatable;
+
+    public LuaTextStyleMeta() {
+        this.metatable = new LuaTable();
+
+        set("getStyleName", asFunction(vargs -> {
+            return valueOf(obj(vargs).getStyleName());
+        }));
+    }
+
     @Override
     public Class<?> getTargetObjectClass() {
         return TextStyle.class;
@@ -49,7 +73,7 @@ public class LuaTextStyleMeta implements LuaObjectMeta {
 
     @Override
     public LuaTable getMetatable() {
-        return null;
+        return this.metatable;
     }
 
     @Override
