@@ -75,8 +75,13 @@ public class LuaRenderableMeta implements LuaObjectMeta {
             return NIL;
         }));
 
-        // renderable:draw(x, y[, transform])
+        // renderable:draw([x, y, transform])
         set("draw", asFunction(vargs -> {
+            if(vargs.narg() == 0) {
+                obj(vargs).draw();
+                return NIL;
+            }
+
             float x = vargs.checknumber(2).tofloat();
             float y = vargs.checknumber(3).tofloat();
             Transform transform = vargs.isnil(4) ? null

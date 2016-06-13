@@ -57,6 +57,18 @@ public interface Renderable {
     public void setTransform(Transform transform);
 
     /**
+     * Draws this {@link Renderable} object.
+     * 
+     * <p>Convenience method for drawing objects who
+     * implement the Renderable interface but do not factor
+     * a given position or {@link Transform} in its
+     * rendering.</p>
+     */
+    public default void draw() {
+        this.draw(0, 0);
+    }
+
+    /**
      * Draws this {@link Renderable} object at the given
      * position.
      * 
