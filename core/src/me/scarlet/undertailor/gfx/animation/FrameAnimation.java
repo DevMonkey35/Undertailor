@@ -263,7 +263,7 @@ public class FrameAnimation extends Animation {
             // interpolation
             KeyFrameData first = drawn.getFrameData();
             KeyFrameData second = frames.getSecond().getFrameData();
-            long realRuntime = this.getRealRuntime();
+            long realRuntime = this.getCycleRuntime();
             float currentFrameProgress = (float) (realRuntime - frames.getFirst().getKeyTime())
                 / (frames.getSecond().getKeyTime() - frames.getFirst().getKeyTime());
             float[] interpolation = first.interpolateValues(second, currentFrameProgress);
@@ -281,21 +281,12 @@ public class FrameAnimation extends Animation {
         drawn.getFrame().draw(x, y, drawnTransform);
     }
 
-    // ---------------- methods ----------------
-
-    // TODO probably integrate into the base animation class
-    public long getRealRuntime() {
-        long runtime = this.getRuntime();
-        if (this.isLooping()) {
-            if (runtime > this.length)
-                runtime -= this.length * Math.floor((runtime / this.length));
-        } else {
-            if (runtime > this.length)
-                runtime = this.length;
-        }
-
-        return runtime;
+    @Override
+    public long getLength() {
+        return this.length;
     }
+
+    // ---------------- methods ----------------
 
     /**
      * Returns the current {@link KeyFrame} to be rendered,
@@ -311,7 +302,7 @@ public class FrameAnimation extends Animation {
         KeyFrame previous = null;
         for (Long key : this.frames.keySet()) {
             KeyFrame frame = this.frames.get(key);
-            if (this.getRealRuntime() >= key) {
+            if (this.getCycleRuntime() >= key) {
                 returnBuffer.setItems(frame, previous);
                 break;
             }

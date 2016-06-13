@@ -63,6 +63,32 @@ public abstract class Animation implements Renderable {
     }
 
     /**
+     * Returns the runtime of the current cycle of this
+     * {@link Animation}, in milliseconds.
+     * 
+     * <p>A "cycle" being a single play of the animation.
+     * That is, if the animation is looping, this value
+     * resets to 0 every time the first frame is replayed.
+     * If the animation is not looping and finishes, then
+     * this value sits still, matching the total length of a
+     * single cycle of the animation.</p>
+     * 
+     * @return the current cycle runtime
+     */
+    public long getCycleRuntime() {
+        long runtime = this.getRuntime();
+        if (this.isLooping()) {
+            if (runtime > this.getLength())
+                runtime -= this.getLength() * Math.floor((runtime / this.getLength()));
+        } else {
+            if (runtime > this.getLength())
+                runtime = this.getLength();
+        }
+
+        return runtime;
+    }
+
+    /**
      * Sets the current runtime of this {@link Animation},
      * in milliseconds.
      * 
@@ -147,4 +173,12 @@ public abstract class Animation implements Renderable {
         this.pauseTime = -1;
         this.startTime = -1;
     }
+
+    /**
+     * Returns the length of a single cycle of this
+     * {@link Animation}.
+     * 
+     * @return the cycle length of this Animation
+     */
+    public abstract long getLength();
 }
