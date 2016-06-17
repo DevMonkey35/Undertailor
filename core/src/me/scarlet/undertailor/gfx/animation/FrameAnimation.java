@@ -240,7 +240,7 @@ public class FrameAnimation extends Animation {
         if(transform == null) {
             this.transform = Transform.DUMMY.copyInto(this.transform);
         } else {
-            this.transform = transform;
+            this.transform = transform.copyInto(this.transform);
         }
     }
 
