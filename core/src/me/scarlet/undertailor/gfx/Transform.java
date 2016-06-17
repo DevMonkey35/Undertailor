@@ -319,7 +319,7 @@ public class Transform implements Cloneable {
     @Override
     public Transform clone() {
         Transform returned = new Transform();
-        return this.copy(returned);
+        return this.copyInto(returned);
     }
 
     /**
@@ -330,7 +330,7 @@ public class Transform implements Cloneable {
      * 
      * @return the provided Transform with its new values
      */
-    public Transform copy(Transform to) {
+    public Transform copyInto(Transform to) {
         to.scaleX = this.scaleX;
         to.scaleY = this.scaleY;
         to.skewX = this.skewX;

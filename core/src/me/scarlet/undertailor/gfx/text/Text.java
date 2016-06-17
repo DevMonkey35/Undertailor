@@ -229,7 +229,7 @@ public class Text extends TextComponent implements Renderable {
     @Override
     public void setTransform(Transform transform) {
         if (transform == null) {
-            this.transform = Transform.DUMMY.copy(this.transform);
+            this.transform = Transform.DUMMY.copyInto(this.transform);
         } else {
             this.transform = transform;
         }
@@ -255,7 +255,7 @@ public class Text extends TextComponent implements Renderable {
                 Sprite sprite = this.font.getCharacterSprite(character);
                 SpriteMeta sMeta = sprite.getMeta();
                 Pair<Float> letterSpacing = font.getLetterSpacing(character);
-                this.m_drawnTransform = this.transform.copy(this.m_drawnTransform);
+                this.m_drawnTransform = this.transform.copyInto(this.m_drawnTransform);
 
                 DisplayMeta dMeta = Text.generateDisplayMeta();
                 if (!component.getStyles().isEmpty()) {

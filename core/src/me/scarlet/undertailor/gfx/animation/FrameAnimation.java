@@ -238,7 +238,7 @@ public class FrameAnimation extends Animation {
     @Override
     public void setTransform(Transform transform) {
         if(transform == null) {
-            this.transform = Transform.DUMMY.copy(this.transform);
+            this.transform = Transform.DUMMY.copyInto(this.transform);
         } else {
             this.transform = transform;
         }
@@ -246,7 +246,7 @@ public class FrameAnimation extends Animation {
 
     @Override
     public void draw(float x, float y, Transform transform) {
-        Transform drawnTransform = transform.copy(PROXY_TRANSFORM);
+        Transform drawnTransform = transform.copyInto(PROXY_TRANSFORM);
         Pair<KeyFrame> frames = this.getCurrentFrame();
         KeyFrame drawn = frames.getFirst();
         if (frames.getSecond() == null) { // last frame? just draw it

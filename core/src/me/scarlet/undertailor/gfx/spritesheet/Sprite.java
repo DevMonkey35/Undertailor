@@ -100,7 +100,7 @@ public class Sprite implements Renderable, Cloneable {
     @Override
     public void setTransform(Transform transform) {
         if (transform == null) {
-            this.transform = Transform.DUMMY.copy(this.transform);
+            this.transform = Transform.DUMMY.copyInto(this.transform);
         } else {
             this.transform = transform;
         }
