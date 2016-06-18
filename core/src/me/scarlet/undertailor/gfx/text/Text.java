@@ -228,7 +228,7 @@ public class Text extends TextComponent implements Renderable {
 
     @Override
     public void setTransform(Transform transform) {
-        if(transform == null) {
+        if (transform == null) {
             this.transform = Transform.DUMMY.copyInto(this.transform);
         } else {
             this.transform = transform.copyInto(this.transform);
@@ -244,7 +244,7 @@ public class Text extends TextComponent implements Renderable {
         dY = y;
 
         this.processCharacters((localIndex, component) -> {
-            char character = component.getText().charAt(localIndex.getSecond());
+            char character = component.getText().charAt(localIndex.getB());
 
             if (character == ' ') {
                 dX += font.getSpaceLength() * transform.getScaleX();
@@ -261,7 +261,7 @@ public class Text extends TextComponent implements Renderable {
                 if (!component.getStyles().isEmpty()) {
                     component.getStyles().forEach(style -> {
                         style.apply(dMeta, TimeUtils.timeSinceMillis(this.instantiationTime),
-                            character, localIndex.getFirst() + localIndex.getSecond(),
+                            character, localIndex.getA() + localIndex.getB(),
                             this.getText().length());
                     });
 
@@ -272,8 +272,8 @@ public class Text extends TextComponent implements Renderable {
                     this.m_drawnTransform.addRotation(dMeta.rotation);
                 }
 
-                if (letterSpacing.getFirst() > spacing) {
-                    dX += (letterSpacing.getFirst() - spacing) * m_drawnTransform.getScaleX();
+                if (letterSpacing.getA() > spacing) {
+                    dX += (letterSpacing.getA() - spacing) * m_drawnTransform.getScaleX();
                 }
 
                 font.getRenderer().setBatchColor(component.getColor());
@@ -281,7 +281,7 @@ public class Text extends TextComponent implements Renderable {
                     dY + ((sMeta.originY + dMeta.offY) * (m_drawnTransform.getScaleY())),
                     m_drawnTransform);
 
-                spacing = letterSpacing.getSecond();
+                spacing = letterSpacing.getB();
                 dX += (sprite.getTextureRegion().getRegionWidth() + spacing)
                     * m_drawnTransform.getScaleX();
             }
@@ -300,9 +300,9 @@ public class Text extends TextComponent implements Renderable {
      */
     public String getBoundedText() {
         return this.getText().substring(
-            this.getStringBounds().getFirst() == -1 ? 0 : this.getStringBounds().getFirst(),
-            this.getStringBounds().getSecond() == -1 ? this.getText().length()
-                : this.getStringBounds().getSecond());
+            this.getStringBounds().getA() == -1 ? 0 : this.getStringBounds().getA(),
+            this.getStringBounds().getB() == -1 ? this.getText().length()
+                : this.getStringBounds().getB());
     }
 
     /**
@@ -519,8 +519,8 @@ public class Text extends TextComponent implements Renderable {
      *        character
      */
     private void processCharacters(BiConsumer<Pair<Integer>, TextComponent> consumer) {
-        int boundL = this.getStringBounds().getFirst();
-        int boundR = this.getStringBounds().getSecond();
+        int boundL = this.getStringBounds().getA();
+        int boundR = this.getStringBounds().getB();
 
         if (boundL < 0) {
             boundL = this.getText().length() - Math.abs(boundL);
@@ -546,9 +546,9 @@ public class Text extends TextComponent implements Renderable {
                 localIndex += boundL - entry.getKey();
             }
 
-            this.m_valuePair.setFirst(entry.getKey());
+            this.m_valuePair.setA(entry.getKey());
             for (int ind = localIndex; ind < entry.getValue().getText().length(); ind++) {
-                this.m_valuePair.setSecond(ind);
+                this.m_valuePair.setB(ind);
                 consumer.accept(this.m_valuePair, entry.getValue());
 
                 if (boundR != 0 && entry.getKey() + ind >= boundR) {
@@ -588,31 +588,31 @@ public class Text extends TextComponent implements Renderable {
         dY = font.getLineSize();
 
         this.processCharacters((localIndex, component) -> {
-            char character = component.getText().charAt(localIndex.getSecond());
+            char character = component.getText().charAt(localIndex.getB());
 
             if (character == ' ') {
                 dX += font.getSpaceLength();
             } else if (character == '\n') {
-                if (this.spaceTaken.getFirst() < dX)
-                    this.spaceTaken.setFirst(dX);
+                if (this.spaceTaken.getA() < dX)
+                    this.spaceTaken.setA(dX);
                 dX = 0;
                 dY += font.getLineSize();
             } else {
                 Sprite sprite = this.font.getCharacterSprite(character);
                 Pair<Float> letterSpacing = font.getLetterSpacing(character);
 
-                if (letterSpacing.getFirst() > spacing) {
-                    dX += letterSpacing.getFirst() - spacing;
+                if (letterSpacing.getA() > spacing) {
+                    dX += letterSpacing.getA() - spacing;
                 }
 
-                spacing = letterSpacing.getSecond();
+                spacing = letterSpacing.getB();
                 dX += (sprite.getTextureRegion().getRegionWidth() + spacing);
             }
         });
 
-        if (this.spaceTaken.getFirst() < dX)
-            this.spaceTaken.setFirst(dX);
-        this.spaceTaken.setSecond(dY);
+        if (this.spaceTaken.getA() < dX)
+            this.spaceTaken.setA(dX);
+        this.spaceTaken.setB(dY);
     }
 
     /**

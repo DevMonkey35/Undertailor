@@ -31,16 +31,76 @@
 package me.scarlet.undertailor.util;
 
 /**
- * Class holding a pair of two objects of the same type.
+ * Class holding a pair of two objects with potentially
+ * differring types.
  *
- * @param <T> the type of object to hold two of
+ * @param <A> the type of object A
+ * @param <B> the type of object B
  */
-public class Pair<T> extends Tuple<T, T> {
+public class Tuple<A, B> {
 
-    public Pair() {}
+    private A a;
+    private B b;
 
-    public Pair(T item1, T item2) {
-        this.setA(item1);
-        this.setB(item2);
+    public Tuple() {}
+
+    public Tuple(A a, B b) {
+        this.setItems(a, b);
+    }
+
+    /**
+     * Returns object A.
+     * 
+     * @return A
+     */
+    public A getA() {
+        return this.a;
+    }
+
+    /**
+     * Sets object A.
+     * 
+     * @param a A
+     */
+    public void setA(A a) {
+        this.a = a;
+    }
+
+    /**
+     * Returns object B.
+     * 
+     * @return B
+     */
+    public B getB() {
+        return this.b;
+    }
+
+    /**
+     * Sets object B.
+     * 
+     * @param b B
+     */
+    public void setB(B b) {
+        this.b = b;
+    }
+
+    /**
+     * Sets object A and B.
+     * 
+     * @param a A
+     * @param b B
+     */
+    public void setItems(A a, B b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    /**
+     * Clears both objects in this {@link Tuple} and sets
+     * them to null.
+     */
+    public void clearItems() {
+        this.a = null;
+        this.b = null;
     }
 }

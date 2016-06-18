@@ -265,8 +265,9 @@ public class Font {
         for (ConfigurationNode node : rootNode.getNode(KEY_META_LIST).getChildrenMap().values()) {
             char character = node.getKey().toString().charAt(0);
 
-            float letterSpacing = checkValue(node.getNode(KEY_META_LETTER_SPACING)
-                .getFloat(this.defaultLetterSpacing.getFirst()), value -> {
+            float letterSpacing = checkValue(
+                node.getNode(KEY_META_LETTER_SPACING).getFloat(this.defaultLetterSpacing.getA()),
+                value -> {
                     if (value < 0) {
                         return "Cannot use negative letter spacing";
                     }
@@ -275,7 +276,7 @@ public class Font {
                 });
 
             Pair<Float> spacingPair = new Pair<>();
-            spacingPair.setFirst(checkValue(
+            spacingPair.setA(checkValue(
                 node.getNode(KEY_META_LETTER_SPACING_LEFT).getFloat(letterSpacing), value -> {
                     if (value < 0) {
                         return "Cannot use negative letter spacing";
@@ -284,7 +285,7 @@ public class Font {
                     return null;
                 }));
 
-            spacingPair.setSecond(checkValue(
+            spacingPair.setB(checkValue(
                 node.getNode(KEY_META_LETTER_SPACING_RIGHT).getFloat(letterSpacing), value -> {
                     if (value < 0) {
                         return "Cannot use negative letter spacing";

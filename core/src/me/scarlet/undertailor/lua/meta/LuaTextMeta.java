@@ -49,8 +49,8 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.util.Pair;
 
 /**
- * Metadata for {@link LuaObjectValue}s holding
- * {@link Text} objects.
+ * Metadata for {@link LuaObjectValue}s holding {@link Text}
+ * objects.
  */
 public class LuaTextMeta implements LuaObjectMeta {
 
@@ -88,7 +88,7 @@ public class LuaTextMeta implements LuaObjectMeta {
         // text:getSpaceTaken()
         set("getSpaceTaken", asFunction(vargs -> {
             Pair<Float> space = obj(vargs).getSpaceTaken();
-            return varargsOf(valueOf(space.getFirst()), valueOf(space.getSecond()));
+            return varargsOf(valueOf(space.getA()), valueOf(space.getB()));
         }));
 
         // ---------------- g/s text parameters ----------------
@@ -96,7 +96,7 @@ public class LuaTextMeta implements LuaObjectMeta {
         // text:getStringBounds()
         set("getStringBounds", asFunction(vargs -> {
             Pair<Integer> bounds = obj(vargs).getStringBounds();
-            return varargsOf(valueOf(bounds.getFirst()), valueOf(bounds.getSecond()));
+            return varargsOf(valueOf(bounds.getA()), valueOf(bounds.getB()));
         }));
 
         // text:setStringBounds(iFirst, iSecond)

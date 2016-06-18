@@ -47,8 +47,8 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.util.Pair;
 
 /**
- * Metadata for {@link LuaObjectValue}s holding
- * {@link Font} objects.
+ * Metadata for {@link LuaObjectValue}s holding {@link Font}
+ * objects.
  */
 public class LuaFontMeta implements LuaObjectMeta {
 
@@ -83,7 +83,7 @@ public class LuaFontMeta implements LuaObjectMeta {
             }
 
             Pair<Float> spacing = obj(vargs).getLetterSpacing(str.charAt(0));
-            return varargsOf(valueOf(spacing.getFirst()), valueOf(spacing.getSecond()));
+            return varargsOf(valueOf(spacing.getA()), valueOf(spacing.getB()));
         }));
 
         // font:getCharacterList()

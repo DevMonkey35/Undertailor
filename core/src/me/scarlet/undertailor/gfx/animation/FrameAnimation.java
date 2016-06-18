@@ -237,7 +237,7 @@ public class FrameAnimation extends Animation {
 
     @Override
     public void setTransform(Transform transform) {
-        if(transform == null) {
+        if (transform == null) {
             this.transform = Transform.DUMMY.copyInto(this.transform);
         } else {
             this.transform = transform.copyInto(this.transform);
@@ -248,9 +248,9 @@ public class FrameAnimation extends Animation {
     public void draw(float x, float y, Transform transform) {
         Transform drawnTransform = transform.copyInto(PROXY_TRANSFORM);
         Pair<KeyFrame> frames = this.getCurrentFrame();
-        KeyFrame drawn = frames.getFirst();
-        if (frames.getSecond() == null) { // last frame? just draw it
-            KeyFrameData data = frames.getFirst().getFrameData();
+        KeyFrame drawn = frames.getA();
+        if (frames.getB() == null) { // last frame? just draw it
+            KeyFrameData data = frames.getA().getFrameData();
 
             x += data.x;
             y += data.y;
@@ -262,10 +262,10 @@ public class FrameAnimation extends Animation {
         } else {
             // interpolation
             KeyFrameData first = drawn.getFrameData();
-            KeyFrameData second = frames.getSecond().getFrameData();
+            KeyFrameData second = frames.getB().getFrameData();
             long realRuntime = this.getCycleRuntime();
-            float currentFrameProgress = (float) (realRuntime - frames.getFirst().getKeyTime())
-                / (frames.getSecond().getKeyTime() - frames.getFirst().getKeyTime());
+            float currentFrameProgress = (float) (realRuntime - frames.getA().getKeyTime())
+                / (frames.getB().getKeyTime() - frames.getA().getKeyTime());
             float[] interpolation = first.interpolateValues(second, currentFrameProgress);
 
             x += interpolation[0];
