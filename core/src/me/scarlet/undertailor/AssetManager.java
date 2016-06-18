@@ -31,6 +31,7 @@
 package me.scarlet.undertailor;
 
 import me.scarlet.undertailor.audio.AudioManager;
+import me.scarlet.undertailor.engine.overworld.map.TilemapManager;
 import me.scarlet.undertailor.engine.overworld.map.TilesetManager;
 import me.scarlet.undertailor.gfx.spritesheet.SpriteSheetManager;
 import me.scarlet.undertailor.gfx.text.FontManager;
@@ -51,6 +52,7 @@ public class AssetManager {
     public static final String DIR_FONTS = "fonts";
     public static final String DIR_SCRIPTS = "scripts";
     public static final String DIR_TILESETS = "maps/tilesets";
+    public static final String DIR_TILEMAPS = "maps/rooms";
 
     private FontManager font;
     private AudioManager audio;
@@ -58,6 +60,7 @@ public class AssetManager {
     private TextStyleManager styles;
     private SpriteSheetManager sprites;
     private TilesetManager tilesets;
+    private TilemapManager tilemaps;
 
     public AssetManager(Undertailor undertailor) {
         this.font = new FontManager(undertailor.getRenderer());
@@ -66,6 +69,7 @@ public class AssetManager {
         this.styles = new TextStyleManager(this.scripts);
         this.sprites = new SpriteSheetManager(undertailor.getRenderer());
         this.tilesets = new TilesetManager(undertailor.getRenderer());
+        this.tilemaps = new TilemapManager(this.tilesets);
     }
 
     // ---------------- functional methods ----------------
@@ -83,6 +87,7 @@ public class AssetManager {
         this.audio.loadMusic(new File(rootDirectory, DIR_AUDIO_MUSIC));
         this.sprites.loadSpriteSheets(new File(rootDirectory, DIR_SPRITES));
         this.tilesets.load(new File(rootDirectory, DIR_TILESETS));
+        this.tilemaps.load(new File(rootDirectory, DIR_TILEMAPS));
         this.font.loadFonts(new File(rootDirectory, DIR_FONTS));
 
         // script manager
@@ -147,5 +152,14 @@ public class AssetManager {
      */
     public TilesetManager getTilesetManager() {
         return this.tilesets;
+    }
+
+    /**
+     * Returns the underlying {@link TilemapManager}.
+     * 
+     * @return the TilemapManager
+     */
+    public TilemapManager getTilemapManager() {
+        return this.tilemaps;
     }
 }
