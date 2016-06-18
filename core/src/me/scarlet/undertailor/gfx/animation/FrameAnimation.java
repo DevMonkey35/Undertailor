@@ -277,11 +277,7 @@ public class FrameAnimation extends Animation {
 
     @Override
     public void setTransform(Transform transform) {
-        if (transform == null) {
-            this.transform = Transform.DUMMY.copyInto(this.transform);
-        } else {
-            this.transform = transform.copyInto(this.transform);
-        }
+        Transform.setOrDefault(this.transform, transform);
     }
 
     @Override

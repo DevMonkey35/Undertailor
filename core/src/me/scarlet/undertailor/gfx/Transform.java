@@ -39,6 +39,24 @@ public class Transform implements Cloneable {
 
     public static final Transform DUMMY = new Transform();
 
+    /**
+     * Convenience method to avoid violating DRY when
+     * implementing
+     * {@link Renderable#setTransform(Transform)}.
+     * 
+     * @param current the current transform of the
+     *        Renderable
+     * @param transform the transform to be set, or null to
+     *        set default
+     */
+    public static void setOrDefault(Transform current, Transform transform) {
+        if (transform == null) {
+            Transform.DUMMY.copyInto(current);
+        } else {
+            transform.copyInto(current);
+        }
+    }
+
     private float scaleX; // flip can be done by negative scale
     private float scaleY;
     private float skewX; // is skew even possible

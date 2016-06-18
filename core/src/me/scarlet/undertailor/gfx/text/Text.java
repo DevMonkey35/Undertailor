@@ -228,11 +228,7 @@ public class Text extends TextComponent implements Renderable {
 
     @Override
     public void setTransform(Transform transform) {
-        if (transform == null) {
-            this.transform = Transform.DUMMY.copyInto(this.transform);
-        } else {
-            this.transform = transform.copyInto(this.transform);
-        }
+        Transform.setOrDefault(this.transform, transform);
     }
 
     // method-specific variables because stupid scope rules
