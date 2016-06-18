@@ -50,7 +50,6 @@ import me.scarlet.undertailor.gfx.spritesheet.Sprite.SpriteMeta;
 import me.scarlet.undertailor.resource.Resource;
 import me.scarlet.undertailor.resource.ResourceFactory;
 import me.scarlet.undertailor.util.Tuple;
-import me.scarlet.undertailor.util.XMLUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -152,7 +151,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
 
         if (tsxFile.exists()) {
             try {
-                this.meta = TilesetFactory.READER.read(XMLUtil.getParser(), tsxFile);
+                this.meta = TilesetFactory.READER.read(tsxFile);
             } catch(FileNotFoundException ignored) {} // can't happen
         }
     }

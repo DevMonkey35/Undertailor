@@ -37,6 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
 import me.scarlet.undertailor.util.Tuple;
+import me.scarlet.undertailor.util.XMLUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,8 +48,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.parsers.SAXParser;
 
 /**
  * {@link DefaultHandler} implementation for reading Tiled
@@ -135,8 +134,6 @@ public class TilesetReader extends DefaultHandler {
      * information associated with the tileset, should there
      * be any.
      * 
-     * @param parser the parser used to parse the .tsx XML
-     *        file
      * @param tsxFile the File pointing to the target .tsx
      *        file
      * 
@@ -148,7 +145,7 @@ public class TilesetReader extends DefaultHandler {
      * @throws IOException if a miscellaneous I/O error
      *         occured
      */
-    public TilesetMeta read(SAXParser parser, File tsxFile)
+    public TilesetMeta read(File tsxFile)
         throws FileNotFoundException, SAXException, IOException {
         FileInputStream stream = null;
 
@@ -156,7 +153,7 @@ public class TilesetReader extends DefaultHandler {
             stream = new FileInputStream(tsxFile);
             InputStreamReader reader = new InputStreamReader(stream);
             InputSource source = new InputSource(reader);
-            parser.parse(source, this);
+            XMLUtil.getParser().parse(source, this);
         } finally {
             if (stream != null)
                 stream.close();
