@@ -33,11 +33,13 @@ package me.scarlet.undertailor.gfx.animation;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.gfx.animation.FrameAnimation.KeyFrame.KeyFrameData;
+import me.scarlet.undertailor.gfx.spritesheet.Sprite;
 import me.scarlet.undertailor.util.NumberUtil;
 import me.scarlet.undertailor.util.NumberUtil.Interpolator;
 import me.scarlet.undertailor.util.Pair;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.TreeMap;
 
 /**
@@ -50,16 +52,16 @@ public class FrameAnimation extends Animation {
      * Holds data for key frames making up a
      * {@link FrameAnimation}.
      */
-    public static class KeyFrame {
+    public static class KeyFrame implements Cloneable {
 
-        static final KeyFrameData DEFAULT_DATA = new KeyFrameData(0, 0);
+        static final KeyFrameData DEFAULT_DATA = new KeyFrameData();
 
         /**
          * Holds data of a {@link KeyFrame}, pertaining to
          * the transformation of the held {@link Renderable}
          * .
          */
-        public static class KeyFrameData {
+        public static class KeyFrameData implements Cloneable {
 
             public static enum Interpolation {
                 LINEAR, EASE_IN, EASE_OUT
@@ -72,6 +74,10 @@ public class FrameAnimation extends Animation {
             public boolean flipX;
             public boolean flipY;
             public float rotation;
+
+            public KeyFrameData() {
+                this(0, 0);
+            }
 
             public KeyFrameData(float x, float y) {
                 this(x, y, 1F);
@@ -148,6 +154,21 @@ public class FrameAnimation extends Animation {
                 return this.x == other.x && this.y == other.y && this.scaleX == other.scaleX
                     && this.scaleY == other.scaleY && this.rotation == other.rotation;
             }
+
+            @Override
+            public KeyFrameData clone() {
+                KeyFrameData clone = new KeyFrameData();
+
+                clone.x = clone.x;
+                clone.y = clone.y;
+                clone.scaleX = this.scaleX;
+                clone.scaleY = this.scaleY;
+                clone.flipX = this.flipX;
+                clone.flipY = this.flipY;
+                clone.rotation = this.rotation;
+
+                return clone;
+            }
         }
 
         private long time;
@@ -202,12 +223,30 @@ public class FrameAnimation extends Animation {
         public KeyFrameData getFrameData() {
             return this.data == null ? FrameAnimation.KeyFrame.DEFAULT_DATA : this.data;
         }
+
+        @Override
+        public KeyFrame clone() {
+            KeyFrame clone = new KeyFrame(this.time, this.frame, this.data);
+            clone.data = this.data == null ? null : this.data.clone();
+            clone.time = this.time;
+
+            clone.frame = this.frame;
+            if (this.frame instanceof Sprite) {
+                clone.frame = ((Sprite) this.frame).clone();
+            }
+
+            return clone;
+        }
     }
 
     private static final Transform PROXY_TRANSFORM;
+    private static final Comparator<Long> MAP_COMPARATOR;
 
     static {
         PROXY_TRANSFORM = new Transform();
+        MAP_COMPARATOR = (time1, time2) -> {
+            return Long.compare(time2, time1);
+        };
     }
 
     private long length;
@@ -219,9 +258,7 @@ public class FrameAnimation extends Animation {
 
     public FrameAnimation(KeyFrame... frames) {
         this.returnBuffer = new Pair<>();
-        this.frames = new TreeMap<>((time1, time2) -> {
-            return Long.compare(time2, time1);
-        });
+        this.frames = new TreeMap<>(MAP_COMPARATOR);
 
         for (KeyFrame frame : frames) {
             this.frames.put(frame.time, frame);
@@ -257,8 +294,8 @@ public class FrameAnimation extends Animation {
 
             x += data.x;
             y += data.y;
-            drawnTransform.addScaleX(data.scaleX);
-            drawnTransform.addScaleY(data.scaleY);
+            drawnTransform.setScaleX(drawnTransform.getScaleX() * data.scaleX);
+            drawnTransform.setScaleY(drawnTransform.getScaleY() * data.scaleY);
             drawnTransform.setFlipX(drawnTransform.getFlipX() && data.flipX);
             drawnTransform.setFlipY(drawnTransform.getFlipY() && data.flipY);
             drawnTransform.addRotation(data.rotation);
@@ -273,8 +310,8 @@ public class FrameAnimation extends Animation {
 
             x += interpolation[0];
             y += interpolation[1];
-            drawnTransform.addScaleX(interpolation[2]);
-            drawnTransform.addScaleY(interpolation[3]);
+            drawnTransform.setScaleX(drawnTransform.getScaleX() * interpolation[2]);
+            drawnTransform.setScaleY(drawnTransform.getScaleY() * interpolation[3]);
             drawnTransform.addRotation(interpolation[4]);
 
             drawnTransform.setFlipX(drawnTransform.getFlipX() && first.flipX);
@@ -301,11 +338,16 @@ public class FrameAnimation extends Animation {
     @Override
     public FrameAnimation clone() {
         FrameAnimation clone = new FrameAnimation();
-        clone.frames = this.frames;
+        clone.frames = new TreeMap<>(MAP_COMPARATOR);
+        for (Long key : this.frames.keySet()) {
+            clone.frames.put(key, this.frames.get(key).clone());
+        }
+
         clone.length = this.length;
         clone.transform = this.transform.clone();
         clone.returnBuffer = new Pair<>();
         clone.setLooping(this.isLooping());
+        if(this.isPlaying()) clone.play();
 
         return clone;
     }
