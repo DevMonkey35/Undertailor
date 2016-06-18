@@ -145,12 +145,17 @@ public class TilemapReader extends DefaultHandler {
                 } else if (character == ',') {
                     this.currentTiles[currentTile] = Integer.parseInt(number);
                     number = "";
-                    if (++currentTile >= this.currentTiles.length) {
+                    currentTile++;
+                    if (currentTile >= this.currentTiles.length) {
                         break;
                     }
                 } else {
                     number += character;
                 }
+            }
+
+            if (!number.isEmpty()) {
+                this.currentTiles[this.currentTiles.length - 1] = Integer.parseInt(number);
             }
         }
     }
