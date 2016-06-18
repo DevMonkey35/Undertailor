@@ -139,7 +139,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     private Map<Integer, Animation> animatedTiles;
 
     public TilesetFactory(MultiRenderer renderer, File textureFile)
-        throws FileNotFoundException, SAXException, IOException {
+        throws SAXException, IOException {
 
         this.tiles = new ArrayList<>();
         this.animatedTiles = new HashMap<>();
@@ -151,7 +151,9 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
             textureFile.getName().substring(0, textureFile.getName().length() - 4) + ".tsx");
 
         if (tsxFile.exists()) {
-            this.meta = TilesetFactory.READER.read(XMLUtil.getParser(), tsxFile);
+            try {
+                this.meta = TilesetFactory.READER.read(XMLUtil.getParser(), tsxFile);
+            } catch(FileNotFoundException ignored) {} // can't happen
         }
     }
 
