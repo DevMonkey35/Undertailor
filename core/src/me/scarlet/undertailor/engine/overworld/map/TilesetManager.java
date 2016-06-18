@@ -53,7 +53,7 @@ public class TilesetManager {
         log.info("Loading tilesets from directory " + rootDirectory.getAbsolutePath());
 
         Map<String, File> files =
-            FileUtil.loadWithIdentifiers(rootDirectory, file -> file.getName().endsWith(".png"));
+            FileUtil.loadWithIdentifiers(rootDirectory, file -> file.getName().endsWith(".png"), false);
 
         files.keySet().forEach(key -> {
             File targetFile = files.get(key);

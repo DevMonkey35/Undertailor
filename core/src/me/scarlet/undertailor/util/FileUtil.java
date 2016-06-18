@@ -42,6 +42,23 @@ public class FileUtil {
 
     /**
      * Returns a mapping of identifier strings and files
+     * loaded from the given root folder, scanned
+     * recursively.
+     * 
+     * @param root the root folder to search in
+     * @param filter the file filter to query about which
+     *        files to include, or null to allow all
+     * 
+     * @return a mapping of identifier and File pairs
+     * 
+     * @see #loadWithIdentifiers(File, FileFilter, boolean)
+     */
+    public static Map<String, File> loadWithIdentifiers(File root, FileFilter filter) {
+        return loadWithIdentifiers(root, filter, true);
+    }
+
+    /**
+     * Returns a mapping of identifier strings and files
      * loaded from the given root folder.
      * 
      * <p>With the given directory tree,</p>
@@ -84,8 +101,8 @@ public class FileUtil {
      * 
      * @return a mapping of identifier and File pairs
      */
-    public static Map<String, File> loadWithIdentifiers(File root, FileFilter filter) {
-        return loadWithIdentifiers(new HashMap<>(), null, root, filter);
+    public static Map<String, File> loadWithIdentifiers(File root, FileFilter filter, boolean recursive) {
+        return loadWithIdentifiers(new HashMap<>(), recursive, null, root, filter);
     }
 
     /**
@@ -97,8 +114,8 @@ public class FileUtil {
      * 
      * @see #loadWithIdentifiers(File, FileFilter)
      */
-    private static Map<String, File> loadWithIdentifiers(Map<String, File> parentMap, String append,
-        File root, FileFilter filter) {
+    private static Map<String, File> loadWithIdentifiers(Map<String, File> parentMap,
+        boolean recursive, String append, File root, FileFilter filter) {
         if (!root.exists()) {
             root.mkdirs();
         }
@@ -112,8 +129,8 @@ public class FileUtil {
         })) {
             String identifier =
                 (append == null ? "" : append + ".") + file.getName().split("\\.")[0].replaceAll(" ", "_");
-            if (file.isDirectory()) {
-                loadWithIdentifiers(parentMap, identifier, file, filter);
+            if (file.isDirectory() && recursive) {
+                loadWithIdentifiers(parentMap, true, identifier, file, filter);
             } else {
                 parentMap.put(identifier, file);
             }
