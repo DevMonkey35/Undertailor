@@ -103,4 +103,9 @@ public class Tuple<A, B> {
         this.a = null;
         this.b = null;
     }
+
+    @Override
+    public String toString() {
+        return "[" + a + ", " + b + "]";
+    }
 }
