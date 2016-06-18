@@ -38,11 +38,17 @@ import me.scarlet.undertailor.gfx.Renderable;
  * Base class for a collection of graphics stitched
  * together, made to look like a single moving entity.
  */
-public abstract class Animation implements Renderable {
+public abstract class Animation implements Renderable, Cloneable {
 
     private long startTime; // The time the animation was started, or -1 if not started.
     private long pauseTime; // The time tha animation was paused, or -1 if not paused.
     private boolean looping; // Whether or not the animation is looping.
+
+    protected Animation() {
+        this.startTime = -1;
+        this.pauseTime = -1;
+        this.looping = false;
+    }
 
     /**
      * Returns the current runtime of this {@link Animation}
@@ -173,6 +179,8 @@ public abstract class Animation implements Renderable {
         this.pauseTime = -1;
         this.startTime = -1;
     }
+
+    public abstract Animation clone();
 
     /**
      * Returns the length of a single cycle of this

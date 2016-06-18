@@ -37,6 +37,7 @@ import me.scarlet.undertailor.util.NumberUtil;
 import me.scarlet.undertailor.util.NumberUtil.Interpolator;
 import me.scarlet.undertailor.util.Pair;
 
+import java.util.Collection;
 import java.util.TreeMap;
 
 /**
@@ -214,6 +215,8 @@ public class FrameAnimation extends Animation {
     private Pair<KeyFrame> returnBuffer;
     private Transform transform;
 
+    private FrameAnimation() {}
+
     public FrameAnimation(KeyFrame... frames) {
         this.returnBuffer = new Pair<>();
         this.frames = new TreeMap<>((time1, time2) -> {
@@ -286,6 +289,27 @@ public class FrameAnimation extends Animation {
         return this.length;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Cloning a {@link FrameAnimation} creates a new
+     * instance that shares the same values as the old
+     * FrameAnimation. Modifying the frames of the clone
+     * through {@link #getFrames()} will affect the frames
+     * of the original.</p>
+     */
+    @Override
+    public FrameAnimation clone() {
+        FrameAnimation clone = new FrameAnimation();
+        clone.frames = this.frames;
+        clone.length = this.length;
+        clone.transform = this.transform.clone();
+        clone.returnBuffer = new Pair<>();
+        clone.setLooping(this.isLooping());
+
+        return clone;
+    }
+
     // ---------------- methods ----------------
 
     /**
@@ -311,5 +335,20 @@ public class FrameAnimation extends Animation {
         }
 
         return returnBuffer;
+    }
+
+    /**
+     * Returns the set of {@link KeyFrame}s assigned to this
+     * {@link FrameAnimation}.
+     * 
+     * <p>Frames may not be in their playback order.
+     * Modifying this collection modifies the KeyFrames in
+     * the animation itself. Elements should not be
+     * removed.</p>
+     * 
+     * @return the collection of KeyFrames
+     */
+    public Collection<KeyFrame> getFrames() {
+        return this.frames.values();
     }
 }
