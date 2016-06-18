@@ -152,7 +152,8 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
         if (tsxFile.exists()) {
             try {
                 this.meta = TilesetFactory.READER.read(tsxFile);
-            } catch(FileNotFoundException ignored) {} // can't happen
+            } catch (FileNotFoundException ignored) {
+            } // can't happen
         }
     }
 
@@ -234,9 +235,6 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
                     }
 
                     frames[i] = new KeyFrame(currentTime, this.tiles.get(tupleFrame.getA()));
-
-                    System.out.println("frame " + i + " at " + currentTime + " with tile "
-                        + tupleFrame.getA() + "(" + this.tiles.get(tupleFrame.getA()) + ")");
                 }
 
                 Tuple<Integer, Long> last = animations.get(animations.size() - 1);
@@ -246,8 +244,6 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
                 FrameAnimation animation = new FrameAnimation(frames);
                 animation.setLooping(true);
                 animation.play();
-
-                System.out.println(animation.isPlaying());
 
                 this.animatedTiles.put(id, animation);
             });
