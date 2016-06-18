@@ -112,7 +112,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
         public Sprite getSprite(int index) {
             if (sprites.get(index) == null || sprites.get(index).get() == null) {
                 Sprite newSprite = factory.sprites.get(index).clone();
-                newSprite.sourceSheet = this;
+                newSprite.sourceObject = this;
                 sprites.put(index, new WeakReference<>(newSprite));
             }
 

@@ -81,7 +81,7 @@ public class Sprite implements Renderable, Cloneable {
     private Transform transform;
     private TextureRegion region;
     private MultiRenderer renderer;
-    protected SpriteSheet sourceSheet;
+    public Object sourceObject;
 
     public Sprite(MultiRenderer renderer, TextureRegion sprite, SpriteMeta meta) {
         this.renderer = renderer;
