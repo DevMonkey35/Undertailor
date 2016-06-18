@@ -51,14 +51,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.zip.ZipFile;
 
 /**
@@ -77,11 +76,11 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
     public static class PackagedSpriteSheet extends Resource<Texture> implements SpriteSheet {
 
         private PackagedSpriteSheetFactory factory;
-        private Map<Integer, WeakReference<Sprite>> sprites;
+        private Map<Integer, Sprite> sprites;
 
         public PackagedSpriteSheet(PackagedSpriteSheetFactory factory) {
             this.factory = factory;
-            this.sprites = new WeakHashMap<>();
+            this.sprites = new HashMap<>();
         }
 
         // ---------------- abstract method implementation ----------------
@@ -110,13 +109,13 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
          */
         @Override
         public Sprite getSprite(int index) {
-            if (sprites.get(index) == null || sprites.get(index).get() == null) {
+            if (!sprites.containsKey(index)) {
                 Sprite newSprite = factory.sprites.get(index).clone();
                 newSprite.sourceObject = this;
-                sprites.put(index, new WeakReference<>(newSprite));
+                sprites.put(index, newSprite);
             }
 
-            return sprites.get(index).get();
+            return sprites.get(index);
         }
 
         @Override
