@@ -31,6 +31,7 @@
 package me.scarlet.undertailor;
 
 import me.scarlet.undertailor.audio.AudioManager;
+import me.scarlet.undertailor.engine.overworld.map.TilesetManager;
 import me.scarlet.undertailor.gfx.spritesheet.SpriteSheetManager;
 import me.scarlet.undertailor.gfx.text.FontManager;
 import me.scarlet.undertailor.gfx.text.TextStyleManager;
@@ -49,12 +50,14 @@ public class AssetManager {
     public static final String DIR_STYLES = "fonts/styles";
     public static final String DIR_FONTS = "fonts";
     public static final String DIR_SCRIPTS = "scripts";
+    public static final String DIR_TILESETS = "maps/tilesets";
 
     private FontManager font;
     private AudioManager audio;
     private ScriptManager scripts;
     private TextStyleManager styles;
     private SpriteSheetManager sprites;
+    private TilesetManager tilesets;
 
     public AssetManager(Undertailor undertailor) {
         this.font = new FontManager(undertailor.getRenderer());
@@ -62,6 +65,7 @@ public class AssetManager {
         this.scripts = new ScriptManager(undertailor);
         this.styles = new TextStyleManager(this.scripts);
         this.sprites = new SpriteSheetManager(undertailor.getRenderer());
+        this.tilesets = new TilesetManager(undertailor.getRenderer());
     }
 
     // ---------------- functional methods ----------------
@@ -78,6 +82,7 @@ public class AssetManager {
         this.audio.loadSounds(new File(rootDirectory, DIR_AUDIO_SOUND));
         this.audio.loadMusic(new File(rootDirectory, DIR_AUDIO_MUSIC));
         this.sprites.loadSpriteSheets(new File(rootDirectory, DIR_SPRITES));
+        this.tilesets.load(new File(rootDirectory, DIR_TILESETS));
         this.font.loadFonts(new File(rootDirectory, DIR_FONTS));
 
         // script manager
@@ -133,5 +138,14 @@ public class AssetManager {
      */
     public TextStyleManager getStyleManager() {
         return this.styles;
+    }
+
+    /**
+     * Returns the underlying {@link TilesetManager}.
+     * 
+     * @return the TilesetManager
+     */
+    public TilesetManager getTilesetManager() {
+        return this.tilesets;
     }
 }
