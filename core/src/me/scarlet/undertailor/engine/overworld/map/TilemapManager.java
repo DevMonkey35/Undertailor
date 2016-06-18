@@ -64,7 +64,7 @@ public class TilemapManager {
      * 
      * @return the associated Tilemap, or null if not found
      */
-    public Tilemap getTileset(String name) {
+    public Tilemap getTilemap(String name) {
         if (this.tilemaps.containsKey(name)) {
             return this.tilemaps.get(name).getResource();
         }
