@@ -135,7 +135,6 @@ public class TilemapReader extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        System.out.println("START: " + start + ", LENGTH: " + length);
         if (this.currentTiles != null) {
             String number = "";
 
