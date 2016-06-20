@@ -38,8 +38,6 @@ import me.scarlet.undertailor.gfx.Transform;
 
 public class TileLayer implements Layerable, Renderable {
 
-    static final float OVW_SIZE = 19.0F * OverworldController.PIXELS_TO_METERS;
-    static final float OVW_SIZE_HALF = OVW_SIZE / 2F;
     static final Transform OVW_SIZE_TRANSFORM;
 
     static {
