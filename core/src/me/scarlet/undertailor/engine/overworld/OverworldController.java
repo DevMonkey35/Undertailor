@@ -95,10 +95,17 @@ public class OverworldController implements Processable, Renderable, Subsystem {
 
     @Override
     public void draw(float x, float y, Transform transform) {
+        this.renderer.setBatchProjectionMatrix(this.camera.combined);
+
         if (this.room != null) {
-            this.renderer.setBatchProjectionMatrix(this.camera.combined);
             this.room.draw();
         }
+
+        this.renderer.flush();
+        // have to flush before rendering collisions,
+        // otherwise the b2d debug renderer calls begin()
+        // inside another begin() call
+        this.getCollisionHandler().render();
     }
 
     @Override
