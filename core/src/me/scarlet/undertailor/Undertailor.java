@@ -32,6 +32,7 @@ package me.scarlet.undertailor;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.physics.box2d.Box2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,6 +132,7 @@ public class Undertailor extends ApplicationAdapter {
         this.input = new InputRetriever();
         this.renderer = new MultiRenderer();
         Gdx.input.setInputProcessor(this.input);
+        Box2D.init();
 
         this.assets = new AssetManager(this);
         this.assets.loadAll(this.options.assetDir);
