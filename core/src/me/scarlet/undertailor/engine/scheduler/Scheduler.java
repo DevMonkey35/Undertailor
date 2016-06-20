@@ -1,0 +1,190 @@
+package me.scarlet.undertailor.engine.scheduler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import me.scarlet.undertailor.engine.Environment;
+import me.scarlet.undertailor.engine.Processable;
+import me.scarlet.undertailor.engine.Subsystem;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/**
+ * Implementation of a task handling class performing sets
+ * of actions every frame.
+ */
+public class Scheduler implements Processable, Subsystem {
+
+    public static long nextId;
+    static final Logger log = LoggerFactory.getLogger(Scheduler.class);
+
+    static {
+        nextId = 0;
+    }
+
+    private Environment env;
+    private Map<Long, Task> tasks;
+    private Map<Long, Task> activeTasks;
+
+    public Scheduler(Environment env) {
+        this.env = env;
+        this.tasks = new HashMap<>();
+        this.activeTasks = new LinkedHashMap<>();
+    }
+
+    // ---------------- abstract method implementation ----------------
+
+    @Override
+    public Environment getEnvironment() {
+        return this.env;
+    }
+
+    @Override
+    public boolean process(Object... params) {
+        Iterator<Entry<Long, Task>> iterator = tasks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<Long, Task> entry = iterator.next();
+            long id = entry.getKey();
+            Task task = entry.getValue();
+            String taskName =
+                (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
+
+            try {
+                if (task.process()) {
+                    log.debug("task " + taskName + " finished and was removed");
+                    task.onFinish(false);
+                    iterator.remove();
+                }
+            } catch (Exception e) {
+                log.warn("task " + taskName + " was removed due to caught error: "
+                    + e.getClass().getSimpleName() + ": " + e.getMessage());
+                e.printStackTrace();
+                task.onFinish(true);
+                iterator.remove();
+            }
+        }
+
+        iterator = activeTasks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<Long, Task> entry = iterator.next();
+            long id = entry.getKey();
+            Task task = entry.getValue();
+            String taskName =
+                (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
+
+            try {
+                if (task.process()) {
+                    log.debug("active task " + taskName + " finished and was removed");
+                    task.onFinish(false);
+                    iterator.remove();
+                } else {
+                    break;
+                }
+            } catch (Exception e) {
+                log.warn("active task " + taskName + " was removed due to caught error: "
+                    + e.getClass().getSimpleName() + ": " + e.getMessage());
+                e.printStackTrace();
+                task.onFinish(true);
+                iterator.remove();
+            }
+        }
+
+        return true;
+    }
+
+    // ---------------- functional methods ----------------
+
+    /**
+     * Registers a new {@link Task} to be processed by this
+     * {@link Scheduler}.
+     * 
+     * <p>An "active" task is a task that is not executed
+     * with other tasks of its type. That is, active tasks
+     * work on a first-come, first-serve basis, where until
+     * the current task has decided its work is done, no
+     * other active task will be processed. Tasks are
+     * otherwise executed consecutively in an undefined
+     * order.</p>
+     * 
+     * @param task the task to register
+     * @param active whether or not to register the task as
+     *        an active task
+     * 
+     * @return the id assigned to the task
+     */
+    public long registerTask(Task task, boolean active) {
+        long id = this.getNextId();
+        String taskName = (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
+        if (active) {
+            activeTasks.put(id, task);
+            log.debug("active task " + taskName + " registered");
+        } else {
+            tasks.put(id, task);
+            log.debug("task " + taskName + " registered");
+        }
+
+        return id;
+    }
+
+    /**
+     * Cancels the task associated with the provided ID.
+     * 
+     * @param id the ID of the task to cancel
+     */
+    public void cancelTask(long id) {
+        if (tasks.containsKey(id)) {
+            Task task = tasks.get(id);
+            String taskName =
+                (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
+
+            task.onFinish(true);
+            log.debug("task " + taskName + " was removed by scheduler call");
+            tasks.remove(id);
+        }
+
+        if (activeTasks.containsKey(id)) {
+            Task task = activeTasks.get(id);
+            String taskName =
+                (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
+
+            task.onFinish(true);
+            log.debug("active task " + taskName + " was removed by scheduler call");
+            activeTasks.remove(id);
+        }
+    }
+
+    /**
+     * Returns whether or not a given task currently exists
+     * in the {@link Scheduler}.
+     * 
+     * <p>Tasks do not exist in the Scheduler after they've
+     * finished; this method can be used to check whether a
+     * task is still running.</p>
+     * 
+     * @param id the ID of the task to check
+     * 
+     * @return whether or not the task exists
+     */
+    public boolean hasTask(long id) {
+        return tasks.containsKey(id) || activeTasks.containsKey(id);
+    }
+
+    // ---------------- internal methods ----------------
+
+    /**
+     * Internal method.
+     * 
+     * <p>Generates a new task ID.</p>
+     */
+    private long getNextId() {
+        if (nextId == Long.MAX_VALUE) {
+            nextId = 0;
+        }
+
+        return nextId++;
+    }
+}
