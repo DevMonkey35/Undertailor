@@ -40,6 +40,9 @@ import me.scarlet.undertailor.engine.ui.UIController;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
+/**
+ * A primary system running a single game environment.
+ */
 public class Environment implements Processable, Renderable {
 
     private UIController ui;

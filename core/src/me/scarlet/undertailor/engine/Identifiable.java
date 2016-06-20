@@ -36,6 +36,11 @@ package me.scarlet.undertailor.engine;
  */
 public interface Identifiable {
 
+    /**
+     * Returns the numeric ID of this {@link Identifiable}.
+     * 
+     * @return the ID of this Identifiable
+     */
     long getId();
 
 }

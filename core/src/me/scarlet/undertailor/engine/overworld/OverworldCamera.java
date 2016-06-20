@@ -33,6 +33,10 @@ package me.scarlet.undertailor.engine.overworld;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * An {@link OrthographicCamera} specifically for use by an
+ * {@link OverworldController}.
+ */
 public class OverworldCamera extends OrthographicCamera {
 
     private float zoom;
@@ -62,6 +66,7 @@ public class OverworldCamera extends OrthographicCamera {
 
     /**
      * Sets the position of this {@link OverworldCamera}.
+     * The position originates at the center of the camera.
      * 
      * @param x the x coordinate of the center of the camera
      * @param y the y coordinate of the center of the camera

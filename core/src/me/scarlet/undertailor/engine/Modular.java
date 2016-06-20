@@ -30,10 +30,30 @@
 
 package me.scarlet.undertailor.engine;
 
+/**
+ * Skeleton implementation for objects that function only in
+ * cooperation with a parent object.
+ */
 public interface Modular<T> {
 
+    /**
+     * Claims this {@link Modular} object for the parent.
+     * 
+     * @param parent the parent object
+     * 
+     * @return whether or not the object was successfully
+     *         claimed
+     */
     boolean claim(T parent);
 
+    /**
+     * Releases this {@link Modular} object from the parent.
+     * 
+     * @param parent the parent object
+     * 
+     * @return whether or not the object was successfully
+     *         released
+     */
     boolean release(T parent);
 
 }

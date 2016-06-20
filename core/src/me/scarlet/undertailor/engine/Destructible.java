@@ -30,6 +30,10 @@
 
 package me.scarlet.undertailor.engine;
 
+/**
+ * Skeleton implementation for classes that can be
+ * destroyed.
+ */
 public interface Destructible {
 
     void destroy();

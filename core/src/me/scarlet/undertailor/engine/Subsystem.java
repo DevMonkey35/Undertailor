@@ -30,8 +30,17 @@
 
 package me.scarlet.undertailor.engine;
 
+/**
+ * A subsystem of a parent {@link Environment}.
+ */
 public interface Subsystem {
 
+    /**
+     * Returns the {@link Environment} owning this
+     * {@link Subsystem}.
+     * 
+     * @return the parent environment of this Subsystem
+     */
     Environment getEnvironment();
 
 }

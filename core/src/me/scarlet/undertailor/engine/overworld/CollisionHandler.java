@@ -42,6 +42,10 @@ import me.scarlet.undertailor.engine.Collider;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.util.Pair;
 
+/**
+ * Handles collision between {@link Collider}s within an
+ * Overworld.
+ */
 public class CollisionHandler {
 
     public static final float PHYSICS_STEP = 1F / 60F;
@@ -88,6 +92,12 @@ public class CollisionHandler {
         };
     }
 
+    /**
+     * Internal method.
+     * 
+     * <p>Quick check method to ensure eligibility for
+     * intereference by this {@link CollisionHandler}.</p>
+     */
     private static Pair<Collider> checkObjects(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
@@ -113,6 +123,10 @@ public class CollisionHandler {
         this.renderer = new Box2DDebugRenderer(true, true, true, true, true, false);
     }
 
+    /**
+     * Resets this {@link CollisionHandler}, disposing of
+     * the old {@link World} and creating a new one.
+     */
     public void reset() {
         this.timeAccumulator = 0F;
         if (this.world != null) {
@@ -123,10 +137,22 @@ public class CollisionHandler {
         this.world.setContactListener(CollisionHandler.LISTENER);
     }
 
+    /**
+     * Returns the {@link World} currently being used by
+     * this {@link CollisionHandler}.
+     * 
+     * @return za warudo
+     */
     public World getWorld() {
         return this.world;
     }
 
+    /**
+     * Steps the physics simulation by the provided amount
+     * of time.
+     * 
+     * @param delta the time since the last frame
+     */
     public void step(float delta) {
         this.timeAccumulator += delta;
         while (this.timeAccumulator > PHYSICS_STEP) {
@@ -135,6 +161,10 @@ public class CollisionHandler {
         }
     }
 
+    /**
+     * Draws the debug renderer, showing debug data for
+     * physics objects currently in the owning Overworld.
+     */
     public void render() {
         this.renderer.render(world, mRenderer.getBatchProjectionMatrix());
     }
