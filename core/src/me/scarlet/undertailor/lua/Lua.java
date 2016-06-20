@@ -65,11 +65,13 @@ public class Lua {
 
     static final Logger log = LoggerFactory.getLogger(Lua.class);
     private static final Map<Class<?>, LuaObjectMeta> META;
+    private static final Map<Class<?>, LuaObjectMeta> PMETA;
     private static final Map<Class<?>, LuaTable> METATABLES;
     private static final String INVALID_TYPE_MSG = "bad argument: %s expected, got %s";
 
     static {
         META = new HashMap<>();
+        PMETA = new HashMap<>();
         METATABLES = new HashMap<>();
 
         loadMeta(LuaAudioDataMeta.class);
@@ -141,27 +143,46 @@ public class Lua {
      *         provided object, or null if one was not found
      */
     public static LuaObjectMeta getMeta(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return null;
         }
 
+        Class<?> target = null;
+
         if (obj instanceof LuaImplementable
             && ((LuaImplementable<?>) obj).getPrimaryIdentifyingClass() != null) {
-            Class<?> target = ((LuaImplementable<?>) obj).getPrimaryIdentifyingClass();
+            target = ((LuaImplementable<?>) obj).getPrimaryIdentifyingClass();
+        } else {
+            target = obj.getClass();
+        }
+
+        do {
+            if (Lua.PMETA.containsKey(target)) {
+                return Lua.PMETA.get(target);
+            }
+
             if (Lua.META.containsKey(target)) {
                 return Lua.META.get(target);
             }
-        }
 
-        if (Lua.META.containsKey(obj.getClass())) {
-            return Lua.META.get(obj.getClass());
-        }
-
-        for (LuaObjectMeta meta : Lua.META.values()) {
-            if (meta.getTargetObjectClass().isInstance(obj)) {
-                return meta;
+            for (LuaObjectMeta meta : Lua.PMETA.values()) {
+                if (meta.getTargetObjectClass().isInstance(obj)) {
+                    return meta;
+                }
             }
-        }
+
+            for (LuaObjectMeta meta : Lua.META.values()) {
+                if (meta.getTargetObjectClass().isInstance(obj)) {
+                    return meta;
+                }
+            }
+
+            if (target != obj.getClass()) {
+                target = obj.getClass();
+            } else {
+                target = null;
+            }
+        } while (target != null);
 
         return null;
     }
@@ -239,7 +260,11 @@ public class Lua {
                 return;
             }
 
-            Lua.META.put(meta.getTargetObjectClass(), metaClass.newInstance());
+            if (meta.isPrimaryType()) {
+                Lua.PMETA.put(meta.getTargetObjectClass(), meta);
+            } else {
+                Lua.META.put(meta.getTargetObjectClass(), meta);
+            }
         } catch (Exception e) {
             log.error("Failed to load meta for meta class " + metaClass.getSimpleName(), e);
         }
@@ -252,6 +277,12 @@ public class Lua {
      * instance.</p>
      */
     static LuaObjectMeta getMeta(Class<? extends LuaObjectMeta> metaClass) {
+        for (LuaObjectMeta meta : Lua.PMETA.values()) {
+            if (meta.getClass() == metaClass) {
+                return meta;
+            }
+        }
+
         for (LuaObjectMeta meta : Lua.META.values()) {
             if (meta.getClass() == metaClass) {
                 return meta;

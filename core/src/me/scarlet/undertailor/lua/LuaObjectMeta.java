@@ -73,6 +73,20 @@ public interface LuaObjectMeta {
      */
     public String getTypeName();
 
+    // ---------------- default methods ----------------
+
+    /**
+     * Returns whether or not this {@link LuaObjectMeta}
+     * should be considered a priority type, that is, if an
+     * object is of this meta's target type, this object
+     * meta will be one of the first choices.
+     * 
+     * @return whether or not this meta should take priority
+     */
+    default boolean isPrimaryType() {
+        return false;
+    }
+
     // ---------------- convenience methods because i'm an ass ----------------
 
     /**

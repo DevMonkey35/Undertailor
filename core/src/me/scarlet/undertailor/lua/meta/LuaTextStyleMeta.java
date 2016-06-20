@@ -80,4 +80,9 @@ public class LuaTextStyleMeta implements LuaObjectMeta {
     public String getTypeName() {
         return "tlr-textstyle";
     }
+
+    @Override
+    public boolean isPrimaryType() {
+        return true;
+    }
 }
