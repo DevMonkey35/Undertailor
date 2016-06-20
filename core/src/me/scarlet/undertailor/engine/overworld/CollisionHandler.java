@@ -120,7 +120,7 @@ public class CollisionHandler {
         this.mRenderer = mRenderer;
         this.reset();
 
-        this.renderer = new Box2DDebugRenderer(true, true, true, true, true, false);
+        this.renderer = new Box2DDebugRenderer(true, true, true, true, false, true);
     }
 
     /**
