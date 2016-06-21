@@ -36,6 +36,8 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 
+import me.scarlet.undertailor.engine.overworld.OverworldController;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -110,10 +112,13 @@ public class ObjectLayer {
          */
         void generateVertices() {
             if (this.shapeVertices == null) {
+                float shapeWidth = this.shapeWidth * OverworldController.PIXELS_TO_METERS;
+                float shapeHeight = this.shapeHeight * OverworldController.PIXELS_TO_METERS;
+                
                 if (type == null) { // rect
                     // rectangle origin in Tiled is on top left,
                     // so need negative height
-                    float negHeight = this.shapeHeight * -1;
+                    float negHeight = shapeHeight * -1;
                     this.shapeVertices = new float[] {0, 0, // tl
                         0, negHeight, // bl
                         shapeWidth, negHeight, // br
