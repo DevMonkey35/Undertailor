@@ -33,6 +33,7 @@ package me.scarlet.undertailor.engine.overworld;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.Subsystem;
@@ -101,11 +102,13 @@ public class OverworldController implements Processable, Renderable, Subsystem {
             this.room.draw();
         }
 
-        this.renderer.flush();
-        // have to flush before rendering collisions,
-        // otherwise the b2d debug renderer calls begin()
-        // inside another begin() call
-        this.getCollisionHandler().render();
+        if (Undertailor.isDebug()) {
+            this.renderer.flush();
+            // have to flush before rendering collisions,
+            // otherwise the b2d debug renderer calls begin()
+            // inside another begin() call
+            this.getCollisionHandler().render();
+        }
     }
 
     @Override
