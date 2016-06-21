@@ -43,6 +43,7 @@ import me.scarlet.undertailor.resource.ResourceFactory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +135,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * 
          * @return the TileLayers held by this Tilemap
          */
-        public List<TileLayer> getLayers() {
+        public List<TileLayer> getTileLayers() {
             return this.layers;
         }
 
@@ -155,6 +156,30 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
             }
 
             return null;
+        }
+
+        /**
+         * Returns a {@link Collection} of all
+         * {@link ObjectLayer}s held by this {@link Tilemap}
+         * .
+         * 
+         * @return a Collection of this Tilemap's
+         *         ObjectLayers
+         */
+        public Collection<ObjectLayer> getObjectLayers() {
+            return this.objects.values();
+        }
+
+        /**
+         * Returns the {@link ObjectLayer} of the provided
+         * name, held by this {@link Tilemap}.
+         * 
+         * @param name the name of the ObjectLayer
+         * 
+         * @return the ObjectLayer of the given name
+         */
+        public ObjectLayer getObjectLayer(String name) {
+            return this.objects.get(name);
         }
 
         /**

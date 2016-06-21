@@ -159,6 +159,16 @@ public class ObjectLayer {
     }
 
     /**
+     * Returns a {@link Set} of all {@link ShapeData}
+     * instances held by this {@link ObjectLayer}.
+     * 
+     * @return all this ObjectLayer's ShapeData
+     */
+    public Set<ShapeData> getShapes() {
+        return this.shapes;
+    }
+
+    /**
      * Returns the {@link ShapeData} under the given name.
      * 
      * @param name the name of the shape
