@@ -74,39 +74,15 @@ public class ObjectLayer {
          */
         public Shape generateShape() {
             Shape shape = null;
-            if (this.shapeVertices == null) {
-                if (type == null) { // rect
-                    // rectangle origin in Tiled is on top left,
-                    // so need negative height
-                    float negHeight = this.shapeHeight * -1;
-                    this.shapeVertices = new float[] {0, 0, // tl
-                        0, negHeight, // bl
-                        shapeWidth, negHeight, // br
-                        shapeWidth, 0 // tr
-                    };
-                } else if (type == Shape.Type.Circle) {
-                    if (shapeHeight == shapeWidth) { // perfect circle?
-                        shape = new CircleShape();
-                        ((CircleShape) shape).setRadius(shapeHeight / 2.0F);
-                    } else { // jagged ellipse :c
-                        float halfHeight = shapeHeight / 2.0F;
-                        float halfWidth = shapeWidth / 2.0F;
-                        float eighthHeight = halfHeight / 4.0F;
-                        float eighthWidth = halfWidth / 4.0F;
-                        this.shapeVertices = new float[] {0, halfHeight, // top
-                            halfWidth - eighthWidth, halfHeight - eighthHeight, // topright
-                            halfWidth, 0, // right
-                            halfWidth - eighthWidth, (halfHeight - eighthHeight) * -1, // bottomright
-                            0, halfHeight * -1, // bottom
-                            (halfWidth - eighthWidth) * -1, (halfHeight - eighthHeight) * -1, // bottomleft
-                            halfWidth * -1, 0, // left
-                            (halfWidth - eighthWidth) * -1, halfHeight - eighthHeight // topleft
-                        };
-                    }
-                } else if (type == Shape.Type.Chain) {
-                    shape = new ChainShape();
-                    ((ChainShape) shape).createChain(shapeVertices);
-                }
+
+            if (type == Shape.Type.Circle && shapeHeight == shapeWidth) { // perfect circle?
+                shape = new CircleShape();
+                ((CircleShape) shape).setRadius(shapeHeight / 2.0F);
+            }
+
+            if (type == Shape.Type.Chain) {
+                shape = new ChainShape();
+                ((ChainShape) shape).createChain(shapeVertices);
             }
 
             if (shape == null && this.shapeVertices != null) { // type polygon happens here too
@@ -124,6 +100,41 @@ public class ObjectLayer {
          */
         public Vector2 getPosition() {
             return this.position;
+        }
+
+        /**
+         * Internal method.
+         * 
+         * <p>Generates the vertices for the {@link Shape}s
+         * created by {@link #generateShape()}.</p>
+         */
+        void generateVertices() {
+            if (this.shapeVertices == null) {
+                if (type == null) { // rect
+                    // rectangle origin in Tiled is on top left,
+                    // so need negative height
+                    float negHeight = this.shapeHeight * -1;
+                    this.shapeVertices = new float[] {0, 0, // tl
+                        0, negHeight, // bl
+                        shapeWidth, negHeight, // br
+                        shapeWidth, 0 // tr
+                    };
+                } else if (type == Shape.Type.Circle && shapeHeight != shapeWidth) {
+                    float halfHeight = shapeHeight / 2.0F;
+                    float halfWidth = shapeWidth / 2.0F;
+                    float eighthHeight = halfHeight / 4.0F;
+                    float eighthWidth = halfWidth / 4.0F;
+                    this.shapeVertices = new float[] {0, halfHeight, // top
+                        halfWidth - eighthWidth, halfHeight - eighthHeight, // topright
+                        halfWidth, 0, // right
+                        halfWidth - eighthWidth, (halfHeight - eighthHeight) * -1, // bottomright
+                        0, halfHeight * -1, // bottom
+                        (halfWidth - eighthWidth) * -1, (halfHeight - eighthHeight) * -1, // bottomleft
+                        halfWidth * -1, 0, // left
+                        (halfWidth - eighthWidth) * -1, halfHeight - eighthHeight // topleft
+                    };
+                }
+            }
         }
     }
 

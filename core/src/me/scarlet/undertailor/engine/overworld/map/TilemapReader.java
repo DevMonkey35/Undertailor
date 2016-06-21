@@ -233,6 +233,7 @@ public class TilemapReader extends DefaultHandler {
                         this.currentShape.position);
                 }
             } else {
+                this.currentShape.generateVertices();
                 this.currentObjectLayer.shapes.add(this.currentShape);
             }
 
