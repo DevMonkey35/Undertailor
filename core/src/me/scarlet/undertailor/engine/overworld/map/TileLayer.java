@@ -33,9 +33,14 @@ package me.scarlet.undertailor.engine.overworld.map;
 import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
+import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
+/**
+ * A layer of a set of images defined by a {@link Tileset}
+ * placed in a grid.
+ */
 public class TileLayer implements Layerable, Renderable {
 
     static final Transform OVW_SIZE_TRANSFORM;
