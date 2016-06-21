@@ -33,7 +33,9 @@ package me.scarlet.undertailor.lua.lib.game;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 
 import com.badlogic.gdx.graphics.Color;
+import org.luaj.vm2.LuaValue;
 
+import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
@@ -48,6 +50,24 @@ public class GraphicsLib extends LuaLibrary {
 
     public GraphicsLib(MultiRenderer renderer) {
         super("graphics");
+
+        // ---------------- lua util ----------------
+
+        // graphics.toOverworldUnits(...)
+        registerFunction("toOverworldUnits", vargs -> {
+            LuaValue[] values = new LuaValue[vargs.narg()];
+            for (int i = 1; i <= vargs.narg(); i++) {
+                LuaValue value = vargs.arg(i);
+                if (value.isnumber()) {
+                    value = valueOf(
+                        value.checknumber().tofloat() * OverworldController.PIXELS_TO_METERS);
+                }
+
+                values[i - 1] = value;
+            }
+
+            return LuaValue.varargsOf(values);
+        });
 
         // ---------------- renderer functions ----------------
 
