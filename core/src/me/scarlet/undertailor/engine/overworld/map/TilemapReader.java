@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.engine.overworld.map;
 
+import com.badlogic.gdx.physics.box2d.Shape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -37,6 +38,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.util.XMLUtil;
 
@@ -64,6 +66,9 @@ public class TilemapReader extends DefaultHandler {
     private Tilemap tilemap;
     private File currentFile;
     private TileLayer currentTileLayer;
+    private ObjectLayer currentObjectLayer;
+
+    private ShapeData currentShape;
     private int[] currentTiles;
     private int currentTile;
 
@@ -131,6 +136,37 @@ public class TilemapReader extends DefaultHandler {
                 }
             }
         }
+
+        if (this.checkElement("map", "objectgroup", qName)) {
+            this.currentObjectLayer = new ObjectLayer();
+            this.currentObjectLayer.name = attributes.getValue("", "name");
+        }
+
+        if (this.checkElement("objectgroup", "object", qName)) {
+            // will always have these
+            this.currentShape = new ShapeData();
+            this.currentShape.name = attributes.getValue("", "name");
+            this.currentShape.position.x = Float.parseFloat(attributes.getValue("", "x"));
+            this.currentShape.position.y = Float.parseFloat(attributes.getValue("", "y"));
+
+            // only circle/rectangle have these
+            String shapeWidth = attributes.getValue("", "width");
+            this.currentShape.shapeWidth = shapeWidth == null ? 0 : Float.valueOf(shapeWidth);
+
+            String shapeHeight = attributes.getValue("", "height");
+            this.currentShape.shapeHeight = shapeHeight == null ? 0 : Float.valueOf(shapeHeight);
+        }
+
+        if (this.checkElement("object", "polygon", qName)
+            || this.checkElement("object", "polyline", qName)) {
+            String[] points = attributes.getValue("", "points").split(" ");
+            for (int i = 0; i < points.length; i++) {
+                String[] point = points[i].split(",");
+                this.currentShape.shapeVertices = new float[points.length * 2];
+                this.currentShape.shapeVertices[i * 2] = Float.parseFloat(point[0]);
+                this.currentShape.shapeVertices[(i * 2) + 1] = Float.parseFloat(point[1]);
+            }
+        }
     }
 
     @Override
@@ -172,7 +208,50 @@ public class TilemapReader extends DefaultHandler {
             }
         }
 
+        if (this.checkElement("object", "polygon", qName)) {
+            if(this.currentShape.shapeVertices.length > 16) {
+                throw new UnsupportedOperationException(
+                    "libGDX's Box2D will not permit polygons with more than 8 vertices");
+            }
+
+            this.currentShape.type = Shape.Type.Polygon;
+        }
+
+        if (this.checkElement("object", "polyline", qName)) {
+            this.currentShape.type = Shape.Type.Chain;
+        }
+
+        if (this.checkElement("object", "ellipse", qName)) {
+            this.currentShape.type = Shape.Type.Circle;
+        }
+
+        if (this.checkElement("objectgroup", "object", qName)) {
+            if (this.currentShape.shapeWidth == 0 && this.currentShape.shapeHeight == 0) { // width/height of 0
+                if (this.currentShape.name != null && (this.currentShape.type == null
+                    || this.currentShape.type == Shape.Type.Circle)) { // has a name and is a circle/rectangle
+                    this.currentObjectLayer.points.put(this.currentShape.name,
+                        this.currentShape.position);
+                }
+            } else {
+                this.currentObjectLayer.shapes.add(this.currentShape);
+            }
+
+            this.currentShape = null;
+        }
+
+        if (this.checkElement("map", "objectgroup", qName)) {
+            this.tilemap.objects.put(this.currentObjectLayer.name, this.currentObjectLayer);
+            this.currentObjectLayer = null;
+        }
+
         this.tree.remove(qName);
+    }
+
+    @Override
+    public void endDocument() throws SAXException {
+        this.tilemap.layers.sort((l1, l2) -> {
+            return Short.compare(l1.getLayer(), l2.getLayer());
+        });
     }
 
     // ---------------- object ----------------
@@ -206,10 +285,6 @@ public class TilemapReader extends DefaultHandler {
             if (stream != null)
                 stream.close();
         }
-
-        this.tilemap.layers.sort((l1, l2) -> {
-            return Short.compare(l1.getLayer(), l2.getLayer());
-        });
 
         return this.tilemap;
     }

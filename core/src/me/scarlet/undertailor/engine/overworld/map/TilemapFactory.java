@@ -43,7 +43,9 @@ import me.scarlet.undertailor.resource.ResourceFactory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -66,11 +68,13 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
         float spaceX;
         float spaceY;
         List<TileLayer> layers;
+        Map<String, ObjectLayer> objects;
         TreeMap<Integer, Tileset> tilesets;
 
-        protected Tilemap() {
-            this.layers = new ArrayList<TileLayer>();
-            this.tilesets = new TreeMap<Integer, Tileset>(Integer::compare);
+        Tilemap() {
+            this.objects = new HashMap<>();
+            this.layers = new ArrayList<>();
+            this.tilesets = new TreeMap<>(Integer::compare);
         }
 
         /**
