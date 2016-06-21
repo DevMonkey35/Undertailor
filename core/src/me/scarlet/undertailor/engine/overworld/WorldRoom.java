@@ -31,6 +31,9 @@
 package me.scarlet.undertailor.engine.overworld;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.EventListener;
@@ -43,6 +46,7 @@ import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -86,11 +90,13 @@ public abstract class WorldRoom
     private Set<WorldObject> obj;
     private Set<WorldObject> bodyQueue;
     private OverworldController controller;
+    private Map<String, Set<Body>> collisionLayers;
 
-    public WorldRoom() {
-        this.tilemap = null;
+    public WorldRoom(Tilemap map) {
+        this.tilemap = map;
         this.obj = new HashSet<>();
         this.bodyQueue = new HashSet<>();
+        this.collisionLayers = new HashMap<>();
     }
 
     @Override
@@ -131,6 +137,7 @@ public abstract class WorldRoom
             this.controller = controller;
             this.bodyQueue
                 .forEach(obj -> obj.createBody(this.controller.getCollisionHandler().getWorld()));
+            this.prepareMap(this.tilemap);
             return true;
         }
 
@@ -158,17 +165,6 @@ public abstract class WorldRoom
      */
     public OverworldController getOverworld() {
         return this.controller;
-    }
-
-    /**
-     * Sets the {@link Tilemap} used by this
-     * {@link WorldRoom}.
-     * 
-     * @param map the map to use
-     */
-    public void setMap(Tilemap map) {
-        this.tilemap = map;
-        // TODO collision layers once tilemap reader supports them
     }
 
     /**
@@ -263,10 +259,38 @@ public abstract class WorldRoom
     private Set<Layerable> getInRenderOrder() {
         RENDER_ORDER.clear();
 
-        tilemap.getLayers().forEach(RENDER_ORDER::add);
+        tilemap.getTileLayers().forEach(RENDER_ORDER::add);
         obj.forEach(RENDER_ORDER::add);
 
         return RENDER_ORDER;
+    }
+
+    /**
+     * Internal method.
+     * 
+     * <p>Locks the set tilemap as this room's, and adds its
+     * collision to the world.</p>
+     */
+    private void prepareMap(Tilemap map) {
+        World world = this.getOverworld().getCollisionHandler().getWorld();
+        BodyDef def = new BodyDef();
+        def.type = BodyType.StaticBody;
+        def.active = true;
+        map.getObjectLayers().forEach(layer -> {
+            Set<Body> layerBodies = new HashSet<>();
+            layer.getShapes().forEach(data -> {
+                def.position.set(data.getPosition());
+                def.position.x = def.position.x * OverworldController.PIXELS_TO_METERS;
+                def.position.y = (map.getOccupiedHeight() - def.position.y)
+                    * OverworldController.PIXELS_TO_METERS;
+                layerBodies
+                    .add(world.createBody(def).createFixture(data.generateShape(), 0).getBody());
+            });
+
+            this.collisionLayers.put(layer.getName(), layerBodies);
+        });
+
+        System.out.println("THESE " + this.collisionLayers.size() + " LAYERS");
     }
 
     // ---------------- abstract definitions ----------------
