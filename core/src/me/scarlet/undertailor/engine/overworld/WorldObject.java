@@ -379,10 +379,16 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
      * <p>If the body is ready, this method immediately
      * applies the Shape as a Fixture.</p>
      * 
-     * <p>The shape is automagically disposed after the
-     * Fixture is applied.</p>
+     * <p>Note: Do <strong>NOT</strong> dispose of the Shape
+     * after sending it to this method. This method
+     * <strong>will automatically dispose of the
+     * Shape</strong> after it has been applied to this
+     * WorldObject's body. Disposing of the shape after
+     * passing to this method will crash the Java Virtual
+     * Machine, as Shapes are written in C++ JNI.</p>
      * 
-     * @param shape the shape to apply as a bounding shape
+     * @param shape the shape to apply as a bounding shape,
+     *        do not dispose after passing to this method
      */
     public void queueBoundingShape(Shape shape) {
         if (this.body != null) {
