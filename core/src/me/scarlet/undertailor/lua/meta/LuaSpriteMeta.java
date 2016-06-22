@@ -30,9 +30,15 @@
 
 package me.scarlet.undertailor.lua.meta;
 
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
+import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
@@ -42,6 +48,25 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaSpriteMeta implements LuaObjectMeta {
 
+    static LuaObjectValue<Sprite> convert(LuaValue value) {
+        return Lua.checkType(value, LuaSpriteMeta.class);
+    }
+
+    static Sprite obj(Varargs args) {
+        return convert(args.arg1()).getObject();
+    }
+
+    private LuaTable metatable;
+
+    public LuaSpriteMeta() {
+        this.metatable = new LuaTable();
+
+        // sprite:clone()
+        set("clone", asFunction(vargs -> {
+            return orNil(obj(vargs).clone());
+        }));
+    }
+
     @Override
     public Class<?> getTargetObjectClass() {
         return Sprite.class;
@@ -49,7 +74,7 @@ public class LuaSpriteMeta implements LuaObjectMeta {
 
     @Override
     public LuaTable getMetatable() {
-        return null; // done by everything else; we don't wanna expose anything else either
+        return this.metatable;
     }
 
     @Override

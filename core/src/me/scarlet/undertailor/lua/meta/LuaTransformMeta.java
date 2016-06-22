@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.lua.meta;
 
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.NIL;
 import static org.luaj.vm2.LuaValue.valueOf;
@@ -120,7 +121,20 @@ public class LuaTransformMeta implements LuaObjectMeta {
             obj(vargs).setRotation(vargs.checknumber(2).tofloat());
             return NIL;
         }));
-}
+
+        // ---------------- other ----------------
+
+        // transform:copyInto(transform)
+        set("copyInto", asFunction(vargs -> {
+            Transform other = convert(vargs.checknotnil(2)).getObject();
+            return orNil(obj(vargs).copyInto(other));
+        }));
+
+        // transform:clone()
+        set("clone", asFunction(vargs -> {
+            return orNil(obj(vargs).clone());
+        }));
+    }
 
     @Override
     public Class<?> getTargetObjectClass() {
