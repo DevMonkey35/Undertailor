@@ -40,4 +40,9 @@ public class NumberUtil {
         if(lowerBound.floatValue() == higherBound.floatValue()) return lowerBound.floatValue();
         return ((higherBound.floatValue() - lowerBound.floatValue()) * percent) + lowerBound.floatValue();
     };
+
+    public static boolean isNumber(Object obj) {
+        return Float.class.isInstance(obj) || Double.class.isInstance(obj)
+            || Integer.class.isInstance(obj) || Long.class.isInstance(obj);
+    }
 }

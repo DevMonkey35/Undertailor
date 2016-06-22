@@ -36,14 +36,22 @@ import org.luaj.vm2.LuaValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.lua.meta.LuaAudioDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaAudioMeta;
 import me.scarlet.undertailor.lua.meta.LuaAudioPlayableMeta;
+import me.scarlet.undertailor.lua.meta.LuaColliderMeta;
 import me.scarlet.undertailor.lua.meta.LuaColorMeta;
+import me.scarlet.undertailor.lua.meta.LuaDestructibleMeta;
+import me.scarlet.undertailor.lua.meta.LuaEventListenerMeta;
 import me.scarlet.undertailor.lua.meta.LuaFontMeta;
+import me.scarlet.undertailor.lua.meta.LuaIdentifiableMeta;
 import me.scarlet.undertailor.lua.meta.LuaInputDataMeta;
+import me.scarlet.undertailor.lua.meta.LuaLayerableMeta;
 import me.scarlet.undertailor.lua.meta.LuaMusicMeta;
+import me.scarlet.undertailor.lua.meta.LuaPositionableMeta;
 import me.scarlet.undertailor.lua.meta.LuaPressDataMeta;
+import me.scarlet.undertailor.lua.meta.LuaProcessableMeta;
 import me.scarlet.undertailor.lua.meta.LuaRenderableMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundMeta;
@@ -52,6 +60,8 @@ import me.scarlet.undertailor.lua.meta.LuaTextComponentMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
 import me.scarlet.undertailor.lua.meta.LuaTransformMeta;
+import me.scarlet.undertailor.lua.meta.LuaWorldObjectMeta;
+import me.scarlet.undertailor.lua.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.util.LuaUtil;
 
 import java.util.HashMap;
@@ -82,11 +92,18 @@ public class Lua {
         loadMeta(LuaAudioDataMeta.class);
         loadMeta(LuaAudioMeta.class);
         loadMeta(LuaAudioPlayableMeta.class);
+        loadMeta(LuaColliderMeta.class);
         loadMeta(LuaColorMeta.class);
+        loadMeta(LuaDestructibleMeta.class);
+        loadMeta(LuaEventListenerMeta.class);
         loadMeta(LuaFontMeta.class);
+        loadMeta(LuaIdentifiableMeta.class);
         loadMeta(LuaInputDataMeta.class);
+        loadMeta(LuaLayerableMeta.class);
         loadMeta(LuaMusicMeta.class);
+        loadMeta(LuaPositionableMeta.class);
         loadMeta(LuaPressDataMeta.class);
+        loadMeta(LuaProcessableMeta.class);
         loadMeta(LuaRenderableMeta.class);
         loadMeta(LuaSoundDataMeta.class);
         loadMeta(LuaSoundMeta.class);
@@ -95,6 +112,8 @@ public class Lua {
         loadMeta(LuaTextMeta.class);
         loadMeta(LuaTextStyleMeta.class);
         loadMeta(LuaTransformMeta.class);
+        loadMeta(LuaWorldObjectMeta.class);
+        loadMeta(new LuaWorldRoomMeta(Undertailor.getInstance()));
     }
 
     // ---------------- functional methods ----------------
@@ -273,13 +292,23 @@ public class Lua {
                 return;
             }
 
-            if (meta.isPrimaryType()) {
-                Lua.PMETA.put(meta.getTargetObjectClass(), meta);
-            } else {
-                Lua.META.put(meta.getTargetObjectClass(), meta);
-            }
+            loadMeta(meta);
         } catch (Exception e) {
             log.error("Failed to load meta for meta class " + metaClass.getSimpleName(), e);
+        }
+    }
+
+    /**
+     * Internal method.
+     * 
+     * <p>Used to quickly load {@link LuaObjectMeta}
+     * instances by passing the instance.</p>
+     */
+    static void loadMeta(LuaObjectMeta metaInstance) {
+        if (metaInstance.isPrimaryType()) {
+            Lua.PMETA.put(metaInstance.getTargetObjectClass(), metaInstance);
+        } else {
+            Lua.META.put(metaInstance.getTargetObjectClass(), metaInstance);
         }
     }
 

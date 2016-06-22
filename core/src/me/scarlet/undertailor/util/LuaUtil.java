@@ -132,7 +132,7 @@ public class LuaUtil {
      */
     public static LuaTable arrayOf(LuaValue... values) {
         LuaTable array = new LuaTable();
-        for(int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             array.set(i + 1, values[i]);
         }
 
@@ -158,6 +158,38 @@ public class LuaUtil {
     }
 
     /**
+     * Generates a {@link Varargs} instance, converting the
+     * provided Objects into their LuaValue/LuaObjectValue
+     * forms packaged into the former.
+     * 
+     * @param values the Objects to convert to LuaValues
+     * 
+     * @return the provided Objects as Varargs
+     */
+    public static Varargs varargsOf(Object... values) {
+        LuaValue[] vargs = new LuaValue[values.length];
+        for (int i = 0; i < values.length; i++) {
+            Object obj = values[i];
+            if (obj == null) {
+                vargs[i] = LuaValue.NIL;
+                continue;
+            }
+
+            if (NumberUtil.isNumber(obj)) {
+                vargs[i] = LuaValue.valueOf((double) obj);
+            } else if (Boolean.class.isInstance(obj)) {
+                vargs[i] = LuaValue.valueOf((boolean) obj);
+            } else if (String.class.isInstance(obj)) {
+                vargs[i] = LuaValue.valueOf(obj.toString());
+            } else {
+                vargs[i] = LuaObjectValue.of(obj);
+            }
+        }
+
+        return varargsOf(vargs);
+    }
+
+    /**
      * Generates an Object array containing the Java
      * versions of the values within the provided
      * {@link Varargs}.
@@ -169,14 +201,14 @@ public class LuaUtil {
      */
     public static Object[] asJavaVargs(Varargs vargs) {
         Object[] obj = new Object[vargs.narg()];
-        for(int i = 0; i < obj.length; i++) {
+        for (int i = 0; i < obj.length; i++) {
             LuaValue arg = vargs.arg(i + 1);
-            if(arg instanceof LuaObjectValue) {
+            if (arg instanceof LuaObjectValue) {
                 obj[i] = ((LuaObjectValue<?>) arg).getObject();
             } else {
-                if(arg.isnumber()) {
+                if (arg.isnumber()) {
                     obj[i] = arg.todouble();
-                } else if(arg.isboolean()) {
+                } else if (arg.isboolean()) {
                     obj[i] = arg.toboolean();
                 } else {
                     obj[i] = arg.tojstring();
