@@ -55,19 +55,6 @@ public interface LuaImplementable<T> {
      */
     LuaObjectValue<T> getObjectValue();
 
-    /**
-     * Sets the {@link LuaObjectValue} representing this
-     * {@link LuaImplementable} as a Lua object.
-     * 
-     * <p>This method should not actually be invoked by
-     * anything other than a {@link ScriptManager} loading
-     * the script that implements this implementable.</p>
-     * 
-     * @param the new LuaObjectValue associated with this
-     *        implementable
-     */
-    void setObjectValue(LuaObjectValue<T> value);
-
     // ---------------- optional methods ----------------
 
     /**

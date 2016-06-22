@@ -83,11 +83,6 @@ public class LuaTextStyle implements LuaImplementable<TextStyle>, TextStyle {
     }
 
     @Override
-    public void setObjectValue(LuaObjectValue<TextStyle> value) {
-        this.luaObj = value;
-    }
-
-    @Override
     public String getStyleName() {
         return this.styleName;
     }

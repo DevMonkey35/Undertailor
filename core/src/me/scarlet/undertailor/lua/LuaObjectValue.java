@@ -71,7 +71,7 @@ public class LuaObjectValue<T> extends LuaTable {
      */
     @SuppressWarnings("unchecked")
     public static <T> LuaObjectValue<T> of(T object) {
-        if(object == null) {
+        if (object == null) {
             return null;
         }
 
@@ -99,7 +99,7 @@ public class LuaObjectValue<T> extends LuaTable {
      */
     public static LuaValue orNil(Object obj) {
         LuaObjectValue<?> val = LuaObjectValue.of(obj);
-        if(val == null) {
+        if (val == null) {
             return LuaValue.NIL;
         }
 
@@ -112,7 +112,6 @@ public class LuaObjectValue<T> extends LuaTable {
     private LuaObjectMeta meta;
     private T ref;
 
-    @SuppressWarnings("unchecked")
     private LuaObjectValue(T object) {
         this.ref = object;
 
@@ -126,10 +125,6 @@ public class LuaObjectValue<T> extends LuaTable {
         LuaTable metatable = Lua.generateMetatable(object);
         if (metatable != null) {
             this.setmetatable(metatable);
-        }
-
-        if (object instanceof LuaImplementable) {
-            ((LuaImplementable<T>) object).setObjectValue(this);
         }
     }
 
