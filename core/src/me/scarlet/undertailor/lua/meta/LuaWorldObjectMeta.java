@@ -35,6 +35,10 @@ import static me.scarlet.undertailor.lua.LuaObjectValue.of;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.NIL;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -74,6 +78,67 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
             Renderable renderable =
                 (Renderable) checkType(vargs.arg(2), LuaRenderableMeta.class).getObject();
             obj(vargs).setActor(renderable);
+            return NIL;
+        }));
+
+        // lua-only functions
+
+        // worldObject:addBoundingPolygon(...)
+        set("addBoundingPolygon", asFunction(vargs -> {
+            WorldObject obj = obj(vargs);
+            if (vargs.narg() % 2 != 0) {
+                throw new LuaError("uneven points");
+            }
+
+            if (vargs.narg() > 16) {
+                throw new LuaError(
+                    "libGDX's Box2D will not permit polygons with more than 8 vertices");
+            }
+
+            float[] vertices = new float[vargs.narg()];
+            for (int i = 0; i < vargs.narg(); i++) {
+                vertices[i] = vargs.checknumber(i + 1).tofloat();
+            }
+
+            PolygonShape polygon = new PolygonShape();
+            polygon.set(vertices);
+            obj.getBody().createFixture(polygon, 0F);
+            polygon.dispose();
+
+            return NIL;
+        }));
+
+        // worldObject:addBoundingCircle(radius[, offsetX, offsetY])
+        set("addBoundingCircle", asFunction(vargs -> {
+            WorldObject obj = obj(vargs);
+            float radius = vargs.checknumber(2).tofloat();
+            Vector2 offset = new Vector2();
+            offset.x = vargs.isnil(3) ? 0 : vargs.checknumber(3).tofloat();
+            offset.y = vargs.isnil(4) ? 0 : vargs.checknumber(4).tofloat();
+
+            CircleShape circle = new CircleShape();
+            circle.setRadius(radius);
+            circle.setPosition(offset);
+            obj.getBody().createFixture(circle, 0F);
+            circle.dispose();
+
+            return NIL;
+        }));
+
+        // worldObject:addBoundingBox(width, height[, offsetX, offsetY])
+        set("addBoundingBox", asFunction(vargs -> {
+            WorldObject obj = obj(vargs);
+            float width = vargs.checknumber(2).tofloat();
+            float height = vargs.checknumber(3).tofloat();
+            Vector2 offset = new Vector2();
+            offset.x = vargs.isnil(3) ? 0 : vargs.checknumber(3).tofloat();
+            offset.y = vargs.isnil(4) ? 0 : vargs.checknumber(4).tofloat();
+
+            PolygonShape box = new PolygonShape();
+            box.setAsBox(width / 2F, height / 2F, offset, 0F);
+            obj.getBody().createFixture(box, 0F);
+            box.dispose();
+
             return NIL;
         }));
     }
