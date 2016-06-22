@@ -33,6 +33,7 @@ package me.scarlet.undertailor.engine.scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.Subsystem;
@@ -47,7 +48,7 @@ import java.util.Map.Entry;
  * Implementation of a task handling class performing sets
  * of actions every frame.
  */
-public class Scheduler implements Processable, Subsystem {
+public class Scheduler implements Processable, Subsystem, Destructible {
 
     public static long nextId;
     static final Logger log = LoggerFactory.getLogger(Scheduler.class);
@@ -124,6 +125,15 @@ public class Scheduler implements Processable, Subsystem {
         }
 
         return true;
+    }
+
+    @Override
+    public void destroy() {
+        this.activeTasks.clear();
+        this.tasks.clear();
+
+        this.activeTasks = null;
+        this.tasks = null;
     }
 
     // ---------------- functional methods ----------------

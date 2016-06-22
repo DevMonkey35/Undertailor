@@ -39,6 +39,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
 import me.scarlet.undertailor.engine.Collider;
+import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.util.Pair;
 
@@ -46,7 +47,7 @@ import me.scarlet.undertailor.util.Pair;
  * Handles collision between {@link Collider}s within an
  * Overworld.
  */
-public class CollisionHandler {
+public class CollisionHandler implements Destructible {
 
     public static final float PHYSICS_STEP = 1F / 60F;
 
@@ -121,6 +122,15 @@ public class CollisionHandler {
         this.reset();
 
         this.renderer = new Box2DDebugRenderer(true, true, true, true, false, true);
+    }
+
+    @Override
+    public void destroy() {
+        this.world.dispose();
+        this.renderer.dispose();
+
+        this.world = null;
+        this.renderer = null;
     }
 
     /**

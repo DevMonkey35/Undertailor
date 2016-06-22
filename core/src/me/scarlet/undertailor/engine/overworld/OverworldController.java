@@ -34,6 +34,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.Subsystem;
@@ -51,7 +52,7 @@ import me.scarlet.undertailor.gfx.Transform;
  * to the internal measure of values to keep the physics
  * engine from going insane.</p>
  */
-public class OverworldController implements Processable, Renderable, Subsystem {
+public class OverworldController implements Processable, Renderable, Subsystem, Destructible {
 
     public static final float PIXELS_TO_METERS = 0.025F;
     public static final float METERS_TO_PIXELS = 40.0F;
@@ -119,6 +120,19 @@ public class OverworldController implements Processable, Renderable, Subsystem {
         }
 
         return true;
+    }
+
+    @Override
+    public void destroy() {
+        if (this.room != null) {
+            this.room.destroy();
+        }
+
+        if (this.character != null) {
+            this.character.destroy();
+        }
+
+        this.collision.destroy();
     }
 
     // ---------------- object methods ----------------
