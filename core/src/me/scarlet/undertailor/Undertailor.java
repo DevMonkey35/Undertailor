@@ -36,6 +36,8 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.engine.Environment;
+import me.scarlet.undertailor.engine.EnvironmentManager;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.input.InputRetriever;
 import me.scarlet.undertailor.resource.ResourceHandler;
@@ -49,7 +51,12 @@ import java.io.File;
  */
 public class Undertailor extends ApplicationAdapter {
 
+    static boolean debug;
     static Logger log = LoggerFactory.getLogger(Undertailor.class);
+
+    public static boolean isDebug() {
+        return Undertailor.debug;
+    }
 
     // ---------------- System variables -- Core variables. ----------------
 
@@ -57,12 +64,18 @@ public class Undertailor extends ApplicationAdapter {
     private LwjglApplicationConfiguration lwjglConfig;
 
     private InputRetriever input;
+    private EnvironmentManager environments;
     private MultiRenderer renderer;
     private AssetManager assets;
 
     public Undertailor(LaunchOptions options, LwjglApplicationConfiguration lwjglConfig) {
         this.options = options;
         this.lwjglConfig = lwjglConfig;
+        Undertailor.debug = this.options.debug;
+        if (Undertailor.debug) {
+            log.info("Debug mode is enabled.");
+            // TODO enable debug logging
+        }
 
         new ResourceHandler().start();
 
@@ -125,6 +138,16 @@ public class Undertailor extends ApplicationAdapter {
         return this.assets;
     }
 
+    /**
+     * Returns the {@link EnvironmentManager} used to create
+     * and process new {@link Environment}s.
+     * 
+     * @return the EnvironmentManager
+     */
+    public EnvironmentManager getEnvironmentManager() {
+        return this.environments;
+    }
+
     // ---------------- abstract method implementation ----------------
 
     @Override
@@ -150,6 +173,12 @@ public class Undertailor extends ApplicationAdapter {
         this.assets.getAudioManager().update(); // update audio
         this.renderer.clear();
         this.input.update(); // Prepare input for current frame.
+
+        Environment env = this.environments.getActiveEnvironment();
+        if (env != null) {
+            env.draw();
+            env.process();
+        }
 
         this.renderer.flush(); // Flush graphics for next frame.
     }
