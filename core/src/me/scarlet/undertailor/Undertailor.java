@@ -52,7 +52,12 @@ import java.io.File;
 public class Undertailor extends ApplicationAdapter {
 
     static boolean debug;
+    static Undertailor instance;
     static Logger log = LoggerFactory.getLogger(Undertailor.class);
+
+    public static Undertailor getInstance() {
+        return Undertailor.instance;
+    }
 
     public static boolean isDebug() {
         return Undertailor.debug;
@@ -71,6 +76,7 @@ public class Undertailor extends ApplicationAdapter {
     public Undertailor(LaunchOptions options, LwjglApplicationConfiguration lwjglConfig) {
         this.options = options;
         this.lwjglConfig = lwjglConfig;
+        Undertailor.instance = this;
         Undertailor.debug = this.options.debug;
         if (Undertailor.debug) {
             log.info("Debug mode is enabled.");
