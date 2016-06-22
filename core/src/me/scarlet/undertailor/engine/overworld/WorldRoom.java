@@ -87,7 +87,7 @@ public abstract class WorldRoom
         });
     }
 
-    private Tilemap tilemap;
+    protected Tilemap tilemap;
     private Set<WorldObject> obj;
     private Set<WorldObject> bodyQueue;
     private OverworldController controller;
