@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.engine;
 
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import me.scarlet.undertailor.Undertailor;
@@ -43,7 +44,7 @@ import me.scarlet.undertailor.gfx.Transform;
 /**
  * A primary system running a single game environment.
  */
-public class Environment implements Processable, Renderable {
+public class Environment implements Processable, Renderable, Destructible {
 
     private UIController ui;
     private Scheduler scheduler;
@@ -51,7 +52,8 @@ public class Environment implements Processable, Renderable {
 
     public Environment(Undertailor tailor) {
         this.scheduler = new Scheduler(this);
-        this.overworld = new OverworldController(tailor.getRenderer(), this, new FitViewport(640, 480));
+        this.overworld =
+            new OverworldController(tailor.getRenderer(), this, new FitViewport(640, 480));
         this.ui = new UIController();
     }
 
@@ -77,22 +79,56 @@ public class Environment implements Processable, Renderable {
         return true;
     }
 
+    @Override
+    public void destroy() {
+        this.scheduler.destroy();
+        this.overworld.destroy();
+        this.ui.destroy();
+    }
+
+    /**
+     * Returns the {@link Scheduler} ran locally by this
+     * {@link Environment}.
+     * 
+     * @return this Environment's Scheduler
+     */
     public Scheduler getScheduler() {
         return this.scheduler;
     }
 
+    /**
+     * Returns the {@link OverworldController} ran locally by this
+     * {@link Environment}.
+     * 
+     * @return this Environment's Scheduler
+     */
     public OverworldController getOverworld() {
         return this.overworld;
     }
 
+    /**
+     * Returns the {@link UIController} ran locally by this
+     * {@link Environment}.
+     * 
+     * @return this Environment's UIController
+     */
     public UIController getUI() {
         return this.ui;
     }
-    
-    public void setViewport(Viewport viewport) {
-        
+
+    public void setViewport(Class<? extends Viewport> viewportType) {
+        Viewport newPort = null;
+        if (viewportType == FitViewport.class) {
+            newPort = new FitViewport(640, 480);
+        } else if (viewportType == StretchViewport.class) {
+            newPort = new StretchViewport(640, 480);
+        }
+
+        if (newPort != null) {
+            this.overworld.setViewport(newPort);
+        }
     }
-    
+
     public void resize(int width, int height) {
         this.overworld.resize(width, height);
     }
