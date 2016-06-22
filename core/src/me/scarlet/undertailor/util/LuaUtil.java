@@ -36,6 +36,8 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 
+import me.scarlet.undertailor.lua.LuaObjectValue;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -153,5 +155,35 @@ public class LuaUtil {
      */
     public static Varargs varargsOf(LuaValue... values) {
         return LuaValue.varargsOf(values);
+    }
+
+    /**
+     * Generates an Object array containing the Java
+     * versions of the values within the provided
+     * {@link Varargs}.
+     * 
+     * @param vargs the Varargs to process
+     * 
+     * @return a new Object array containing Java variants
+     *         of the Varargs' contained values
+     */
+    public static Object[] asJavaVargs(Varargs vargs) {
+        Object[] obj = new Object[vargs.narg()];
+        for(int i = 0; i < obj.length; i++) {
+            LuaValue arg = vargs.arg(i + 1);
+            if(arg instanceof LuaObjectValue) {
+                obj[i] = ((LuaObjectValue<?>) arg).getObject();
+            } else {
+                if(arg.isnumber()) {
+                    obj[i] = arg.todouble();
+                } else if(arg.isboolean()) {
+                    obj[i] = arg.toboolean();
+                } else {
+                    obj[i] = arg.tojstring();
+                }
+            }
+        }
+
+        return obj;
     }
 }
