@@ -157,6 +157,17 @@ public class LuaColliderMeta implements LuaObjectMeta {
             return NIL;
         }));
 
+        // collider:isRotationFixed()
+        set("isRotationFixed", asFunction(vargs -> {
+            return valueOf(obj(vargs).isRotationFixed());
+        }));
+
+        // collider:setRotationFixed(rotationFixed)
+        set("setRotationFixed", asFunction(vargs -> {
+            obj(vargs).setRotationFixed(vargs.checkboolean(2));
+            return NIL;
+        }));
+
         // collider:getGroupId()
         set("getGroupId", asFunction(vargs -> {
             return valueOf(obj(vargs).getGroupId());

@@ -166,6 +166,25 @@ public interface Collider {
     void setCanCollide(boolean canCollide);
 
     /**
+     * Returns whether or not this {@link Collider}'s
+     * physical rotation will be affected by physics
+     * simulation.
+     * 
+     * @return if the rotation of this Collider is affected
+     *         by physics
+     */
+    boolean isRotationFixed();
+
+    /**
+     * Sets whether or not this {@link Collider}'s physical
+     * rotation will be affected by physics simulation.
+     * 
+     * @param rotationFixed if the rotation of this Collider
+     *        should be affected by physics
+     */
+    void setRotationFixed(boolean rotationFixed);
+
+    /**
      * Returns the group ID of this {@link Collider}. A
      * negative group ID represents no group.
      * 

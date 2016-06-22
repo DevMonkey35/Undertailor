@@ -86,6 +86,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
         this.def.active = true;
         this.def.awake = true;
+        this.def.fixedRotation = true;
         this.def.type = BodyType.DynamicBody;
 
         this.groupId = -1;
@@ -314,6 +315,24 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     @Override
     public void setCanCollide(boolean canCollide) {
         this.canCollide = canCollide;
+    }
+
+    @Override
+    public boolean isRotationFixed() {
+        if (this.body != null) {
+            return this.body.isFixedRotation();
+        }
+
+        return this.def.fixedRotation;
+    }
+
+    @Override
+    public void setRotationFixed(boolean rotationFixed) {
+        if (this.body != null) {
+            this.body.setFixedRotation(rotationFixed);
+        }
+
+        this.def.fixedRotation = rotationFixed;
     }
 
     @Override
