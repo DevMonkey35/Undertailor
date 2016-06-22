@@ -36,6 +36,9 @@ package me.scarlet.undertailor.engine;
  */
 public interface Destructible {
 
+    /**
+     * Destroys this {@link Destructible}.
+     */
     void destroy();
 
 }
