@@ -185,6 +185,11 @@ public class Undertailor extends ApplicationAdapter {
         this.renderer.flush(); // Flush graphics for next frame.
     }
 
+    @Override
+    public void resize(int width, int height) {
+        this.environments.resize(width, height);
+    }
+
     // ---------------- methods ----------------
 
     void exit() {
