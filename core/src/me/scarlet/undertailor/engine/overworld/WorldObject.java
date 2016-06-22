@@ -57,6 +57,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     private long id;
     private WorldRoom room;
+    private boolean destroyed;
 
     private Body body;
     private BodyDef def; // acts as a proxy object for position
@@ -71,6 +72,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     public WorldObject() {
         this.id = nextId++;
+        this.destroyed = false;
         this.transform = new Transform();
         this.proxyTransform = new Transform();
         this.def = new BodyDef();
@@ -156,6 +158,10 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     // Intended to draw at overworld scale.
     @Override
     public void draw(float x, float y, Transform transform) {
+        if (this.destroyed) {
+            return;
+        }
+
         transform.copyInto(proxyTransform);
         proxyTransform.setScaleX(proxyTransform.getScaleX() * OverworldController.PIXELS_TO_METERS);
         proxyTransform.setScaleY(proxyTransform.getScaleY() * OverworldController.PIXELS_TO_METERS);
@@ -176,6 +182,17 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         }
 
         this.actor.draw(drawX, drawY + height, proxyTransform);
+    }
+
+    // -------- processable --------
+
+    @Override
+    public final boolean process(Object... params) {
+        if(this.destroyed) {
+            return false;
+        }
+        
+        return this.processObject(params);
     }
 
     // -------- destructible --------
@@ -379,8 +396,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     // ---------------- abstract definitions ----------------
 
-    @Override
-    public abstract boolean process(Object... params);
+    public abstract boolean processObject(Object... params);
 
     @Override
     public abstract boolean catchEvent(String eventName, Object... data);
