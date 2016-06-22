@@ -329,6 +329,16 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     // -------------------------------- object --------------------------------
 
     /**
+     * Returns the {@link WorldRoom} this
+     * {@link WorldObject} currently resides in.
+     * 
+     * @return this WorldObject's current WorldRoom
+     */
+    public WorldRoom getRoom() {
+        return this.room;
+    }
+
+    /**
      * Returns the {@link Renderable} serving as the graphic
      * used to display this {@link WorldObject}.
      * 

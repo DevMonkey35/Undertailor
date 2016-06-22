@@ -31,7 +31,7 @@
 package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.lua.Lua.checkType;
-import static me.scarlet.undertailor.lua.LuaObjectValue.of;
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.NIL;
 
@@ -69,9 +69,14 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
     public LuaWorldObjectMeta() {
         this.metatable = new LuaTable();
 
+        // worldObject:getRoom()
+        set("getRoom", asFunction(vargs -> {
+            return orNil(obj(vargs).getRoom());
+        }));
+
         // worldObject:getActor()
         set("getActor", asFunction(vargs -> {
-            return of(obj(vargs).getActor());
+            return orNil(obj(vargs).getActor());
         }));
 
         // worldObject:setActor(actor)
