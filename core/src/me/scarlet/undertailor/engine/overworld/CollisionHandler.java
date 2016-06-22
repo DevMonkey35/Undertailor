@@ -63,8 +63,7 @@ public class CollisionHandler implements Destructible {
                 Pair<Collider> pair = checkObjects(contact);
                 if (pair != null) {
                     if (!pair.getA().canCollide() || !pair.getB().canCollide()
-                        || (pair.getA().getGroupId() < 0
-                            && pair.getA().getGroupId() == pair.getB().getGroupId())) {
+                        || (pair.getA().getGroupId() >= 0 && pair.getA().getGroupId() == pair.getB().getGroupId())) {
                         contact.setEnabled(false);
                     }
                 }
