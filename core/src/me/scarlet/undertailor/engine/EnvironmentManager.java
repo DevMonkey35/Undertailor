@@ -33,7 +33,7 @@ public class EnvironmentManager implements EventListener {
     // ---------------- abstract method implementation ----------------
 
     @Override
-    public boolean catchEvent(String eventName, Map<String, Object> data) {
+    public boolean catchEvent(String eventName, Object... data) {
         return false;
     }
 

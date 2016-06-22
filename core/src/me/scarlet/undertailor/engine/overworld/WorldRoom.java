@@ -330,7 +330,7 @@ public abstract class WorldRoom
     // ---------------- abstract definitions ----------------
 
     @Override
-    public abstract boolean catchEvent(String eventName, Map<String, Object> data);
+    public abstract boolean catchEvent(String eventName, Object... data);
 
     /**
      * Called before processing the rest of the room.

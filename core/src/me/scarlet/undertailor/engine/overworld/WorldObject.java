@@ -47,8 +47,6 @@ import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
-import java.util.Map;
-
 /**
  * An entity within an Overworld.
  */
@@ -385,7 +383,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     public abstract boolean process(Object... params);
 
     @Override
-    public abstract boolean catchEvent(String eventName, Map<String, Object> data);
+    public abstract boolean catchEvent(String eventName, Object... data);
 
     @Override
     public abstract void startCollision(Collider collider);

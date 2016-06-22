@@ -30,8 +30,6 @@
 
 package me.scarlet.undertailor.engine;
 
-import java.util.Map;
-
 /**
  * Skeleton implementation for classes that are able to
  * receive and process events.
@@ -52,5 +50,5 @@ public interface EventListener {
      * @return whether or not the event should continue to
      *         the next listener
      */
-    boolean catchEvent(String eventName, Map<String, Object> data);
+    boolean catchEvent(String eventName, Object... data);
 }
