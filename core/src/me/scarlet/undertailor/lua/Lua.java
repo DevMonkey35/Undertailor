@@ -55,7 +55,9 @@ import me.scarlet.undertailor.lua.meta.LuaTransformMeta;
 import me.scarlet.undertailor.util.LuaUtil;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Static implementation of a class that holds meta data for
@@ -64,12 +66,15 @@ import java.util.Map;
 public class Lua {
 
     static final Logger log = LoggerFactory.getLogger(Lua.class);
+    static final Set<LuaObjectMeta> metas;
+
     private static final Map<Class<?>, LuaObjectMeta> META;
     private static final Map<Class<?>, LuaObjectMeta> PMETA;
     private static final Map<Class<?>, LuaTable> METATABLES;
     private static final String INVALID_TYPE_MSG = "bad argument: %s expected, got %s";
 
     static {
+        metas = new HashSet<>();
         META = new HashMap<>();
         PMETA = new HashMap<>();
         METATABLES = new HashMap<>();
@@ -217,13 +222,17 @@ public class Lua {
         }
 
         LuaTable functable = new LuaTable();
-        for (LuaObjectMeta meta : Lua.META.values()) {
+        Lua.metas.clear();
+        Lua.metas.addAll(Lua.PMETA.values());
+        Lua.metas.addAll(Lua.META.values());
+
+        Lua.metas.forEach(meta -> {
             if (meta.getTargetObjectClass().isInstance(obj) && meta.getMetatable() != null) {
                 LuaUtil.iterateTable(meta.getMetatable(), vargs -> {
                     functable.set(vargs.arg(1), vargs.arg(2));
                 });
             }
-        }
+        });
 
         if (LuaUtil.getTableSize(functable) > 0) {
             LuaTable metatable = new LuaTable();
