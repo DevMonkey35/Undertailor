@@ -199,7 +199,6 @@ public interface Collider {
         this.applyForce(forceX, forceY, 0, 0);
     }
 
-
     /**
      * Applies an impulse to the center of this
      * {@link Collider}.

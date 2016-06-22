@@ -216,14 +216,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     // -------- modular --------
 
-    /**
-     * Allows the {@link WorldRoom} to claim this
-     * {@link WorldObject}.
-     * 
-     * @param room the room claiming the object
-     * 
-     * @return if the object was successfully claimed
-     */
     @Override
     public final boolean claim(WorldRoom room) {
         if (this.room == null) {
@@ -235,14 +227,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         return false;
     }
 
-    /**
-     * Releases this {@link WorldObject} from the provided
-     * {@link WorldRoom}.
-     * 
-     * @param room the room currently owning the object
-     * 
-     * @return if the object was successfully released
-     */
     @Override
     public final boolean release(WorldRoom room) {
         if (this.room == room) {
@@ -433,6 +417,14 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     // ---------------- abstract definitions ----------------
 
+    /**
+     * Executes the routine processing of this
+     * {@link WorldObject}.
+     * 
+     * @param params generic parameters
+     * 
+     * @return generic return value
+     */
     public abstract boolean processObject(Object... params);
 
     @Override
