@@ -227,6 +227,38 @@ public abstract class WorldRoom
         }
     }
 
+    /**
+     * Returns the state of a collision layer.
+     * 
+     * @param layerName the name of the layer
+     * 
+     * @return whether or not the layer is active
+     */
+    public boolean getCollisionLayerState(String layerName) {
+        if (this.collisionLayers.containsKey(layerName)) {
+            for (Body body : this.collisionLayers.get(layerName)) {
+                return body.isActive();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Sets the state of a collision layer.
+     * 
+     * @param layerName the name of the layer
+     * @param flag whether or not the layer is active
+     */
+    public void setCollisionLayerState(String layerName, boolean flag) {
+        if (this.collisionLayers.containsKey(layerName)
+            && this.getCollisionLayerState(layerName) != flag) { // activating a body is just as expensive as creating it
+            this.collisionLayers.get(layerName).forEach(body -> {
+                body.setActive(flag);
+            });
+        }
+    }
+
     // ---------------- internal methods ----------------
 
     /**
