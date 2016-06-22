@@ -105,10 +105,18 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
 
         // worldRoom:setTilemap(tilemapName)
         set("setTilemap", asFunction(vargs -> {
-            Tilemap tilemap = tailor.getAssetManager().getTilemapManager().getTilemap(vargs.checkjstring(2));
-            convert(vargs.arg1()).getmetatable().set(LuaWorldRoomMeta.METAKEY_MAP, LuaValue.userdataOf(tilemap));
+            Tilemap tilemap =
+                tailor.getAssetManager().getTilemapManager().getTilemap(vargs.checkjstring(2));
+            convert(vargs.arg1()).getmetatable().set(LuaWorldRoomMeta.METAKEY_MAP,
+                LuaValue.userdataOf(tilemap));
             return NIL;
         }));
+    }
+
+    @Override
+    public void postMetaInit(LuaTable metatable) {
+        metatable.set("process", NIL); // Processable
+        metatable.set("catchEvent", NIL); // EventListener
     }
 
     @Override
