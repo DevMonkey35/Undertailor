@@ -140,15 +140,29 @@ public interface LuaImplementable<T> {
      * @return the values returned by the invoked function
      */
     default Varargs invoke(String funcName, LuaValue... args) {
+        return this.invoke(funcName, LuaValue.varargsOf(args));
+    }
+
+
+    /**
+     * Convenience method for invoking a function held by
+     * the implementing Lua script.
+     * 
+     * @param funcName the name of the function to invoke
+     * @param args the arguments to pass to the function
+     * 
+     * @return the values returned by the invoked function
+     */
+    default Varargs invoke(String funcName, Varargs args) {
         if (this.getObjectValue() != null && !this.getObjectValue().get(funcName).isnil()) {
-            if (args.length > 0) {
-                return this.getObjectValue().get(funcName).invoke(LuaValue.varargsOf(args));
+            if (args != null && args.narg() > 0) {
+                return this.getObjectValue().get(funcName).invoke(args);
             } else {
                 return this.getObjectValue().get(funcName).invoke();
             }
         }
 
-        return null;
+        return LuaValue.NIL;
     }
 
     /**
@@ -165,15 +179,32 @@ public interface LuaImplementable<T> {
      * @return the values returned by the invoked function
      */
     default Varargs invokeSelf(String funcName, LuaValue... args) {
+        return this.invoke(funcName, LuaValue.varargsOf(args));
+    }
+
+    /**
+     * Convenience method for invoking a function held by
+     * the implementing Lua script, passing the Lua object
+     * as its first parameter.
+     * 
+     * <p>Functionally equivalent to, in Lua script,
+     * <code>object:funcName(args)</code>.</p>
+     * 
+     * @param funcName the name of the function to invoke
+     * @param args the arguments to pass to the function
+     * 
+     * @return the values returned by the invoked function
+     */
+    default Varargs invokeSelf(String funcName, Varargs args) {
         if (this.getObjectValue() != null && !this.getObjectValue().get(funcName).isnil()) {
-            if (args.length > 0) {
+            if (args != null && args.narg() > 0) {
                 return this.getObjectValue().get(funcName)
-                    .invoke(LuaValue.varargsOf(this.getObjectValue(), LuaValue.varargsOf(args)));
+                    .invoke(this.getObjectValue(), args);
             } else {
                 return this.getObjectValue().get(funcName).invoke(this.getObjectValue());
             }
         }
 
-        return null;
+        return LuaValue.NIL;
     }
 }
