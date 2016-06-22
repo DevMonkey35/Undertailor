@@ -72,6 +72,10 @@ public class ObjectLayer {
          * Generates a Box2D {@link Shape} object from the
          * data held by this {@link ShapeData}.
          * 
+         * <p>The returned Shape should be cached and
+         * disposed of, as this ShapeData will not track its
+         * Shape instances.</p>
+         * 
          * @return a Shape
          */
         public Shape generateShape() {
