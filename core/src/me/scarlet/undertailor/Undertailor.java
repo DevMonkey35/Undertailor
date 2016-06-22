@@ -159,6 +159,8 @@ public class Undertailor extends ApplicationAdapter {
 
         this.assets = new AssetManager(this);
         this.assets.loadAll(this.options.assetDir);
+
+        this.environments = new EnvironmentManager(this);
         File mainFile = new File(this.options.assetDir, "main.lua");
         if (mainFile.exists()) {
             this.assets.getScriptManager().generateGlobals().loadfile(mainFile.getAbsolutePath())
