@@ -57,6 +57,8 @@ public class Environment implements Processable, Renderable, Destructible {
         this.ui = new UIController();
     }
 
+    // ---------------- abstract method implementation ----------------
+
     @Override
     public Transform getTransform() {
         return null;
@@ -86,6 +88,8 @@ public class Environment implements Processable, Renderable, Destructible {
         this.ui.destroy();
     }
 
+    // ---------------- object ----------------
+
     /**
      * Returns the {@link Scheduler} ran locally by this
      * {@link Environment}.
@@ -97,8 +101,8 @@ public class Environment implements Processable, Renderable, Destructible {
     }
 
     /**
-     * Returns the {@link OverworldController} ran locally by this
-     * {@link Environment}.
+     * Returns the {@link OverworldController} ran locally
+     * by this {@link Environment}.
      * 
      * @return this Environment's Scheduler
      */
@@ -116,7 +120,14 @@ public class Environment implements Processable, Renderable, Destructible {
         return this.ui;
     }
 
-    public void setViewport(Class<? extends Viewport> viewportType) {
+    // ---------------- internal ----------------
+
+    /**
+     * Internal method.
+     * 
+     * <p>Sets the viewport type.</p>
+     */
+    void setViewport(Class<? extends Viewport> viewportType) {
         Viewport newPort = null;
         if (viewportType == FitViewport.class) {
             newPort = new FitViewport(640, 480);
@@ -129,7 +140,12 @@ public class Environment implements Processable, Renderable, Destructible {
         }
     }
 
-    public void resize(int width, int height) {
+    /**
+     * Internal method.
+     * 
+     * <p>Called when the game window size changes.</p>
+     */
+    void resize(int width, int height) {
         this.overworld.resize(width, height);
     }
 }
