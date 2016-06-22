@@ -165,7 +165,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     // Intended to draw at overworld scale.
     @Override
     public void draw(float x, float y, Transform transform) {
-        if (this.destroyed) {
+        if (this.destroyed || this.actor == null) {
             return;
         }
 
