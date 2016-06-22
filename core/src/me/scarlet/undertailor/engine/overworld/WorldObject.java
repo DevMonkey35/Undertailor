@@ -280,14 +280,14 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     }
 
     @Override
-    public void applyForce(float x, float y, float forceX, float forceY) {
+    public void applyForce(float forceX, float forceY, float x, float y) {
         if (this.body != null) {
             this.body.applyForce(forceX, forceY, x, y, true);
         }
     }
 
     @Override
-    public void applyImpulse(float x, float y, float impX, float impY) {
+    public void applyImpulse(float impX, float impY, float x, float y) {
         if (this.body != null) {
             this.body.applyLinearImpulse(impX, impY, x, y, true);
         }

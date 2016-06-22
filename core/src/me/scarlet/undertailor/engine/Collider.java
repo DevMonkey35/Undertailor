@@ -102,7 +102,7 @@ public interface Collider {
      * @param forceY the force's power on the Y axis, in
      *        newtons
      */
-    void applyForce(float x, float y, float forceX, float forceY);
+    void applyForce(float forceX, float forceY, float x, float y);
 
     /**
      * Applies an impulse to this {@link Collider} at the
@@ -123,7 +123,7 @@ public interface Collider {
      * @param impY the impulse's power on the Y axis, in
      *        newtons
      */
-    void applyImpulse(float x, float y, float impX, float impY);
+    void applyImpulse(float impX, float impY, float x, float y);
 
     /**
      * Applies a torque to this {@link Collider}.
@@ -196,7 +196,7 @@ public interface Collider {
      *        newtons
      */
     default void applyCenterForce(float forceX, float forceY) {
-        this.applyForce(0, 0, forceX, forceY);
+        this.applyForce(forceX, forceY, 0, 0);
     }
 
 
@@ -210,6 +210,6 @@ public interface Collider {
      *        newtons
      */
     default void applyCenterImpulse(float impX, float impY) {
-        this.applyImpulse(0, 0, impX, impY);
+        this.applyImpulse(impX, impY, 0, 0);
     }
 }
