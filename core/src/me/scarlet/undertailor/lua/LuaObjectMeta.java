@@ -87,6 +87,14 @@ public interface LuaObjectMeta {
         return false;
     }
 
+    /**
+     * Called after the metatable of this
+     * {@link LuaObjectMeta} and others that match the
+     * target {@link LuaObjectValue}'s class are compiled
+     * into the provided metatable.
+     */
+    default void postMetaInit(LuaTable metatable) {}
+
     // ---------------- convenience methods because i'm an ass ----------------
 
     /**

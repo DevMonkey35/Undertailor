@@ -234,6 +234,10 @@ public class Lua {
             }
         });
 
+        Lua.metas.forEach(meta -> {
+            meta.postMetaInit(functable);
+        });
+
         if (LuaUtil.getTableSize(functable) > 0) {
             LuaTable metatable = new LuaTable();
             metatable.set("__index", functable);
