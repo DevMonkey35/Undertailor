@@ -192,6 +192,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     public void setRoom(WorldRoom room) {
         if (this.room != null) {
             this.room.release(this);
+            this.room.destroy();
             this.room = null;
         }
 
