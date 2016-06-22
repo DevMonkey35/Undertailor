@@ -307,6 +307,10 @@ public abstract class WorldRoom
      * collision to the world.</p>
      */
     private void prepareMap(Tilemap map) {
+        if (map == null) {
+            return;
+        }
+
         World world = this.getOverworld().getCollisionHandler().getWorld();
         BodyDef def = new BodyDef();
         def.type = BodyType.StaticBody;
