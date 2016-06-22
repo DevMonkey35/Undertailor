@@ -100,6 +100,8 @@ public abstract class WorldRoom
         this.collisionLayers = new HashMap<>();
     }
 
+    // ---------------- abstract method implementation ----------------
+
     @Override
     public Transform getTransform() {
         return null;
