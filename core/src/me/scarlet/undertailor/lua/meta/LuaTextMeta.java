@@ -30,7 +30,6 @@
 
 package me.scarlet.undertailor.lua.meta;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.of;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.arrayOf;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
@@ -79,7 +78,7 @@ public class LuaTextMeta implements LuaObjectMeta {
             Object[] components = obj(vargs).getComponents().toArray();
             LuaValue[] returned = new LuaValue[components.length];
             for (int i = 0; i < returned.length; i++) {
-                returned[i] = of(components[i]);
+                returned[i] = orNil(components[i]);
             }
 
             return arrayOf(returned);

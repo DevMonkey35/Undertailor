@@ -30,7 +30,6 @@
 
 package me.scarlet.undertailor.lua.meta;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.of;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.valueOf;
@@ -92,7 +91,7 @@ public class LuaTextComponentMeta implements LuaObjectMeta {
             List<TextStyle> styles = obj(vargs).getStyles();
             LuaValue[] returned = new LuaValue[styles.size()];
             for (int i = 0; i < styles.size(); i++) {
-                returned[i] = of(styles.get(i));
+                returned[i] = orNil(styles.get(i));
             }
 
             return LuaUtil.arrayOf(returned);

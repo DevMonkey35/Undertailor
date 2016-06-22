@@ -74,13 +74,15 @@ public class LuaColliderMeta implements LuaObjectMeta {
         set("setColliderType", asFunction(vargs -> {
             Collider col = obj(vargs);
             int type = vargs.arg(2).checkint();
+            BodyType setType = BodyType.DynamicBody; // default
             for (BodyType typeEntry : BodyType.values()) {
                 if (typeEntry.getValue() == type) {
-                    col.setColliderType(typeEntry);
+                    setType = typeEntry;
                     break;
                 }
             }
 
+            col.setColliderType(setType);
             return NIL;
         }));
 

@@ -62,7 +62,7 @@ public class LuaSoundDataMeta implements LuaObjectMeta {
 
         // soundData:getParent()
         set("getParent", asFunction(vargs -> {
-            return LuaObjectValue.of(obj(vargs).getPan());
+            return LuaObjectValue.orNil(obj(vargs).getPan());
         }));
     }
 

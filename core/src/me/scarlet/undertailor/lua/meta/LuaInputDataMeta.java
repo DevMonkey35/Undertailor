@@ -30,7 +30,7 @@
 
 package me.scarlet.undertailor.lua.meta;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.of;
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.NIL;
 import static org.luaj.vm2.LuaValue.valueOf;
@@ -65,7 +65,7 @@ public class LuaInputDataMeta implements LuaObjectMeta {
 
         // input:getPressData(key)
         set("getPressData", asFunction(vargs -> {
-            return of(obj(vargs).getPressData(vargs.checkint(2)));
+            return orNil(obj(vargs).getPressData(vargs.checkint(2)));
         }));
 
         // input:isConsumed()

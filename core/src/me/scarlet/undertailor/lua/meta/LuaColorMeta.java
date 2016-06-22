@@ -30,7 +30,7 @@
 
 package me.scarlet.undertailor.lua.meta;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.of;
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.valueOf;
 
@@ -66,14 +66,14 @@ public class LuaColorMeta implements LuaObjectMeta {
         // color:add(r, g, b)
         set("add", asFunction(vargs -> {
             Color color = obj(vargs);
-            if(vargs.arg(2).isnumber()) {
+            if (vargs.arg(2).isnumber()) {
                 float r = vargs.optint(2, 0) / 255F;
                 float g = vargs.optint(3, 0) / 255F;
                 float b = vargs.optint(4, 0) / 255F;
-                return of(color.add(r, g, b, 0));
+                return orNil(color.add(r, g, b, 0));
             } else {
                 Color added = convert(vargs.arg(2)).getObject();
-                return of(color.add(added));
+                return orNil(color.add(added));
             }
         }));
 
@@ -81,14 +81,14 @@ public class LuaColorMeta implements LuaObjectMeta {
         // color:multiply(r, g, b)
         set("multiply", asFunction(vargs -> {
             Color color = obj(vargs);
-            if(vargs.arg(2).isnumber()) {
+            if (vargs.arg(2).isnumber()) {
                 float r = vargs.optint(2, 0) / 255F;
                 float g = vargs.optint(3, 0) / 255F;
                 float b = vargs.optint(4, 0) / 255F;
-                return of(color.mul(r, g, b, 0));
+                return orNil(color.mul(r, g, b, 0));
             } else {
                 Color multiplier = convert(vargs.arg(2)).getObject();
-                return of(color.mul(multiplier));
+                return orNil(color.mul(multiplier));
             }
         }));
 
@@ -96,14 +96,14 @@ public class LuaColorMeta implements LuaObjectMeta {
         // color:subtract(r, g, b)
         set("subtract", asFunction(vargs -> {
             Color color = obj(vargs);
-            if(vargs.arg(2).isnumber()) {
+            if (vargs.arg(2).isnumber()) {
                 float r = vargs.optint(2, 0) / 255F;
                 float g = vargs.optint(3, 0) / 255F;
                 float b = vargs.optint(4, 0) / 255F;
-                return of(color.sub(r, g, b, 0));
+                return orNil(color.sub(r, g, b, 0));
             } else {
                 Color subtracted = convert(vargs.arg(2)).getObject();
-                return of(color.sub(subtracted));
+                return orNil(color.sub(subtracted));
             }
         }));
 
@@ -111,20 +111,20 @@ public class LuaColorMeta implements LuaObjectMeta {
         // color:set(r, g, b)
         set("set", asFunction(vargs -> {
             Color color = obj(vargs);
-            if(vargs.arg(2).isnumber()) {
+            if (vargs.arg(2).isnumber()) {
                 float r = vargs.optint(2, 0) / 255F;
                 float g = vargs.optint(3, 0) / 255F;
                 float b = vargs.optint(4, 0) / 255F;
-                return of(color.set(r, g, b, 1));
+                return orNil(color.set(r, g, b, 1));
             } else {
                 Color set = convert(vargs.arg(2)).getObject();
-                return of(color.set(set));
+                return orNil(color.set(set));
             }
         }));
 
         // color:clone()
         set("clone", asFunction(vargs -> {
-            return of(obj(vargs).cpy());
+            return orNil(obj(vargs).cpy());
         }));
 
         // color:toHex()
