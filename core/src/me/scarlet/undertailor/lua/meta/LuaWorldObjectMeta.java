@@ -36,6 +36,7 @@ import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.NIL;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import org.luaj.vm2.LuaError;
@@ -142,6 +143,38 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
             PolygonShape box = new PolygonShape();
             box.setAsBox(width / 2F, height / 2F, offset, 0F);
             obj.queueBoundingShape(box);
+
+            return NIL;
+        }));
+
+        // worldObject:addBoundingChain(...)
+        set("addBoundingChain", asFunction(vargs -> {
+            WorldObject obj = obj(vargs);
+
+            float[] vertices = new float[vargs.narg()];
+            for (int i = 0; i < vargs.narg(); i++) {
+                vertices[i] = vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
+            }
+
+            ChainShape chain = new ChainShape();
+            chain.createChain(vertices);
+            obj.queueBoundingShape(chain);
+
+            return NIL;
+        }));
+
+        // worldObject:addBoundingChainLoop(...)
+        set("addBoundingChainLoop", asFunction(vargs -> {
+            WorldObject obj = obj(vargs);
+
+            float[] vertices = new float[vargs.narg()];
+            for (int i = 0; i < vargs.narg(); i++) {
+                vertices[i] = vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
+            }
+
+            ChainShape chain = new ChainShape();
+            chain.createLoop(vertices);
+            obj.queueBoundingShape(chain);
 
             return NIL;
         }));
