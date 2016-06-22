@@ -104,8 +104,7 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
 
             PolygonShape polygon = new PolygonShape();
             polygon.set(vertices);
-            obj.getBody().createFixture(polygon, 0F);
-            polygon.dispose();
+            obj.queueBoundingShape(polygon);
 
             return NIL;
         }));
@@ -121,8 +120,7 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
             CircleShape circle = new CircleShape();
             circle.setRadius(radius);
             circle.setPosition(offset);
-            obj.getBody().createFixture(circle, 0F);
-            circle.dispose();
+            obj.queueBoundingShape(circle);
 
             return NIL;
         }));
@@ -138,8 +136,7 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
 
             PolygonShape box = new PolygonShape();
             box.setAsBox(width / 2F, height / 2F, offset, 0F);
-            obj.getBody().createFixture(box, 0F);
-            box.dispose();
+            obj.queueBoundingShape(box);
 
             return NIL;
         }));

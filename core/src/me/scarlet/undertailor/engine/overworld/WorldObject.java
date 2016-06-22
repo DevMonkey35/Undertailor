@@ -34,6 +34,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import me.scarlet.undertailor.engine.Collider;
@@ -46,6 +48,9 @@ import me.scarlet.undertailor.engine.Positionable;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An entity within an Overworld.
@@ -63,6 +68,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     private BodyDef def; // acts as a proxy object for position
     private short groupId;
     private boolean canCollide;
+    private Set<Shape> boundingQueue;
 
     private short layer;
     private float height;
@@ -75,6 +81,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         this.destroyed = false;
         this.transform = new Transform();
         this.proxyTransform = new Transform();
+        this.boundingQueue = new HashSet<>();
         this.def = new BodyDef();
 
         this.def.active = true;
@@ -188,10 +195,10 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     @Override
     public final boolean process(Object... params) {
-        if(this.destroyed) {
+        if (this.destroyed) {
             return false;
         }
-        
+
         return this.processObject(params);
     }
 
@@ -371,6 +378,27 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         this.actor = actor;
     }
 
+    /**
+     * Queues a {@link Shape} to be set as a {@link Fixture}
+     * on this {@link WorldObject}'s body.
+     * 
+     * <p>If the body is ready, this method immediately
+     * applies the Shape as a Fixture.</p>
+     * 
+     * <p>The shape is automagically disposed after the
+     * Fixture is applied.</p>
+     * 
+     * @param shape the shape to apply as a bounding shape
+     */
+    public void queueBoundingShape(Shape shape) {
+        if (this.body != null) {
+            this.body.createFixture(shape, 0F);
+            shape.dispose();
+        } else if (this.boundingQueue != null) {
+            this.boundingQueue.add(shape);
+        }
+    }
+
     // ---------------- internal ----------------
 
     /**
@@ -389,6 +417,15 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
             pxY * OverworldController.PIXELS_TO_METERS);
         this.body = world.createBody(this.def);
         this.body.setUserData(this);
+
+        if (this.boundingQueue != null) {
+            this.boundingQueue.forEach(shape -> {
+                this.body.createFixture(shape, 0F);
+                shape.dispose();
+            });
+
+            this.boundingQueue = null;
+        }
 
         // back to holding the pixel pos
         this.def.position.set(pxX, pxY);
