@@ -80,11 +80,13 @@ public class ScriptManager {
     }
 
     public void load() {
+        // base libs are libs that require a new instance for each Globals environment
         baseLibraries.add(JseBaseLib.class);
         baseLibraries.add(PackageLib.class);
         baseLibraries.add(DebugLib.class);
         baseLibraries.add(BaseLib.class);
 
+        // generic libs can use the same instance across each Globals environment
         libraries.add(new Bit32Lib());
         libraries.add(new TableLib());
         libraries.add(new StringLib());
