@@ -72,7 +72,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
 
     public OverworldController(MultiRenderer renderer, Environment environment, Viewport viewport) {
         this.collision = new CollisionHandler(renderer, true);
-        this.camera = new OverworldCamera();
+        this.camera = new OverworldCamera(this);
         this.environment = environment;
         this.renderer = renderer;
         this.character = null;
@@ -199,6 +199,9 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
         if (room.claim(this)) {
             this.room = room;
         }
+
+        // update the camera since the room has changed
+        this.camera.fixPosition();
     }
 
     // ---------------- internal methods ----------------
