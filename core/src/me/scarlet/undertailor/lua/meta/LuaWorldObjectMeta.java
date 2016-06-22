@@ -43,6 +43,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
+import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.engine.overworld.WorldObject;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.lua.Lua;
@@ -83,6 +84,7 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
 
         // lua-only functions
 
+        // bounding shape creation methods respect overworld scale
         // worldObject:addBoundingPolygon(...)
         set("addBoundingPolygon", asFunction(vargs -> {
             WorldObject obj = obj(vargs);
@@ -97,7 +99,7 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
 
             float[] vertices = new float[vargs.narg()];
             for (int i = 0; i < vargs.narg(); i++) {
-                vertices[i] = vargs.checknumber(i + 1).tofloat();
+                vertices[i] = vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
             }
 
             PolygonShape polygon = new PolygonShape();
@@ -111,10 +113,10 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
         // worldObject:addBoundingCircle(radius[, offsetX, offsetY])
         set("addBoundingCircle", asFunction(vargs -> {
             WorldObject obj = obj(vargs);
-            float radius = vargs.checknumber(2).tofloat();
+            float radius = vargs.checknumber(2).tofloat() * OverworldController.PIXELS_TO_METERS;
             Vector2 offset = new Vector2();
-            offset.x = vargs.isnil(3) ? 0 : vargs.checknumber(3).tofloat();
-            offset.y = vargs.isnil(4) ? 0 : vargs.checknumber(4).tofloat();
+            offset.x = vargs.isnil(3) ? 0 : (vargs.checknumber(3).tofloat() * OverworldController.PIXELS_TO_METERS);
+            offset.y = vargs.isnil(4) ? 0 : (vargs.checknumber(4).tofloat() * OverworldController.PIXELS_TO_METERS);
 
             CircleShape circle = new CircleShape();
             circle.setRadius(radius);
@@ -128,11 +130,11 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
         // worldObject:addBoundingBox(width, height[, offsetX, offsetY])
         set("addBoundingBox", asFunction(vargs -> {
             WorldObject obj = obj(vargs);
-            float width = vargs.checknumber(2).tofloat();
-            float height = vargs.checknumber(3).tofloat();
+            float width = vargs.checknumber(2).tofloat() * OverworldController.PIXELS_TO_METERS;
+            float height = vargs.checknumber(3).tofloat() * OverworldController.PIXELS_TO_METERS;
             Vector2 offset = new Vector2();
-            offset.x = vargs.isnil(3) ? 0 : vargs.checknumber(3).tofloat();
-            offset.y = vargs.isnil(4) ? 0 : vargs.checknumber(4).tofloat();
+            offset.x = vargs.isnil(3) ? 0 : (vargs.checknumber(3).tofloat() * OverworldController.PIXELS_TO_METERS);
+            offset.y = vargs.isnil(4) ? 0 : (vargs.checknumber(4).tofloat() * OverworldController.PIXELS_TO_METERS);
 
             PolygonShape box = new PolygonShape();
             box.setAsBox(width / 2F, height / 2F, offset, 0F);
