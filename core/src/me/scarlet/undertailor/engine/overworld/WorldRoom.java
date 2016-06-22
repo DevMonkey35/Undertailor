@@ -32,8 +32,9 @@ package me.scarlet.undertailor.engine.overworld;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.World;
 
 import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.EventListener;
@@ -283,8 +284,9 @@ public abstract class WorldRoom
                 def.position.x = def.position.x * OverworldController.PIXELS_TO_METERS;
                 def.position.y = (map.getOccupiedHeight() - def.position.y)
                     * OverworldController.PIXELS_TO_METERS;
-                layerBodies
-                    .add(world.createBody(def).createFixture(data.generateShape(), 0).getBody());
+                Shape shape = data.generateShape();
+                layerBodies.add(world.createBody(def).createFixture(shape, 0).getBody());
+                shape.dispose();
             });
 
             this.collisionLayers.put(layer.getName(), layerBodies);
