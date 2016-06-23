@@ -2,11 +2,28 @@ apply plugin: "java"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.resources.srcDirs = [ "resources/" ]
 
+import org.apache.tools.ant.filters.ReplaceTokens
 
-eclipse.project {
-    name = appName + "-core"
+task deleteOldAdj(type: Delete) {
+    delete "build/adjSources"
+}
+
+task replaceTokens(type: Copy, dependsOn: deleteOldAdj) {
+    from(sourceSets.main.java.srcDirs) {
+        filter(ReplaceTokens, tokens: [VERSION: rootProject.ext.finalVersion.toString()])
+    }
+
+    into("build/adjSources")
+}
+
+task compileJava(type: JavaCompile, overwrite: true, dependsOn: replaceTokens) {
+    source = files("build/adjSources")
+    classpath = sourceSets.main.compileClasspath
+    destinationDir = sourceSets.main.output.classesDir
 }

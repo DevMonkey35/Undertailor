@@ -8,16 +8,16 @@ buildscript {
     
     dependencies {
         classpath "nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0"
+        classpath "org.ajoberstar:grgit:1.1.0"
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
-    apply plugin: "java"
     apply plugin: "com.github.hierynomus.license"
+    apply plugin: "java"
 
-    version = '1.0'
     ext {
         appName = "Undertailor"
         gdxVersion = '1.9.3'
@@ -40,6 +40,7 @@ allprojects {
         }
         
         excludes([
+            "**/assets/",
             "mod/**",
             "**/package-info.java",
             "**/log4j.properties"
@@ -47,6 +48,15 @@ allprojects {
         
         header rootProject.file("LICENSE")
     }
+}
+
+ext {
+    git = org.ajoberstar.grgit.Grgit.open(file('.'))
+    revision = git.head().abbreviatedId
+    version = "1.0"
+    
+    finalVersion = "${version}-${revision}"
+    mainClassName = "me.scarlet.undertailor.desktop.DesktopLauncher"
 }
 
 project(":desktop") {
@@ -69,6 +79,36 @@ project(":core") {
     }
 }
 
+import org.apache.tools.ant.filters.ReplaceTokens
+
 tasks.eclipse.doLast {
     delete ".project"
 }
+
+task run(type: JavaExec) {
+    main = project.mainClassName
+    classpath = project(":desktop").sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    
+    workingDir = new File("../test/")
+    workingDir.mkdirs()
+    ignoreExitValue = true
+}
+
+task dist(type: Jar) {
+    from files(project(":core").sourceSets.main.output.classesDir)
+    from files(project(":desktop").sourceSets.main.output.classesDir)
+    from files(project(":core").sourceSets.main.output.resourcesDir)
+    from { project(":desktop").configurations.compile.collect {zipTree(it)} }
+    
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+    
+    baseName = "undertailor-" + rootProject.ext.finalVersion
+}
+
+dist.dependsOn project(":core").licenseMain
+dist.dependsOn project(":desktop").licenseMain
+dist.dependsOn project(":core").classes
+dist.dependsOn project(":desktop").classes
