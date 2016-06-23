@@ -53,6 +53,7 @@ public class Undertailor extends ApplicationAdapter {
 
     static boolean debug;
     static Undertailor instance;
+    public static final String version = "@VERSION@";
     static Logger log = LoggerFactory.getLogger(Undertailor.class);
 
     public static Undertailor getInstance() {
@@ -84,7 +85,7 @@ public class Undertailor extends ApplicationAdapter {
         }
 
         new ResourceHandler().start();
-
+        log.info("Running Undertailor version " + Undertailor.version + "!");
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             log.error("Uncaught exception. Program will close.", e);
             this.exit();
