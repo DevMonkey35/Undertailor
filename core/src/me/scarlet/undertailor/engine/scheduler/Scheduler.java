@@ -85,7 +85,7 @@ public class Scheduler implements Processable, Subsystem, Destructible {
                 (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
 
             try {
-                if (task.process()) {
+                if (!task.process()) {
                     log.debug("task " + taskName + " finished and was removed");
                     task.onFinish(false);
                     iterator.remove();
@@ -100,27 +100,31 @@ public class Scheduler implements Processable, Subsystem, Destructible {
         }
 
         iterator = activeTasks.entrySet().iterator();
+        long id = -1;
+        Task task = null;
+        String taskName = null;
         while (iterator.hasNext()) {
             Entry<Long, Task> entry = iterator.next();
-            long id = entry.getKey();
-            Task task = entry.getValue();
-            String taskName =
+            id = entry.getKey();
+            task = entry.getValue();
+            taskName =
                 (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
+            break;
+        }
 
+        if(task != null) {
             try {
-                if (task.process()) {
+                if (!task.process()) {
+                    this.activeTasks.remove(id);
                     log.debug("active task " + taskName + " finished and was removed");
                     task.onFinish(false);
-                    iterator.remove();
-                } else {
-                    break;
                 }
             } catch (Exception e) {
                 log.warn("active task " + taskName + " was removed due to caught error: "
                     + e.getClass().getSimpleName() + ": " + e.getMessage());
                 e.printStackTrace();
                 task.onFinish(true);
-                iterator.remove();
+                this.activeTasks.remove(id);
             }
         }
 
