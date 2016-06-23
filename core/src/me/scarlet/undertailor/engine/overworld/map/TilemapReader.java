@@ -69,8 +69,7 @@ public class TilemapReader extends DefaultHandler {
     private ObjectLayer currentObjectLayer;
 
     private ShapeData currentShape;
-    private int[] currentTiles;
-    private int currentTile;
+    private String tileData;
 
     public TilemapReader(TilesetManager tilesets) {
         tree = new ArrayList<>();
@@ -78,7 +77,7 @@ public class TilemapReader extends DefaultHandler {
 
         this.tilemap = null;
         this.currentTileLayer = null;
-        this.currentTiles = null;
+        this.tileData = null;
     }
 
     // ---------------- abstract method implementation ----------------
@@ -131,8 +130,7 @@ public class TilemapReader extends DefaultHandler {
                     "Undertailor will only support Tiled maps saved in CSV format");
             } else {
                 if (this.currentTileLayer != null) {
-                    this.currentTiles = new int[this.tilemap.height * this.tilemap.width];
-                    this.currentTile = 0;
+                    this.tileData = "";
                 }
             }
         }
@@ -171,27 +169,14 @@ public class TilemapReader extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        if (this.currentTiles != null) {
-            String number = "";
-
+        if (this.tileData != null) {
             for (int i = 0; i < length; i++) {
                 char character = ch[i + start];
                 if (character == '\n') {
                     continue;
-                } else if (character == ',') {
-                    this.currentTiles[currentTile] = Integer.parseInt(number);
-                    number = "";
-                    currentTile++;
-                    if (currentTile >= this.currentTiles.length) {
-                        break;
-                    }
                 } else {
-                    number += character;
+                    this.tileData += character;
                 }
-            }
-
-            if (!number.isEmpty()) {
-                this.currentTiles[this.currentTiles.length - 1] = Integer.parseInt(number);
             }
         }
     }
@@ -199,9 +184,16 @@ public class TilemapReader extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (this.checkElement("layer", "data", qName)) {
-            if (this.currentTileLayer != null && this.currentTiles != null) {
-                this.currentTileLayer.tiles = this.currentTiles;
-                this.currentTiles = null;
+            if (this.currentTileLayer != null && this.tileData != null) {
+                String[] tileSplit = this.tileData.split(",");
+                int[] tiles = new int[tileSplit.length];
+
+                for(int i = 0; i < tiles.length; i++) {
+                    tiles[i] = Integer.parseInt(tileSplit[i]);
+                }
+
+                this.currentTileLayer.tiles = tiles;
+                this.tileData = null;
 
                 this.tilemap.layers.add(this.currentTileLayer);
                 this.currentTileLayer = null;
