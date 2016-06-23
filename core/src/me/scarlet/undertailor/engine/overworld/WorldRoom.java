@@ -49,6 +49,7 @@ import me.scarlet.undertailor.gfx.Transform;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -126,12 +127,14 @@ public abstract class WorldRoom
     @Override
     public final void destroy() {
         this.tilemap = null;
-        this.obj.forEach(obj -> {
-            this.removeObject(obj);
-            if (!this.controller.isCharacter(obj)) {
-                obj.destroy();
+        Iterator<WorldObject> iterator = this.obj.iterator();
+        while(iterator.hasNext()) {
+            WorldObject next = iterator.next();
+            iterator.remove();
+            if(next.release(this) && !this.controller.isCharacter(next)) {
+                next.destroy();
             }
-        });
+        }
     }
 
     @Override
@@ -221,11 +224,16 @@ public abstract class WorldRoom
      * @param id the ID of the WorldObject to remove
      */
     public void removeObject(long id) {
+        WorldObject removed = null;
         for (WorldObject obj : this.obj) {
             if (obj.getId() == id) {
-                removeObject(obj);
+                removed = obj;
                 break;
             }
+        }
+
+        if(removed != null) {
+            this.removeObject(removed);
         }
     }
 
@@ -294,7 +302,10 @@ public abstract class WorldRoom
     private Set<Layerable> getInRenderOrder() {
         RENDER_ORDER.clear();
 
-        tilemap.getTileLayers().forEach(RENDER_ORDER::add);
+        if(tilemap != null) {
+            tilemap.getTileLayers().forEach(RENDER_ORDER::add);
+        }
+
         obj.forEach(RENDER_ORDER::add);
 
         return RENDER_ORDER;
@@ -329,8 +340,6 @@ public abstract class WorldRoom
 
             this.collisionLayers.put(layer.getName(), layerBodies);
         });
-
-        System.out.println("THESE " + this.collisionLayers.size() + " LAYERS");
     }
 
     // ---------------- abstract definitions ----------------
