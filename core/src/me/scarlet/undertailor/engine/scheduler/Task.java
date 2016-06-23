@@ -43,7 +43,7 @@ public interface Task extends Processable {
      * 
      * @return the name of this Task
      */
-    String getName();
+    default String getName() { return null; };
 
     /**
      * Called when this {@link Task} finishes (when
@@ -52,7 +52,7 @@ public interface Task extends Processable {
      * @param forced if the task was ended preemptively by
      *        means of an error or a scheduler call
      */
-    void onFinish(boolean forced);
+    default void onFinish(boolean forced) {}
 
     /**
      * Processes this {@link Task} for the current frame.
