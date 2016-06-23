@@ -30,11 +30,13 @@
 
 package me.scarlet.undertailor.engine.overworld.map;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
 import me.scarlet.undertailor.gfx.Renderable;
@@ -55,6 +57,12 @@ import java.util.TreeMap;
  * {@link Tilemap} instances.
  */
 public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
+
+    /**
+     * The name of the layer used to store definition
+     * objects. Ignored during collision generation.
+     */
+    public static final String OBJ_DEF_LAYER = "#def";
 
     static TilemapReader READER;
     static final Logger log = LoggerFactory.getLogger(TilemapFactory.class);
@@ -180,6 +188,43 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          */
         public ObjectLayer getObjectLayer(String name) {
             return this.objects.get(name);
+        }
+
+        /**
+         * Returns the {@link ShapeData} definition
+         * associated with the provided name.
+         * 
+         * @param shapeName the name of the defined
+         *        ShapeData
+         * 
+         * @return the defined ShapeData, or null if not
+         *         found
+         */
+        public ShapeData getDefinedShape(String shapeName) {
+            if (this.getObjectLayer(OBJ_DEF_LAYER) != null) {
+                return this.getObjectLayer(OBJ_DEF_LAYER).getShape(shapeName);
+            }
+
+            return null;
+        }
+
+
+        /**
+         * Returns the point definition associated with the
+         * provided name as a {@link Vector2}.
+         * 
+         * @param pointName the name of the defined
+         *        ShapeData
+         * 
+         * @return the defined point as a Vector2, or null
+         *         if not found
+         */
+        public Vector2 getDefinedPoint(String pointName) {
+            if (this.getObjectLayer(OBJ_DEF_LAYER) != null) {
+                return this.getObjectLayer(OBJ_DEF_LAYER).getPoint(pointName);
+            }
+
+            return null;
         }
 
         /**

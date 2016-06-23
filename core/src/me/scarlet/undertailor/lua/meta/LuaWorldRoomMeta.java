@@ -30,10 +30,14 @@
 
 package me.scarlet.undertailor.lua.meta;
 
+import static me.scarlet.undertailor.util.LuaUtil.arrayOf;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+import static me.scarlet.undertailor.util.LuaUtil.varargsOf;
 import static org.luaj.vm2.LuaValue.NIL;
 import static org.luaj.vm2.LuaValue.valueOf;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Shape;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -41,10 +45,12 @@ import org.luaj.vm2.Varargs;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.engine.overworld.WorldObject;
 import me.scarlet.undertailor.engine.overworld.WorldRoom;
+import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.util.LuaUtil;
 
 /**
  * Metadata for {@link LuaObjectValue}s holding
@@ -110,6 +116,99 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
             convert(vargs.arg1()).getmetatable().set(LuaWorldRoomMeta.METAKEY_MAP,
                 LuaValue.userdataOf(tilemap));
             return NIL;
+        }));
+
+        /*
+         * Shape data is weird in Lua, as we don't wanna
+         * just make it another LuaObjectValue with its own
+         * meta because its just a databag class.
+         * 
+         * We just try to represent it as a string and 4
+         * values. The values are listed here.
+         * 
+         * When returned as vargs, the first value is the
+         * type of shape. Possible values include rectangle,
+         * circle, polygon, polyline.
+         * 
+         * The second and third value are the X and Y
+         * positions of the shape's origin point, as
+         * presented in Tiled. Y value is unlikely to match
+         * the one defined by Tiled, and is instead
+         * converted, as the screen origin for libGDX is on
+         * the bottom left while Tiled puts it on the top
+         * left.
+         * 
+         * The fourth value can be a number or a table. It
+         * is only a number if the shape is a perfect
+         * circle, that is, its height matches its width.
+         * The number represents the radius of the perfect
+         * circle. If the shape was not a perfect circle,
+         * then the second value is a table containing the
+         * vertices of the shape.
+         */
+        // worldRoom:getMapDefinedShape(pointName)
+        set("getMapDefinedShape", asFunction(vargs -> {
+            String shapeName = vargs.checkjstring(2);
+            WorldRoom room = obj(vargs);
+            if (room == null) {
+                return NIL;
+            }
+
+            Tilemap map = room.getMap();
+            if (map == null) {
+                return NIL;
+            }
+
+            ShapeData shape = map.getDefinedShape(shapeName);
+            if (shape == null) {
+                return NIL;
+            }
+
+            String shapeTypeName;
+            LuaValue fourth;
+            if(shape.getType() == Shape.Type.Circle) {
+                shapeTypeName = "circle";
+                fourth = valueOf(shape.getRadius());
+            } else {
+                if(shape.getType() == null) {
+                    shapeTypeName = "rectangle";
+                } else if(shape.getType() == Shape.Type.Polygon) {
+                    shapeTypeName = "polygon";
+                } else { // chain/edge
+                    shapeTypeName = "polyline";
+                }
+
+                float[] vertices = shape.getVertices();
+                LuaValue[] lVertices = new LuaValue[vertices.length];
+                for(int i = 0; i < vertices.length; i++) {
+                    lVertices[i] = valueOf(vertices[i]);
+                }
+
+                fourth = LuaUtil.arrayOf(lVertices);
+            }
+
+            return arrayOf(valueOf(shapeTypeName), valueOf(shape.getPosition().x), valueOf(shape.getPosition().y), fourth);
+        }));
+
+        // worldRoom:getMapDefinedPoint(pointName)
+        set("getMapDefinedPoint", asFunction(vargs -> {
+            String pointName = vargs.checkjstring(2);
+            WorldRoom room = obj(vargs);
+            if (room == null) {
+                return NIL;
+            }
+
+            Tilemap map = room.getMap();
+            if (map == null) {
+                return NIL;
+            }
+
+            Vector2 point = map.getDefinedPoint(pointName);
+            if (point == null) {
+                return NIL;
+            }
+
+            return varargsOf(point.x, point.y);
         }));
     }
 

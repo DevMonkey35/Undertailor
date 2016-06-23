@@ -269,6 +269,16 @@ public abstract class WorldRoom
         }
     }
 
+    /**
+     * Returns the {@link Tilemap} currently loaded on this
+     * {@link WorldRoom}.
+     * 
+     * @return this WorldRoom's current Tilemap
+     */
+    public Tilemap getMap() {
+        return this.tilemap;
+    }
+
     // ---------------- internal methods ----------------
 
     /**
