@@ -69,6 +69,63 @@ public class ObjectLayer {
         }
 
         /**
+         * Returns the type of the {@link Shape} defined by
+         * this {@link ShapeData}.
+         * 
+         * <p>This class reuses an already-existing class of
+         * the same purpose, with different values. The
+         * following enumeration values resolve to the given
+         * shapes.</p>
+         * 
+         * <pre>
+         * null : Rectangle
+         * {@link com.badlogic.gdx.physics.box2d.Shape.Type#Circle} : Circle
+         * {@link com.badlogic.gdx.physics.box2d.Shape.Type#Polygon} : Polygon
+         * {@link com.badlogic.gdx.physics.box2d.Shape.Type#Chain} : Chain/Polyline
+         * </pre>
+         * 
+         * @return the type of the Shape defined by this
+         *         ShapeData
+         */
+        public Shape.Type getType() {
+            return this.type;
+        }
+
+        /**
+         * Returns the vertices that create the
+         * {@link Shape} defined by this {@link ShapeData}.
+         * 
+         * <p>Vertices are only generated for imperfect
+         * circles, rectangles, polygons and
+         * chain/polylines. For perfect circles, see
+         * {@link #getRadius()}.</p>
+         * 
+         * @return the vertices that make up the underlying
+         *         Shape, or null if this is a perfect
+         *         circle
+         */
+        public float[] getVertices() {
+            return this.shapeVertices;
+        }
+
+        /**
+         * Returns the radius of the {@link Shape} defined
+         * by this {@link ShapeData}.
+         * 
+         * <p>Only returns a value other than 0 if the
+         * underlying Shape is a perfect circle.</p>
+         * 
+         * @return the radius of the underlying Shape
+         */
+        public float getRadius() {
+            if(this.type == Shape.Type.Circle && this.shapeHeight == this.shapeWidth) {
+                return this.shapeHeight / 2.0F;
+            }
+
+            return 0F;
+        }
+
+        /**
          * Generates a Box2D {@link Shape} object from the
          * data held by this {@link ShapeData}.
          * 
@@ -118,7 +175,7 @@ public class ObjectLayer {
             if (this.shapeVertices == null) {
                 float shapeWidth = this.shapeWidth * OverworldController.PIXELS_TO_METERS;
                 float shapeHeight = this.shapeHeight * OverworldController.PIXELS_TO_METERS;
-                
+
                 if (type == null) { // rect
                     // rectangle origin in Tiled is on top left,
                     // so need negative height
