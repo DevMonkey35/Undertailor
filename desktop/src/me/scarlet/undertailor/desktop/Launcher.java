@@ -89,7 +89,7 @@ public class Launcher extends Scene {
         stage.setWidth(512);
         stage.setHeight(320);
         stage.setResizable(false);
-        stage.setTitle("Undertailor Launcher");
+        stage.setTitle("Undertailor Launcher v" + Undertailor.version);
         JFXUtil.loadIcon(stage, "defaultIcon.png");
         JFXUtil.loadIcon(stage, "defaultIcon_small.png");
         
