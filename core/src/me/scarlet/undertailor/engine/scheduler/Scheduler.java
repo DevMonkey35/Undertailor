@@ -154,6 +154,9 @@ public class Scheduler implements Processable, Subsystem, Destructible {
      * otherwise executed consecutively in an undefined
      * order.</p>
      * 
+     * <p>This method will quietly ignore operations where
+     * <code>task</code> is null.</p>
+     * 
      * @param task the task to register
      * @param active whether or not to register the task as
      *        an active task
@@ -161,6 +164,10 @@ public class Scheduler implements Processable, Subsystem, Destructible {
      * @return the id assigned to the task
      */
     public long registerTask(Task task, boolean active) {
+        if(task == null) {
+            return -1;
+        }
+
         long id = this.getNextId();
         String taskName = (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
         if (active) {
