@@ -32,6 +32,9 @@ package me.scarlet.undertailor.resource;
 
 import com.badlogic.gdx.utils.Disposable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Wrapping class providing the functional methods for usage
  * of managed resources created by associated
@@ -52,6 +55,14 @@ import com.badlogic.gdx.utils.Disposable;
 public abstract class Resource<T extends Disposable> {
 
     T disposable;
+    boolean loaded;
+    List<Runnable> actionQueue;
+
+    protected Resource() {
+        this.loaded = false;
+        this.disposable = null;
+        this.actionQueue = new ArrayList<>();
+    }
 
     /**
      * Returns the current instance of the
@@ -68,5 +79,58 @@ public abstract class Resource<T extends Disposable> {
      */
     protected T getReference() {
         return this.disposable;
+    }
+
+    /**
+     * Queues an action to be done once this
+     * {@link Resource} has been fully loaded.
+     * 
+     * <p>Care should be exercised when allowing a Resource
+     * to be accessed during loading. It is encouraged to
+     * follow the provided guidelines.</p>
+     * 
+     * <pre>
+     * * Any task requiring the underlying {@link Disposable}
+     *   should ALWAYS be queued.
+     * * Keep track of what is queuing actions. A queued action
+     *   should not be scheduling another queued action.
+     * * Methods whose return type is not void should strictly
+     *   return null while the underlying Dispoasble has not
+     *   been loaded.
+     * </pre>
+     * 
+     * @param action the Runnable to execute on completion
+     */
+    protected void queueAction(Runnable action) {
+        if(this.actionQueue != null) {
+            this.actionQueue.add(action);
+        } else {
+            action.run();
+        }
+    }
+
+    /**
+     * Returns whether or not this {@link Resource}'s
+     * underlying {@link Disposable} has been loaded.
+     * 
+     * @return if this Resource has been fully loaded
+     */
+    public boolean isLoaded() {
+        return this.loaded;
+    }
+
+    /**
+     * Internal method.
+     * 
+     * <p>Called by the owning {@link ResourceFactory} to
+     * notify that this {@link Resource}'s
+     * {@link Disposable} has successfully been loaded, and
+     * can therefore execute tasks that require it.</p>
+     */
+    void load(T disposable) {
+        this.loaded = true;
+        this.disposable = disposable;
+        this.actionQueue.forEach(Runnable::run);
+        this.actionQueue = null;
     }
 }
