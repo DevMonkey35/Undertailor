@@ -30,7 +30,13 @@
 
 package me.scarlet.undertailor.engine.scheduler;
 
+import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaFunction;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+
 import me.scarlet.undertailor.engine.Processable;
+import me.scarlet.undertailor.util.LuaUtil;
 
 /**
  * Functional class used to perform a task to run across
@@ -39,11 +45,78 @@ import me.scarlet.undertailor.engine.Processable;
 public interface Task extends Processable {
 
     /**
+     * Generates a {@link Task} based on the contents of the
+     * provided Lua value.
+     * 
+     * <p>The value may be one of two types, either a table
+     * (full implementation) or a function (process function
+     * only).</p>
+     * 
+     * <p>If the value is a function, the task returned
+     * contains nothing but the Lua script assigned to run
+     * when this task is executed.</p>
+     * 
+     * <p>If the value is a table, then the task returned is
+     * a full implementation based on the properties of the
+     * table. The following keys are read from the
+     * table.</p>
+     * 
+     * <pre>
+     * "name": {@link #getName()},
+     * "process": {@link #process(Object...)},
+     * "onFinish": {@link #onFinish(boolean)}
+     * </pre>
+     * 
+     * <p>The two functions of the tasks gain parameters
+     * based on whether or not the provided value was a
+     * function or a table. If a function, the functions
+     * gain no extra values, otherwise the first argument
+     * for both functions is always the table implementing
+     * the task.</p>
+     * 
+     * @param value the value containing the task properties
+     * 
+     * @return a Lua-made Task
+     */
+    public static Task asLuaTask(LuaValue value) {
+        if(value.isfunction()) {
+            return (params) -> {
+                return value.invoke(LuaUtil.varargsOf(params)).toboolean(1);
+            };
+        } else if(value.istable()) {
+            LuaTable table = value.checktable();
+            return new Task() {
+                @Override
+                public String getName() {
+                    return table.get("name").optjstring(null);
+                }
+
+                @Override
+                public boolean process(Object... params) {
+                    return table.get("process").checkfunction().invoke(table, LuaUtil.varargsOf(params)).toboolean(1);
+                }
+
+                @Override
+                public void onFinish(boolean forced) {
+                    LuaFunction func = table.get("onFinish").optfunction(null);
+                    if(func != null) {
+                        func.invoke(table, LuaValue.valueOf(forced));
+                    }
+                }
+            };
+        } else {
+            throw new LuaError("bad argument: expected function or table, got " + value.typename());
+        }
+    }
+
+    /**
      * Returns the name of this {@link Task}.
      * 
      * @return the name of this Task
      */
-    default String getName() { return null; };
+    default String getName() {
+        return null;
+    };
 
     /**
      * Called when this {@link Task} finishes (when
