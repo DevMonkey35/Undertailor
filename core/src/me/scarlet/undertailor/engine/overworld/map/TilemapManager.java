@@ -85,19 +85,21 @@ public class TilemapManager {
             file -> file.getName().endsWith(".tmx"), false);
 
         files.keySet().forEach(key -> {
-            File targetFile = files.get(key);
-            try {
-                this.tilemaps.put(key, new TilemapFactory(targetFile, tilesets));
-                log.info("Loaded tilemap " + targetFile.getName() + " under key " + key);
-            } catch (Exception e) {
-                String message =
-                    "Could not load tilemap at tilemap file " + targetFile.getAbsolutePath();
-
-                if (e instanceof SAXException) {
-                    message += " (malformed tmx)";
+            if(!key.startsWith("images.") && !key.startsWith("tilesets.")) {
+                File targetFile = files.get(key);
+                try {
+                    this.tilemaps.put(key, new TilemapFactory(targetFile, tilesets));
+                    log.info("Loaded tilemap " + targetFile.getName() + " under key " + key);
+                } catch (Exception e) {
+                    String message =
+                        "Could not load tilemap at tilemap file " + targetFile.getAbsolutePath();
+    
+                    if (e instanceof SAXException) {
+                        message += " (malformed tmx)";
+                    }
+    
+                    log.error(message, e);
                 }
-
-                log.error(message, e);
             }
         });
 

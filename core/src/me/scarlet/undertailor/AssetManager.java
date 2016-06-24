@@ -52,7 +52,7 @@ public class AssetManager {
     public static final String DIR_FONTS = "fonts";
     public static final String DIR_SCRIPTS = "scripts";
     public static final String DIR_TILESETS = "maps/tilesets";
-    public static final String DIR_TILEMAPS = "maps/rooms";
+    public static final String DIR_TILEMAPS = "maps";
 
     private FontManager font;
     private AudioManager audio;
