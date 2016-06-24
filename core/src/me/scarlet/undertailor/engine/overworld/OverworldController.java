@@ -217,19 +217,31 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
      * @param transitions whether or not to play transitions
      */
     public void setRoom(WorldRoom room, boolean transitions) {
-        Task roomTask = (params) -> {
-            if (this.room != null) {
-                this.room.release(this);
-                this.room = null;
-            }
+        Task roomTask = new Task() {
 
-            if (room.claim(this)) {
-                this.room = room;
-            }
+            boolean set = false;
 
-            // update the camera since the room has changed
-            this.camera.fixPosition();
-            return false;
+            public boolean process(Object... params) {
+                if (!set) {
+                    if (room != null) {
+                        room.release(OverworldController.this);
+                        OverworldController.this.room = null;
+                    }
+
+                    room.claim(OverworldController.this);
+
+                    set = true;
+                }
+
+                if (room.poke()) {
+                    // update the camera since the room has changed
+                    OverworldController.this.room = room;
+                    camera.fixPosition();
+                    return false;
+                }
+
+                return true;
+            }
         };
 
         Scheduler sched = this.environment.getScheduler();

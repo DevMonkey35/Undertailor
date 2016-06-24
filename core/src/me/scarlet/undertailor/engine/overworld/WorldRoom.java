@@ -41,6 +41,7 @@ import me.scarlet.undertailor.engine.EventListener;
 import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.Modular;
 import me.scarlet.undertailor.engine.Positionable;
+import me.scarlet.undertailor.engine.PotentialDelay;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.overworld.map.TileLayer;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
@@ -57,8 +58,8 @@ import java.util.TreeSet;
 /**
  * A container for entities within an Overworld.
  */
-public abstract class WorldRoom
-    implements Renderable, Processable, Destructible, EventListener, Modular<OverworldController> {
+public abstract class WorldRoom implements Renderable, Processable, Destructible, EventListener,
+    Modular<OverworldController>, PotentialDelay {
 
     static final Set<Layerable> RENDER_ORDER;
 
@@ -89,6 +90,7 @@ public abstract class WorldRoom
     }
 
     protected Tilemap tilemap;
+    private boolean prepared;
     private Set<WorldObject> obj;
     private Set<WorldObject> bodyQueue;
     private OverworldController controller;
@@ -96,6 +98,7 @@ public abstract class WorldRoom
 
     public WorldRoom(Tilemap map) {
         this.tilemap = map;
+        this.prepared = false;
         this.obj = new HashSet<>();
         this.bodyQueue = new HashSet<>();
         this.collisionLayers = new HashMap<>();
@@ -128,10 +131,10 @@ public abstract class WorldRoom
     public final void destroy() {
         this.tilemap = null;
         Iterator<WorldObject> iterator = this.obj.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             WorldObject next = iterator.next();
             iterator.remove();
-            if(next.release(this) && !this.controller.isCharacter(next)) {
+            if (next.release(this) && !this.controller.isCharacter(next)) {
                 next.destroy();
             }
         }
@@ -147,9 +150,6 @@ public abstract class WorldRoom
     public final boolean claim(OverworldController controller) {
         if (this.controller == null) {
             this.controller = controller;
-            this.bodyQueue
-                .forEach(obj -> obj.createBody(this.controller.getCollisionHandler().getWorld()));
-            this.prepareMap(this.tilemap);
             return true;
         }
 
@@ -165,6 +165,22 @@ public abstract class WorldRoom
         }
 
         return false;
+    }
+
+    @Override
+    public boolean poke() {
+        if (!prepared) {
+            if (this.tilemap.isLoaded()) {
+                this.bodyQueue.forEach(
+                    obj -> obj.createBody(this.controller.getCollisionHandler().getWorld()));
+                this.prepareMap(this.tilemap);
+                this.prepared = true;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     // ---------------- object methods ----------------
@@ -238,7 +254,7 @@ public abstract class WorldRoom
             }
         }
 
-        if(removed != null) {
+        if (removed != null) {
             this.removeObject(removed);
         }
     }
@@ -318,7 +334,7 @@ public abstract class WorldRoom
     private Set<Layerable> getInRenderOrder() {
         RENDER_ORDER.clear();
 
-        if(tilemap != null) {
+        if (tilemap != null) {
             tilemap.getTileLayers().forEach(RENDER_ORDER::add);
         }
 
