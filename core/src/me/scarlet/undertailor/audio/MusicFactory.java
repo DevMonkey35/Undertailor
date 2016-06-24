@@ -39,6 +39,7 @@ import me.scarlet.undertailor.resource.ResourceFactory;
 import me.scarlet.undertailor.util.BoundedFloat;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -54,7 +55,8 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
      * long tracks of audio (
      * {@link com.badlogic.gdx.audio.Music}).
      */
-    public static class Music extends Resource<com.badlogic.gdx.audio.Music> implements Audio, AudioData, AudioPlayable<Void> {
+    public static class Music extends Resource<com.badlogic.gdx.audio.Music>
+        implements Audio, AudioData, AudioPlayable<Void> {
 
         private String audioName;
         private AudioManager manager;
@@ -152,7 +154,7 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
 
         @Override
         public void stop() {
-            if(this.isPlaying()) {
+            if (this.isPlaying()) {
                 this.getReference().stop();
             }
         }
@@ -243,21 +245,23 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
     private BoundedFloat volume, pitch, pan;
     private float loopPoint;
 
-    public MusicFactory(String audioName, AudioManager manager, File musicFile) throws UnsupportedAudioFileException {
+    public MusicFactory(String audioName, AudioManager manager, File musicFile)
+        throws UnsupportedAudioFileException {
         this.musicFile = musicFile;
         this.audioName = audioName;
         this.manager = manager;
-        
+
         try {
-            this.newDisposable().dispose(); // try loading it once and then dispose of it
-        } catch(GdxRuntimeException e) {
+            this.loadDisposable().get().dispose(); // try loading it once and then dispose of it
+        } catch (GdxRuntimeException e) {
             UnsupportedAudioFileException thrown =
                 new UnsupportedAudioFileException("Could not load music file at "
                     + this.musicFile.getAbsolutePath() + " (unsupported type, ogg/mp3/wav only)");
             thrown.initCause(e);
             throw thrown;
+        } catch (Exception e) { // from compfuture.get(); can't happen
         }
-        
+
         this.volume = new BoundedFloat(0.0F, 1.0F, 1.0F);
         this.pitch = new BoundedFloat(0.5F, 2.0F, 1.0F);
         this.pan = new BoundedFloat(-1.0F, 1.0F, 0.0F);
@@ -272,8 +276,9 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
     }
 
     @Override
-    protected com.badlogic.gdx.audio.Music newDisposable() {
-        return Gdx.audio.newMusic(Gdx.files.absolute(this.musicFile.getAbsolutePath()));
+    protected CompletableFuture<com.badlogic.gdx.audio.Music> loadDisposable() {
+        return CompletableFuture.completedFuture(
+            Gdx.audio.newMusic(Gdx.files.absolute(this.musicFile.getAbsolutePath())));
     }
 
     @Override
@@ -291,7 +296,7 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
      * spawned by this {@link MusicFactory}.
      */
     public void stop() {
-        if(this.getDisposable() != null) {
+        if (this.getDisposable() != null) {
             this.getDisposable().stop();
         }
     }

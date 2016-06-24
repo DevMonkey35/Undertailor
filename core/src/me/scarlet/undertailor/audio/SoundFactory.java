@@ -45,6 +45,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -156,7 +157,8 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
      * short tracks of audio (
      * {@link com.badlogic.gdx.audio.Sound}).
      */
-    public static class Sound extends Resource<com.badlogic.gdx.audio.Sound> implements Audio, AudioPlayable<SoundData> {
+    public static class Sound extends Resource<com.badlogic.gdx.audio.Sound>
+        implements Audio, AudioPlayable<SoundData> {
 
         private String audioName;
         private AudioManager manager;
@@ -240,21 +242,23 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
         this.manager = manager;
 
         try {
-            this.newDisposable().dispose();
+            this.loadDisposable().get().dispose();
         } catch (GdxRuntimeException e) {
             UnsupportedAudioFileException thrown =
                 new UnsupportedAudioFileException("Could not load sound file at "
                     + this.soundFile.getAbsolutePath() + " (unsupported type, ogg/mp3/wav only)");
             thrown.initCause(e);
             throw thrown;
+        } catch (Exception e) { // from compfuture.get(); can't happen
         }
     }
 
     // ---------------- abstract method implementation ----------------
 
     @Override
-    protected com.badlogic.gdx.audio.Sound newDisposable() {
-        return Gdx.audio.newSound(Gdx.files.absolute(this.soundFile.getAbsolutePath()));
+    protected CompletableFuture<com.badlogic.gdx.audio.Sound> loadDisposable() {
+        return CompletableFuture.completedFuture(
+            Gdx.audio.newSound(Gdx.files.absolute(this.soundFile.getAbsolutePath())));
     }
 
     @Override

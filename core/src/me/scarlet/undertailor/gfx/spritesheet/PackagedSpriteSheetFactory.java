@@ -58,6 +58,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipFile;
 
 /**
@@ -171,7 +172,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
     // ---------------- abstract method implementation ----------------
 
     @Override
-    protected Texture newDisposable() {
+    protected CompletableFuture<Texture> loadDisposable() {
         InputStream textureStream = null;
         try { // load the spritesheet here
             textureStream = sourceFile.getInputStream(sourceFile.getEntry(ENTRY_SPRITESHEET));
@@ -181,7 +182,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
 
             this.loadSheet(texture);
 
-            return texture;
+            return CompletableFuture.completedFuture(texture);
         } catch (Exception e) {
             log.error("Failed to load packaged spritesheet", e);
         } finally {
