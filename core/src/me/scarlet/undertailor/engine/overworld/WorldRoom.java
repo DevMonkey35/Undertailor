@@ -135,6 +135,12 @@ public abstract class WorldRoom
                 next.destroy();
             }
         }
+
+        this.collisionLayers.values().forEach(collisionSet -> {
+            collisionSet.forEach(body -> {
+                body.getWorld().destroyBody(body);
+            });
+        });
     }
 
     @Override
