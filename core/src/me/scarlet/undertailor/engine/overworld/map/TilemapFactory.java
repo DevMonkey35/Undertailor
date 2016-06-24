@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * {@link ResourceFactory} implementation for generating
@@ -64,7 +65,6 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
      */
     public static final String OBJ_DEF_LAYER = "#def";
 
-    static TilemapReader READER;
     static final Logger log = LoggerFactory.getLogger(TilemapFactory.class);
 
     /**
@@ -84,6 +84,21 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
             this.objects = new HashMap<>();
             this.layers = new ArrayList<>();
             this.tilesets = new TreeMap<>(Integer::compare);
+        }
+
+        @Override
+        public boolean isLoaded() {
+            if (super.isLoaded()) {
+                for (Tileset tileset : tilesets.values()) {
+                    if (!tileset.isLoaded()) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         /**
@@ -144,6 +159,10 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * @return the TileLayers held by this Tilemap
          */
         public List<TileLayer> getTileLayers() {
+            if (!this.isLoaded()) {
+                return null;
+            }
+
             return this.layers;
         }
 
@@ -157,6 +176,10 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          *         index, or null if no layer is found.
          */
         public TileLayer getLayerAt(short layer) {
+            if (!this.isLoaded()) {
+                return null;
+            }
+
             for (TileLayer tileLayer : this.layers) {
                 if (tileLayer.getLayer() == layer) {
                     return tileLayer;
@@ -175,6 +198,10 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          *         ObjectLayers
          */
         public Collection<ObjectLayer> getObjectLayers() {
+            if (!this.isLoaded()) {
+                return null;
+            }
+
             return this.objects.values();
         }
 
@@ -187,6 +214,10 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * @return the ObjectLayer of the given name
          */
         public ObjectLayer getObjectLayer(String name) {
+            if (!this.isLoaded()) {
+                return null;
+            }
+
             return this.objects.get(name);
         }
 
@@ -201,6 +232,10 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          *         found
          */
         public ShapeData getDefinedShape(String shapeName) {
+            if (!this.isLoaded()) {
+                return null;
+            }
+
             if (this.getObjectLayer(OBJ_DEF_LAYER) != null) {
                 return this.getObjectLayer(OBJ_DEF_LAYER).getShape(shapeName);
             }
@@ -220,6 +255,10 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          *         if not found
          */
         public Vector2 getDefinedPoint(String pointName) {
+            if (!this.isLoaded()) {
+                return null;
+            }
+
             if (this.getObjectLayer(OBJ_DEF_LAYER) != null) {
                 return this.getObjectLayer(OBJ_DEF_LAYER).getPoint(pointName);
             }
@@ -238,6 +277,10 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * @return the highest layer index in this Tilemap
          */
         public short getHighestLayerIndex() {
+            if (!this.isLoaded()) {
+                return -1;
+            }
+
             return this.layers.get(this.layers.size() - 1).getLayer();
         }
 
@@ -251,39 +294,43 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          *         found
          */
         public Renderable getTile(int gid) {
+            if (!this.isLoaded()) {
+                return null;
+            }
+
             Entry<Integer, Tileset> entry = tilesets.lowerEntry(gid + 1);
             return entry.getValue().getTile(gid - entry.getKey());
         }
     }
 
     private File tmxFile;
+    private TilemapReader reader;
 
     public TilemapFactory(File tmxFile, TilesetManager tilesets) {
-        if (TilemapFactory.READER == null) {
-            TilemapFactory.READER = new TilemapReader(tilesets);
-        }
-
+        this.reader = new TilemapReader(tilesets);
         this.tmxFile = tmxFile;
     }
 
     @Override
-    protected Disposable newDisposable() {
-        return null;
+    protected CompletableFuture<Disposable> loadDisposable() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                reader.read(tmxFile, this.getResourceReference());
+            } catch (Exception e) {
+                String message = "Failed to load tilemap";
+                if (e instanceof SAXException)
+                    message += " (malformed XML)";
+
+                log.error(message, e);
+            }
+
+            return null;
+        });
     }
 
     @Override
     protected Tilemap newResource() {
-        try {
-            return TilemapFactory.READER.read(tmxFile);
-        } catch (Exception e) {
-            String message = "Failed to load tilemap";
-            if (e instanceof SAXException)
-                message += " (malformed XML)";
-
-            log.error(message, e);
-        }
-
-        return null;
+        return new Tilemap();
     }
 
     @Override

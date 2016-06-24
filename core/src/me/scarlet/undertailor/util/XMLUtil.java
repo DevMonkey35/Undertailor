@@ -39,26 +39,22 @@ import javax.xml.parsers.SAXParserFactory;
 public class XMLUtil {
 
     static final SAXParserFactory SAX_FACTORY;
-    static final SAXParser SAX_PARSER;
 
     static {
         SAX_FACTORY = SAXParserFactory.newInstance();
-
-        SAXParser parser = null;
-        try {
-            parser = SAX_FACTORY.newSAXParser();
-        } catch (Exception ignore) {
-        } // shouldn't happen
-
-        SAX_PARSER = parser;
     }
 
     /**
-     * Returns the system-wide {@link SAXParser}.
+     * Generates and returns a new {@link SAXParser}.
      * 
      * @return a SAXParser
      */
-    public static SAXParser getParser() {
-        return XMLUtil.SAX_PARSER;
+    public static SAXParser generateParser() {
+        try {
+            return XMLUtil.SAX_FACTORY.newSAXParser();
+        } catch (Exception shouldntHappen) {
+        }
+
+        return null;
     }
 }

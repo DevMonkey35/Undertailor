@@ -35,7 +35,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
 import me.scarlet.undertailor.engine.overworld.map.TilesetReader.TilesetMeta;
@@ -50,14 +49,14 @@ import me.scarlet.undertailor.gfx.spritesheet.Sprite.SpriteMeta;
 import me.scarlet.undertailor.resource.Resource;
 import me.scarlet.undertailor.resource.ResourceFactory;
 import me.scarlet.undertailor.util.Tuple;
+import me.scarlet.undertailor.util.Wrapper;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * {@link ResourceFactory} implementation for generating
@@ -101,6 +100,10 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
          * @return the {@link Renderable} for the tile
          */
         public Renderable getTile(int index) {
+            if (!this.isLoaded()) {
+                return null;
+            }
+
             if (!this.tiles.containsKey(index)) {
                 Renderable renderable = factory.animatedTiles.get(index);
                 if (renderable == null) {
@@ -130,47 +133,72 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
 
     // ---------------- object ----------------
 
+    private File tsxFile;
     private TilesetMeta meta;
     private File textureFile;
+    private TilesetReader reader;
     private MultiRenderer renderer;
 
     private List<Sprite> tiles;
     private Map<Integer, Animation> animatedTiles;
 
-    public TilesetFactory(MultiRenderer renderer, File textureFile)
-        throws SAXException, IOException {
+    public TilesetFactory(MultiRenderer renderer, File textureFile) {
 
         this.tiles = new ArrayList<>();
+        this.reader = new TilesetReader();
         this.animatedTiles = new HashMap<>();
 
         this.textureFile = textureFile;
         this.renderer = renderer;
 
-        File tsxFile = new File(textureFile.getParentFile(),
+        this.tsxFile = new File(textureFile.getParentFile(),
             textureFile.getName().substring(0, textureFile.getName().length() - 4) + ".tsx");
-
-        if (tsxFile.exists()) {
-            try {
-                this.meta = TilesetFactory.READER.read(tsxFile);
-            } catch (FileNotFoundException ignored) {
-            } // can't happen
-        }
     }
 
     // ---------------- abstract method implementation ----------------
 
     @Override
-    protected Texture newDisposable() {
-        Texture texture = new Texture(Gdx.files.absolute(this.textureFile.getAbsolutePath()));
+    protected CompletableFuture<Texture> loadDisposable() {
+        Wrapper<Texture> texture = new Wrapper<>();
+        Gdx.app.postRunnable(() -> {
+            synchronized (texture) {
+                texture.set(new Texture(Gdx.files.absolute(this.textureFile.getAbsolutePath())));
+                texture.notifyAll();
+            }
+        });
 
-        try {
-            this.loadTexture(texture);
-        } catch (Exception e) {
-            log.error("Failed to load tileset texture", e);
-            return null;
-        }
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                if (tsxFile.exists()) {
+                    this.meta = reader.read(tsxFile);
+                }
 
-        return texture;
+                if (texture.get() == null) {
+                    synchronized (texture) {
+                        while (texture.get() == null) {
+                            try {
+                                texture.wait();
+                            } catch (InterruptedException ignored) {
+                            }
+                        }
+                    }
+                }
+
+                this.loadTexture(texture.get());
+
+                return texture.get();
+            } catch (Exception e) {
+                RuntimeException thrown = new RuntimeException();
+                thrown.initCause(e);
+                throw thrown;
+            }
+        });
+    }
+
+    @Override
+    protected void handleLoadError(Throwable err) {
+        log.error("Failed to load tileset at tileset file " + this.textureFile.getAbsolutePath(),
+            err);
     }
 
     @Override

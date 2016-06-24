@@ -49,6 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.SAXParser;
+
 /**
  * {@link DefaultHandler} implementation for reading Tiled
  * .tsx files.
@@ -77,6 +79,7 @@ public class TilesetReader extends DefaultHandler {
         }
     }
 
+    private SAXParser parser;
     private TilesetMeta meta;
 
     // processing vars;
@@ -84,7 +87,8 @@ public class TilesetReader extends DefaultHandler {
     private List<String> tree;
 
     public TilesetReader() {
-        tree = new ArrayList<>();
+        this.tree = new ArrayList<>();
+        this.parser = XMLUtil.generateParser();
     }
 
     // ---------------- abstract method implementation ----------------
@@ -145,15 +149,14 @@ public class TilesetReader extends DefaultHandler {
      * @throws IOException if a miscellaneous I/O error
      *         occured
      */
-    public TilesetMeta read(File tsxFile)
-        throws FileNotFoundException, SAXException, IOException {
+    public TilesetMeta read(File tsxFile) throws FileNotFoundException, SAXException, IOException {
         FileInputStream stream = null;
 
         try {
             stream = new FileInputStream(tsxFile);
             InputStreamReader reader = new InputStreamReader(stream);
             InputSource source = new InputSource(reader);
-            XMLUtil.getParser().parse(source, this);
+            parser.parse(source, this);
         } finally {
             if (stream != null)
                 stream.close();

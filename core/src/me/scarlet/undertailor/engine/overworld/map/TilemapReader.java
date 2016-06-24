@@ -50,6 +50,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.SAXParser;
+
 /**
  * {@link DefaultHandler} implementation for reading Tiled
  * .tmx files.
@@ -65,6 +67,7 @@ public class TilemapReader extends DefaultHandler {
 
     private Tilemap tilemap;
     private File currentFile;
+    private SAXParser parser;
     private TileLayer currentTileLayer;
     private ObjectLayer currentObjectLayer;
 
@@ -78,14 +81,13 @@ public class TilemapReader extends DefaultHandler {
         this.tilemap = null;
         this.currentTileLayer = null;
         this.tileData = null;
+        this.parser = XMLUtil.generateParser();
     }
 
     // ---------------- abstract method implementation ----------------
 
     @Override
     public void startDocument() throws SAXException {
-        this.tilemap = new Tilemap();
-
         this.tree.clear();
     }
 
@@ -188,7 +190,7 @@ public class TilemapReader extends DefaultHandler {
                 String[] tileSplit = this.tileData.split(",");
                 int[] tiles = new int[tileSplit.length];
 
-                for(int i = 0; i < tiles.length; i++) {
+                for (int i = 0; i < tiles.length; i++) {
                     tiles[i] = Integer.parseInt(tileSplit[i]);
                 }
 
@@ -201,7 +203,7 @@ public class TilemapReader extends DefaultHandler {
         }
 
         if (this.checkElement("object", "polygon", qName)) {
-            if(this.currentShape.shapeVertices.length > 16) {
+            if (this.currentShape.shapeVertices.length > 16) {
                 throw new UnsupportedOperationException(
                     "libGDX's Box2D will not permit polygons with more than 8 vertices");
             }
@@ -255,8 +257,9 @@ public class TilemapReader extends DefaultHandler {
      * 
      * @param tmxFile the File pointing to the target .tmx
      *        file
+     * @param tilemap the Tilemap to load the map data into
      * 
-     * @return the loaded Tilemap
+     * @return the provided Tilemap, now loaded
      * 
      * @throws FileNotFoundException if the .tmx file was
      *         not found
@@ -264,8 +267,10 @@ public class TilemapReader extends DefaultHandler {
      * @throws IOException if a miscellaneous I/O error
      *         occured
      */
-    public Tilemap read(File tmxFile) throws FileNotFoundException, SAXException, IOException {
+    public Tilemap read(File tmxFile, Tilemap tilemap)
+        throws FileNotFoundException, SAXException, IOException {
         FileInputStream stream = null;
+        this.tilemap = tilemap;
 
         try {
             stream = new FileInputStream(tmxFile);
@@ -273,7 +278,7 @@ public class TilemapReader extends DefaultHandler {
             InputSource source = new InputSource(reader);
 
             this.currentFile = tmxFile;
-            XMLUtil.getParser().parse(source, this);
+            parser.parse(source, this);
         } finally {
             if (stream != null)
                 stream.close();
