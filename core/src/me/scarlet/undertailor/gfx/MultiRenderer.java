@@ -141,6 +141,9 @@ public class MultiRenderer {
         if (renderer.isDrawing()) {
             renderer.end();
         }
+
+        batch.setColor(Color.WHITE);
+        renderer.setColor(Color.WHITE);
     }
 
     // ---------------- spritebatch methods ----------------
