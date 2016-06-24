@@ -38,9 +38,12 @@ import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.Subsystem;
+import me.scarlet.undertailor.engine.scheduler.Scheduler;
+import me.scarlet.undertailor.engine.scheduler.Task;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
+import me.scarlet.undertailor.util.Pair;
 
 /**
  * Subsystem within an {@link Environment} running the
@@ -67,13 +70,17 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
 
     // overworld-related
     private CollisionHandler collision;
+    private boolean playTransitions;
+    private Pair<Task> transitions;
     private WorldObject character;
     private WorldRoom room;
 
     public OverworldController(MultiRenderer renderer, Environment environment, Viewport viewport) {
         this.collision = new CollisionHandler(renderer, true);
         this.camera = new OverworldCamera(this);
+        this.transitions = new Pair<>();
         this.environment = environment;
+        this.playTransitions = true;
         this.renderer = renderer;
         this.character = null;
 
@@ -187,21 +194,93 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
      * Sets the provided {@link WorldRoom} as this
      * {@link OverworldController}'s room.
      * 
+     * <p>Whether or not to play transitions is decided by
+     * {@link #isPlayingTransitions()}.</p>
+     * 
      * @param room the new room for the Overworld to use
      */
     public void setRoom(WorldRoom room) {
-        if (this.room != null) {
-            this.room.release(this);
-            this.room.destroy();
-            this.room = null;
-        }
+        this.setRoom(room, this.playTransitions);
+    }
 
-        if (room.claim(this)) {
-            this.room = room;
-        }
 
-        // update the camera since the room has changed
-        this.camera.fixPosition();
+    /**
+     * Sets the provided {@link WorldRoom} as this
+     * {@link OverworldController}'s room.
+     * 
+     * <p>It is recommended to always play at least an exit
+     * transition to hide the previous room from view,
+     * otherwise the game may look as if suspended in limbo
+     * during room loading.</p>
+     * 
+     * @param room the new room for the Overworld to use
+     * @param transitions whether or not to play transitions
+     */
+    public void setRoom(WorldRoom room, boolean transitions) {
+        Task roomTask = (params) -> {
+            if (this.room != null) {
+                this.room.release(this);
+                this.room = null;
+            }
+
+            if (room.claim(this)) {
+                this.room = room;
+            }
+
+            // update the camera since the room has changed
+            this.camera.fixPosition();
+            return false;
+        };
+
+        Scheduler sched = this.environment.getScheduler();
+        if (transitions) {
+            sched.registerTask(this.transitions.getB(), true); // exit
+            sched.registerTask(roomTask, true);
+            sched.registerTask(this.transitions.getA(), true); // entry
+        } else {
+            sched.registerTask(roomTask, true);
+        }
+    }
+
+    /**
+     * Returns whether or not this
+     * {@link OverworldController} will play room
+     * transitions, by default.
+     * 
+     * @return if this Overworld will play room transitions
+     *         by default
+     */
+    public boolean isPlayingTransitions() {
+        return this.playTransitions;
+    }
+
+    /**
+     * Sets whether or not this {@link OverworldController}
+     * will play room transitions, by default.
+     * 
+     * @param playingTransitions if this Overworld should
+     *        play room transitions by default
+     */
+    public void setPlayingTransitions(boolean playingTransitions) {
+        this.playTransitions = playingTransitions;
+    }
+
+    /**
+     * Sets the {@link Task} played upon entering any room.
+     * 
+     * @param transitionTask the entry transition
+     */
+    public void setEntryTransition(Task transitionTask) {
+        this.transitions.setA(transitionTask);
+    }
+
+    /**
+     * Sets the {@link Task} played upon exiting any room.
+     * 
+     * @param transitionTask the exit transition
+     */
+    public void setExitTransition(Task transitionTask) {
+        this.transitions.setB(transitionTask);
     }
 
     // ---------------- internal methods ----------------
