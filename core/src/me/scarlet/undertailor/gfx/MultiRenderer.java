@@ -380,8 +380,7 @@ public class MultiRenderer {
         }
 
         if (!renderer.isDrawing()) {
-            //Gdx.gl.glEnable(GL20.GL_BLEND);
-            //Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            Gdx.gl.glEnable(GL20.GL_BLEND);
             renderer.setAutoShapeType(true);
             renderer.begin(ShapeType.Filled);
         }
