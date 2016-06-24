@@ -34,6 +34,7 @@ import static me.scarlet.undertailor.lua.Lua.checkType;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.NIL;
+import static org.luaj.vm2.LuaValue.valueOf;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ChainShape;
@@ -85,6 +86,17 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
             Renderable renderable =
                 (Renderable) checkType(vargs.arg(2), LuaRenderableMeta.class).getObject();
             obj(vargs).setActor(renderable);
+            return NIL;
+        }));
+
+        // worldObject:isVisible()
+        set("isVisible", asFunction(vargs -> {
+            return valueOf(obj(vargs).isVisible());
+        }));
+
+        // worldObject:setVisible(visible)
+        set("setVisible", asFunction(vargs -> {
+            obj(vargs).setVisible(vargs.checkboolean(2));
             return NIL;
         }));
 

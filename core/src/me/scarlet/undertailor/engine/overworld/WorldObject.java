@@ -62,6 +62,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     private long id;
     private WorldRoom room;
+    private boolean visible;
     private boolean destroyed;
 
     private Body body;
@@ -83,6 +84,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         this.proxyTransform = new Transform();
         this.boundingQueue = new HashSet<>();
         this.def = new BodyDef();
+        this.visible = true;
 
         this.def.active = true;
         this.def.awake = true;
@@ -166,7 +168,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     // Intended to draw at overworld scale.
     @Override
     public void draw(float x, float y, Transform transform) {
-        if (this.destroyed || this.actor == null) {
+        if (!this.visible || this.destroyed || this.actor == null) {
             return;
         }
 
@@ -416,6 +418,26 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         } else if (this.boundingQueue != null) {
             this.boundingQueue.add(shape);
         }
+    }
+
+    /**
+     * Returns whether or not this {@link WorldObject}'s
+     * actor will be rendered.
+     * 
+     * @return if this WorldObject is visible
+     */
+    public boolean isVisible() {
+        return this.visible;
+    }
+
+    /**
+     * Sets whether or not this {@link WorldObject}'s actor
+     * will be rendered.
+     * 
+     * @param visible if this WorldObject will be visible
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     // ---------------- internal ----------------
