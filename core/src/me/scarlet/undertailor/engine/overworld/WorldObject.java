@@ -120,8 +120,8 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     @Override
     public void setPosition(float x, float y) {
         if (this.body != null) {
-            this.body.getPosition().set(x * OverworldController.PIXELS_TO_METERS,
-                y * OverworldController.PIXELS_TO_METERS);
+            this.body.setTransform(x * OverworldController.PIXELS_TO_METERS,
+                y * OverworldController.PIXELS_TO_METERS, this.body.getAngle());
         }
 
         this.def.position.set(x, y);
@@ -234,12 +234,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     public final boolean release(WorldRoom room) {
         if (this.room == room) {
             this.room = null;
-            this.getPosition(); // update the definition position
-            if (this.body != null) {
-                this.body.getWorld().destroyBody(this.body);
-                this.body = null;
-            }
-
             return true;
         }
 
