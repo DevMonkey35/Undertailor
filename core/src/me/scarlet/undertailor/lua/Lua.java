@@ -270,9 +270,21 @@ public class Lua {
 
     /**
      * Logs a message as the Lua class.
+     * 
+     * @param message a log message
      */
     public static void log(String message) {
         log.info(message);
+    }
+
+    /**
+     * Logs an error as the Lua class.
+     * 
+     * @param message the message associated with the error
+     * @param err the thrown exception
+     */
+    public static void error(String message, Throwable err) {
+        log.error(message, err);
     }
 
     // ---------------- internal methods ----------------

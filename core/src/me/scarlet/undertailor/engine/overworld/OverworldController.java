@@ -83,6 +83,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
         this.playTransitions = true;
         this.renderer = renderer;
         this.character = null;
+        this.room = null;
 
         this.setViewport(viewport);
     }
@@ -200,7 +201,22 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
      * @param room the new room for the Overworld to use
      */
     public void setRoom(WorldRoom room) {
-        this.setRoom(room, this.playTransitions);
+        this.setRoom(room, null);
+    }
+
+    /**
+     * Sets the provided {@link WorldRoom} as this
+     * {@link OverworldController}'s room.
+     * 
+     * <p>Whether or not to play transitions is decided by
+     * {@link #isPlayingTransitions()}.</p>
+     * 
+     * @param room the new room for the Overworld to use
+     * @param targetEntrypoint the entrypoint to spawn the
+     *        character object at, or null to spawn at 0, 0
+     */
+    public void setRoom(WorldRoom room, String targetEntrypoint) {
+        this.setRoom(room, targetEntrypoint, this.playTransitions);
     }
 
 
@@ -214,29 +230,43 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
      * during room loading.</p>
      * 
      * @param room the new room for the Overworld to use
+     * @param targetEntrypoint the entrypoint to spawn the
+     *        character object at, or null to spawn at 0, 0
      * @param transitions whether or not to play transitions
      */
-    public void setRoom(WorldRoom room, boolean transitions) {
+    public void setRoom(WorldRoom room, String targetEntrypoint, boolean transitions) {
         Task roomTask = new Task() {
 
             boolean set = false;
 
             public boolean process(Object... params) {
                 if (!set) {
-                    if (room != null) {
-                        room.release(OverworldController.this);
+                    if (OverworldController.this.room != null) {
+                        OverworldController.this.room.release(OverworldController.this);
                         OverworldController.this.room = null;
                     }
 
                     room.claim(OverworldController.this);
-
                     set = true;
                 }
 
                 if (room.poke()) {
-                    // update the camera since the room has changed
                     OverworldController.this.room = room;
+                    // update the camera since the room has changed
                     camera.fixPosition();
+
+                    // did we have an entrypoint to go to?
+                    if (OverworldController.this.character != null) {
+                        if (targetEntrypoint != null) {
+                            Entrypoint target =
+                                OverworldController.this.room.getEntrypoint(targetEntrypoint);
+                            OverworldController.this.character.setPosition(target.getTargetSpawnpoint());
+                        }
+
+                        OverworldController.this.room
+                            .registerObject(OverworldController.this.character);
+                    }
+
                     return false;
                 }
 

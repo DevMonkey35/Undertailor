@@ -45,6 +45,7 @@ import me.scarlet.undertailor.engine.Positionable;
 import me.scarlet.undertailor.engine.PotentialDelay;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.overworld.map.TileLayer;
+import me.scarlet.undertailor.engine.overworld.map.TilemapFactory;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
@@ -96,18 +97,27 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
         });
     }
 
-    protected Tilemap tilemap;
+    // while delayed
     private boolean prepared;
-    private Set<WorldObject> obj;
     private Set<WorldObject> bodyQueue;
+    private Set<Entrypoint> entrypointQueue;
+
+    // primary
+    protected Tilemap tilemap;
+    private Set<WorldObject> obj;
     private OverworldController controller;
+    private Map<String, Entrypoint> entrypoints;
     private Map<String, Set<Body>> collisionLayers;
 
     public WorldRoom(Tilemap map) {
-        this.tilemap = map;
         this.prepared = false;
-        this.obj = new HashSet<>();
         this.bodyQueue = new HashSet<>();
+        this.entrypointQueue = new HashSet<>();
+
+        this.tilemap = map;
+        this.controller = null;
+        this.obj = new HashSet<>();
+        this.entrypoints = new HashMap<>();
         this.collisionLayers = new HashMap<>();
     }
 
@@ -141,10 +151,15 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
         while (iterator.hasNext()) {
             WorldObject next = iterator.next();
             iterator.remove();
-            if (next.release(this) && !this.controller.isCharacter(next)) {
+            next.release(this);
+            if (!this.controller.isCharacter(next)) {
                 next.destroy();
             }
         }
+
+        this.entrypoints.values().forEach(entrypoint -> {
+            entrypoint.release(this);
+        });
 
         this.collisionLayers.values().forEach(collisionSet -> {
             collisionSet.forEach(body -> {
@@ -165,13 +180,9 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
 
     @Override
     public final boolean release(OverworldController controller) {
-        if (this.controller == controller) {
-            this.destroy();
-            this.controller = null;
-            return true;
-        }
-
-        return false;
+        this.destroy();
+        this.controller = null;
+        return true;
     }
 
     @Override
@@ -180,7 +191,18 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
             if (this.tilemap.isLoaded()) {
                 this.bodyQueue.forEach(
                     obj -> obj.createBody(this.controller.getCollisionHandler().getWorld()));
+                this.entrypointQueue.forEach(entrypoint -> {
+                    if (entrypoint.claim(this)) {
+                        Entrypoint old = this.entrypoints.put(entrypoint.getName(), entrypoint);
+                        if (old != null) {
+                            old.release(this);
+                        }
+                    }
+                });
+
                 this.prepareMap(this.tilemap);
+                this.entrypointQueue = null;
+                this.bodyQueue = null;
                 this.prepared = true;
             }
 
@@ -203,6 +225,41 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     }
 
     /**
+     * Registers an entrypoint to be used by this
+     * {@link WorldRoom}.
+     * 
+     * <p>If the provided entrypoint's name conflicts with
+     * another of which is already registered, the old one
+     * is replaced with the one given.</p>
+     * 
+     * @param entrypoint a new Entrypoint
+     */
+    public void registerEntrypoint(Entrypoint entrypoint) {
+        if(this.entrypointQueue != null) {
+            this.entrypointQueue.add(entrypoint);
+        } else {
+            if (entrypoint.claim(this)) {
+                Entrypoint old = this.entrypoints.put(entrypoint.getName(), entrypoint);
+                if (old != null) {
+                    old.release(this);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns an entrypoint held by this {@link WorldRoom}.
+     * 
+     * @param entrypoint an Entrypoint name
+     * 
+     * @return the Entrypoint under the given name,
+     *         otherwise null
+     */
+    public Entrypoint getEntrypoint(String entrypoint) {
+        return this.entrypoints.get(entrypoint);
+    }
+
+    /**
      * Allows a {@link WorldObject} to request a
      * {@link Body} from this {@link WorldRoom}.
      * 
@@ -213,10 +270,10 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
             return;
         }
 
-        if (this.controller != null) {
-            obj.createBody(this.controller.getCollisionHandler().getWorld());
-        } else {
+        if (this.bodyQueue != null) {
             this.bodyQueue.add(obj);
+        } else {
+            obj.createBody(this.controller.getCollisionHandler().getWorld());
         }
     }
 
@@ -376,18 +433,22 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
         def.type = BodyType.StaticBody;
         def.active = true;
         map.getObjectLayers().forEach(layer -> {
-            Set<Body> layerBodies = new HashSet<>();
-            layer.getShapes().forEach(data -> {
-                def.position.set(data.getPosition());
-                def.position.x = def.position.x * OverworldController.PIXELS_TO_METERS;
-                def.position.y = (map.getOccupiedHeight() - def.position.y)
-                    * OverworldController.PIXELS_TO_METERS;
-                Shape shape = data.generateShape();
-                layerBodies.add(world.createBody(def).createFixture(shape, 0).getBody());
-                shape.dispose();
-            });
+            if (layer.getName().length() > 0
+                && layer.getName().charAt(0) == TilemapFactory.OBJ_DEF_LAYER_PREFIX) {
+                // def layer, ignore
+            } else {
+                Set<Body> layerBodies = new HashSet<>();
+                layer.getShapes().forEach(data -> {
+                    def.position.set(data.getPosition());
+                    def.position.x = def.position.x * OverworldController.PIXELS_TO_METERS;
+                    def.position.y = def.position.y * OverworldController.PIXELS_TO_METERS;
+                    Shape shape = data.generateShape();
+                    layerBodies.add(world.createBody(def).createFixture(shape, 0).getBody());
+                    shape.dispose();
+                });
 
-            this.collisionLayers.put(layer.getName(), layerBodies);
+                this.collisionLayers.put(layer.getName(), layerBodies);
+            }
         });
     }
 

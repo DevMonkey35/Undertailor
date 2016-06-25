@@ -43,7 +43,9 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
+import me.scarlet.undertailor.AssetManager;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.engine.overworld.Entrypoint;
 import me.scarlet.undertailor.engine.overworld.WorldObject;
 import me.scarlet.undertailor.engine.overworld.WorldRoom;
 import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
@@ -51,7 +53,11 @@ import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.impl.LuaWorldRoom;
 import me.scarlet.undertailor.util.LuaUtil;
+
+import java.io.File;
+import java.util.function.Supplier;
 
 /**
  * Metadata for {@link LuaObjectValue}s holding
@@ -73,6 +79,53 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
 
     public LuaWorldRoomMeta(Undertailor tailor) {
         this.metatable = new LuaTable();
+
+        // worldRoom:registerEntrypoint(name, defpoint[, defshape, target room file, target entrypoint])
+        // worldRoom:registerEntrypoint(name, spawnX, spawnY[, defshape, target room file, target entrypoint])
+        set("registerEntrypoint", asFunction(vargs -> {
+            String pointName = vargs.checkjstring(2);
+            String defPoint = null;
+            float spawnPointX = 0F;
+            float spawnPointY = 0F;
+            String defShape = null;
+            final String targetRoom;
+            Supplier<WorldRoom> targetRoomSup = null;
+            String targetPoint = null;
+            if (vargs.narg() == 5) { // named a def point
+                defPoint = vargs.checkjstring(3);
+                defShape = vargs.checkjstring(4);
+                targetRoom = vargs.checkjstring(5);
+                targetPoint = vargs.checkjstring(6);
+            } else { // named their own point
+                spawnPointX = vargs.checknumber(3).tofloat();
+                spawnPointY = vargs.checknumber(4).tofloat();
+                defShape = vargs.checkjstring(5);
+                targetRoom = vargs.checkjstring(6);
+                targetPoint = vargs.checkjstring(7);
+            }
+
+            targetRoomSup = () -> {
+                try {
+                    return new LuaWorldRoom(tailor.getAssetManager().getScriptManager(),
+                        new File(AssetManager.rootDirectory, targetRoom));
+                } catch (Exception e) {
+                    Lua.error("Failed to load WorldRoom", e);
+                }
+
+                return null;
+            };
+
+            Entrypoint point;
+            if (defPoint == null) {
+                point = new Entrypoint(pointName, spawnPointX, spawnPointY, defShape, targetRoomSup,
+                    targetPoint);
+            } else {
+                point = new Entrypoint(pointName, defPoint, defShape, targetRoomSup, targetPoint);
+            }
+
+            obj(vargs).registerEntrypoint(point);
+            return NIL;
+        }));
 
         // worldRoom:registerObject(worldobject)
         set("registerObject", asFunction(vargs -> {
@@ -150,7 +203,7 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
         // worldRoom:getMapDefinedShape(defShapeName)
         set("getMapDefinedShape", asFunction(vargs -> {
             String[] shapeName = vargs.checkjstring(2).split(":");
-            if(shapeName.length < 2) {
+            if (shapeName.length < 2) {
                 throw new LuaError("shape name must be in \"defLayerName:shapeName\" form");
             }
 
@@ -171,13 +224,13 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
 
             String shapeTypeName;
             LuaValue fourth;
-            if(shape.getType() == Shape.Type.Circle) {
+            if (shape.getType() == Shape.Type.Circle) {
                 shapeTypeName = "circle";
                 fourth = valueOf(shape.getRadius());
             } else {
-                if(shape.getType() == null) {
+                if (shape.getType() == null) {
                     shapeTypeName = "rectangle";
-                } else if(shape.getType() == Shape.Type.Polygon) {
+                } else if (shape.getType() == Shape.Type.Polygon) {
                     shapeTypeName = "polygon";
                 } else { // chain/edge
                     shapeTypeName = "polyline";
@@ -185,20 +238,21 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
 
                 float[] vertices = shape.getVertices();
                 LuaValue[] lVertices = new LuaValue[vertices.length];
-                for(int i = 0; i < vertices.length; i++) {
+                for (int i = 0; i < vertices.length; i++) {
                     lVertices[i] = valueOf(vertices[i]);
                 }
 
                 fourth = LuaUtil.arrayOf(lVertices);
             }
 
-            return arrayOf(valueOf(shapeTypeName), valueOf(shape.getPosition().x), valueOf(shape.getPosition().y), fourth);
+            return arrayOf(valueOf(shapeTypeName), valueOf(shape.getPosition().x),
+                valueOf(shape.getPosition().y), fourth);
         }));
 
         // worldRoom:getMapDefinedPoint(pointName)
         set("getMapDefinedPoint", asFunction(vargs -> {
             String[] pointName = vargs.checkjstring(2).split(":");
-            if(pointName.length < 2) {
+            if (pointName.length < 2) {
                 throw new LuaError("point name must be in \"defLayerName:pointName\" form");
             }
             WorldRoom room = obj(vargs);
