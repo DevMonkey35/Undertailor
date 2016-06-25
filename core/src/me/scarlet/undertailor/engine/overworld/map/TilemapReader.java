@@ -193,7 +193,7 @@ public class TilemapReader extends DefaultHandler {
             this.currentShape = new ShapeData();
             this.currentShape.name = attributes.getValue("", "name");
             this.currentShape.position.x = Float.parseFloat(attributes.getValue("", "x"));
-            this.currentShape.position.y = Float.parseFloat(attributes.getValue("", "y"));
+            this.currentShape.position.y = this.tilemap.getOccupiedHeight() - Float.parseFloat(attributes.getValue("", "y"));
 
             // only circle/rectangle have these
             String shapeWidth = attributes.getValue("", "width");
