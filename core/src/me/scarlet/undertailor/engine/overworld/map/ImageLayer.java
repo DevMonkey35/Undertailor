@@ -16,13 +16,17 @@ public class ImageLayer implements Layerable, Renderable, Positionable, Identifi
     short id;
     short layer;
     Texture image;
+    float threshold;
     Vector2 position;
+    Vector2 proxyPosition;
     boolean layerSet;
     MultiRenderer renderer;
 
     ImageLayer() {
+        this.threshold = 0F;
         this.layerSet = false;
         this.position = new Vector2(0, 0);
+        this.proxyPosition = new Vector2(0, 0);
     }
 
     @Override
@@ -48,7 +52,10 @@ public class ImageLayer implements Layerable, Renderable, Positionable, Identifi
 
     @Override
     public Vector2 getPosition() {
-        return this.position;
+        this.proxyPosition.set(this.position.x, this.position.y);
+        this.proxyPosition.y +=
+            (this.image.getHeight() * threshold);
+        return this.proxyPosition;
     }
 
     @Override

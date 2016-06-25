@@ -233,8 +233,9 @@ public class TilemapReader extends DefaultHandler {
 
         // image layer custom props
         if (this.currentImageLayer != null && this.checkElement("properties", "property", qName)) {
-            if (attributes.getValue("", "name").equals("layer")) {
-                String value = attributes.getValue("", "value");
+            String key = attributes.getValue("", "name");
+            String value = attributes.getValue("", "value");
+            if (key.equals("layer")) {
                 try {
                     this.currentImageLayer.layer = Short.parseShort(value);
                     this.currentImageLayer.layerSet = true;
@@ -242,6 +243,18 @@ public class TilemapReader extends DefaultHandler {
                     log.warn("Invalid layer value \"" + value + "\" for image layer " + layerName);
                     log.warn("Skipping image layer \"" + layerName + "\"");
                     this.currentImageLayer = null;
+                }
+            }
+
+            if(this.currentImageLayer != null && key.equals("threshold")) {
+                try {
+                    float threshold = Float.parseFloat(value);
+                    if(threshold > 1.0) threshold = 1F;
+                    if(threshold < 0) threshold = 0F;
+                    this.currentImageLayer.threshold = threshold;
+                } catch(NumberFormatException e) {
+                    log.warn("Invalid threshold value " + value + " for image layer " + layerName);
+                    log.warn(layerName + " threshold value defaulted to 0");
                 }
             }
         }
