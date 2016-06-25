@@ -43,6 +43,7 @@ import me.scarlet.undertailor.input.InputRetriever;
 import me.scarlet.undertailor.resource.ResourceHandler;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * The entrypoint class to the base game.
@@ -165,13 +166,14 @@ public class Undertailor extends ApplicationAdapter {
         Box2D.init();
 
         this.assets = new AssetManager(this);
+        this.environments = new EnvironmentManager(this);
         this.assets.loadAll(this.options.assetDir);
 
-        this.environments = new EnvironmentManager(this);
         File mainFile = new File(this.options.assetDir, "main.lua");
         if (mainFile.exists()) {
-            this.assets.getScriptManager().generateGlobals().loadfile(mainFile.getAbsolutePath())
-                .invoke();
+            try {
+                this.assets.getScriptManager().runScript(mainFile);
+            } catch (FileNotFoundException wontHappen) {}
         } else {
             log.warn("main.lua was not found in game directory; no start code was executed");
         }
