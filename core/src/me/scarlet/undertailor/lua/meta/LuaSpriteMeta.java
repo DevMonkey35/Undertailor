@@ -48,7 +48,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaSpriteMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Sprite> convert(LuaValue value) {
+    public static LuaObjectValue<Sprite> convert(LuaValue value) {
         return Lua.checkType(value, LuaSpriteMeta.class);
     }
 

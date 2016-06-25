@@ -50,7 +50,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaInputDataMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<InputData> convert(LuaValue value) {
+    public static LuaObjectValue<InputData> convert(LuaValue value) {
         return Lua.checkType(value, LuaInputDataMeta.class);
     }
 

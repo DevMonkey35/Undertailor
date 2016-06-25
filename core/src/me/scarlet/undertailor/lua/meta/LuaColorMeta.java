@@ -49,7 +49,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaColorMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Color> convert(LuaValue value) {
+    public static LuaObjectValue<Color> convert(LuaValue value) {
         return Lua.checkType(value, LuaColorMeta.class);
     }
 

@@ -48,7 +48,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaSubsystemMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Subsystem> convert(LuaValue value) {
+    public static LuaObjectValue<Subsystem> convert(LuaValue value) {
         return Lua.checkType(value, LuaSubsystemMeta.class);
     }
 

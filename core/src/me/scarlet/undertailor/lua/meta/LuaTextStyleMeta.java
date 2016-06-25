@@ -48,7 +48,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaTextStyleMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<TextStyle> convert(LuaValue value) {
+    public static LuaObjectValue<TextStyle> convert(LuaValue value) {
         return Lua.checkType(value, LuaTextStyleMeta.class);
     }
 

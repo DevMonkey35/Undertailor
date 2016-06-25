@@ -48,7 +48,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaIdentifiableMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Identifiable> convert(LuaValue value) {
+    public static LuaObjectValue<Identifiable> convert(LuaValue value) {
         return Lua.checkType(value, LuaIdentifiableMeta.class);
     }
 

@@ -59,7 +59,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaOverworldControllerMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<OverworldController> convert(LuaValue value) {
+    public static LuaObjectValue<OverworldController> convert(LuaValue value) {
         return Lua.checkType(value, LuaOverworldControllerMeta.class);
     }
 

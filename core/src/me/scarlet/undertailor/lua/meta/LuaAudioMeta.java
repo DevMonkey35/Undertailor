@@ -30,13 +30,15 @@
 
 package me.scarlet.undertailor.lua.meta;
 
-import static me.scarlet.undertailor.lua.Lua.checkType;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.valueOf;
 
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.audio.Audio;
+import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
@@ -46,14 +48,22 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaAudioMeta implements LuaObjectMeta {
 
+    public static LuaObjectValue<Audio> convert(LuaValue value) {
+        return Lua.checkType(value, LuaAudioMeta.class);
+    }
+
+    static Audio obj(Varargs args) {
+        return convert(args.arg1()).getObject();
+    }
+
     private LuaTable metatable;
 
     public LuaAudioMeta() {
         this.metatable = new LuaTable();
 
+        // audio:getAudioName()
         set("getAudioName", asFunction(vargs -> {
-            LuaObjectValue<Audio> audio = checkType(vargs.arg1(), LuaAudioMeta.class);
-            return valueOf(audio.getObject().getAudioName());
+            return valueOf(obj(vargs).getAudioName());
         }));
     }
 

@@ -53,7 +53,7 @@ import java.util.List;
  */
 public class LuaTextComponentMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<TextComponent> convert(LuaValue value) {
+    public static LuaObjectValue<TextComponent> convert(LuaValue value) {
         return Lua.checkType(value, LuaTextComponentMeta.class);
     }
 

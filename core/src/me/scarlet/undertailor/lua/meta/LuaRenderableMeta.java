@@ -50,7 +50,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaRenderableMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Renderable> convert(LuaValue value) {
+    public static LuaObjectValue<Renderable> convert(LuaValue value) {
         return Lua.checkType(value, LuaRenderableMeta.class);
     }
 

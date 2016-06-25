@@ -49,7 +49,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaEventListenerMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<EventListener> convert(LuaValue value) {
+    public static LuaObjectValue<EventListener> convert(LuaValue value) {
         return Lua.checkType(value, LuaEventListenerMeta.class);
     }
 

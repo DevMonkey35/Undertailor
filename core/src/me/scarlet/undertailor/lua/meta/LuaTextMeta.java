@@ -53,7 +53,7 @@ import me.scarlet.undertailor.util.Pair;
  */
 public class LuaTextMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Text> convert(LuaValue value) {
+    public static LuaObjectValue<Text> convert(LuaValue value) {
         return Lua.checkType(value, LuaTextMeta.class);
     }
 

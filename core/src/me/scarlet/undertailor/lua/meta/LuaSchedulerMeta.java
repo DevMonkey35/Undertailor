@@ -50,7 +50,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaSchedulerMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Scheduler> convert(LuaValue value) {
+    public static LuaObjectValue<Scheduler> convert(LuaValue value) {
         return Lua.checkType(value, LuaSchedulerMeta.class);
     }
 

@@ -51,7 +51,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaPositionableMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Positionable> convert(LuaValue value) {
+    public static LuaObjectValue<Positionable> convert(LuaValue value) {
         return Lua.checkType(value, LuaPositionableMeta.class);
     }
 

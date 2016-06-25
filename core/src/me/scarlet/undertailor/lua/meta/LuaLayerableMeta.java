@@ -49,7 +49,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaLayerableMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Layerable> convert(LuaValue value) {
+    public static LuaObjectValue<Layerable> convert(LuaValue value) {
         return Lua.checkType(value, LuaLayerableMeta.class);
     }
 

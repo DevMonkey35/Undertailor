@@ -47,7 +47,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaSoundDataMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<SoundData> convert(LuaValue value) {
+    public static LuaObjectValue<SoundData> convert(LuaValue value) {
         return Lua.checkType(value, LuaSoundDataMeta.class);
     }
 

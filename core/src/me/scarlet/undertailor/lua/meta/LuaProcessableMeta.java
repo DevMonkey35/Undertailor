@@ -49,7 +49,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaProcessableMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Processable> convert(LuaValue value) {
+    public static LuaObjectValue<Processable> convert(LuaValue value) {
         return Lua.checkType(value, LuaProcessableMeta.class);
     }
 

@@ -48,7 +48,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaDestructibleMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Destructible> convert(LuaValue value) {
+    public static LuaObjectValue<Destructible> convert(LuaValue value) {
         return Lua.checkType(value, LuaDestructibleMeta.class);
     }
 

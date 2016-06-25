@@ -31,8 +31,11 @@
 package me.scarlet.undertailor.lua.meta;
 
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.audio.SoundFactory.Sound;
+import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
@@ -41,6 +44,14 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  * {@link Sound} objects.
  */
 public class LuaSoundMeta implements LuaObjectMeta {
+
+    public static LuaObjectValue<Sound> convert(LuaValue value) {
+        return Lua.checkType(value, LuaSoundMeta.class);
+    }
+
+    static Sound obj(Varargs args) {
+        return convert(args.arg1()).getObject();
+    }
 
     @Override
     public Class<?> getTargetObjectClass() {

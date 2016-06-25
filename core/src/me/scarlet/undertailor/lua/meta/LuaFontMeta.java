@@ -52,7 +52,7 @@ import me.scarlet.undertailor.util.Pair;
  */
 public class LuaFontMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Font> convert(LuaValue value) {
+    public static LuaObjectValue<Font> convert(LuaValue value) {
         return Lua.checkType(value, LuaFontMeta.class);
     }
 

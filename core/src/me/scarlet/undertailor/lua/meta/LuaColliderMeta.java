@@ -52,7 +52,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaColliderMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Collider> convert(LuaValue value) {
+    public static LuaObjectValue<Collider> convert(LuaValue value) {
         return Lua.checkType(value, LuaColliderMeta.class);
     }
 

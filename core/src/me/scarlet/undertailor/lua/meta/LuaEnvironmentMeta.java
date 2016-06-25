@@ -48,7 +48,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaEnvironmentMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<Environment> convert(LuaValue value) {
+    public static LuaObjectValue<Environment> convert(LuaValue value) {
         return Lua.checkType(value, LuaEnvironmentMeta.class);
     }
 

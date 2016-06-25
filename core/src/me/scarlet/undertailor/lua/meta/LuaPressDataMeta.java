@@ -48,7 +48,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaPressDataMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<PressData> convert(LuaValue value) {
+    public static LuaObjectValue<PressData> convert(LuaValue value) {
         return Lua.checkType(value, LuaPressDataMeta.class);
     }
 

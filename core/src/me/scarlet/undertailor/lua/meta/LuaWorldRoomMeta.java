@@ -67,7 +67,7 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
 
     public static final String METAKEY_MAP = "__WROOM_MAP";
 
-    static LuaObjectValue<WorldRoom> convert(LuaValue value) {
+    public static LuaObjectValue<WorldRoom> convert(LuaValue value) {
         return Lua.checkType(value, LuaWorldRoomMeta.class);
     }
 

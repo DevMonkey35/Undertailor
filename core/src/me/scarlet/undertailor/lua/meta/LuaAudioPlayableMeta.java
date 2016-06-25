@@ -50,7 +50,7 @@ import me.scarlet.undertailor.lua.LuaObjectValue;
  */
 public class LuaAudioPlayableMeta implements LuaObjectMeta {
 
-    static LuaObjectValue<AudioPlayable<?>> convert(LuaValue value) {
+    public static LuaObjectValue<AudioPlayable<?>> convert(LuaValue value) {
         return Lua.checkType(value, LuaAudioPlayableMeta.class);
     }
 
