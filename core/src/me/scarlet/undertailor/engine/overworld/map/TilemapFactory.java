@@ -64,7 +64,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
      * The name of the layer used to store definition
      * objects. Ignored during collision generation.
      */
-    public static final String OBJ_DEF_LAYER = "#def";
+    public static final char OBJ_DEF_LAYER_PREFIX = '#';
 
     static final Logger log = LoggerFactory.getLogger(TilemapFactory.class);
 
@@ -242,13 +242,14 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * @return the defined ShapeData, or null if not
          *         found
          */
-        public ShapeData getDefinedShape(String shapeName) {
+        public ShapeData getDefinedShape(String defLayerName, String shapeName) {
             if (!this.isLoaded()) {
                 return null;
             }
 
-            if (this.getObjectLayer(OBJ_DEF_LAYER) != null) {
-                return this.getObjectLayer(OBJ_DEF_LAYER).getShape(shapeName);
+            String layerName = OBJ_DEF_LAYER_PREFIX + defLayerName;
+            if (this.getObjectLayer(layerName) != null) {
+                return this.getObjectLayer(layerName).getShape(shapeName);
             }
 
             return null;
@@ -265,13 +266,14 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * @return the defined point as a Vector2, or null
          *         if not found
          */
-        public Vector2 getDefinedPoint(String pointName) {
+        public Vector2 getDefinedPoint(String defLayerName, String pointName) {
             if (!this.isLoaded()) {
                 return null;
             }
 
-            if (this.getObjectLayer(OBJ_DEF_LAYER) != null) {
-                return this.getObjectLayer(OBJ_DEF_LAYER).getPoint(pointName);
+            String layerName = OBJ_DEF_LAYER_PREFIX + defLayerName;
+            if (this.getObjectLayer(layerName) != null) {
+                return this.getObjectLayer(layerName).getPoint(pointName);
             }
 
             return null;

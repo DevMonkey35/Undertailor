@@ -38,6 +38,7 @@ import static org.luaj.vm2.LuaValue.valueOf;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Shape;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -146,9 +147,13 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
          * then the second value is a table containing the
          * vertices of the shape.
          */
-        // worldRoom:getMapDefinedShape(pointName)
+        // worldRoom:getMapDefinedShape(defShapeName)
         set("getMapDefinedShape", asFunction(vargs -> {
-            String shapeName = vargs.checkjstring(2);
+            String[] shapeName = vargs.checkjstring(2).split(":");
+            if(shapeName.length < 2) {
+                throw new LuaError("shape name must be in \"defLayerName:shapeName\" form");
+            }
+
             WorldRoom room = obj(vargs);
             if (room == null) {
                 return NIL;
@@ -159,7 +164,7 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
                 return NIL;
             }
 
-            ShapeData shape = map.getDefinedShape(shapeName);
+            ShapeData shape = map.getDefinedShape(shapeName[0], shapeName[1]);
             if (shape == null) {
                 return NIL;
             }
@@ -192,7 +197,10 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
 
         // worldRoom:getMapDefinedPoint(pointName)
         set("getMapDefinedPoint", asFunction(vargs -> {
-            String pointName = vargs.checkjstring(2);
+            String[] pointName = vargs.checkjstring(2).split(":");
+            if(pointName.length < 2) {
+                throw new LuaError("point name must be in \"defLayerName:pointName\" form");
+            }
             WorldRoom room = obj(vargs);
             if (room == null) {
                 return NIL;
@@ -203,7 +211,7 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
                 return NIL;
             }
 
-            Vector2 point = map.getDefinedPoint(pointName);
+            Vector2 point = map.getDefinedPoint(pointName[0], pointName[1]);
             if (point == null) {
                 return NIL;
             }
