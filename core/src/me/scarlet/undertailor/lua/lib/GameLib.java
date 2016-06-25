@@ -50,30 +50,25 @@ import java.util.Set;
  */
 public class GameLib extends LuaLibrary {
 
-    private Undertailor undertailor;
-
     private Set<LuaLibrary> childLibraries;
 
     public GameLib(Undertailor undertailor) {
         super("game");
 
-        this.undertailor = undertailor;
         this.set("setTitle", asFunction(vargs -> {
             Gdx.graphics.setTitle(vargs.arg1().checkjstring());
             return LuaValue.NIL;
         }));
 
-        
+        this.childLibraries = new HashSet<>();
+
+        childLibraries.add(new AudioLib(undertailor.getAssetManager().getAudioManager()));
+        childLibraries.add(new GraphicsLib(undertailor.getRenderer()));
+        childLibraries.add(new ControlLib(undertailor.getInput()));
     }
 
     @Override
     public void postinit(LuaTable table, LuaValue environment) {
-        this.childLibraries = new HashSet<>();
-        
-        childLibraries.add(new AudioLib(undertailor.getAssetManager().getAudioManager()));
-        childLibraries.add(new GraphicsLib(undertailor.getRenderer()));
-        childLibraries.add(new ControlLib(undertailor.getInput()));
-
         childLibraries.forEach(lib -> lib.call(null, table));
     }
 }
