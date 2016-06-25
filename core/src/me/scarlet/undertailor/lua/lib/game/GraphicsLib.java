@@ -30,10 +30,10 @@
 
 package me.scarlet.undertailor.lua.lib.game;
 
-
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import org.luaj.vm2.LuaValue;
 
@@ -54,6 +54,11 @@ public class GraphicsLib extends LuaLibrary {
         super("graphics");
 
         // ---------------- lua util ----------------
+
+        // graphics.getDeltaTime()
+        set("getDeltaTime", asFunction(vargs -> {
+            return valueOf(Gdx.graphics.getRawDeltaTime());
+        }));
 
         // graphics.toOverworldUnits(...)
         set("toOverworldUnits", asFunction(vargs -> {

@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.lua.meta;
 
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.arrayOf;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static me.scarlet.undertailor.util.LuaUtil.varargsOf;
@@ -80,6 +81,11 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
     public LuaWorldRoomMeta(Undertailor tailor) {
         this.metatable = new LuaTable();
 
+        // worldRoom:getOverworld()
+        set("getOverworld", asFunction(vargs -> {
+            return orNil(obj(vargs).getOverworld());
+        }));
+
         // worldRoom:registerEntrypoint(name, defpoint[, defshape, target room file, target entrypoint])
         // worldRoom:registerEntrypoint(name, spawnX, spawnY[, defshape, target room file, target entrypoint])
         set("registerEntrypoint", asFunction(vargs -> {
@@ -91,7 +97,7 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
             final String targetRoom;
             Supplier<WorldRoom> targetRoomSup = null;
             String targetPoint = null;
-            if (vargs.narg() == 5) { // named a def point
+            if (vargs.narg() == 6) { // named a def point
                 defPoint = vargs.checkjstring(3);
                 defShape = vargs.checkjstring(4);
                 targetRoom = vargs.checkjstring(5);
