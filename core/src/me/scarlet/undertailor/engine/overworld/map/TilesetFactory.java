@@ -36,6 +36,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.scarlet.undertailor.AssetManager;
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
 import me.scarlet.undertailor.engine.overworld.map.TilesetReader.TilesetMeta;
 import me.scarlet.undertailor.exception.BadAssetException;
@@ -160,7 +161,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     @Override
     protected CompletableFuture<Texture> loadDisposable() {
         Wrapper<Texture> texture = new Wrapper<>();
-        Gdx.app.postRunnable(() -> {
+        AssetManager.addTask(() -> {
             synchronized (texture) {
                 texture.set(new Texture(Gdx.files.absolute(this.textureFile.getAbsolutePath())));
                 texture.notifyAll();

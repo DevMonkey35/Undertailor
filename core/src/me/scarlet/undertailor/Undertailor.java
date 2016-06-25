@@ -180,6 +180,7 @@ public class Undertailor extends ApplicationAdapter {
     @Override
     public void render() {
         this.assets.getAudioManager().update(); // update audio
+        this.assets.update(); // update any loading tasks
         this.renderer.clear();
         this.input.update(); // Prepare input for current frame.
 

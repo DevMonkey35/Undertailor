@@ -39,12 +39,36 @@ import me.scarlet.undertailor.gfx.text.TextStyleManager;
 import me.scarlet.undertailor.lua.ScriptManager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manager class for all the managers.
  */
 public class AssetManager {
 
+    static final List<Runnable> loadTasks;
+
+    static {
+        loadTasks = new ArrayList<>();
+    }
+
+    /**
+     * Queues a task to be ran by this {@link AssetManager}
+     * on the main game thread.
+     * 
+     * <p>Typically used for loading things that are
+     * required to load on the main thread.</p>
+     * 
+     * @param run the task to run
+     */
+    public static void addTask(Runnable run) {
+        synchronized(AssetManager.class) {
+            loadTasks.add(run);
+        }
+    }
+
+    public static File rootDirectory;
     public static final String DIR_AUDIO_SOUND = "sounds";
     public static final String DIR_AUDIO_MUSIC = "music";
     public static final String DIR_SPRITES = "sprites";
@@ -96,6 +120,22 @@ public class AssetManager {
 
         // anything that uses scripts
         this.styles.loadStyles(new File(rootDirectory, DIR_STYLES));
+    }
+
+    /**
+     * Executes the next queued task assigned to this
+     * {@link AssetManager}.
+     * 
+     * <p>Must be called every frame.</p>
+     */
+    public void update() {
+        synchronized(AssetManager.class) {
+            if(!AssetManager.loadTasks.isEmpty()) {
+                Runnable run = AssetManager.loadTasks.get(0);
+                run.run();
+                AssetManager.loadTasks.remove(run);
+            }
+        }
     }
 
     // ---------------- g/s managers ----------------
