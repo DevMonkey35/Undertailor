@@ -275,7 +275,7 @@ public class AudioManager {
                 targetMap.put(key,
                     audioClass == Music.class ? new MusicFactory(key, this, audioFile)
                         : new SoundFactory(key, this, audioFile));
-                log.debug("Loaded " + resourceName.toLowerCase() + " " + audioFile.getName()
+                log.info("Loaded " + resourceName.toLowerCase() + " " + audioFile.getName()
                     + " under key " + key);
             } catch (UnsupportedAudioFileException e) {
                 log.error("Failed to load " + resourceName.toLowerCase() + " file "
