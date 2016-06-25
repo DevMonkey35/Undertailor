@@ -76,8 +76,16 @@ public class CollisionHandler implements Destructible {
             public void endContact(Contact contact) {
                 Pair<Collider> pair = checkObjects(contact);
                 if (pair != null) {
-                    pair.getA().endCollision(pair.getB());
-                    pair.getB().endCollision(pair.getA());
+                    if(pair.getA() instanceof WorldObject && pair.getB() instanceof WorldObject) {
+                        pair.getA().endCollision(pair.getB());
+                        pair.getB().endCollision(pair.getA());
+                    } else {
+                        if(pair.getA() instanceof Entrypoint) {
+                            pair.getA().endCollision(pair.getB());
+                        } else if(pair.getB() instanceof Entrypoint) {
+                            pair.getB().endCollision(pair.getA());;
+                        }
+                    }
                 }
             }
 
@@ -85,8 +93,16 @@ public class CollisionHandler implements Destructible {
             public void beginContact(Contact contact) {
                 Pair<Collider> pair = checkObjects(contact);
                 if (pair != null) {
-                    pair.getA().startCollision(pair.getB());
-                    pair.getB().startCollision(pair.getA());
+                    if(pair.getA() instanceof WorldObject && pair.getB() instanceof WorldObject) {
+                        pair.getA().startCollision(pair.getB());
+                        pair.getB().startCollision(pair.getA());
+                    } else {
+                        if(pair.getA() instanceof Entrypoint) {
+                            pair.getA().startCollision(pair.getB());
+                        } else if(pair.getB() instanceof Entrypoint) {
+                            pair.getB().startCollision(pair.getA());;
+                        }
+                    }
                 }
             }
         };
