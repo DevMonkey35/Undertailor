@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.engine.overworld.map;
 
+import me.scarlet.undertailor.engine.Identifiable;
 import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
@@ -41,7 +42,7 @@ import me.scarlet.undertailor.gfx.Transform;
  * A layer of a set of images defined by a {@link Tileset}
  * placed in a grid.
  */
-public class TileLayer implements Layerable, Renderable {
+public class TileLayer implements Layerable, Renderable, Identifiable {
 
     static final Transform OVW_SIZE_TRANSFORM;
 
@@ -50,11 +51,21 @@ public class TileLayer implements Layerable, Renderable {
         OVW_SIZE_TRANSFORM.setScale(OverworldController.PIXELS_TO_METERS);
     }
 
+    short id;
     short layer;
     int[] tiles;
+    String name;
     Tilemap parent;
+    boolean layerSet;
 
-    TileLayer() {}
+    TileLayer() {
+        this.layerSet = false;
+    }
+
+    @Override
+    public long getId() {
+        return this.id;
+    }
 
     @Override
     public short getLayer() {

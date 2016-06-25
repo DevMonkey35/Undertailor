@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.engine.overworld.map;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.Shape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +40,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import me.scarlet.undertailor.AssetManager;
 import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
+import me.scarlet.undertailor.gfx.MultiRenderer;
+import me.scarlet.undertailor.util.Wrapper;
 import me.scarlet.undertailor.util.XMLUtil;
 
 import java.io.File;
@@ -65,29 +70,36 @@ public class TilemapReader extends DefaultHandler {
     // processing vars;
     private List<String> tree;
 
+    private short layerId;
     private Tilemap tilemap;
-    private File currentFile;
     private SAXParser parser;
+    private MultiRenderer renderer;
     private TileLayer currentTileLayer;
+    private ImageLayer currentImageLayer;
     private ObjectLayer currentObjectLayer;
 
     private ShapeData currentShape;
+    private Wrapper<Object> wrapper;
+    private String layerName;
     private String tileData;
 
-    public TilemapReader(TilesetManager tilesets) {
+    public TilemapReader(TilesetManager tilesets, MultiRenderer renderer) {
         tree = new ArrayList<>();
         this.tilesets = tilesets;
+        this.renderer = renderer;
 
         this.tilemap = null;
         this.currentTileLayer = null;
         this.tileData = null;
         this.parser = XMLUtil.generateParser();
+        this.wrapper = new Wrapper<>();
     }
 
     // ---------------- abstract method implementation ----------------
 
     @Override
     public void startDocument() throws SAXException {
+        this.layerId = 0;
         this.tree.clear();
     }
 
@@ -114,27 +126,61 @@ public class TilemapReader extends DefaultHandler {
         }
 
         if (this.checkElement("map", "layer", qName)) {
-            String layerName = attributes.getValue("", "name");
-            try {
-                short layer = Short.parseShort(layerName);
-                this.currentTileLayer = new TileLayer();
-                this.currentTileLayer.parent = this.tilemap;
-                this.currentTileLayer.layer = layer;
-            } catch (NumberFormatException ignored) {
-                log.warn("ignoring tile layer " + layerName + " in tilemap file "
-                    + this.currentFile.getAbsolutePath());
-            }
+            this.currentTileLayer = new TileLayer();
+            this.currentTileLayer.name = attributes.getValue("", "name");
+            this.currentTileLayer.id = this.layerId++;
+            this.currentTileLayer.parent = this.tilemap;
+            this.layerName =
+                this.currentTileLayer.name == null ? "unnamed layer" : this.currentTileLayer.name;
         }
 
-        if (this.checkElement("layer", "data", qName)) {
+        if (this.checkElement("map", "imagelayer", qName)) {
+            this.currentImageLayer = new ImageLayer();
+            this.currentImageLayer.id = this.layerId++;
+
+            String sX = attributes.getValue("", "offsetx");
+            String sY = attributes.getValue("", "offsety");
+            float x = sX == null ? 0 : Float.parseFloat(sX);
+            float y = sY == null ? 0 : Float.parseFloat(sY);
+
+            y = (this.tilemap.getHeight() * 20) - y;
+            this.currentImageLayer.setPosition(x, y);
+        }
+
+        if (this.currentTileLayer != null && this.checkElement("layer", "data", qName)) {
             if (!attributes.getValue("", "encoding").equalsIgnoreCase("csv")) {
                 throw new UnsupportedOperationException(
                     "Undertailor will only support Tiled maps saved in CSV format");
             } else {
-                if (this.currentTileLayer != null) {
-                    this.tileData = "";
+                this.tileData = "";
+            }
+        }
+
+        if (this.currentImageLayer != null && this.checkElement("imagelayer", "image", qName)) {
+            this.wrapper.set(null);
+            String[] sourceNameSplit = attributes.getValue("", "source").split("/");
+            File file = new File(
+                AssetManager.rootDirectory.getAbsolutePath() + "/" + AssetManager.DIR_TILEMAP_IMAGES,
+                sourceNameSplit[sourceNameSplit.length - 1]);
+            AssetManager.addTask(() -> {
+                synchronized (wrapper) {
+                    this.wrapper.set(new Texture(Gdx.files.absolute(file.getAbsolutePath())));
+                    this.wrapper.notifyAll();
+                }
+            });
+
+            synchronized (wrapper) {
+                while (wrapper.get() == null) {
+                    try {
+                        wrapper.wait();
+                    } catch (InterruptedException ignore) {
+                    }
                 }
             }
+
+            this.currentImageLayer.image = (Texture) this.wrapper.get();
+            this.currentImageLayer.position.y =
+                this.currentImageLayer.position.y - ((Texture) this.wrapper.get()).getHeight();
         }
 
         if (this.checkElement("map", "objectgroup", qName)) {
@@ -167,6 +213,38 @@ public class TilemapReader extends DefaultHandler {
                 this.currentShape.shapeVertices[(i * 2) + 1] = Float.parseFloat(point[1]);
             }
         }
+
+        // tile layer custom props
+        if (this.currentTileLayer != null && this.checkElement("properties", "property", qName)) {
+            if (attributes.getValue("", "name").equals("layer")) {
+                String value = attributes.getValue("", "value");
+                try {
+                    this.currentTileLayer.layer = Short.parseShort(value);
+                    this.currentTileLayer.layerSet = true;
+                } catch (NumberFormatException e) {
+                    log.warn("Invalid layer value \"" + value + "\" for tile layer " + layerName);
+                    log.warn("Skipping tile layer \"" + layerName + "\"");
+                    this.currentTileLayer = null;
+                    this.layerName = null;
+                    this.tileData = null;
+                }
+            }
+        }
+
+        // image layer custom props
+        if (this.currentImageLayer != null && this.checkElement("properties", "property", qName)) {
+            if (attributes.getValue("", "name").equals("layer")) {
+                String value = attributes.getValue("", "value");
+                try {
+                    this.currentImageLayer.layer = Short.parseShort(value);
+                    this.currentImageLayer.layerSet = true;
+                } catch (NumberFormatException e) {
+                    log.warn("Invalid layer value \"" + value + "\" for image layer " + layerName);
+                    log.warn("Skipping image layer \"" + layerName + "\"");
+                    this.currentImageLayer = null;
+                }
+            }
+        }
     }
 
     @Override
@@ -186,18 +264,26 @@ public class TilemapReader extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (this.checkElement("layer", "data", qName)) {
-            if (this.currentTileLayer != null && this.tileData != null) {
-                String[] tileSplit = this.tileData.split(",");
-                int[] tiles = new int[tileSplit.length];
+            String[] tileSplit = this.tileData.split(",");
+            int[] tiles = new int[tileSplit.length];
 
-                for (int i = 0; i < tiles.length; i++) {
-                    tiles[i] = Integer.parseInt(tileSplit[i]);
+            for (int i = 0; i < tiles.length; i++) {
+                tiles[i] = Integer.parseInt(tileSplit[i]);
+            }
+
+            this.currentTileLayer.tiles = tiles;
+            this.tileData = null;
+        }
+
+        if (this.checkElement("map", "layer", qName)) {
+            if (this.currentTileLayer != null) {
+                if (!this.currentTileLayer.layerSet) {
+                    log.warn("Layer \"" + layerName + "\" is missing layer property");
+                    log.warn("Skipping tile layer \"" + layerName + "\"");
+                } else {
+                    this.tilemap.tileLayers.add(this.currentTileLayer);
                 }
 
-                this.currentTileLayer.tiles = tiles;
-                this.tileData = null;
-
-                this.tilemap.layers.add(this.currentTileLayer);
                 this.currentTileLayer = null;
             }
         }
@@ -239,12 +325,26 @@ public class TilemapReader extends DefaultHandler {
             this.currentObjectLayer = null;
         }
 
+        if(this.checkElement("map", "imagelayer", qName)) {
+            if (this.currentImageLayer != null) {
+                if (!this.currentImageLayer.layerSet) {
+                    log.warn("Layer \"" + layerName + "\" is missing layer property");
+                    log.warn("Skipping image layer \"" + layerName + "\"");
+                } else {
+                    this.currentImageLayer.renderer = this.renderer;
+                    this.tilemap.imageLayers.add(this.currentImageLayer);
+                }
+
+                this.currentImageLayer = null;
+            }
+        }
+
         this.tree.remove(qName);
     }
 
     @Override
     public void endDocument() throws SAXException {
-        this.tilemap.layers.sort((l1, l2) -> {
+        this.tilemap.tileLayers.sort((l1, l2) -> {
             return Short.compare(l1.getLayer(), l2.getLayer());
         });
     }
@@ -277,7 +377,6 @@ public class TilemapReader extends DefaultHandler {
             InputStreamReader reader = new InputStreamReader(stream);
             InputSource source = new InputSource(reader);
 
-            this.currentFile = tmxFile;
             parser.parse(source, this);
         } finally {
             if (stream != null)

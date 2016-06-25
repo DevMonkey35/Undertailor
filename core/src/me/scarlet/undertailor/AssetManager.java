@@ -75,6 +75,7 @@ public class AssetManager {
     public static final String DIR_STYLES = "fonts/styles";
     public static final String DIR_FONTS = "fonts";
     public static final String DIR_SCRIPTS = "scripts";
+    public static final String DIR_TILEMAP_IMAGES = "maps/images";
     public static final String DIR_TILESETS = "maps/tilesets";
     public static final String DIR_TILEMAPS = "maps";
 
@@ -93,7 +94,7 @@ public class AssetManager {
         this.styles = new TextStyleManager(this.scripts);
         this.sprites = new SpriteSheetManager(undertailor.getRenderer());
         this.tilesets = new TilesetManager(undertailor.getRenderer());
-        this.tilemaps = new TilemapManager(this.tilesets);
+        this.tilemaps = new TilemapManager(undertailor.getRenderer(), this.tilesets);
     }
 
     // ---------------- functional methods ----------------
@@ -106,6 +107,7 @@ public class AssetManager {
      * @param rootDirectory the root directory to load from
      */
     public void loadAll(File rootDirectory) {
+        AssetManager.rootDirectory = rootDirectory;
         // anything that doesn't have a dependency on scripts first
         this.audio.loadSounds(new File(rootDirectory, DIR_AUDIO_SOUND));
         this.audio.loadMusic(new File(rootDirectory, DIR_AUDIO_MUSIC));

@@ -38,6 +38,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.EventListener;
+import me.scarlet.undertailor.engine.Identifiable;
 import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.Modular;
 import me.scarlet.undertailor.engine.Positionable;
@@ -77,8 +78,14 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                         return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
                     }
                 } else {
-                    if (obj1 instanceof TileLayer) {
-                        return -1;
+                    if (obj1 instanceof Identifiable && obj2 instanceof Identifiable) {
+                        Identifiable iobj1 = (Identifiable) obj1;
+                        Identifiable iobj2 = (Identifiable) obj2;
+                        if (obj1 instanceof WorldObject) { // tilemap layer vs worldobj
+                            return 1;
+                        } else { // tilemap layer vs tilemap layer
+                            return Long.compare(iobj1.getId(), iobj2.getId());
+                        }
                     }
 
                     return 1;
@@ -323,12 +330,21 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      * with a same Y position, its first come, first
      * serve.</p>
      * 
-     * <p>In draw order, the order is:</p>
+     * <p>Rules for draw order are as follows (tl;dr).</p>
      * 
      * <pre>
-     * * Lower layers come first.
-     * * TileLayer first.
-     * * WorldObjects with a higher Y position.
+     * * Any tilemap layer comes first.
+     * * Worldobjects come after.
+     * </pre>
+     * 
+     * <pre>
+     * * WorldObjects on the same layer are decided by their
+     *   Y position.
+     *   * Lower Y positions get rendered in front.
+     * * Tile layers on the same layer are decided by their
+     *   registry order.
+     *   * First ones get rendered in the back. See how
+     *     layers react in Tiled for reference.
      * </pre>
      */
     private Set<Layerable> getInRenderOrder() {
@@ -336,6 +352,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
 
         if (tilemap != null) {
             tilemap.getTileLayers().forEach(RENDER_ORDER::add);
+            tilemap.getImageLayers().forEach(RENDER_ORDER::add);
         }
 
         obj.forEach(RENDER_ORDER::add);

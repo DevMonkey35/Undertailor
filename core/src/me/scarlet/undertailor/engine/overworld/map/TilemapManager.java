@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
+import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.util.FileUtil;
 
 import java.io.File;
@@ -48,12 +49,14 @@ public class TilemapManager {
 
     static final Logger log = LoggerFactory.getLogger(TilemapManager.class);
 
+    private MultiRenderer renderer;
     private TilesetManager tilesets;
     private Map<String, TilemapFactory> tilemaps;
 
-    public TilemapManager(TilesetManager tilesets) {
+    public TilemapManager(MultiRenderer renderer, TilesetManager tilesets) {
         this.tilemaps = new HashMap<>();
         this.tilesets = tilesets;
+        this.renderer = renderer;
     }
 
     /**
@@ -88,7 +91,7 @@ public class TilemapManager {
             if(!key.startsWith("images.") && !key.startsWith("tilesets.")) {
                 File targetFile = files.get(key);
                 try {
-                    this.tilemaps.put(key, new TilemapFactory(targetFile, tilesets));
+                    this.tilemaps.put(key, new TilemapFactory(targetFile, tilesets, renderer));
                     log.info("Loaded tilemap " + targetFile.getName() + " under key " + key);
                 } catch (Exception e) {
                     String message =

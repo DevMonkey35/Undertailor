@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
+import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.resource.Resource;
 import me.scarlet.undertailor.resource.ResourceFactory;
@@ -76,13 +77,15 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
         int height;
         float spaceX;
         float spaceY;
-        List<TileLayer> layers;
+        List<TileLayer> tileLayers;
+        List<ImageLayer> imageLayers;
         Map<String, ObjectLayer> objects;
         TreeMap<Integer, Tileset> tilesets;
 
         Tilemap() {
             this.objects = new HashMap<>();
-            this.layers = new ArrayList<>();
+            this.tileLayers = new ArrayList<>();
+            this.imageLayers = new ArrayList<>();
             this.tilesets = new TreeMap<>(Integer::compare);
         }
 
@@ -163,7 +166,15 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
                 return null;
             }
 
-            return this.layers;
+            return this.tileLayers;
+        }
+
+        public List<ImageLayer> getImageLayers() {
+            if(!this.isLoaded()) {
+                return null;
+            }
+
+            return this.imageLayers;
         }
 
         /**
@@ -180,7 +191,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
                 return null;
             }
 
-            for (TileLayer tileLayer : this.layers) {
+            for (TileLayer tileLayer : this.tileLayers) {
                 if (tileLayer.getLayer() == layer) {
                     return tileLayer;
                 }
@@ -281,7 +292,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
                 return -1;
             }
 
-            return this.layers.get(this.layers.size() - 1).getLayer();
+            return this.tileLayers.get(this.tileLayers.size() - 1).getLayer();
         }
 
         /**
@@ -306,8 +317,8 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
     private File tmxFile;
     private TilemapReader reader;
 
-    public TilemapFactory(File tmxFile, TilesetManager tilesets) {
-        this.reader = new TilemapReader(tilesets);
+    public TilemapFactory(File tmxFile, TilesetManager tilesets, MultiRenderer renderer) {
+        this.reader = new TilemapReader(tilesets, renderer);
         this.tmxFile = tmxFile;
     }
 
