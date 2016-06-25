@@ -92,7 +92,7 @@ public class ScriptManager {
         libraries.add(new StringLib());
         libraries.add(new JseMathLib());
         libraries.add(new JseOsLib());
-        
+
         libraries.add(new BaseLib());
         libraries.add(new GameLib(undertailor));
         libraries.add(new ColorsLib());
@@ -142,6 +142,7 @@ public class ScriptManager {
                 log.error("Failed to load base library of class " + clazz.getSimpleName(), e);
             }
         });
+
         this.libraries.forEach(returned::load);
         this.cleanGlobals(returned);
 
@@ -182,14 +183,7 @@ public class ScriptManager {
      */
     public LuaTable loadAsModule(File luaFile, LuaTable store)
         throws FileNotFoundException, LuaScriptException {
-        Globals globals = this.generateGlobals();
-        InputStream stream = globals.finder.findResource(luaFile.getAbsolutePath());
-        if (stream == null) {
-            throw new FileNotFoundException(luaFile.getAbsolutePath());
-        }
-
-        String chunkname = "@" + luaFile.getName();
-        LuaValue value = globals.load(stream, chunkname, "bt", globals).invoke().arg(1);
+        LuaValue value = this.runScript(luaFile);
         if (value.istable()) {
             if (store == null) {
                 return (LuaTable) value;
@@ -203,6 +197,28 @@ public class ScriptManager {
         } else {
             throw new LuaScriptException("Script does not resolve as a module");
         }
+    }
+
+    /**
+     * Runs the provided Lua script file.
+     * 
+     * @param luaFile the Lua script file to run
+     * 
+     * @return the {@link LuaValue} returned by the script
+     *         file
+     * 
+     * @throws FileNotFoundException if the file wasn't
+     *         found
+     */
+    public LuaValue runScript(File luaFile) throws FileNotFoundException {
+        Globals globals = this.generateGlobals();
+        InputStream stream = globals.finder.findResource(luaFile.getAbsolutePath());
+        if (stream == null) {
+            throw new FileNotFoundException(luaFile.getAbsolutePath());
+        }
+
+        String chunkname = "@" + luaFile.getName();
+        return globals.load(stream, chunkname, "bt", globals).invoke().arg(1);
     }
 
     // ---------------- internal methods ----------------
