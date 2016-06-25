@@ -159,8 +159,7 @@ public class TilemapReader extends DefaultHandler {
         if (this.currentImageLayer != null && this.checkElement("imagelayer", "image", qName)) {
             this.wrapper.set(null);
             String[] sourceNameSplit = attributes.getValue("", "source").split("/");
-            File file = new File(
-                AssetManager.rootDirectory.getAbsolutePath() + "/" + AssetManager.DIR_TILEMAP_IMAGES,
+            File file = new File(new File(AssetManager.rootDirectory.getAbsolutePath(), AssetManager.DIR_TILEMAP_IMAGES),
                 sourceNameSplit[sourceNameSplit.length - 1]);
             AssetManager.addTask(() -> {
                 synchronized (wrapper) {
