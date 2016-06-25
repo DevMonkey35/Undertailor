@@ -13,8 +13,6 @@ import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.Set;
 
 public class LuaWorldObject extends WorldObject implements LuaImplementable<WorldObject> {
 
@@ -27,20 +25,25 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
     public static final String FUNC_POSTRENDER = "postRender";
 
     private LuaObjectValue<WorldObject> luaObj;
-    private Set<String> checkCache;
 
     public LuaWorldObject(ScriptManager manager, File luaFile)
         throws FileNotFoundException, LuaScriptException {
         this.luaObj = LuaObjectValue.of(this);
         this.luaObj.load(manager, luaFile);
-        this.checkCache = new HashSet<>();
 
-        this.invokeSelf(FUNC_CREATE);
+        if(this.hasFunction(FUNC_CREATE)) {
+            this.invokeSelf(FUNC_CREATE);
+        }
     }
 
     @Override
     public LuaObjectValue<WorldObject> getObjectValue() {
         return this.luaObj;
+    }
+
+    @Override
+    public Class<WorldObject> getPrimaryIdentifyingClass() {
+        return WorldObject.class;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
 
     @Override
     public boolean processObject(Object... params) {
-        if (this.checkFunction(FUNC_PROCESS, checkCache)) {
+        if (this.hasFunction(FUNC_PROCESS)) {
             return this.invokeSelf(FUNC_PROCESS).toboolean(1);
         }
 
@@ -67,7 +70,7 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
 
     @Override
     public boolean catchEvent(String eventName, Object... data) {
-        if (this.checkFunction(FUNC_CATCHEVENT, checkCache)) {
+        if (this.hasFunction(FUNC_CATCHEVENT)) {
             return this.invokeSelf(FUNC_CATCHEVENT, LuaUtil.varargsOf(data)).toboolean(1);
         }
 
@@ -76,14 +79,14 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
 
     @Override
     public void startCollision(Collider collider) {
-        if (this.checkFunction(FUNC_STARTCOLLISION, checkCache)) {
+        if (this.hasFunction(FUNC_STARTCOLLISION)) {
             this.invokeSelf(FUNC_STARTCOLLISION, of(collider));
         }
     }
 
     @Override
     public void endCollision(Collider collider) {
-        if (this.checkFunction(FUNC_ENDCOLLISION, checkCache)) {
+        if (this.hasFunction(FUNC_ENDCOLLISION)) {
             this.invokeSelf(FUNC_ENDCOLLISION, of(collider));
         }
     }

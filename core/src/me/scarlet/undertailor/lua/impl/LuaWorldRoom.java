@@ -13,8 +13,6 @@ import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.Set;
 
 public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoom> {
 
@@ -22,7 +20,6 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
     public static final String FUNC_PROCESS = "process";
     public static final String FUNC_CATCHEVENT = "catchEvent";
 
-    private Set<String> checkCache;
     private LuaObjectValue<WorldRoom> luaObj;
 
     public LuaWorldRoom(ScriptManager manager, File luaFile)
@@ -31,7 +28,6 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
 
         this.luaObj = LuaObjectValue.of(this);
         this.luaObj.load(manager, luaFile);
-        this.checkCache = new HashSet<>();
 
         if (this.hasFunction(FUNC_CREATE)) {
             this.invokeSelf(FUNC_CREATE);
@@ -43,13 +39,18 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
     }
 
     @Override
+    public Class<WorldRoom> getPrimaryIdentifyingClass() {
+        return WorldRoom.class;
+    }
+
+    @Override
     public LuaObjectValue<WorldRoom> getObjectValue() {
         return this.luaObj;
     }
 
     @Override
     public void processRoom() {
-        if (this.checkFunction(FUNC_PROCESS, checkCache)) {
+        if (this.hasFunction(FUNC_PROCESS)) {
             this.invokeSelf(FUNC_PROCESS);
         }
     }

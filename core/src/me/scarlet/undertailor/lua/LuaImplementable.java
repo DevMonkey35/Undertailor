@@ -33,8 +33,6 @@ package me.scarlet.undertailor.lua;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
-import java.util.Set;
-
 /**
  * Skeleton implementation for an object that can be
  * implemented by a Lua script.
@@ -69,9 +67,7 @@ public interface LuaImplementable<T> {
      * @return this implementable's primary identifying
      *         Class
      */
-    default Class<?> getPrimaryIdentifyingClass() {
-        return null;
-    }
+    Class<T> getPrimaryIdentifyingClass();
 
     /**
      * Returns the name by which this Lua-implemented object
@@ -102,32 +98,13 @@ public interface LuaImplementable<T> {
     }
 
     /**
-     * Provides the same functionality as
-     * {@link #hasFunction(String)}, and logs a warning if
-     * the function of the provided name was not found.
+     * Checks whether the provided function exists, and
+     * raises a LuaError if not found.
      * 
      * @param funcName the name of the function
-     * @param checkSet the set caching functions we've
-     *        checked so as to not spam the log
-     * 
-     * @return if the function exists
      */
-    default boolean checkFunction(String funcName, Set<String> checkSet) {
-        boolean returned = !this.getObjectValue().get(funcName).isnil();
-        if(!returned && !checkSet.contains(funcName)) {
-            if(this.getIdentifier() == null) {
-                Lua.log.warn("Lua object of type " + this.getObjectValue().typename()
-                    + " does not implement system-called function \"" + funcName + "\"");
-            } else {
-                Lua.log.warn("Lua object " + this.getIdentifier() + " of type "
-                    + this.getObjectValue().typename()
-                    + " does not implement system-called function \"" + funcName + "\"");
-            }
-
-            checkSet.add(funcName);
-        }
-
-        return returned;
+    default void checkFunction(String funcName) {
+        this.getObjectValue().get(funcName).checknotnil();
     }
 
     /**
@@ -179,7 +156,7 @@ public interface LuaImplementable<T> {
      * @return the values returned by the invoked function
      */
     default Varargs invokeSelf(String funcName, LuaValue... args) {
-        return this.invoke(funcName, LuaValue.varargsOf(args));
+        return this.invokeSelf(funcName, LuaValue.varargsOf(args));
     }
 
     /**
