@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.lua.lib;
 
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+
 import com.badlogic.gdx.Gdx;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -56,10 +58,12 @@ public class GameLib extends LuaLibrary {
         super("game");
 
         this.undertailor = undertailor;
-        this.registerFunction("setTitle", vargs -> {
+        this.set("setTitle", asFunction(vargs -> {
             Gdx.graphics.setTitle(vargs.arg1().checkjstring());
             return LuaValue.NIL;
-        });
+        }));
+
+        
     }
 
     @Override

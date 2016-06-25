@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.lua.lib.game;
 
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 
 import me.scarlet.undertailor.audio.AudioManager;
@@ -48,56 +49,56 @@ public class AudioLib extends LuaLibrary {
         // ---------------- g/s volumes ----------------
 
         // audio.getMasterVolume()
-        registerFunction("getMasterVolume", vargs -> {
+        set("getMasterVolume", asFunction(vargs -> {
             return valueOf(manager.getMasterVolume());
-        });
+        }));
 
         // audio.setMasterVolume(nVol)
-        registerFunction("setMasterVolume", vargs -> {
+        set("setMasterVolume", asFunction(vargs -> {
             manager.setMasterVolume(vargs.checknumber(1).tofloat());
             return NIL;
-        });
+        }));
 
         // audio.getMusicVolume()
-        registerFunction("getMusicVolume", vargs -> {
+        set("getMusicVolume", asFunction(vargs -> {
             return valueOf(manager.getMusicVolume());
-        });
+        }));
 
         // audio.setMusicVolume(nVol)
-        registerFunction("setMusicVolume", vargs -> {
+        set("setMusicVolume", asFunction(vargs -> {
             manager.setMusicVolume(vargs.checknumber(1).tofloat());
             return NIL;
-        });
+        }));
 
         // audio.getSoundVolume()
-        registerFunction("getSoundVolume", vargs -> {
+        set("getSoundVolume", asFunction(vargs -> {
             return valueOf(manager.getSoundVolume());
-        });
+        }));
 
         // audio.setSoundVolume(nVol)
-        registerFunction("setSoundVolume", vargs -> {
+        set("setSoundVolume", asFunction(vargs -> {
             manager.setSoundVolume(vargs.checknumber(1).tofloat());
             return NIL;
-        });
+        }));
 
         // ---------------- loading methods ----------------
 
         // audio.getSound(sKey)
-        registerFunction("getSound", vargs -> {
+        set("getSound", asFunction(vargs -> {
             return orNil(manager.getSound(vargs.checkjstring(1)));
-        });
+        }));
 
         // audio.getMusic(sKey)
-        registerFunction("getMusic", vargs -> {
+        set("getMusic", asFunction(vargs -> {
             return orNil(manager.getMusic(vargs.checkjstring(1)));
-        });
+        }));
 
         // ---------------- functional methods ----------------
 
         // audio.stopAllAudio()
-        registerFunction("stopAllAudio", vargs -> {
+        set("stopAllAudio", asFunction(vargs -> {
             manager.stopAllAudio();
             return NIL;
-        });
+        }));
     }
 }

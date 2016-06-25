@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.lua.lib;
 
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -113,21 +115,21 @@ public class BaseLib extends LuaLibrary {
         super(null);
 
         // print(string) -- Prints to console.
-        this.registerFunction("print", vargs -> {
+        this.set("print", asFunction(vargs -> {
             Lua.log("[print] " + vargs.arg(1).tojstring());
             return LuaValue.NIL;
-        });
+        }));
 
         // require(path) -- Loads a file, executes and returns its result.
         //               -- If already done before, returns the old result.
-        this.registerFunction("require", vargs -> {
+        this.set("require", asFunction(vargs -> {
             return BaseLib.loadLib(globals, vargs.arg(1).checkjstring());
-        });
+        }));
 
         // dofile(path) -- Loads a file. Does not cache.
-        this.registerFunction("dofile", vargs -> {
+        this.set("dofile", asFunction(vargs -> {
             return BaseLib.doFile(globals, vargs.arg(1).checkjstring());
-        });
+        }));
     }
 
     @Override

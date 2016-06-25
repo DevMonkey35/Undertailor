@@ -1,6 +1,7 @@
 package me.scarlet.undertailor.lua.lib;
 
 import static me.scarlet.undertailor.lua.LuaObjectValue.of;
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.text.Text;
@@ -17,9 +18,9 @@ public class TextLib extends LuaLibrary {
         super("text");
 
         // text.of(baseParams, text)
-        registerFunction("newText", vargs -> {
+        set("newText", asFunction(vargs -> {
             return of(Text.of(undertailor, vargs.checkjstring(1), vargs.checkjstring(2)));
-        });
+        }));
     }
 
 }

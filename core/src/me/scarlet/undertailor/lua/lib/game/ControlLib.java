@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.lua.lib.game;
 
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+
 import me.scarlet.undertailor.input.InputRetriever;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaObjectValue;
@@ -44,9 +46,9 @@ public class ControlLib extends LuaLibrary {
     public ControlLib(InputRetriever input) {
         super("control");
 
-        registerFunction("getInput", vargs -> {
+        set("getInput", asFunction(vargs -> {
             return LuaObjectValue.of(input.getCurrentData());
-        });
+        }));
     }
 
 }

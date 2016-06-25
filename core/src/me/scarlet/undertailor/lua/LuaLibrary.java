@@ -34,14 +34,10 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.TwoArgFunction;
-
-import me.scarlet.undertailor.util.LuaUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * A collection of actions executable by reference of a Lua
@@ -94,8 +90,8 @@ public class LuaLibrary extends TwoArgFunction {
      * @param funcId the id to give the function
      * @param func the function
      */
-    public final void registerFunction(String funcId, Function<Varargs, Varargs> func) {
-        functions.put(funcId, LuaUtil.asFunction(func));
+    public final void set(String funcId, LuaFunction func) {
+        functions.put(funcId, func);
     }
 
     /**

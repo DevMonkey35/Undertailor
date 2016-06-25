@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.lua.lib.game;
 
+
+import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 
 import com.badlogic.gdx.graphics.Color;
@@ -54,7 +56,7 @@ public class GraphicsLib extends LuaLibrary {
         // ---------------- lua util ----------------
 
         // graphics.toOverworldUnits(...)
-        registerFunction("toOverworldUnits", vargs -> {
+        set("toOverworldUnits", asFunction(vargs -> {
             LuaValue[] values = new LuaValue[vargs.narg()];
             for (int i = 1; i <= vargs.narg(); i++) {
                 LuaValue value = vargs.arg(i);
@@ -67,52 +69,52 @@ public class GraphicsLib extends LuaLibrary {
             }
 
             return LuaValue.varargsOf(values);
-        });
+        }));
 
         // ---------------- renderer functions ----------------
 
         // graphics.getClearColor()
-        registerFunction("getClearColor", vargs -> {
+        set("getClearColor", asFunction(vargs -> {
             return orNil(renderer.getClearColor());
-        });
+        }));
 
         // graphics.setClearColor(color)
-        registerFunction("setClearColor", vargs -> {
+        set("setClearColor", asFunction(vargs -> {
             Color color = Lua.<Color>checkType(vargs.arg1(), LuaColorMeta.class).getObject();
             renderer.setClearColor(color);
             return NIL;
-        });
+        }));
 
         // ---------------- draw color functions ----------------
 
         // graphics.getBatchColor()
-        registerFunction("getBatchColor", vargs -> {
+        set("getBatchColor", asFunction(vargs -> {
             return orNil(renderer.getBatchColor());
-        });
+        }));
 
         // graphics.setBatchColor(color)
-        registerFunction("setBatchColor", vargs -> {
+        set("setBatchColor", asFunction(vargs -> {
             Color color = Lua.<Color>checkType(vargs.arg1(), LuaColorMeta.class).getObject();
             renderer.setBatchColor(color);
             return NIL;
-        });
+        }));
 
         // graphics.getShapeColor()
-        registerFunction("getShapeColor", vargs -> {
+        set("getShapeColor", asFunction(vargs -> {
             return orNil(renderer.getShapeColor());
-        });
+        }));
 
         // graphics.setShapeColor(color)
-        registerFunction("setShapeColor", vargs -> {
+        set("setShapeColor", asFunction(vargs -> {
             Color color = Lua.<Color>checkType(vargs.arg1(), LuaColorMeta.class).getObject();
             renderer.setShapeColor(color);
             return NIL;
-        });
+        }));
 
         // ---------------- shape draw functions ----------------
 
         // graphics.drawLine(x1, y1, x2, y2[, thickness])
-        registerFunction("drawLine", vargs -> {
+        set("drawLine", asFunction(vargs -> {
             float x1 = vargs.checknumber(1).tofloat();
             float y1 = vargs.checknumber(2).tofloat();
             float x2 = vargs.checknumber(3).tofloat();
@@ -121,10 +123,10 @@ public class GraphicsLib extends LuaLibrary {
 
             renderer.drawLine(x1, y1, x2, y2, thickness);
             return NIL;
-        });
+        }));
 
         // graphics.drawArc(x, y, radius, start, degrees[, segments])
-        registerFunction("drawArc", vargs -> {
+        set("drawArc", asFunction(vargs -> {
             float x = vargs.checknumber(1).tofloat();
             float y = vargs.checknumber(2).tofloat();
             float radius = vargs.checknumber(3).tofloat();
@@ -139,10 +141,10 @@ public class GraphicsLib extends LuaLibrary {
             }
 
             return NIL;
-        });
+        }));
 
         // graphics.drawFilledPolygon(...)
-        registerFunction("drawFilledPolygon", vargs -> {
+        set("drawFilledPolygon", asFunction(vargs -> {
             float[] points = new float[vargs.narg()];
             for (int i = 0; i < vargs.narg(); i++) {
                 points[i] = vargs.checknumber(i + 1).tofloat();
@@ -150,10 +152,10 @@ public class GraphicsLib extends LuaLibrary {
 
             renderer.drawFilledPolygon(points);
             return NIL;
-        });
+        }));
 
         // graphics.drawPolygon(thickness, ...)
-        registerFunction("drawPolygon", vargs -> {
+        set("drawPolygon", asFunction(vargs -> {
             float thickness = vargs.checknumber(1).tofloat();
             float[] points = new float[vargs.narg() - 1];
             for (int i = 0; i < vargs.narg() - 1; i++) {
@@ -162,10 +164,10 @@ public class GraphicsLib extends LuaLibrary {
 
             renderer.drawPolygon(thickness, points);
             return NIL;
-        });
+        }));
 
         // graphics.drawOpenPolygon(thickness, ...)
-        registerFunction("drawOpenPolygon", vargs -> {
+        set("drawOpenPolygon", asFunction(vargs -> {
             float thickness = vargs.checknumber(1).tofloat();
             float[] points = new float[vargs.narg() - 1];
             for (int i = 0; i < vargs.narg() - 1; i++) {
@@ -174,10 +176,10 @@ public class GraphicsLib extends LuaLibrary {
 
             renderer.drawOpenPolygon(thickness, points);
             return NIL;
-        });
+        }));
 
         // graphics.drawRectangle(x, y, width, height[, thickness])
-        registerFunction("drawRectangle", vargs -> {
+        set("drawRectangle", asFunction(vargs -> {
             float x = vargs.checknumber(1).tofloat();
             float y = vargs.checknumber(2).tofloat();
             float width = vargs.checknumber(3).tofloat();
@@ -186,10 +188,10 @@ public class GraphicsLib extends LuaLibrary {
 
             renderer.drawRectangle(x, y, width, height, thickness);
             return NIL;
-        });
+        }));
 
         // graphics.drawFilledRectangle(x, y, width, height)
-        registerFunction("drawFilledRectangle", vargs -> {
+        set("drawFilledRectangle", asFunction(vargs -> {
             float x = vargs.checknumber(1).tofloat();
             float y = vargs.checknumber(2).tofloat();
             float width = vargs.checknumber(3).tofloat();
@@ -197,30 +199,30 @@ public class GraphicsLib extends LuaLibrary {
 
             renderer.drawFilledRectangle(x, y, width, height);
             return NIL;
-        });
+        }));
 
         // graphics.drawCircle(x, y, radius)
-        registerFunction("drawCircle", vargs -> {
+        set("drawCircle", asFunction(vargs -> {
             float x = vargs.checknumber(1).tofloat();
             float y = vargs.checknumber(2).tofloat();
             float radius = vargs.checknumber(3).tofloat();
 
             renderer.drawCircle(x, y, radius);
             return NIL;
-        });
+        }));
 
         // graphics.drawFilledCircle(x, y, radius)
-        registerFunction("drawFilledCircle", vargs -> {
+        set("drawFilledCircle", asFunction(vargs -> {
             float x = vargs.checknumber(1).tofloat();
             float y = vargs.checknumber(2).tofloat();
             float radius = vargs.checknumber(3).tofloat();
 
             renderer.drawFilledCircle(x, y, radius);
             return NIL;
-        });
+        }));
 
         // graphics.drawTriangle(x1, y1, x2, y2, x3, y3[, thickness])
-        registerFunction("drawTriangle", vargs -> {
+        set("drawTriangle", asFunction(vargs -> {
             float x1 = vargs.checknumber(1).tofloat();
             float y1 = vargs.checknumber(2).tofloat();
             float x2 = vargs.checknumber(3).tofloat();
@@ -231,10 +233,10 @@ public class GraphicsLib extends LuaLibrary {
 
             renderer.drawTriangle(x1, y1, x2, y2, x3, y3, thickness);
             return NIL;
-        });
+        }));
 
         // graphics.drawFilledTriangle(x1, y1, x2, y2, x3, y3[, thickness])
-        registerFunction("drawTriangle", vargs -> {
+        set("drawTriangle", asFunction(vargs -> {
             float x1 = vargs.checknumber(1).tofloat();
             float y1 = vargs.checknumber(2).tofloat();
             float x2 = vargs.checknumber(3).tofloat();
@@ -244,6 +246,6 @@ public class GraphicsLib extends LuaLibrary {
 
             renderer.drawFilledTriangle(x1, y1, x2, y2, x3, y3);
             return NIL;
-        });
+        }));
     }
 }
