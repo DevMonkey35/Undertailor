@@ -129,8 +129,10 @@ public class FileUtil {
         })) {
             String identifier =
                 (append == null ? "" : append + ".") + file.getName().split("\\.")[0].replaceAll(" ", "_");
-            if (file.isDirectory() && recursive) {
-                loadWithIdentifiers(parentMap, true, identifier, file, filter);
+            if (file.isDirectory()) {
+                if(recursive) {
+                    loadWithIdentifiers(parentMap, true, identifier, file, filter);
+                }
             } else {
                 parentMap.put(identifier, file);
             }
