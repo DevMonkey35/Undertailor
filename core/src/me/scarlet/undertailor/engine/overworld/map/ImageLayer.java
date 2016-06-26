@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import me.scarlet.undertailor.engine.Identifiable;
 import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.Positionable;
-import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
@@ -76,8 +75,6 @@ public class ImageLayer implements Layerable, Renderable, Positionable, Identifi
     // Intended to only render on the overworld.
     @Override
     public void draw(float x, float y, Transform transform) {
-        float ptm = OverworldController.PIXELS_TO_METERS;
-        renderer.getSpriteBatch().draw(image, this.position.x * ptm, this.position.y * ptm,
-            this.image.getWidth() * ptm, this.image.getHeight() * ptm);
+        renderer.getSpriteBatch().draw(image, this.position.x, this.position.y);
     }
 }

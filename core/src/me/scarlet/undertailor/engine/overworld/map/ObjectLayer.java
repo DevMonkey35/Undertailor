@@ -58,6 +58,7 @@ public class ObjectLayer {
         int id;
         String name;
         Shape.Type type; // null for rect, chain for polyline
+        boolean generated;
         float[] shapeVertices;
         float shapeHeight;
         float shapeWidth;
@@ -65,6 +66,7 @@ public class ObjectLayer {
         Vector2 position;
 
         ShapeData() {
+            this.generated = false;
             this.position = new Vector2();
         }
 
@@ -172,34 +174,42 @@ public class ObjectLayer {
          * created by {@link #generateShape()}.</p>
          */
         void generateVertices() {
-            if (this.shapeVertices == null) {
-                float shapeWidth = this.shapeWidth * OverworldController.PIXELS_TO_METERS;
-                float shapeHeight = this.shapeHeight * OverworldController.PIXELS_TO_METERS;
-
-                if (type == null) { // rect
-                    // rectangle origin in Tiled is on top left,
-                    // so need negative height
-                    float negHeight = shapeHeight * -1;
-                    this.shapeVertices = new float[] {0, 0, // tl
-                        0, negHeight, // bl
-                        shapeWidth, negHeight, // br
-                        shapeWidth, 0 // tr
-                    };
-                } else if (type == Shape.Type.Circle && shapeHeight != shapeWidth) {
-                    float halfHeight = shapeHeight / 2.0F;
-                    float halfWidth = shapeWidth / 2.0F;
-                    float eighthHeight = halfHeight / 4.0F;
-                    float eighthWidth = halfWidth / 4.0F;
-                    this.shapeVertices = new float[] {0, halfHeight, // top
-                        halfWidth - eighthWidth, halfHeight - eighthHeight, // topright
-                        halfWidth, 0, // right
-                        halfWidth - eighthWidth, (halfHeight - eighthHeight) * -1, // bottomright
-                        0, halfHeight * -1, // bottom
-                        (halfWidth - eighthWidth) * -1, (halfHeight - eighthHeight) * -1, // bottomleft
-                        halfWidth * -1, 0, // left
-                        (halfWidth - eighthWidth) * -1, halfHeight - eighthHeight // topleft
-                    };
+            if(!this.generated) {
+                if (this.shapeVertices == null) {
+                    float shapeWidth = this.shapeWidth * OverworldController.PIXELS_TO_METERS;
+                    float shapeHeight = this.shapeHeight * OverworldController.PIXELS_TO_METERS;
+    
+                    if (type == null) { // rect
+                        // rectangle origin in Tiled is on top left,
+                        // so need negative height
+                        float negHeight = shapeHeight * -1;
+                        this.shapeVertices = new float[] {0, 0, // tl
+                            0, negHeight, // bl
+                            shapeWidth, negHeight, // br
+                            shapeWidth, 0 // tr
+                        };
+                    } else if (type == Shape.Type.Circle && shapeHeight != shapeWidth) {
+                        float halfHeight = shapeHeight / 2.0F;
+                        float halfWidth = shapeWidth / 2.0F;
+                        float eighthHeight = halfHeight / 4.0F;
+                        float eighthWidth = halfWidth / 4.0F;
+                        this.shapeVertices = new float[] {0, halfHeight, // top
+                            halfWidth - eighthWidth, halfHeight - eighthHeight, // topright
+                            halfWidth, 0, // right
+                            halfWidth - eighthWidth, (halfHeight - eighthHeight) * -1, // bottomright
+                            0, halfHeight * -1, // bottom
+                            (halfWidth - eighthWidth) * -1, (halfHeight - eighthHeight) * -1, // bottomleft
+                            halfWidth * -1, 0, // left
+                            (halfWidth - eighthWidth) * -1, halfHeight - eighthHeight // topleft
+                        };
+                    }
+                } else {
+                    for(int i = 0; i < this.shapeVertices.length; i++) {
+                        this.shapeVertices[i] = this.shapeVertices[i] * OverworldController.PIXELS_TO_METERS;
+                    }
                 }
+
+                this.generated = true;
             }
         }
     }

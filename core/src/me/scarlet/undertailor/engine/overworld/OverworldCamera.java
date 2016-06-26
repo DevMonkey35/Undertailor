@@ -89,8 +89,7 @@ public class OverworldCamera extends OrthographicCamera {
         this.position.set(x, y);
         this.fixPosition();
         // call >this< position's params instead of method params in case fixPos updates them
-        super.position.set((this.position.x + this.offset.x) * OverworldController.PIXELS_TO_METERS,
-            (this.position.y + this.offset.y) * OverworldController.PIXELS_TO_METERS, 0);
+        super.position.set(this.position, 0);
         super.update();
     }
 
@@ -141,7 +140,7 @@ public class OverworldCamera extends OrthographicCamera {
      * @param zoom the new zoom level
      */
     public void setZoom(float zoom) {
-        super.zoom = OverworldController.PIXELS_TO_METERS / zoom;
+        super.zoom = 1 / zoom;//OverworldController.PIXELS_TO_METERS / zoom;
         super.update();
         this.zoom = zoom;
     }

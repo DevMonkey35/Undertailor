@@ -32,7 +32,6 @@ package me.scarlet.undertailor.engine.overworld.map;
 
 import me.scarlet.undertailor.engine.Identifiable;
 import me.scarlet.undertailor.engine.Layerable;
-import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
 import me.scarlet.undertailor.gfx.Renderable;
@@ -43,13 +42,6 @@ import me.scarlet.undertailor.gfx.Transform;
  * placed in a grid.
  */
 public class TileLayer implements Layerable, Renderable, Identifiable {
-
-    static final Transform OVW_SIZE_TRANSFORM;
-
-    static {
-        OVW_SIZE_TRANSFORM = new Transform();
-        OVW_SIZE_TRANSFORM.setScale(OverworldController.PIXELS_TO_METERS);
-    }
 
     short id;
     short layer;
@@ -96,9 +88,9 @@ public class TileLayer implements Layerable, Renderable, Identifiable {
         for (int i = 0; i < tiles.length; i++) {
             if (tiles[i] != 0) {
                 Renderable tile = parent.getTile(tiles[i]);
-                float drawX = (x + 10 + (20 * tileX)) * OverworldController.PIXELS_TO_METERS;
-                float drawY = (y + 10 + (20 * tileY)) * OverworldController.PIXELS_TO_METERS;
-                tile.draw(drawX, drawY, OVW_SIZE_TRANSFORM);
+                float drawX = (x + 10 + (20 * tileX));
+                float drawY = (y + 10 + (20 * tileY));
+                tile.draw(drawX, drawY);
             }
 
             tileX++;

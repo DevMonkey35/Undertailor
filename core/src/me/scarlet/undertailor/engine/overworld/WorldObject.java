@@ -74,7 +74,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     private short layer;
     private float height;
     private Transform transform; // The modifiable transform.
-    private Transform proxyTransform; // The actual transform used to render. Used to ensure the object scales right when rendered in Overworld.
+    private Transform proxyTransform;
     private Renderable actor;
 
     public WorldObject() {
@@ -129,12 +129,12 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     @Override
     public float getHeight() {
-        return this.height * OverworldController.METERS_TO_PIXELS;
+        return this.height;
     }
 
     @Override
     public void setHeight(float height) {
-        this.height = height * OverworldController.PIXELS_TO_METERS;
+        this.height = height;
     }
 
     // -------- layerable --------
@@ -165,7 +165,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     // -------- renderable --------
 
     // Ignores provided positions.
-    // Intended to draw at overworld scale.
     @Override
     public void draw(float x, float y, Transform transform) {
         if (!this.visible || this.destroyed || this.actor == null) {
@@ -173,8 +172,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         }
 
         transform.copyInto(proxyTransform);
-        proxyTransform.setScaleX(proxyTransform.getScaleX() * OverworldController.PIXELS_TO_METERS);
-        proxyTransform.setScaleY(proxyTransform.getScaleY() * OverworldController.PIXELS_TO_METERS);
         if (this.body != null) {
             proxyTransform.addRotation((float) Math.toDegrees(this.body.getAngle()));
         }
@@ -183,12 +180,12 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         float drawY;
         if (this.body == null) {
             Vector2 pos = this.getPosition();
-            drawX = pos.x * OverworldController.PIXELS_TO_METERS;
-            drawY = pos.y * OverworldController.PIXELS_TO_METERS;
-        } else {
-            Vector2 pos = this.body.getPosition();
             drawX = pos.x;
             drawY = pos.y;
+        } else {
+            Vector2 pos = this.body.getPosition();
+            drawX = pos.x * OverworldController.METERS_TO_PIXELS;
+            drawY = pos.y * OverworldController.METERS_TO_PIXELS;
         }
 
         this.actor.draw(drawX, drawY + height, proxyTransform);

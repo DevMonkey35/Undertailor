@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.engine.overworld;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -40,7 +41,6 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import me.scarlet.undertailor.engine.Collider;
 import me.scarlet.undertailor.engine.Destructible;
-import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.util.Pair;
 
 /**
@@ -129,11 +129,14 @@ public class CollisionHandler implements Destructible {
 
     private World world;
     private float timeAccumulator;
-    private MultiRenderer mRenderer;
     private Box2DDebugRenderer renderer;
+    private OverworldCamera overworldCam;
+    private OrthographicCamera rendererCam;
 
-    public CollisionHandler(MultiRenderer mRenderer, boolean renderCollision) {
-        this.mRenderer = mRenderer;
+    public CollisionHandler(OverworldCamera ovwCam, boolean renderCollision) {
+        this.overworldCam = ovwCam;
+        this.rendererCam = new OrthographicCamera(640, 480);
+        this.rendererCam.zoom = 1 / OverworldController.METERS_TO_PIXELS;
         this.reset();
 
         this.renderer = new Box2DDebugRenderer(true, true, true, true, false, true);
@@ -191,6 +194,13 @@ public class CollisionHandler implements Destructible {
      * physics objects currently in the owning Overworld.
      */
     public void render() {
-        this.renderer.render(world, mRenderer.getBatchProjectionMatrix());
+        float ptm = OverworldController.PIXELS_TO_METERS;
+        this.rendererCam.position.set(this.overworldCam.getPosition(), 0);
+        this.rendererCam.position.x = this.rendererCam.position.x * ptm;
+        this.rendererCam.position.y = this.rendererCam.position.y * ptm;
+        this.rendererCam.zoom = 1 / (this.overworldCam.getZoom() * OverworldController.METERS_TO_PIXELS);
+        this.rendererCam.update();
+        
+        this.renderer.render(world, this.rendererCam.combined);
     }
 }

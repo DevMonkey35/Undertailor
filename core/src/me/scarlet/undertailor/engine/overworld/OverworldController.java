@@ -76,8 +76,8 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     private WorldRoom room;
 
     public OverworldController(MultiRenderer renderer, Environment environment, Viewport viewport) {
-        this.collision = new CollisionHandler(renderer, true);
         this.camera = new OverworldCamera(this);
+        this.collision = new CollisionHandler(camera, true);
         this.transitions = new Pair<>();
         this.environment = environment;
         this.playTransitions = true;
