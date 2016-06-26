@@ -120,6 +120,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
         this.controller = null;
         this.obj = new HashSet<>();
         this.entrypoints = new HashMap<>();
+        this.opacityMapping = new HashMap<>();
         this.collisionLayers = new HashMap<>();
     }
 
