@@ -78,6 +78,11 @@ public class LuaOverworldControllerMeta implements LuaObjectMeta {
             return valueOf(obj(vargs).isCharacter(obj));
         }));
 
+        // overworld:getCharacter()
+        set("getCharacter", asFunction(vargs -> {
+            return orNil(obj(vargs).getCharacter());
+        }));
+
         // overworld:setCharacter(worldObject)
         set("setCharacter", asFunction(vargs -> {
             WorldObject obj = LuaWorldObjectMeta.convert(vargs.checknotnil(2)).getObject();

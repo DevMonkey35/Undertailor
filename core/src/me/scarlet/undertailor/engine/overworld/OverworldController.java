@@ -182,6 +182,16 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     }
 
     /**
+     * Returns the {@link WorldObject} currently set as the
+     * character object.
+     * 
+     * @return the character object, or null if not set
+     */
+    public WorldObject getCharacter() {
+        return this.character;
+    }
+
+    /**
      * Sets the provided {@link WorldObject} as the
      * "character" object.
      * 
