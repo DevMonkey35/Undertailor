@@ -138,11 +138,13 @@ public class TilemapReader extends DefaultHandler {
             this.currentImageLayer = new ImageLayer();
             this.currentImageLayer.id = this.layerId++;
 
+            String name = attributes.getValue("", "name");
             String sX = attributes.getValue("", "offsetx");
             String sY = attributes.getValue("", "offsety");
             float x = sX == null ? 0 : Float.parseFloat(sX);
             float y = sY == null ? 0 : this.toGDXPoint(Float.parseFloat(sY));
 
+            this.layerName = name == null ? "unnamed" : name;
             this.currentImageLayer.setPosition(x, y);
         }
 
