@@ -139,7 +139,7 @@ public class CollisionHandler implements Destructible {
         this.rendererCam.zoom = 1 / OverworldController.METERS_TO_PIXELS;
         this.reset();
 
-        this.renderer = new Box2DDebugRenderer(true, true, true, true, false, true);
+        this.renderer = new Box2DDebugRenderer(true, true, false, true, false, true);
     }
 
     @Override
