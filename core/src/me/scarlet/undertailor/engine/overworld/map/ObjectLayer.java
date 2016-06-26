@@ -202,6 +202,9 @@ public class ObjectLayer {
                             halfWidth * -1, 0, // left
                             (halfWidth - eighthWidth) * -1, halfHeight - eighthHeight // topleft
                         };
+
+                        this.position.x += this.shapeWidth / 2F;
+                        this.position.y -= this.shapeHeight / 2F;
                     }
                 } else {
                     for(int i = 0; i < this.shapeVertices.length; i++) {
