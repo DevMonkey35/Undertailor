@@ -70,10 +70,13 @@ public class ScriptManager {
     static final Logger log = LoggerFactory.getLogger(ScriptManager.class);
 
     private Undertailor undertailor;
+
+    private File scriptPath;
     private List<LuaValue> libraries;
     private List<Class<? extends LuaValue>> baseLibraries;
 
     public ScriptManager(Undertailor undertailor) {
+        this.scriptPath = null;
         this.libraries = new ArrayList<>();
         this.baseLibraries = new ArrayList<>();
         this.undertailor = undertailor;
@@ -100,14 +103,30 @@ public class ScriptManager {
     }
 
     /**
+     * Returns the path where scripts should only be loaded
+     * from.
+     * 
+     * @return the path containing the game's scripts
+     */
+    public File getScriptPath() {
+        return this.scriptPath;
+    }
+
+    /**
      * Sets the path where scripts should only be loaded
      * from.
      * 
      * @param scriptPath the path containing the game's
      *        scripts
      */
-    public void setScriptPath(String scriptPath) {
-        BaseLib.setScriptPath(scriptPath);
+    public void setScriptPath(File scriptPath) {
+        this.scriptPath = scriptPath;
+        String baseLibPath = scriptPath.getAbsolutePath();
+        if (!baseLibPath.endsWith(File.separator)) {
+            baseLibPath += File.separator;
+        }
+
+        BaseLib.setScriptPath(baseLibPath);
     }
 
     /**

@@ -117,7 +117,7 @@ public class AssetManager {
         this.font.loadFonts(new File(rootDirectory, DIR_FONTS));
 
         // script manager
-        this.scripts.setScriptPath(new File(rootDirectory, DIR_SCRIPTS).getAbsolutePath());
+        this.scripts.setScriptPath(new File(rootDirectory, DIR_SCRIPTS));
         this.scripts.load();
 
         // anything that uses scripts

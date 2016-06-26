@@ -117,7 +117,8 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
 
             float[] vertices = new float[vargs.narg()];
             for (int i = 0; i < vargs.narg(); i++) {
-                vertices[i] = vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
+                vertices[i] =
+                    vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
             }
 
             PolygonShape polygon = new PolygonShape();
@@ -132,8 +133,10 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
             WorldObject obj = obj(vargs);
             float radius = vargs.checknumber(2).tofloat() * OverworldController.PIXELS_TO_METERS;
             Vector2 offset = new Vector2();
-            offset.x = vargs.isnil(3) ? 0 : (vargs.checknumber(3).tofloat() * OverworldController.PIXELS_TO_METERS);
-            offset.y = vargs.isnil(4) ? 0 : (vargs.checknumber(4).tofloat() * OverworldController.PIXELS_TO_METERS);
+            offset.x = vargs.isnil(3) ? 0
+                : (vargs.checknumber(3).tofloat() * OverworldController.PIXELS_TO_METERS);
+            offset.y = vargs.isnil(4) ? 0
+                : (vargs.checknumber(4).tofloat() * OverworldController.PIXELS_TO_METERS);
 
             CircleShape circle = new CircleShape();
             circle.setRadius(radius);
@@ -149,8 +152,12 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
             float width = vargs.checknumber(2).tofloat() * OverworldController.PIXELS_TO_METERS;
             float height = vargs.checknumber(3).tofloat() * OverworldController.PIXELS_TO_METERS;
             Vector2 offset = new Vector2();
-            offset.x = vargs.isnil(3) ? 0 : (vargs.checknumber(3).tofloat() * OverworldController.PIXELS_TO_METERS);
-            offset.y = vargs.isnil(4) ? 0 : (vargs.checknumber(4).tofloat() * OverworldController.PIXELS_TO_METERS);
+            offset.x = vargs.isnil(3) ? 0
+                : (vargs.checknumber(3).tofloat() * OverworldController.PIXELS_TO_METERS);
+            offset.y = vargs.isnil(4) ? 0
+                : (vargs.checknumber(4).tofloat() * OverworldController.PIXELS_TO_METERS);
+            // setAsBox seems to offset itself to have the box centered when used without an offset param, so we do this too
+            offset.x -= width;
 
             PolygonShape box = new PolygonShape();
             box.setAsBox(width / 2F, height / 2F, offset, 0F);
@@ -165,7 +172,8 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
 
             float[] vertices = new float[vargs.narg()];
             for (int i = 0; i < vargs.narg(); i++) {
-                vertices[i] = vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
+                vertices[i] =
+                    vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
             }
 
             ChainShape chain = new ChainShape();
@@ -181,7 +189,8 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
 
             float[] vertices = new float[vargs.narg()];
             for (int i = 0; i < vargs.narg(); i++) {
-                vertices[i] = vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
+                vertices[i] =
+                    vargs.checknumber(i + 1).tofloat() * OverworldController.PIXELS_TO_METERS;
             }
 
             ChainShape chain = new ChainShape();

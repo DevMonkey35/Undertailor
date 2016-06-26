@@ -38,7 +38,6 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
-import me.scarlet.undertailor.AssetManager;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.EnvironmentManager;
@@ -109,12 +108,8 @@ public class GameLib extends LuaLibrary {
             String filePath = vargs.checkjstring(1);
             LuaWorldObject obj;
             try {
-                obj = new LuaWorldObject(scriptMan,
-                    new File(AssetManager.rootDirectory, filePath));
+                obj = new LuaWorldObject(scriptMan, new File(scriptMan.getScriptPath(), filePath));
             } catch (Exception e) {
-                /*LuaError thrown = new LuaError("failed to load world object script at " + filePath);
-                thrown.initCause(e);
-                throw thrown;*/
                 throw new LuaError(e);
             }
 
@@ -126,12 +121,8 @@ public class GameLib extends LuaLibrary {
             String filePath = vargs.checkjstring(1);
             LuaWorldRoom obj;
             try {
-                obj = new LuaWorldRoom(scriptMan,
-                    new File(AssetManager.rootDirectory, filePath));
+                obj = new LuaWorldRoom(scriptMan, new File(scriptMan.getScriptPath(), filePath));
             } catch (Exception e) {
-                /*LuaError thrown = new LuaError("failed to load world room script at " + filePath);
-                thrown.initCause(e);
-                throw thrown;*/
                 throw new LuaError(e);
             }
 
@@ -143,7 +134,7 @@ public class GameLib extends LuaLibrary {
         this.childLibraries = new HashSet<>();
 
         childLibraries.add(new AudioLib(undertailor.getAssetManager().getAudioManager()));
-        childLibraries.add(new GraphicsLib(undertailor.getRenderer()));
+        childLibraries.add(new GraphicsLib(undertailor));
         childLibraries.add(new ControlLib(undertailor.getInput()));
     }
 

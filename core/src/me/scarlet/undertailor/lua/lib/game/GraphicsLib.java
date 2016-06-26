@@ -35,11 +35,19 @@ import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import org.luaj.vm2.LuaError;
 
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.MultiRenderer;
+import me.scarlet.undertailor.gfx.spritesheet.SpriteSheet;
+import me.scarlet.undertailor.gfx.spritesheet.SpriteSheetManager;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.ScriptManager;
+import me.scarlet.undertailor.lua.impl.LuaRenderable;
 import me.scarlet.undertailor.lua.meta.LuaColorMeta;
+
+import java.io.File;
 
 /**
  * Graphics library accessible by Lua.
@@ -48,14 +56,41 @@ import me.scarlet.undertailor.lua.meta.LuaColorMeta;
  */
 public class GraphicsLib extends LuaLibrary {
 
-    public GraphicsLib(MultiRenderer renderer) {
+    public GraphicsLib(Undertailor tailor) {
         super("graphics");
+
+        MultiRenderer renderer = tailor.getRenderer();
+        ScriptManager scriptMan = tailor.getAssetManager().getScriptManager();
+        SpriteSheetManager sheetMan = tailor.getAssetManager().getSpriteSheetManager();
 
         // ---------------- lua util ----------------
 
         // graphics.getDeltaTime()
         set("getDeltaTime", asFunction(vargs -> {
             return valueOf(Gdx.graphics.getRawDeltaTime());
+        }));
+
+        // graphics.getSprite(sheetName, index)
+        set("getSprite", asFunction(vargs -> {
+            SpriteSheet sheet = sheetMan.getSheet(vargs.checkjstring(1));
+            if (sheet != null) {
+                return orNil(sheet.getSprite(vargs.checkint(2)));
+            }
+
+            return NIL;
+        }));
+
+        // game.newRenderable(scriptPath)
+        set("newRenderable", asFunction(vargs -> {
+            String filePath = vargs.checkjstring(1);
+            LuaRenderable obj;
+            try {
+                obj = new LuaRenderable(scriptMan, new File(scriptMan.getScriptPath(), filePath));
+            } catch (Exception e) {
+                throw new LuaError(e);
+            }
+
+            return obj.getObjectValue();
         }));
 
         // ---------------- renderer functions ----------------

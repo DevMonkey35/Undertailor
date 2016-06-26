@@ -105,8 +105,6 @@ public class BaseLib extends LuaLibrary {
      */
     public static void setScriptPath(String scriptPath) {
         BaseLib.scriptPath = scriptPath;
-        if (!BaseLib.scriptPath.endsWith("/"))
-            BaseLib.scriptPath += "/";
     }
 
     private Globals globals;
