@@ -167,6 +167,18 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
             return NIL;
         }));
 
+        // worldRoom:getLayerOpacity(layer)
+        set("getLayerOpacity", asFunction(vargs -> {
+            return valueOf(obj(vargs).getLayerOpacity(vargs.checknumber(2).toshort()));
+        }));
+
+        // worldRoom:setLayerOpacity(layer, opacity)
+        set("setLayerOpacity", asFunction(vargs -> {
+            obj(vargs).setLayerOpacity(vargs.checknumber(2).toshort(),
+                vargs.checknumber(3).tofloat());
+            return NIL;
+        }));
+
         // lua-only functions
 
         // worldRoom:setTilemap(tilemapName)

@@ -47,6 +47,7 @@ import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.overworld.map.TileLayer;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
+import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
@@ -108,6 +109,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     private OverworldController controller;
     private Map<String, Entrypoint> entrypoints;
     private Map<String, Set<Body>> collisionLayers;
+    private Map<Short, Float> opacityMapping;
 
     public WorldRoom(Tilemap map) {
         this.prepared = false;
@@ -134,7 +136,12 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     @Override
     public void draw(float x, float y, Transform transform) {
         Set<Layerable> rendered = this.getInRenderOrder();
-        rendered.forEach(obj -> ((Renderable) obj).draw());
+        MultiRenderer renderer = this.controller.getRenderer();
+        rendered.forEach(obj -> {
+            float alpha = this.opacityMapping.containsKey(obj.getLayer()) ? this.opacityMapping.get(obj.getLayer()) : 1.0F;
+            renderer.setBatchColor(renderer.getBatchColor(), alpha);
+            ((Renderable) obj).draw();
+        });
     }
 
     @Override
@@ -353,6 +360,40 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                 body.setActive(flag);
             });
         }
+    }
+
+    /**
+     * Returns the current opacity value set for the
+     * provided layer.
+     * 
+     * @param layer the target layer
+     * 
+     * @return the layer opacity for the provided layer,
+     *         defaulting to 1.0
+     */
+    public float getLayerOpacity(short layer) {
+        if(this.opacityMapping.containsKey(layer)) {
+            return this.opacityMapping.get(layer);
+        }
+
+        return 1F;
+    }
+
+    /**
+     * Sets the current opacity value for the provided
+     * layer.
+     * 
+     * @param layer the target layer
+     * @param opacity the opacity value, between 0.0 and
+     *        1.0, to set
+     */
+    public void setLayerOpacity(short layer, float opacity) {
+        if(opacity >= 1F) {
+            this.opacityMapping.remove(layer); // defaults to 1F;
+            return;
+        }
+
+        this.opacityMapping.put(layer, opacity < 0 ? 0 : opacity);
     }
 
     /**
