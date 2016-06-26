@@ -62,10 +62,20 @@ public class TilesetReader extends DefaultHandler {
      */
     public static class TilesetMeta {
 
+        private int tileWidth;
+        private int tileHeight;
         private Map<Integer, List<Tuple<Integer, Long>>> animations;
 
         public TilesetMeta() {
             this.animations = new HashMap<>();
+        }
+
+        public int getTileWidth() {
+            return this.tileWidth;
+        }
+
+        public int getTileHeight() {
+            return this.tileHeight;
         }
 
         /**
@@ -105,6 +115,11 @@ public class TilesetReader extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes)
         throws SAXException {
         this.tree.add(qName);
+
+        if(this.checkElement("", "tileset", qName)) {
+            this.meta.tileWidth = Integer.parseInt(attributes.getValue("", "tilewidth"));
+            this.meta.tileHeight = Integer.parseInt(attributes.getValue("", "tileheight"));
+        }
 
         if (this.checkElement("tileset", "tile", qName)) {
             this.id = Integer.parseInt(attributes.getValue("", "id"));

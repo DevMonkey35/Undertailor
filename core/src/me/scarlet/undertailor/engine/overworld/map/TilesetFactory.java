@@ -66,17 +66,10 @@ import java.util.concurrent.CompletableFuture;
 public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
 
     static final TilesetReader READER;
-    static final SpriteMeta SPRITE_META;
     static final Logger log = LoggerFactory.getLogger(TilesetFactory.class);
-
-    public static final int TILE_SIZE_X = 20;
-    public static final int TILE_SIZE_Y = 20;
 
     static {
         READER = new TilesetReader();
-        SPRITE_META = new SpriteMeta();
-        SPRITE_META.originX = TILE_SIZE_X / 2F;
-        SPRITE_META.originY = TILE_SIZE_Y / 2F;
     }
 
     /**
@@ -86,7 +79,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     public static class Tileset extends Resource<Texture> {
 
         private TilesetFactory factory;
-        private Map<Integer, Renderable> tiles;
+        private Map<Integer, Tile> tiles;
 
         public Tileset(TilesetFactory factory) {
             this.factory = factory;
@@ -125,7 +118,11 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
                     ((Sprite) renderable).sourceObject = this;
                 }
 
-                this.tiles.put(index, renderable);
+                Tile tile = new Tile();
+                tile.renderable = renderable;
+                tile.width = factory.meta.getTileWidth();
+                tile.height = factory.meta.getTileHeight();
+                this.tiles.put(index, tile);
             }
 
             return this.tiles.get(index);
@@ -137,6 +134,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     private File tsxFile;
     private TilesetMeta meta;
     private File textureFile;
+    private SpriteMeta sMeta;
     private TilesetReader reader;
     private MultiRenderer renderer;
 
@@ -144,6 +142,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     private Map<Integer, Animation> animatedTiles;
 
     public TilesetFactory(MultiRenderer renderer, File textureFile) {
+        this.sMeta = new SpriteMeta();
 
         this.tiles = new ArrayList<>();
         this.reader = new TilesetReader();
@@ -233,22 +232,24 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
      * for generated {@link Tileset}s to reference.</p>
      */
     private void loadTexture(Texture texture) throws BadAssetException {
-        if (texture.getWidth() % TILE_SIZE_X != 0 || texture.getHeight() % TILE_SIZE_Y != 0) {
+        if (texture.getWidth() % meta.getTileWidth() != 0 || texture.getHeight() % meta.getTileHeight() != 0) {
             throw new BadAssetException(
-                "invalid texture size, sprites must all be 20x20px in size");
+                "invalid texture size, sprites must all be " + meta.getTileWidth() + "x" + meta.getTileHeight() + "px in size");
         }
 
-        int width = texture.getWidth() / TILE_SIZE_X;
-        int height = texture.getHeight() / TILE_SIZE_Y;
+        int width = texture.getWidth() / meta.getTileWidth();
+        int height = texture.getHeight() / meta.getTileHeight();
+        this.sMeta.originX = meta.getTileWidth() / 2F;
+        this.sMeta.originY = meta.getTileHeight() / 2F;
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 this.tiles
                     .add(
                         new Sprite(
-                            this.renderer, new TextureRegion(texture, x * TILE_SIZE_X,
-                                y * TILE_SIZE_Y, TILE_SIZE_X, TILE_SIZE_Y),
-                            TilesetFactory.SPRITE_META));
+                            this.renderer, new TextureRegion(texture, x * meta.getTileWidth(),
+                                y * meta.getTileHeight(), meta.getTileWidth(), meta.getTileHeight()),
+                            this.sMeta));
             }
         }
 
