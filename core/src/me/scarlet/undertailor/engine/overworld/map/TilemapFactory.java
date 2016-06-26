@@ -306,7 +306,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * @return the Renderable tile, or null if none was
          *         found
          */
-        public Renderable getTile(int gid) {
+        public Tile getTile(int gid) {
             if (!this.isLoaded()) {
                 return null;
             }

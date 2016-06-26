@@ -46,7 +46,6 @@ import me.scarlet.undertailor.gfx.animation.Animation;
 import me.scarlet.undertailor.gfx.animation.FrameAnimation;
 import me.scarlet.undertailor.gfx.animation.FrameAnimation.KeyFrame;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
-import me.scarlet.undertailor.gfx.spritesheet.Sprite.SpriteMeta;
 import me.scarlet.undertailor.resource.Resource;
 import me.scarlet.undertailor.resource.ResourceFactory;
 import me.scarlet.undertailor.util.Tuple;
@@ -93,7 +92,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
          * 
          * @return the {@link Renderable} for the tile
          */
-        public Renderable getTile(int index) {
+        public Tile getTile(int index) {
             if (!this.isLoaded()) {
                 return null;
             }
@@ -134,7 +133,6 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     private File tsxFile;
     private TilesetMeta meta;
     private File textureFile;
-    private SpriteMeta sMeta;
     private TilesetReader reader;
     private MultiRenderer renderer;
 
@@ -142,8 +140,6 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     private Map<Integer, Animation> animatedTiles;
 
     public TilesetFactory(MultiRenderer renderer, File textureFile) {
-        this.sMeta = new SpriteMeta();
-
         this.tiles = new ArrayList<>();
         this.reader = new TilesetReader();
         this.animatedTiles = new HashMap<>();
@@ -239,8 +235,6 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
 
         int width = texture.getWidth() / meta.getTileWidth();
         int height = texture.getHeight() / meta.getTileHeight();
-        this.sMeta.originX = meta.getTileWidth() / 2F;
-        this.sMeta.originY = meta.getTileHeight() / 2F;
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -248,8 +242,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
                     .add(
                         new Sprite(
                             this.renderer, new TextureRegion(texture, x * meta.getTileWidth(),
-                                y * meta.getTileHeight(), meta.getTileWidth(), meta.getTileHeight()),
-                            this.sMeta));
+                                y * meta.getTileHeight(), meta.getTileWidth(), meta.getTileHeight()), null));
             }
         }
 
