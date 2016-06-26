@@ -155,6 +155,16 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     }
 
     /**
+     * Return the {@link MultiRenderer} instance assigned to
+     * this {@link OverworldController}.
+     * 
+     * @return the MultiRenderer
+     */
+    public MultiRenderer getRenderer() {
+        return this.renderer;
+    }
+
+    /**
      * Returns whether or not the provided
      * {@link WorldObject} is currently the "character"
      * object.
