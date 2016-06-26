@@ -141,9 +141,8 @@ public class TilemapReader extends DefaultHandler {
             String sX = attributes.getValue("", "offsetx");
             String sY = attributes.getValue("", "offsety");
             float x = sX == null ? 0 : Float.parseFloat(sX);
-            float y = sY == null ? 0 : Float.parseFloat(sY);
+            float y = sY == null ? 0 : this.toGDXPoint(Float.parseFloat(sY));
 
-            y = (this.tilemap.getHeight() * 20) - y;
             this.currentImageLayer.setPosition(x, y);
         }
 
@@ -192,7 +191,7 @@ public class TilemapReader extends DefaultHandler {
             this.currentShape = new ShapeData();
             this.currentShape.name = attributes.getValue("", "name");
             this.currentShape.position.x = Float.parseFloat(attributes.getValue("", "x"));
-            this.currentShape.position.y = this.tilemap.getOccupiedHeight() - Float.parseFloat(attributes.getValue("", "y"));
+            this.currentShape.position.y = this.toGDXPoint(Float.parseFloat(attributes.getValue("", "y")));
 
             // only circle/rectangle have these
             String shapeWidth = attributes.getValue("", "width");
@@ -205,9 +204,9 @@ public class TilemapReader extends DefaultHandler {
         if (this.checkElement("object", "polygon", qName)
             || this.checkElement("object", "polyline", qName)) {
             String[] points = attributes.getValue("", "points").split(" ");
+            this.currentShape.shapeVertices = new float[points.length * 2];
             for (int i = 0; i < points.length; i++) {
                 String[] point = points[i].split(",");
-                this.currentShape.shapeVertices = new float[points.length * 2];
                 this.currentShape.shapeVertices[i * 2] = Float.parseFloat(point[0]);
                 this.currentShape.shapeVertices[(i * 2) + 1] = Float.parseFloat(point[1]);
             }
@@ -318,12 +317,11 @@ public class TilemapReader extends DefaultHandler {
         }
 
         if (this.checkElement("objectgroup", "object", qName)) {
-            if (this.currentShape.shapeWidth == 0 && this.currentShape.shapeHeight == 0) { // width/height of 0
-                if (this.currentShape.name != null && (this.currentShape.type == null
-                    || this.currentShape.type == Shape.Type.Circle)) { // has a name and is a circle/rectangle
-                    this.currentObjectLayer.points.put(this.currentShape.name,
-                        this.currentShape.position);
-                }
+            if (this.currentShape.name != null
+                && (this.currentShape.type == null || this.currentShape.type == Shape.Type.Circle)
+                && (this.currentShape.shapeWidth == 0 && this.currentShape.shapeHeight == 0)) {
+                this.currentObjectLayer.points.put(this.currentShape.name,
+                    this.currentShape.position);
             } else {
                 this.currentShape.generateVertices();
                 this.currentObjectLayer.shapes.add(this.currentShape);
@@ -432,5 +430,9 @@ public class TilemapReader extends DefaultHandler {
         }
 
         return false;
+    }
+
+    float toGDXPoint(float y) {
+        return this.tilemap.getOccupiedHeight() - y;
     }
 }

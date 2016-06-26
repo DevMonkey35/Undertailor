@@ -205,7 +205,12 @@ public class ObjectLayer {
                     }
                 } else {
                     for(int i = 0; i < this.shapeVertices.length; i++) {
-                        this.shapeVertices[i] = this.shapeVertices[i] * OverworldController.PIXELS_TO_METERS;
+                        float coordinate = this.shapeVertices[i];
+                        if(i % 2 != 0) { // odds/y's only
+                            coordinate *= -1;
+                        }
+                        
+                        this.shapeVertices[i] = coordinate * OverworldController.PIXELS_TO_METERS;
                     }
                 }
 
