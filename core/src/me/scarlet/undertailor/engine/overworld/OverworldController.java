@@ -50,12 +50,6 @@ import me.scarlet.undertailor.util.Pair;
 /**
  * Subsystem within an {@link Environment} running the
  * processes of an overworld.
- * 
- * <p>Positional values within the OverworldController
- * internally differ to that of the pixel-based positions.
- * All objects relevant to the Overworld will always convert
- * to the internal measure of values to keep the physics
- * engine from going insane.</p>
  */
 public class OverworldController implements Processable, Renderable, Subsystem, Destructible {
 
