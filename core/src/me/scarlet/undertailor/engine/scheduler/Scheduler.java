@@ -58,11 +58,13 @@ public class Scheduler implements Processable, Subsystem, Destructible {
     }
 
     private Environment env;
+    private boolean destroyed;
     private Map<Long, Task> tasks;
     private Map<Long, Task> activeTasks;
 
     public Scheduler(Environment env) {
         this.env = env;
+        this.destroyed = false;
         this.tasks = new HashMap<>();
         this.activeTasks = new LinkedHashMap<>();
     }
@@ -132,12 +134,22 @@ public class Scheduler implements Processable, Subsystem, Destructible {
     }
 
     @Override
+    public boolean isDestroyed() {
+        return this.destroyed;
+    }
+
+    @Override
     public void destroy() {
+        if(this.destroyed) {
+            return;
+        }
+
         this.activeTasks.clear();
         this.tasks.clear();
 
         this.activeTasks = null;
         this.tasks = null;
+        this.destroyed = true;
     }
 
     // ---------------- functional methods ----------------

@@ -63,6 +63,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     public static final float RENDER_HEIGHT = 480.0F;
 
     // generic
+    private boolean destroyed;
     private MultiRenderer renderer;
     private Environment environment;
     private OverworldCamera camera;
@@ -124,14 +125,27 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     public boolean process(Object... params) {
         this.collision.step(Gdx.graphics.getRawDeltaTime());
         if (this.room != null) {
-            this.room.process(params);
+            if(this.room.isDestroyed()) {
+                this.room = null;
+            } else {
+                this.room.process(params);
+            }
         }
 
         return true;
     }
 
     @Override
+    public boolean isDestroyed() {
+        return this.destroyed;
+    }
+
+    @Override
     public void destroy() {
+        if(this.destroyed) {
+            return;
+        }
+
         if (this.room != null) {
             this.room.destroy();
         }
@@ -141,6 +155,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
         }
 
         this.collision.destroy();
+        this.destroyed = true;
     }
 
     // ---------------- object methods ----------------

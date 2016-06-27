@@ -128,6 +128,7 @@ public class CollisionHandler implements Destructible {
     // ---------------- object ----------------
 
     private World world;
+    private boolean destroyed;
     private float timeAccumulator;
     private Box2DDebugRenderer renderer;
     private OverworldCamera overworldCam;
@@ -137,18 +138,29 @@ public class CollisionHandler implements Destructible {
         this.overworldCam = ovwCam;
         this.rendererCam = new OrthographicCamera(640, 480);
         this.rendererCam.zoom = 1 / OverworldController.METERS_TO_PIXELS;
+        this.destroyed = false;
         this.reset();
 
         this.renderer = new Box2DDebugRenderer(true, true, false, true, false, true);
     }
 
     @Override
+    public boolean isDestroyed() {
+        return this.destroyed;
+    }
+
+    @Override
     public void destroy() {
+        if(this.destroyed) {
+            return;
+        }
+
         this.world.dispose();
         this.renderer.dispose();
 
         this.world = null;
         this.renderer = null;
+        this.destroyed = true;
     }
 
     /**

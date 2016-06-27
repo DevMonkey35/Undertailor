@@ -104,6 +104,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     private Set<Entrypoint> entrypointQueue;
 
     // primary
+    private boolean destroyed;
     protected Tilemap tilemap;
     private Set<WorldObject> obj;
     private OverworldController controller;
@@ -112,6 +113,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     private Map<Short, Float> opacityMapping;
 
     public WorldRoom(Tilemap map) {
+        this.destroyed = false;
         this.prepared = false;
         this.bodyQueue = new HashSet<>();
         this.entrypointQueue = new HashSet<>();
@@ -139,7 +141,8 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
         Set<Layerable> rendered = this.getInRenderOrder();
         MultiRenderer renderer = this.controller.getRenderer();
         rendered.forEach(obj -> {
-            float alpha = this.opacityMapping.containsKey(obj.getLayer()) ? this.opacityMapping.get(obj.getLayer()) : 1.0F;
+            float alpha = this.opacityMapping.containsKey(obj.getLayer())
+                ? this.opacityMapping.get(obj.getLayer()) : 1.0F;
             renderer.setBatchColor(renderer.getBatchColor(), alpha);
             ((Renderable) obj).draw();
         });
@@ -148,12 +151,30 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     @Override
     public final boolean process(Object... params) {
         this.processRoom();
-        this.obj.forEach(obj -> obj.process(params));
+        Iterator<WorldObject> iter = obj.iterator();
+        while (iter.hasNext()) {
+            WorldObject next = iter.next();
+            if (next.isDestroyed()) {
+                iter.remove();
+            } else {
+                next.process(params);
+            }
+        }
+
         return true;
     }
 
     @Override
+    public boolean isDestroyed() {
+        return this.destroyed;
+    }
+
+    @Override
     public final void destroy() {
+        if (this.destroyed) {
+            return;
+        }
+
         this.tilemap = null;
         Iterator<WorldObject> iterator = this.obj.iterator();
         while (iterator.hasNext()) {
@@ -174,6 +195,9 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                 body.getWorld().destroyBody(body);
             });
         });
+
+        this.controller = null;
+        this.destroyed = true;
     }
 
     @Override
@@ -189,7 +213,6 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     @Override
     public final boolean release(OverworldController controller) {
         this.destroy();
-        this.controller = null;
         return true;
     }
 
@@ -243,7 +266,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      * @param entrypoint a new Entrypoint
      */
     public void registerEntrypoint(Entrypoint entrypoint) {
-        if(this.entrypointQueue != null) {
+        if (this.entrypointQueue != null) {
             this.entrypointQueue.add(entrypoint);
         } else {
             if (entrypoint.claim(this)) {
@@ -373,7 +396,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      *         defaulting to 1.0
      */
     public float getLayerOpacity(short layer) {
-        if(this.opacityMapping.containsKey(layer)) {
+        if (this.opacityMapping.containsKey(layer)) {
             return this.opacityMapping.get(layer);
         }
 
@@ -389,7 +412,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      *        1.0, to set
      */
     public void setLayerOpacity(short layer, float opacity) {
-        if(opacity >= 1F) {
+        if (opacity >= 1F) {
             this.opacityMapping.remove(layer); // defaults to 1F;
             return;
         }

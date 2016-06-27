@@ -49,12 +49,14 @@ public class Environment implements Processable, Renderable, Destructible {
     private UIController ui;
     private Scheduler scheduler;
     private OverworldController overworld;
+    private boolean destroyed;
 
     public Environment(Undertailor tailor) {
         this.scheduler = new Scheduler(this);
         this.overworld =
             new OverworldController(tailor.getRenderer(), this, new FitViewport(640, 480));
         this.ui = new UIController();
+        this.destroyed = false;
     }
 
     // ---------------- abstract method implementation ----------------
@@ -82,10 +84,16 @@ public class Environment implements Processable, Renderable, Destructible {
     }
 
     @Override
+    public boolean isDestroyed() {
+        return this.destroyed;
+    }
+
+    @Override
     public void destroy() {
         this.scheduler.destroy();
         this.overworld.destroy();
         this.ui.destroy();
+        this.destroyed = true;
     }
 
     // ---------------- object ----------------

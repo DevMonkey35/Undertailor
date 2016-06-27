@@ -37,6 +37,14 @@ package me.scarlet.undertailor.engine;
 public interface Destructible {
 
     /**
+     * Returns if this {@link Destructible} had been
+     * destroyed.
+     * 
+     * @return if this Destructible has been destroyed
+     */
+    boolean isDestroyed();
+
+    /**
      * Destroys this {@link Destructible}.
      */
     void destroy();

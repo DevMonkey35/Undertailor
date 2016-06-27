@@ -32,6 +32,7 @@ package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.NIL;
+import static org.luaj.vm2.LuaValue.valueOf;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -60,6 +61,11 @@ public class LuaDestructibleMeta implements LuaObjectMeta {
 
     public LuaDestructibleMeta() {
         this.metatable = new LuaTable();
+
+        // destructible:isDestroyed()
+        set("isDestroyed", asFunction(vargs -> {
+            return valueOf(obj(vargs).isDestroyed());
+        }));
 
         // destructible:destroy()
         set("destroy", asFunction(vargs -> {

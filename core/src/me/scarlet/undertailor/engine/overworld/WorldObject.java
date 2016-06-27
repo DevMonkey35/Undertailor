@@ -205,7 +205,16 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     // -------- destructible --------
 
     @Override
+    public boolean isDestroyed() {
+        return this.destroyed;
+    }
+
+    @Override
     public void destroy() {
+        if(this.destroyed) {
+            return;
+        }
+
         this.def = null;
         this.actor = null;
         if (this.body != null) {
