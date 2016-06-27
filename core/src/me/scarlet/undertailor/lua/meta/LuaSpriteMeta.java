@@ -32,7 +32,10 @@ package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+import static org.luaj.vm2.LuaValue.valueOf;
+import static org.luaj.vm2.LuaValue.varargsOf;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -64,6 +67,12 @@ public class LuaSpriteMeta implements LuaObjectMeta {
         // sprite:clone()
         set("clone", asFunction(vargs -> {
             return orNil(obj(vargs).clone());
+        }));
+
+        // sprite:getSpriteSize();
+        set("getSpriteSize", asFunction(vargs -> {
+            TextureRegion region = obj(vargs).getTextureRegion();
+            return varargsOf(valueOf(region.getRegionWidth()), valueOf(region.getRegionHeight()));
         }));
     }
 
