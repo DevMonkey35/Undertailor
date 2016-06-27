@@ -89,7 +89,7 @@ public class Undertailor extends ApplicationAdapter {
         log.info("Running Undertailor version " + Undertailor.version + "!");
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             log.error("Uncaught exception. Program will close.", e);
-            this.exit();
+            this.exit(true);
         });
     }
 
@@ -173,7 +173,8 @@ public class Undertailor extends ApplicationAdapter {
         if (mainFile.exists()) {
             try {
                 this.assets.getScriptManager().runScript(mainFile);
-            } catch (FileNotFoundException wontHappen) {}
+            } catch (FileNotFoundException wontHappen) {
+            }
         } else {
             log.warn("main.lua was not found in game directory; no start code was executed");
         }
@@ -199,7 +200,12 @@ public class Undertailor extends ApplicationAdapter {
 
     // ---------------- methods ----------------
 
-    void exit() {
+    void exit(boolean crash) {
+        if(crash) {
+            this.options.skipLauncher = false;
+            this.options.save();
+        }
+
         System.exit(0); // TODO proper exit
     }
 }
