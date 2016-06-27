@@ -142,8 +142,20 @@ public class MultiRenderer {
             renderer.end();
         }
 
-        this.setBatchColor(Color.WHITE, 1F);
-        this.setShapeColor(Color.WHITE, 1F);
+        this.resetColors();
+    }
+
+    /**
+     * Resets the colors to their default.
+     */
+    public void resetColors() {
+        if(!this.getBatchColor().equals(Color.WHITE)) {
+            this.setBatchColor(Color.WHITE);
+        }
+
+        if(!this.getShapeColor().equals(Color.WHITE)) {
+            this.setShapeColor(Color.WHITE);
+        }
     }
 
     // ---------------- spritebatch methods ----------------

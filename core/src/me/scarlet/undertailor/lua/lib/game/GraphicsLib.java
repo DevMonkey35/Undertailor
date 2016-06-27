@@ -133,6 +133,12 @@ public class GraphicsLib extends LuaLibrary {
             return NIL;
         }));
 
+        // graphics.resetColors()
+        set("resetColors", asFunction(vargs -> {
+            renderer.resetColors();
+            return NIL;
+        }));
+
         // ---------------- shape draw functions ----------------
 
         // graphics.drawLine(x1, y1, x2, y2[, thickness])
