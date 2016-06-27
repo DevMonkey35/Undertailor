@@ -32,6 +32,8 @@ package me.scarlet.undertailor.engine.overworld;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.engine.Destructible;
@@ -57,6 +59,7 @@ import me.scarlet.undertailor.util.Pair;
  */
 public class OverworldController implements Processable, Renderable, Subsystem, Destructible {
 
+    static final Logger log = LoggerFactory.getLogger(OverworldController.class);
     public static final float PIXELS_TO_METERS = 0.025F;
     public static final float METERS_TO_PIXELS = 40.0F;
     public static final float RENDER_WIDTH = 640.0F;
@@ -125,7 +128,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     public boolean process(Object... params) {
         this.collision.step(Gdx.graphics.getRawDeltaTime());
         if (this.room != null) {
-            if(this.room.isDestroyed()) {
+            if (this.room.isDestroyed()) {
                 this.room = null;
             } else {
                 this.room.process(params);
@@ -142,7 +145,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
 
     @Override
     public void destroy() {
-        if(this.destroyed) {
+        if (this.destroyed) {
             return;
         }
 
@@ -270,6 +273,12 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
      * @param transitions whether or not to play transitions
      */
     public void setRoom(WorldRoom room, String targetEntrypoint, boolean transitions) {
+        if (room.isDestroyed()) {
+            log.warn(
+                "attempted to submit a destroyed worldroom to overworldcontroller; cannot accept destroyed room");
+            return;
+        }
+
         Task roomTask = new Task() {
 
             boolean set = false;
@@ -295,7 +304,8 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
                         if (targetEntrypoint != null) {
                             Entrypoint target =
                                 OverworldController.this.room.getEntrypoint(targetEntrypoint);
-                            OverworldController.this.character.setPosition(target.getTargetSpawnpoint());
+                            OverworldController.this.character
+                                .setPosition(target.getTargetSpawnpoint());
                         }
 
                         OverworldController.this.room

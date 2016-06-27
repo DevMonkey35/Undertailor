@@ -35,6 +35,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.EventListener;
@@ -65,6 +67,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     Modular<OverworldController>, PotentialDelay {
 
     static final Set<Layerable> RENDER_ORDER;
+    static final Logger log = LoggerFactory.getLogger(WorldRoom.class);
 
     static {
         RENDER_ORDER = new TreeSet<>((Layerable obj1, Layerable obj2) -> {
@@ -315,6 +318,11 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      * @param obj the WorldObject to register
      */
     public void registerObject(WorldObject obj) {
+        if(obj.isDestroyed()) {
+            log.warn("attempted to submit destroyed worldobject to a worldroom; cannot accept a destroyed object");
+            return;
+        }
+
         if (obj.claim(this)) {
             this.obj.add(obj);
         }
