@@ -212,6 +212,8 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
             this.body.getWorld().destroyBody(this.body);
             this.body = null;
         }
+
+        this.destroyed = true;
     }
 
     // -------- modular --------
