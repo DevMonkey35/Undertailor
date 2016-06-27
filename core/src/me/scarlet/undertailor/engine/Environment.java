@@ -55,7 +55,7 @@ public class Environment implements Processable, Renderable, Destructible {
         this.scheduler = new Scheduler(this);
         this.overworld =
             new OverworldController(tailor.getRenderer(), this, new FitViewport(640, 480));
-        this.ui = new UIController();
+        this.ui = new UIController(this, tailor.getRenderer());
         this.destroyed = false;
     }
 

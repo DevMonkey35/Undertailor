@@ -1,0 +1,79 @@
+package me.scarlet.undertailor.lua.impl;
+
+import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
+import static org.luaj.vm2.LuaValue.valueOf;
+
+import me.scarlet.undertailor.engine.ui.UIComponent;
+import me.scarlet.undertailor.engine.ui.UIObject;
+import me.scarlet.undertailor.exception.LuaScriptException;
+import me.scarlet.undertailor.gfx.Transform;
+import me.scarlet.undertailor.lua.LuaImplementable;
+import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.ScriptManager;
+import me.scarlet.undertailor.util.LuaUtil;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+public class LuaUIComponent extends UIComponent implements LuaImplementable<UIComponent> {
+
+    public static final String FUNC_CREATE = "create";
+    public static final String FUNC_RENDER = "render";
+    public static final String FUNC_PROCESS = "process";
+    public static final String FUNC_ONCLAIM = "onClaim";
+    public static final String FUNC_CATCHEVENT = "catchEvent";
+
+    private LuaObjectValue<UIComponent> luaObj;
+
+    public LuaUIComponent(ScriptManager manager, File luaFile)
+        throws FileNotFoundException, LuaScriptException {
+        this.luaObj = LuaObjectValue.of(this);
+        this.luaObj.load(manager, luaFile);
+
+        if (this.hasFunction(FUNC_CREATE)) {
+            this.invokeSelf(FUNC_CREATE);
+        }
+    }
+
+    @Override
+    public LuaObjectValue<UIComponent> getObjectValue() {
+        return this.luaObj;
+    }
+
+    @Override
+    public Class<UIComponent> getPrimaryIdentifyingClass() {
+        return UIComponent.class;
+    }
+
+    @Override
+    public void onClaim(UIObject parent) {
+        if(this.hasFunction(FUNC_ONCLAIM)) {
+            this.invokeSelf(FUNC_ONCLAIM, orNil(parent));
+        }
+    }
+
+    @Override
+    protected boolean processComponent(Object... params) {
+        if (this.hasFunction(FUNC_PROCESS)) {
+            return this.invokeSelf(FUNC_PROCESS).toboolean(1);
+        }
+
+        return false;
+    }
+
+    @Override
+    public void draw(float x, float y, Transform transform) {
+        if(this.hasFunction(FUNC_RENDER)) {
+            this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y), orNil(transform));
+        }
+    }
+
+    @Override
+    public boolean catchEvent(String eventName, Object... data) {
+        if (this.hasFunction(FUNC_CATCHEVENT)) {
+            return this.invokeSelf(FUNC_CATCHEVENT, LuaUtil.varargsOf(data)).toboolean(1);
+        }
+
+        return true;
+    }
+}

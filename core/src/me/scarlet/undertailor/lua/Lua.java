@@ -63,6 +63,9 @@ import me.scarlet.undertailor.lua.meta.LuaTextComponentMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextMeta;
 import me.scarlet.undertailor.lua.meta.LuaTextStyleMeta;
 import me.scarlet.undertailor.lua.meta.LuaTransformMeta;
+import me.scarlet.undertailor.lua.meta.LuaUIComponentMeta;
+import me.scarlet.undertailor.lua.meta.LuaUIControllerMeta;
+import me.scarlet.undertailor.lua.meta.LuaUIObjectMeta;
 import me.scarlet.undertailor.lua.meta.LuaWorldObjectMeta;
 import me.scarlet.undertailor.lua.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.util.LuaUtil;
@@ -118,8 +121,17 @@ public class Lua {
         loadMeta(LuaTextMeta.class);
         loadMeta(LuaTextStyleMeta.class);
         loadMeta(LuaTransformMeta.class);
+        loadMeta(LuaUIComponentMeta.class);
+        loadMeta(LuaUIControllerMeta.class);
+        loadMeta(LuaUIObjectMeta.class);
         loadMeta(LuaWorldObjectMeta.class);
         loadMeta(new LuaWorldRoomMeta(Undertailor.getInstance()));
+
+        log.info("Finished loading lua object metadata");
+        log.info("Primary types list: ");
+        Lua.PMETA.values().forEach(meta -> {
+            log.info(meta.getClass().getSimpleName());
+        });
     }
 
     // ---------------- functional methods ----------------

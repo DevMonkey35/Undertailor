@@ -41,8 +41,10 @@ import org.luaj.vm2.LuaValue;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.EnvironmentManager;
+import me.scarlet.undertailor.engine.ui.UIObject;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.ScriptManager;
+import me.scarlet.undertailor.lua.impl.LuaUIComponent;
 import me.scarlet.undertailor.lua.impl.LuaWorldObject;
 import me.scarlet.undertailor.lua.impl.LuaWorldRoom;
 import me.scarlet.undertailor.lua.lib.game.AudioLib;
@@ -127,6 +129,24 @@ public class GameLib extends LuaLibrary {
             }
 
             return obj.getObjectValue();
+        }));
+
+        // game.newUIComponent(scriptPath)
+        set("newUIComponent", asFunction(vargs -> {
+            String filePath = vargs.checkjstring(1);
+            LuaUIComponent obj;
+            try {
+                obj = new LuaUIComponent(scriptMan, new File(scriptMan.getScriptPath(), filePath));
+            } catch (Exception e) {
+                throw new LuaError(e);
+            }
+
+            return obj.getObjectValue();
+        }));
+
+        // game.newUIObject()
+        set("newUIObject", asFunction(vargs -> {
+            return orNil(new UIObject());
         }));
 
         // ---------------- child lib ----------------
