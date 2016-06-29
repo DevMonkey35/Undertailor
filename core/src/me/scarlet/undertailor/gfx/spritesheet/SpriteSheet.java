@@ -54,7 +54,7 @@ public interface SpriteSheet {
      * @return a sprite stored in the provided index, or
      *         null if not found
      */
-    public Sprite getSprite(int index);
+    public Sprite getSprite(String index);
 
     /**
      * Returns a read-only collection of all the sprites

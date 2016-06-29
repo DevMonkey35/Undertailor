@@ -70,11 +70,11 @@ public class GraphicsLib extends LuaLibrary {
             return valueOf(Gdx.graphics.getRawDeltaTime());
         }));
 
-        // graphics.getSprite(sheetName, index)
+        // graphics.getSprite(sheetName, name)
         set("getSprite", asFunction(vargs -> {
             SpriteSheet sheet = sheetMan.getSheet(vargs.checkjstring(1));
             if (sheet != null) {
-                return orNil(sheet.getSprite(vargs.checkint(2)));
+                return orNil(sheet.getSprite(vargs.checkjstring(2)));
             }
 
             return NIL;

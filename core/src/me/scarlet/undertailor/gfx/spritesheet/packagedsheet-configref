@@ -1,17 +1,14 @@
-{ // cfg version 0
-	"version": 0,
+{ // cfg version 1
+	"version": 1,
 	"sprites": {
-		"grid": {
-			"sizeX": 30, // horizontal size of the sheet grid
-			"sizeY": 15 // vertical size of the sheet grid
-		},
 		"meta": {
-			"0": { // bunch of SpriteMetas, key defines target sprite index
+			"0": { // bunch of metadata, key defines target sprite index
+				"posX": 0,
+				"posY": 0,
+				"sizeX": 19,
+				"sizeY": 29,
 				"originX": 12,
-				"wrapX": 4
-			},
-			"1": {
-				"wrapY": 13
+				"originY": 0
 			}
 		}
 	}

@@ -51,13 +51,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipFile;
 
@@ -77,7 +73,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
     public static class PackagedSpriteSheet extends Resource<Texture> implements SpriteSheet {
 
         private PackagedSpriteSheetFactory factory;
-        private Map<Integer, Sprite> sprites;
+        private Map<String, Sprite> sprites;
 
         public PackagedSpriteSheet(PackagedSpriteSheetFactory factory) {
             this.factory = factory;
@@ -109,7 +105,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
          * disposing the Texture too early.
          */
         @Override
-        public Sprite getSprite(int index) {
+        public Sprite getSprite(String index) {
             if (!sprites.containsKey(index)) {
                 Sprite newSprite = factory.sprites.get(index).clone();
                 newSprite.sourceObject = this;
@@ -121,12 +117,9 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
 
         @Override
         public Collection<Sprite> getSprites() {
-            Set<Sprite> sprites = new HashSet<Sprite>();
-            for (int i = 0; i < factory.sprites.size(); i++) {
-                sprites.add(this.getSprite(i));
-            }
+            factory.sprites.keySet().forEach(this::getSprite);
 
-            return sprites;
+            return sprites.values();
         }
 
         @Override
@@ -143,7 +136,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
     private String name;
     private ZipFile sourceFile;
     private MultiRenderer renderer;
-    private List<Sprite> sprites;
+    private Map<String, Sprite> sprites;
     private ConfigurationNode sheetConfig;
 
     public PackagedSpriteSheetFactory(String name, MultiRenderer renderer, ZipFile sourceFile) {
@@ -151,7 +144,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
         this.renderer = renderer;
         this.sourceFile = sourceFile;
 
-        this.sprites = new ArrayList<>();
+        this.sprites = new HashMap<>();
 
         InputStream configStream = null; // load the configuration json inside the archive for later reading
         try {
@@ -216,17 +209,16 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
 
     private static Object[] KEY_VERSION = {"version"};
 
-    private static Object[] KEY_GRID_SIZE_X = {"sprites", "grid", "sizeX"};
-    private static Object[] KEY_GRID_SIZE_Y = {"sprites", "grid", "sizeY"};
+    private static Object[] KEY_META_LIST = {"sprites", "meta"};
 
-    private static Object[] KEY_META_LIST = {"sprites", "meta", null};
     // inside a meta block
+
+    private static Object[] KEY_META_POSX = {"posX"};
+    private static Object[] KEY_META_POSY = {"posY"};
+    private static Object[] KEY_META_SIZEX = {"sizeX"};
+    private static Object[] KEY_META_SIZEY = {"sizeY"};
     private static Object[] KEY_META_ORIGINX = {"originX"};
     private static Object[] KEY_META_ORIGINY = {"originY"};
-    private static Object[] KEY_META_WRAPX = {"wrapX"};
-    private static Object[] KEY_META_WRAPY = {"wrapY"};
-    private static Object[] KEY_META_OFFX = {"offX"};
-    private static Object[] KEY_META_OFFY = {"offY"};
 
     /**
      * Internal method.
@@ -238,7 +230,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
      */
     private void loadSheet(Texture texture) throws BadAssetException { // implementing version 0
         int version = this.sheetConfig.getNode(KEY_VERSION).getInt(-1);
-        if (version != 0) {
+        if (version != 1) {
             String message = version == -1
                 ? "Cannot continue with an unknown PackagedSpriteSheet configuration version"
                 : "This Undertailor version does not support PackagedSpriteSheet configuration version "
@@ -246,44 +238,23 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
             throw new UnsupportedOperationException(message);
         }
 
-        int gridX = this.sheetConfig.getNode(KEY_GRID_SIZE_X).getInt(0);
-        int gridY = this.sheetConfig.getNode(KEY_GRID_SIZE_Y).getInt(0);
+        Map<Object, ? extends ConfigurationNode> metaNodes =
+            this.sheetConfig.getNode(KEY_META_LIST).getChildrenMap();
+        for (ConfigurationNode meta : metaNodes.values()) {
+            String spriteName = meta.getKey().toString();
 
-        if (gridX <= 0 || gridY <= 0 || texture.getWidth() % gridX != 0
-            || texture.getHeight() % gridY != 0) {
-            throw new BadAssetException("Incorrectly configured spritesheet with bad grid size");
-        }
+            SpriteMeta metadata = new SpriteMeta();
 
-        int spriteWidth = texture.getWidth() / gridX;
-        int spriteHeight = texture.getHeight() / gridY;
+            int posX = meta.getNode(KEY_META_POSX).getInt(0);
+            int posY = meta.getNode(KEY_META_POSY).getInt(0);
+            int sizeX = meta.getNode(KEY_META_SIZEX).getInt(0);
+            int sizeY = meta.getNode(KEY_META_SIZEY).getInt(0);
+            metadata.originX = meta.getNode(KEY_META_ORIGINX).getFloat(0);
+            metadata.originY = meta.getNode(KEY_META_ORIGINY).getFloat(0);
 
-        for (int y = 0; y < gridY; y++) {
-            for (int x = 0; x < gridX; x++) {
-                int pos = (y * gridX) + x;
-                int wrapX = 0;
-                int wrapY = 0;
-
-                SpriteMeta meta = null;
-                KEY_META_LIST[2] = "" + pos;
-                ConfigurationNode metaNode = this.sheetConfig.getNode(KEY_META_LIST);
-                if (!metaNode.isVirtual()) {
-                    meta = new SpriteMeta(metaNode.getNode(KEY_META_ORIGINX).getFloat(0),
-                        metaNode.getNode(KEY_META_ORIGINY).getFloat(0),
-                        metaNode.getNode(KEY_META_OFFX).getInt(0),
-                        metaNode.getNode(KEY_META_OFFY).getInt(0),
-                        metaNode.getNode(KEY_META_WRAPX).getInt(0),
-                        metaNode.getNode(KEY_META_WRAPY).getInt(0));
-
-                    wrapX = meta.wrapX;
-                    wrapY = meta.wrapY;
-                }
-
-                Sprite added = new Sprite(
-                    this.renderer, new TextureRegion(texture, x * spriteWidth,
-                        (y * spriteHeight) + wrapY, spriteWidth - wrapX, spriteHeight - wrapY),
-                    meta);
-                this.sprites.add(added);
-            }
+            Sprite added = new Sprite(this.renderer,
+                new TextureRegion(texture, posX, posY, sizeX, sizeY), metadata);
+            this.sprites.put(spriteName, added);
         }
     }
 }

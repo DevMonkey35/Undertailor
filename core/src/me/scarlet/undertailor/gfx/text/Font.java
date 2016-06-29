@@ -174,25 +174,21 @@ public class Font {
      * @param character the target character
      */
     public Sprite getCharacterSprite(char character) {
-        int charIndex = this.characterList.indexOf(character);
-        if (charIndex >= 0) {
-            return this.sheet.getSprite(charIndex);
-        }
-
-        return null;
+        return this.sheet.getSprite("" + character);
     }
 
     // ---------------- configuration loader ----------------
 
     private static Object[] KEY_VERSION = {"version"};
 
-    private static Object[] KEY_CHARACTER_SET = {"font", "characterSet"};
-    private static Object[] KEY_LETTER_SPACING = {"font", "letterSpacing"};
-    private static Object[] KEY_SPACE_LENGTH = {"font", "spaceLength"};
-    private static Object[] KEY_LINE_SIZE = {"font", "lineSize"};
+    private static Object[] KEY_LETTER_SPACING = {"sprites", "letterSpacing"};
+    private static Object[] KEY_SPACE_LENGTH = {"sprites", "spaceLength"};
+    private static Object[] KEY_LINE_SIZE = {"sprites", "lineSize"};
 
-    private static Object[] KEY_META_LIST = {"font", "meta", null};
+    private static Object[] KEY_META_LIST = {"sprites", "meta", null};
+
     // inside a meta block
+
     private static Object[] KEY_META_LETTER_SPACING = {"letterSpacing"};
     private static Object[] KEY_META_LETTER_SPACING_LEFT = {"letterSpacingLeft"};
     private static Object[] KEY_META_LETTER_SPACING_RIGHT = {"letterSpacingRight"};
@@ -207,27 +203,12 @@ public class Font {
      */
     private void loadConfig(ConfigurationNode rootNode) throws BadAssetException {
         int version = rootNode.getNode(KEY_VERSION).getInt(-1);
-        if (version != 0) {
+        if (version != 1) {
             String message = version == -1
                 ? "Cannot continue with an unknown Font configuration version"
                 : "This Undertailor version does not support Font configuration version " + version;
             throw new UnsupportedOperationException(message);
         }
-
-        // font.characterSet
-        checkExists(rootNode.getNode(KEY_CHARACTER_SET));
-        this.characterList =
-            checkValue(rootNode.getNode(KEY_CHARACTER_SET).getString(""), value -> {
-                if (value.trim().isEmpty()) {
-                    return "Font has no registered characters";
-                }
-
-                if (value.trim().length() > this.sheet.getSpriteCount()) {
-                    return "Character list does not match up to sprite count";
-                }
-
-                return null;
-            });
 
         // font.letterSpacing
         checkExists(rootNode.getNode(KEY_LETTER_SPACING));
