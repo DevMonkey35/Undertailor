@@ -461,10 +461,10 @@ public class Launcher extends Scene {
         GridPane.setColumnSpan(separator, GridPane.REMAINING);
         systemOptionsContent.getChildren().add(separator);
         
-        CheckBox showDebug = new CheckBox("Show debug messages");
+        CheckBox showDebug = new CheckBox("Debug mode");
         CheckBox skipLauncher = new CheckBox("Skip launcher");
         
-        showDebug.setTooltip(new Tooltip("Whether or not to show messages tagged [DEBUG] in the logging console."));
+        showDebug.setTooltip(new Tooltip("Debug mode!"));
         skipLauncher.setTooltip(new Tooltip("Whether or not to skip the launcher when opening the game.\n"
                                           + "You can cancel this feature by pressing F12 in-game."));
         
