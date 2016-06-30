@@ -126,6 +126,10 @@ public class ScriptManager {
             baseLibPath += File.separator;
         }
 
+        if(!scriptPath.exists()) {
+            scriptPath.mkdirs();
+        }
+
         BaseLib.setScriptPath(baseLibPath);
     }
 

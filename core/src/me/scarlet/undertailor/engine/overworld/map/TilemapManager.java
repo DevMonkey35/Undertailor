@@ -84,6 +84,9 @@ public class TilemapManager {
     public void load(File rootDirectory) {
         log.info("Loading tilemap from directory " + rootDirectory.getAbsolutePath());
 
+        File imgDir = new File(rootDirectory, "images/");
+        imgDir.mkdirs();
+
         Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory,
             file -> file.getName().endsWith(".tmx"), false);
 
