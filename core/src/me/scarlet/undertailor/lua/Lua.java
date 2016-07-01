@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.lua.lib.MetaLib;
 import me.scarlet.undertailor.lua.meta.LuaAudioDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaAudioMeta;
 import me.scarlet.undertailor.lua.meta.LuaAudioPlayableMeta;
@@ -284,6 +285,26 @@ public class Lua {
             Lua.METATABLES.put(obj.getClass(), null);
             return null;
         }
+    }
+
+    /**
+     * Injects all registered metatables into the provided
+     * table, with the owning meta's typename as their keys.
+     * 
+     * <p>Should only be used by {@link MetaLib}.</p>
+     */
+    public static void injectMetatables(LuaTable table) {
+        Lua.PMETA.values().forEach(meta -> {
+            if (meta.getMetatable() != null) {
+                table.set(meta.getTypeName(), meta.getMetatable());
+            }
+        });
+
+        Lua.META.values().forEach(meta -> {
+            if (meta.getMetatable() != null) {
+                table.set(meta.getTypeName(), meta.getMetatable());
+            }
+        });
     }
 
     /**
