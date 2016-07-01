@@ -315,6 +315,6 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
 
     @Override
     public String getTypeName() {
-        return "WorldRoom";
+        return "worldroom";
     }
 }

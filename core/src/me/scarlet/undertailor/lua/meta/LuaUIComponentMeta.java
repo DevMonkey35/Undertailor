@@ -100,6 +100,6 @@ public class LuaUIComponentMeta implements LuaObjectMeta {
 
     @Override
     public String getTypeName() {
-        return "UIComponent";
+        return "uicomponent";
     }
 }

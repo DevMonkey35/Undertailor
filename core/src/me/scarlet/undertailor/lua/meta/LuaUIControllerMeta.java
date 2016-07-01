@@ -107,6 +107,6 @@ public class LuaUIControllerMeta implements LuaObjectMeta {
 
     @Override
     public String getTypeName() {
-        return "UIController";
+        return "uicontroller";
     }
 }
