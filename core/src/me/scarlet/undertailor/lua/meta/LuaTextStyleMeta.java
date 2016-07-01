@@ -78,7 +78,7 @@ public class LuaTextStyleMeta implements LuaObjectMeta {
 
     @Override
     public String getTypeName() {
-        return "tlr-textstyle";
+        return "textstyle";
     }
 
     @Override
