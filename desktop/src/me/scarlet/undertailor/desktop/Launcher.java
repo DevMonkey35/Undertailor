@@ -390,13 +390,13 @@ public class Launcher extends Scene {
         dirChoiceBox.setAlignment(Pos.CENTER_RIGHT);
         dirSetBox.setAlignment(Pos.CENTER_RIGHT);
         
-        RadioButton jarDirectory = new RadioButton("Jar Folder");
+        RadioButton jarDirectory = new RadioButton("App Folder");
         RadioButton setDirectory = new RadioButton("Choose Folder");
         TextField directory = new TextField();
         Button setDir = new Button("...");
         
-        assetDirLabel.setTooltip(new Tooltip("The folder where all the fangame's stuff is. (it has the main.lua)"));
-        jarDirectory.setTooltip(new Tooltip("Use the folder the .jar file is in as the asset folder."));
+        assetDirLabel.setTooltip(new Tooltip("The folder where all the fangame's stuff is (it has the main.lua)."));
+        jarDirectory.setTooltip(new Tooltip("Use the folder the application is in as the asset folder."));
         setDirectory.setTooltip(new Tooltip("Use the folder selected below."));
         directory.setTooltip(new Tooltip("The path to the folder to use as the asset folder, if we choose to use it."));
         directory.setEditable(false);
