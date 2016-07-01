@@ -72,7 +72,7 @@ public class DesktopLauncher extends Application {
             return;
         }
 
-        Application.launch(args);
+        Application.launch(DesktopLauncher.class, args);
     }
 
     public static void launchGame(LaunchOptions options) {
