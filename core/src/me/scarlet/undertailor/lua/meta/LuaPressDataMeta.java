@@ -61,29 +61,32 @@ public class LuaPressDataMeta implements LuaObjectMeta {
     public LuaPressDataMeta() {
         this.metatable = new LuaTable();
 
+        // time value converted to seconds
         // pressData:getLastReleaseTime()
         set("getLastReleaseTime", asFunction(vargs -> {
-            return valueOf(obj(vargs).getLastReleaseTime());
+            return valueOf(obj(vargs).getLastReleaseTime() / 1000.0F);
         }));
 
         // pressData:justReleased(time)
         set("justReleased", asFunction(vargs -> {
-            return valueOf(obj(vargs).justReleased(vargs.checklong(2)));
+            return valueOf(obj(vargs).justReleased((long) (vargs.checknumber(2).tofloat() * 1000.0F)));
         }));
 
+        // time value converted to seconds
         // pressData:getLastPressTime()
         set("getLastPressTime", asFunction(vargs -> {
-            return valueOf(obj(vargs).getLastPressTime());
+            return valueOf(obj(vargs).getLastPressTime() / 1000.0F);
         }));
 
         // pressData:justPressed(time)
         set("justPressed", asFunction(vargs -> {
-            return valueOf(obj(vargs).justPressed(vargs.checklong(2)));
+            return valueOf(obj(vargs).justPressed((long) (vargs.checknumber(2).tofloat() * 1000.0F)));
         }));
 
+        // time value converted to seconds
         // pressData:getHoldTime()
         set("getHoldTime", asFunction(vargs -> {
-            return valueOf(obj(vargs).getHoldTime());
+            return valueOf(obj(vargs).getHoldTime() / 1000.0F);
         }));
 
         // pressData:isPressed()
