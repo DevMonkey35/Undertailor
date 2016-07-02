@@ -66,14 +66,16 @@ public class LuaColliderMeta implements LuaObjectMeta {
         this.metatable = new LuaTable();
 
         // collider:getBodyType()
+        // offsets by 1 to become 1-based
         set("getColliderType", asFunction(vargs -> {
-            return valueOf(obj(vargs).getColliderType().getValue());
+            return valueOf(obj(vargs).getColliderType().getValue() + 1);
         }));
 
         // collider:setColliderType()
+        // negates by 1, as the parameter is expected to be 1-based
         set("setColliderType", asFunction(vargs -> {
             Collider col = obj(vargs);
-            int type = vargs.arg(2).checkint();
+            int type = vargs.arg(2).checkint() - 1;
             BodyType setType = BodyType.DynamicBody; // default
             for (BodyType typeEntry : BodyType.values()) {
                 if (typeEntry.getValue() == type) {
