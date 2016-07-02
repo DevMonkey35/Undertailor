@@ -33,6 +33,7 @@ package me.scarlet.undertailor.lua.meta;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.valueOf;
+import static org.luaj.vm2.LuaValue.varargsOf;
 
 import com.badlogic.gdx.graphics.Color;
 import org.luaj.vm2.LuaTable;
@@ -61,6 +62,12 @@ public class LuaColorMeta implements LuaObjectMeta {
 
     public LuaColorMeta() {
         this.metatable = new LuaTable();
+
+        // color:getRGB()
+        set("getRGB", asFunction(vargs -> {
+            Color color = obj(vargs);
+            return varargsOf(valueOf((int) (color.r * 255)), valueOf((int) (color.g * 255)), valueOf((int) (color.b * 255)));
+        }));
 
         // color:add(color)
         // color:add(r, g, b)
@@ -107,9 +114,9 @@ public class LuaColorMeta implements LuaObjectMeta {
             }
         }));
 
-        // color:set(color)
-        // color:set(r, g, b)
-        set("set", asFunction(vargs -> {
+        // color:setRGB(color)
+        // color:setRGB(r, g, b)
+        set("setRGB", asFunction(vargs -> {
             Color color = obj(vargs);
             if (vargs.arg(2).isnumber()) {
                 float r = vargs.optint(2, 0) / 255F;
