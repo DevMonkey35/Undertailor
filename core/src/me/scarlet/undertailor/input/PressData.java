@@ -127,16 +127,15 @@ public class PressData {
 
     /**
      * Returns how long the key represented by this
-     * {@link PressData} has been held down for if it is
-     * currently pressed. If not pressed, the length of
-     * time it was previously held for is returned
-     * instead, or 0 if the latter had not been set
-     * either.
+     * {@link PressData} has been held down for in
+     * milliseconds if it is currently pressed. If not
+     * pressed, the length of time it was previously held
+     * for is returned instead, or 0 if the latter had not
+     * been set either.
      * 
-     * @return how long this key has been pressed for,
-     *         or how long it <strong>had</strong> been
-     *         pressed for, or 0 if it was never pressed
-     *         before
+     * @return how long this key has been pressed for, or
+     *         how long it <strong>had</strong> been pressed
+     *         for, or 0 if it was never pressed before
      */
     public long getHoldTime() {
         if (holdTime <= -1) {
