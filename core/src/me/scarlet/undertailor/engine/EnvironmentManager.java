@@ -84,7 +84,7 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     public boolean process(Object... params) {
         this.globalSched.process(params);
         Environment active = this.getActiveEnvironment();
-        if(active != null) {
+        if (active != null) {
             return active.process(params);
         }
 
@@ -96,7 +96,7 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     @Override
     public void draw(float x, float y, Transform transform) {
         Environment active = this.getActiveEnvironment();
-        if(active != null) {
+        if (active != null) {
             active.draw();
         }
     }
@@ -123,11 +123,21 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
      */
     public Environment getEnvironment(String name) {
         if (!this.environments.containsKey(name)) {
-            this.environments.put(name, new Environment(tailor));
+            this.environments.put(name, new Environment(tailor, name));
             this.environments.get(name).setViewport(this.viewportType);
         }
 
         return this.environments.get(name);
+    }
+
+    /**
+     * Destroys the provided {@link Environment}.
+     * 
+     * @param environment the environment to destroy
+     */
+    public void destroyEnvironment(Environment environment) {
+        environment.destroy();
+        this.environments.remove(environment.getName());
     }
 
     /**
@@ -148,7 +158,16 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
      * @return the curret active Environment
      */
     public Environment getActiveEnvironment() {
-        return this.environments.get(this.activeEnvironment);
+        Environment environment = this.environments.get(this.activeEnvironment);
+        if (environment != null) {
+            if (environment.isDestroyed()) {
+                this.environments.remove(activeEnvironment);
+            } else {
+                return environment;
+            }
+        }
+
+        return null;
     }
 
     /**

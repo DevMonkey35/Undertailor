@@ -49,9 +49,13 @@ public class Environment implements Processable, Renderable, Destructible {
     private UIController ui;
     private Scheduler scheduler;
     private OverworldController overworld;
+    private EnvironmentManager manager;
     private boolean destroyed;
+    private String name;
 
-    public Environment(Undertailor tailor) {
+    public Environment(Undertailor tailor, String name) {
+        this.name = name;
+        this.manager = tailor.getEnvironmentManager();
         this.scheduler = new Scheduler(this);
         this.overworld =
             new OverworldController(tailor.getRenderer(), this, new FitViewport(640, 480));
@@ -90,6 +94,11 @@ public class Environment implements Processable, Renderable, Destructible {
 
     @Override
     public void destroy() {
+        if(this.destroyed) {
+            return;
+        }
+
+        this.manager.destroyEnvironment(this);
         this.scheduler.destroy();
         this.overworld.destroy();
         this.ui.destroy();
@@ -97,6 +106,15 @@ public class Environment implements Processable, Renderable, Destructible {
     }
 
     // ---------------- object ----------------
+
+    /**
+     * Returns the name of this {@link Environment}.
+     * 
+     * @return the name of this Environment
+     */
+    public String getName() {
+        return this.name;
+    }
 
     /**
      * Returns the {@link Scheduler} ran locally by this

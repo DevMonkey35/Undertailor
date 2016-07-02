@@ -32,6 +32,7 @@ package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+import static org.luaj.vm2.LuaValue.valueOf;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -60,6 +61,11 @@ public class LuaEnvironmentMeta implements LuaObjectMeta {
 
     public LuaEnvironmentMeta() {
         this.metatable = new LuaTable();
+
+        // environment:getName()
+        set("getName", asFunction(vargs -> {
+            return valueOf(obj(vargs).getName());
+        }));
 
         // environment:getScheduler()
         set("getScheduler", asFunction(vargs -> {

@@ -87,7 +87,12 @@ public class GameLib extends LuaLibrary {
 
         // game.destroyEnvironment(name)
         set("destroyEnvironment", asFunction(vargs -> {
-            envMan.destroyEnvironment(vargs.checkjstring(1));
+            if (vargs.isstring(1)) { // passed an env name
+                envMan.destroyEnvironment(vargs.checkjstring(1));
+            } else { // pased an env
+                LuaEnvironmentMeta.convert(vargs.checknotnil(1)).getObject().destroy();
+            }
+
             return NIL;
         }));
 
