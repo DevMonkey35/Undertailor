@@ -92,6 +92,12 @@ public class LuaTransformMeta implements LuaObjectMeta {
 
         // ---------------- setters ----------------
 
+        // transform:setScale(scale)
+        set("setScale", asFunction(vargs -> {
+            obj(vargs).setScale(vargs.checknumber(2).tofloat());
+            return NIL;
+        }));
+
         // transform:setScaleX(scaleX)
         set("setScaleX", asFunction(vargs -> {
             obj(vargs).setScaleX(vargs.checknumber(2).tofloat());
