@@ -64,6 +64,7 @@ public class LuaUIObjectMeta implements LuaObjectMeta {
         this.metatable = new LuaTable();
 
         // uiObject:getMaxLifetime()
+        // Converts time unit to seconds.
         set("getMaxLifetime", asFunction(vargs -> {
             long millis = obj(vargs).getMaxLifetime();
             float seconds = millis / 1000.0F;
@@ -71,6 +72,7 @@ public class LuaUIObjectMeta implements LuaObjectMeta {
         }));
 
         // uiObject:setMaxLifetime(seconds)
+        // Converts passed time unit to milliseconds.
         set("setMaxLifetime", asFunction(vargs -> {
             float seconds = vargs.checknumber(2).tofloat();
             long millis = (long) (seconds * 1000L);
@@ -81,6 +83,12 @@ public class LuaUIObjectMeta implements LuaObjectMeta {
         // uiObject:isPastLifetime()
         set("isPastLifetime", asFunction(vargs -> {
             return valueOf(obj(vargs).isPastLifetime());
+        }));
+
+        // uiObject:getLifetime()
+        // Converts time unit to seconds.
+        set("getLifetime", asFunction(vargs -> {
+            return valueOf(obj(vargs).getLifetime() / 1000.0F);
         }));
 
         // uiObject:resetLifetime()

@@ -233,6 +233,24 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     }
 
     /**
+     * Returns the length of time since this
+     * {@link UIObject} has been registered.
+     * 
+     * <p>Note that this value may not always represent the
+     * actual registration time, as anything may call
+     * {@link #resetLifetime()} to reset this value.</p>
+     * 
+     * @return the current lifetime of this UIObject
+     */
+    public long getLifetime() {
+        if(this.lifestart < 0) {
+            return 0;
+        }
+
+        return TimeUtils.timeSinceMillis(this.lifestart);
+    }
+
+    /**
      * Resets this {@link UIObject}'s lifetime tracker.
      */
     public void resetLifetime() {
