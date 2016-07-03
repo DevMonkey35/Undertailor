@@ -39,6 +39,7 @@ import org.luaj.vm2.LuaError;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.MultiRenderer;
+import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.gfx.spritesheet.SpriteSheet;
 import me.scarlet.undertailor.gfx.spritesheet.SpriteSheetManager;
 import me.scarlet.undertailor.lua.Lua;
@@ -78,6 +79,11 @@ public class GraphicsLib extends LuaLibrary {
             }
 
             return NIL;
+        }));
+
+        // game.getDefaultTransform()
+        set("getDefaultTransform", asFunction(vargs -> {
+            return orNil(Transform.DUMMY);
         }));
 
         // game.newRenderable(scriptPath)
