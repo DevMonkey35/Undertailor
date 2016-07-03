@@ -110,6 +110,10 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
                 throw new LuaError("uneven points");
             }
 
+            if(vargs.narg() < 6) {
+                throw new LuaError("Polygons must have at least 3 points");
+            }
+
             if (vargs.narg() > 16) {
                 throw new LuaError(
                     "libGDX's Box2D will not permit polygons with more than 8 vertices");
