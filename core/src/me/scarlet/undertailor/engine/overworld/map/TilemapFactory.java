@@ -170,7 +170,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
         }
 
         public List<ImageLayer> getImageLayers() {
-            if(!this.isLoaded()) {
+            if (!this.isLoaded()) {
                 return null;
             }
 
@@ -247,7 +247,11 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
                 return null;
             }
 
-            String layerName = OBJ_DEF_LAYER_PREFIX + defLayerName;
+            String layerName = defLayerName;
+            if (layerName.charAt(0) != OBJ_DEF_LAYER_PREFIX) {
+                layerName = OBJ_DEF_LAYER_PREFIX + layerName;
+            }
+
             if (this.getObjectLayer(layerName) != null) {
                 return this.getObjectLayer(layerName).getShape(shapeName);
             }
