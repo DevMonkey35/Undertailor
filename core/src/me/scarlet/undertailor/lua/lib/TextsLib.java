@@ -42,10 +42,10 @@ import me.scarlet.undertailor.lua.LuaLibrary;
  * 
  * <p>Wraps around {@link Text}.</p>
  */
-public class TextLib extends LuaLibrary {
+public class TextsLib extends LuaLibrary {
 
-    public TextLib(Undertailor undertailor) {
-        super("text");
+    public TextsLib(Undertailor undertailor) {
+        super("texts");
 
         // text.of(baseParams, text)
         set("newText", asFunction(vargs -> {
