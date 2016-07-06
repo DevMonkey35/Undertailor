@@ -26,44 +26,21 @@
 
 
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- `processable` objects have a routine task function that gets
+-- called every frame.
 --
--- This class also holds the functions of the following classes:
+-- In most cases, it is Undertailor who calls the process function.
 --
--- * `destructible`
--- * `processable`
--- * `renderable`
---
--- @classmod environment
+-- @classmod processable
 ---
 
-local environment = {}
+local processable = {}
 
 ---
--- Returns the name of this `environment`.
+-- Processes this `processable` for the current frame.
 --
--- @return the name of this environment
+-- @tparam ... vargs generic parameters
 --
-function environment:getName() end
-
----
--- Returns the underlying `scheduler` of this `environment`.
+-- @return generic return value (boolean)
 --
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
-
----
--- Returns the underlying `overworld` of this `environment`.
---
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
---
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+function processable:process(...) end

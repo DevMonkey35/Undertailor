@@ -26,44 +26,22 @@
 
 
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- `control` library for interfacing with user input.
 --
--- This class also holds the functions of the following classes:
---
--- * `destructible`
--- * `processable`
--- * `renderable`
---
--- @classmod environment
+-- @module game.control
+-- @alias control
 ---
 
-local environment = {}
+local control = {}
 
 ---
--- Returns the name of this `environment`.
+-- Returns the current `inputdata` instance.
 --
--- @return the name of this environment
+-- There is only ever a single inputdata instance per game, meaning
+-- this object can be held by another object and still receive
+-- updates. One does not need to repetitively ask this function for
+-- current input.
 --
-function environment:getName() end
-
----
--- Returns the underlying `scheduler` of this `environment`.
+-- @return the current inputdata
 --
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
-
----
--- Returns the underlying `overworld` of this `environment`.
---
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
---
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+function control.getInput() end

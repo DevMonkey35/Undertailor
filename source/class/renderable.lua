@@ -26,44 +26,40 @@
 
 
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- `renderable` objects have a function specifically for drawing onto
+-- the screen.
 --
--- This class also holds the functions of the following classes:
---
--- * `destructible`
--- * `processable`
--- * `renderable`
---
--- @classmod environment
+-- @classmod renderable
 ---
 
-local environment = {}
+local renderable = {}
 
 ---
--- Returns the name of this `environment`.
+-- Returns the `transform` of this `renderable`.
 --
--- @return the name of this environment
+-- @return the transform of this renderable
 --
-function environment:getName() end
+function renderable:getTransform() end
 
 ---
--- Returns the underlying `scheduler` of this `environment`.
+-- Sets the `transform` of this `renderable`.
 --
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
+-- If a renderable possesses a transform, it should never allow its
+-- transform to become nil. Implementations should query the default
+-- transform to duplicate its values into this renderable's current
+-- transform using `game.graphics.getDefaultTransform` should the
+-- passed transform be nil.
+--
+-- @tparam transform transform the new transform to set
+--
+function renderable:setTransform(transform) end
 
 ---
--- Returns the underlying `overworld` of this `environment`.
+-- Draws this `renderable` onto the screen.
 --
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
+-- @number[opt=0.0] x the x coordinate to draw at
+-- @number[opt=0.0] y the y coordinate to draw at
+-- @tparam[opt=renderable:getTransform] transform transform the
+--   transform to draw with
 --
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+function renderable:draw(x, y, transform) end

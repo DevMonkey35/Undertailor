@@ -28,7 +28,7 @@
 ---
 -- `music` objects hold long audio tracks.
 --
--- This class also contains the functions of the following classes:
+-- This class also holds the functions of the following classes:
 --
 -- * `audio`
 -- * `audiodata`

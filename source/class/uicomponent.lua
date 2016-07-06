@@ -26,44 +26,37 @@
 
 
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- `uicomponent`s are the main processing objects inside a
+-- `uicontroller` subsystems.
 --
 -- This class also holds the functions of the following classes:
 --
--- * `destructible`
--- * `processable`
+-- * `eventlistener`
+-- * `positionable`
 -- * `renderable`
+-- * `processable`
 --
--- @classmod environment
+-- @classmod uicomponent
+-- @alias uicomp
 ---
 
-local environment = {}
+local uicomp = {}
 
 ---
--- Returns the name of this `environment`.
+-- Returns the `uiobject` owning and processing this `uicomponent`.
 --
--- @return the name of this environment
+-- @return the parent uiobject
 --
-function environment:getName() end
+function uicomp:getParent() end
 
 ---
--- Returns the underlying `scheduler` of this `environment`.
+-- Returns the screen position at which this `uicomponent` will be
+-- drawn.
 --
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
-
----
--- Returns the underlying `overworld` of this `environment`.
+-- The screen position is a combination of the uicomponent's current
+-- position and the parent `uiobject`'s position.
 --
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
+-- @return the screen position at which the origin of this
+--   uicomponent position is drawn at
 --
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+function uicomp:getScreenPosition() end

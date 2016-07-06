@@ -24,10 +24,18 @@
 	
 ]]--
 
-
 ---
--- `overworldcontroller`, aka, the Overworld, is a subsystem of an
--- `environment` processing routine tasks that occur in an overworld.
+-- `overworldcontroller`s are one of the three main subsystems
+-- running under an `environment`. Holds control over the Overworld
+-- layer of an environment, is the last to be rendered, and last to
+-- be processed, after the `uicontroller`.
+--
+-- This class also holds the functions of the following classes:
+--
+-- * `subsystem`
+-- * `processable`
+-- * `renderable`
+-- * `destructible`
 --
 -- @classmod overworldcontroller
 -- @alias oc
@@ -194,10 +202,14 @@ function oc:setCameraZoom(zoom) end
 -- out of bounds when size of the tilemap for the current room does
 -- not cover that area. By default, this value is true.
 --
+-- @return whether or not the camera is fixing its position
+--
 function oc:isCameraFixing() end
 
 ---
 -- Sets whether or not this `overworldcontroller`'s camera is
 -- constantly fixing its position.
+--
+-- @bool fixing if the camera should fix its position
 --
 function oc:setCameraFixing(fixing) end

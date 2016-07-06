@@ -24,46 +24,46 @@
 	
 ]]--
 
-
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- `scheduler`s are one of the three main subsystems running under an
+-- `environment`. Used to schedule tasks to occur every frame in the
+-- current environment, and is the first to be processed, before
+-- the `uicontroller`.
 --
 -- This class also holds the functions of the following classes:
 --
--- * `destructible`
+-- * `subsystem`
 -- * `processable`
--- * `renderable`
+-- * `destructible`
 --
--- @classmod environment
+-- @classmod scheduler
 ---
 
-local environment = {}
+local scheduler = {}
 
 ---
--- Returns the name of this `environment`.
+-- Registers the provided task implementation into this `scheduler`.
 --
--- @return the name of this environment
+-- @tab task the task implementation to register
+-- @bool[opt=false] active whether or not the task will be active
 --
-function environment:getName() end
+-- @return the ID of the registered
+--
+function scheduler:registerTask(task, active) end
 
 ---
--- Returns the underlying `scheduler` of this `environment`.
+-- Cancels the task with the provided ID.
 --
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
+-- @int id the ID of the task to cancel
+--
+function scheduler:cancelTask(id) end
 
 ---
--- Returns the underlying `overworld` of this `environment`.
+-- Returns whether or not the task of the provided ID is currently
+-- being ran by this `scheduler`.
 --
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
+-- @int id the ID of the task to query
 --
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+-- @return whether or not the task is still being processed
+--
+function scheduler:hasTask(id) end

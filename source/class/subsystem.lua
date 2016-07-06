@@ -26,44 +26,18 @@
 
 
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- `subsystem`s are the three subsystems of an `environment`, namely
+-- the `scheduler`, the `overworldcontroller`, and the
+-- `uicontroller`.
 --
--- This class also holds the functions of the following classes:
---
--- * `destructible`
--- * `processable`
--- * `renderable`
---
--- @classmod environment
+-- @classmod subsystem
 ---
 
-local environment = {}
+local subsystem = {}
 
 ---
--- Returns the name of this `environment`.
+-- Returns the `environment` owning this `subsystem`.
 --
--- @return the name of this environment
+-- @return this subsystem's environment
 --
-function environment:getName() end
-
----
--- Returns the underlying `scheduler` of this `environment`.
---
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
-
----
--- Returns the underlying `overworld` of this `environment`.
---
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
---
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+function subsystem:getEnvironment() end

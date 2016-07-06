@@ -26,44 +26,29 @@
 
 
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- `sprite` objects hold the textures for spritesheets passed to
+-- Undertailor.
 --
 -- This class also holds the functions of the following classes:
 --
--- * `destructible`
--- * `processable`
 -- * `renderable`
 --
--- @classmod environment
+-- @classmod sprite
 ---
 
-local environment = {}
+local sprite = {}
 
 ---
--- Returns the name of this `environment`.
+-- Returns a clone of this `sprite`.
 --
--- @return the name of this environment
+-- @return a clone of this sprite
 --
-function environment:getName() end
+function sprite:clone() end
 
 ---
--- Returns the underlying `scheduler` of this `environment`.
+-- Returns the size of this `sprite`'s held texture.
 --
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
-
----
--- Returns the underlying `overworld` of this `environment`.
+-- @return[1] the width of this sprite's texture
+-- @return[1] the height of this sprite's texture
 --
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
---
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+function sprite:getSpriteSize() end

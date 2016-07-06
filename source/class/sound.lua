@@ -26,44 +26,17 @@
 
 
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- `sound` objects hold small controllable audio tracks.
+--
+-- This class has no functions on its own, as all its functions are
+-- defined by other classes.
 --
 -- This class also holds the functions of the following classes:
 --
--- * `destructible`
--- * `processable`
--- * `renderable`
+-- * `audio`
+-- * `audioplayable`
 --
--- @classmod environment
+-- @classmod sound
 ---
 
-local environment = {}
-
----
--- Returns the name of this `environment`.
---
--- @return the name of this environment
---
-function environment:getName() end
-
----
--- Returns the underlying `scheduler` of this `environment`.
---
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
-
----
--- Returns the underlying `overworld` of this `environment`.
---
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
---
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+local sound = {}

@@ -26,44 +26,24 @@
 
 
 ---
--- `environment`s are the main controller for any instance of a set
--- of the 3 major subsystems.
+-- Text library for creating `text`s.
 --
--- This class also holds the functions of the following classes:
---
--- * `destructible`
--- * `processable`
--- * `renderable`
---
--- @classmod environment
+-- @module texts
 ---
 
-local environment = {}
+local texts = {}
 
 ---
--- Returns the name of this `environment`.
+-- Creates a new `text` object.
 --
--- @return the name of this environment
+-- `text` objects are composed of two parts, their own parameters and
+-- their children components. The first argument for this function
+-- defines the default parameters for component text when the child
+-- parameter chooses not to set it. The **only** required parent
+-- parameter is the text parameter. All other parameters are
+-- optional.
 --
-function environment:getName() end
-
----
--- Returns the underlying `scheduler` of this `environment`.
+-- @string baseParams the base parameters for the text object
+-- @string text a string denoting all child components of the text
 --
--- @return the provided environment's scheduler
--- 
-function environment:getScheduler() end
-
----
--- Returns the underlying `overworld` of this `environment`.
---
--- @return the provided environment's overworld
--- 
-function environment:getOverworld() end
-
----
--- Returns the underlying `ui` of this `environment`.
---
--- @return the provided environment's ui
--- 
-function environment:getUI() end
+function texts.newText(baseParams, text) end
