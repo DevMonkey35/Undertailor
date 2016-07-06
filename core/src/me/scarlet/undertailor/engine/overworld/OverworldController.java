@@ -103,7 +103,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
 
     @Override
     public void draw(float x, float y, Transform transform) {
-        this.renderer.setBatchProjectionMatrix(this.camera.combined);
+        this.renderer.setProjectionMatrix(this.camera.combined);
 
         if (this.room != null) {
             this.room.draw();
