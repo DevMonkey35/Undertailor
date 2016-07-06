@@ -54,6 +54,7 @@ public class MultiRenderer {
     public MultiRenderer() {
         this.batch = new SpriteBatch();
         this.renderer = new ShapeRenderer();
+        this.setClearColor(Color.BLACK);
     }
 
     // ---------------- object-global methods ----------------
