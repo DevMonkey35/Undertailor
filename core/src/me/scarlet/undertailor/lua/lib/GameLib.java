@@ -85,6 +85,7 @@ public class GameLib extends LuaLibrary {
             return orNil(envMan.getEnvironment(vargs.checkjstring(1)));
         }));
 
+        // game.destroyEnvironment(env)
         // game.destroyEnvironment(name)
         set("destroyEnvironment", asFunction(vargs -> {
             if (vargs.isstring(1)) { // passed an env name
@@ -102,9 +103,15 @@ public class GameLib extends LuaLibrary {
         }));
 
         // game.setActiveEnvironment(env)
+        // game.setActiveEnvironment(name)
         set("setActiveEnvironment", asFunction(vargs -> {
-            Environment env = LuaEnvironmentMeta.convert(vargs.checknotnil(1)).getObject();
-            envMan.setActiveEnvironment(env);
+            if(vargs.isstring(1)) { // passed a name
+                envMan.setActiveEnvironment(vargs.checkjstring(1));
+            } else { // passed an env
+                Environment env = LuaEnvironmentMeta.convert(vargs.checknotnil(1)).getObject();
+                envMan.setActiveEnvironment(env);
+            }
+
             return NIL;
         }));
 

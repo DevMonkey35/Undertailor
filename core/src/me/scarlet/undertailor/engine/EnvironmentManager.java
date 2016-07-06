@@ -173,6 +173,19 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     /**
      * Sets the current active {@link Environment}.
      * 
+     * @param envName the name of the new active Environment
+     */
+    public void setActiveEnvironment(String envName) {
+        if (this.environments.containsKey(envName)) {
+            this.setActiveEnvironment(this.environments.get(envName));
+        } else {
+            this.setActiveEnvironment((Environment) null);
+        }
+    }
+
+    /**
+     * Sets the current active {@link Environment}.
+     * 
      * @param env the new active Environment
      */
     public void setActiveEnvironment(Environment env) {
