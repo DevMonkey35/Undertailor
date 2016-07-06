@@ -44,6 +44,7 @@ import me.scarlet.undertailor.engine.EnvironmentManager;
 import me.scarlet.undertailor.engine.ui.UIObject;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.ScriptManager;
+import me.scarlet.undertailor.lua.impl.LuaRenderable;
 import me.scarlet.undertailor.lua.impl.LuaUIComponent;
 import me.scarlet.undertailor.lua.impl.LuaWorldObject;
 import me.scarlet.undertailor.lua.impl.LuaWorldRoom;
@@ -159,6 +160,19 @@ public class GameLib extends LuaLibrary {
         // game.newUIObject()
         set("newUIObject", asFunction(vargs -> {
             return orNil(new UIObject());
+        }));
+
+        // game.newRenderable(scriptPath)
+        set("newRenderable", asFunction(vargs -> {
+            String filePath = vargs.checkjstring(1);
+            LuaRenderable obj;
+            try {
+                obj = new LuaRenderable(scriptMan, new File(scriptMan.getScriptPath(), filePath));
+            } catch (Exception e) {
+                throw new LuaError(e);
+            }
+
+            return obj.getObjectValue();
         }));
 
         // ---------------- child lib ----------------
