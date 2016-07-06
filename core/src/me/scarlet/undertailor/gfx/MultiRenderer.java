@@ -522,6 +522,53 @@ public class MultiRenderer {
      */
     public void drawArc(float x, float y, float radius, float start, float degrees) {
         this.startDrawingShape();
+        if (renderer.getCurrentType() != ShapeType.Line) {
+            renderer.set(ShapeType.Line);
+        }
+
+        renderer.arc(x, y, radius, start, degrees);
+    }
+
+    /**
+     * Draws an arc centered at the given position with a
+     * specified radius, start point, length, and
+     * smoothness.
+     * 
+     * @param x the x-coordinate of the centerpoint of the
+     *        arc
+     * @param y the y-coordinate of the centerpoint of the
+     *        arc
+     * @param radius the radius of the arc
+     * @param start the start point of the arc, in degrees;
+     *        0 being the top
+     * @param degrees the length of the arc, in degrees
+     * @param segments the count of segments creating the
+     *        arc; the "smoothness"
+     */
+    public void drawArc(float x, float y, float radius, float start, float degrees, int segments) {
+        this.startDrawingShape();
+        if (renderer.getCurrentType() != ShapeType.Line) {
+            renderer.set(ShapeType.Line);
+        }
+
+        renderer.arc(x, y, radius, start, degrees, segments);
+    }
+
+    /**
+     * Draws an arc centered at the given position with a
+     * specified radius, start point and length.
+     * 
+     * @param x the x-coordinate of the centerpoint of the
+     *        arc
+     * @param y the y-coordinate of the centerpoint of the
+     *        arc
+     * @param radius the radius of the arc
+     * @param start the start point of the arc, in degrees;
+     *        0 being the top
+     * @param degrees the length of the arc, in degrees
+     */
+    public void drawFilledArc(float x, float y, float radius, float start, float degrees) {
+        this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);
         }
@@ -545,7 +592,7 @@ public class MultiRenderer {
      * @param segments the count of segments creating the
      *        arc; the "smoothness"
      */
-    public void drawArc(float x, float y, float radius, float start, float degrees, int segments) {
+    public void drawFilledArc(float x, float y, float radius, float start, float degrees, int segments) {
         this.startDrawingShape();
         if (renderer.getCurrentType() != ShapeType.Filled) {
             renderer.set(ShapeType.Filled);

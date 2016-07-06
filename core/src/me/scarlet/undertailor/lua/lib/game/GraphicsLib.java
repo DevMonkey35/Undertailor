@@ -147,12 +147,30 @@ public class GraphicsLib extends LuaLibrary {
             float radius = vargs.checknumber(3).tofloat();
             float start = vargs.checknumber(4).tofloat();
             float degrees = vargs.checknumber(5).tofloat();
-            int segments = vargs.optint(6, 0);
+            int segments = vargs.optint(6, -1);
 
-            if (segments <= 0) {
+            if (segments < 0) {
                 renderer.drawArc(x, y, radius, start, degrees);
             } else {
                 renderer.drawArc(x, y, radius, start, degrees, segments);
+            }
+
+            return NIL;
+        }));
+
+        // graphics.drawFilledArc(x, y, radius, start, degrees[, segments])
+        set("drawFilledArc", asFunction(vargs -> {
+            float x = vargs.checknumber(1).tofloat();
+            float y = vargs.checknumber(2).tofloat();
+            float radius = vargs.checknumber(3).tofloat();
+            float start = vargs.checknumber(4).tofloat();
+            float degrees = vargs.checknumber(5).tofloat();
+            int segments = vargs.optint(6, -1);
+
+            if (segments < 0) {
+                renderer.drawFilledArc(x, y, radius, start, degrees);
+            } else {
+                renderer.drawFilledArc(x, y, radius, start, degrees, segments);
             }
 
             return NIL;
