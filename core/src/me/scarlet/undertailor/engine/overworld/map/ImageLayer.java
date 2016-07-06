@@ -105,6 +105,6 @@ public class ImageLayer implements Layerable, Renderable, Positionable, Identifi
     // Intended to only render on the overworld.
     @Override
     public void draw(float x, float y, Transform transform) {
-        renderer.getSpriteBatch().draw(image, this.position.x, this.position.y);
+        renderer.draw(image, this.position.x, this.position.y);
     }
 }
