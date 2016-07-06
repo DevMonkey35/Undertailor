@@ -284,8 +284,10 @@ public class MultiRenderer {
      * @param alpha the alpha value of the color
      */
     public void setBatchColor(Color color, float alpha) {
-        color.a = alpha;
-        batch.setColor(color);
+        if(!batch.getColor().equals(color)) {
+            color.a = alpha;
+            batch.setColor(color);
+        }
     }
 
     /**
@@ -462,7 +464,9 @@ public class MultiRenderer {
      * @param color the new draw color of the ShapeRenderer
      */
     public void setShapeColor(Color color) {
-        renderer.setColor(color);
+        if(!renderer.getColor().equals(color)) {
+            renderer.setColor(color);
+        }
     }
 
     /**
