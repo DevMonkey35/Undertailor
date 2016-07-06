@@ -98,11 +98,11 @@ public class Environment implements Processable, Renderable, Destructible {
             return;
         }
 
-        this.manager.destroyEnvironment(this);
+        this.destroyed = true;
         this.scheduler.destroy();
         this.overworld.destroy();
         this.ui.destroy();
-        this.destroyed = true;
+        this.manager.destroyEnvironment(this);
     }
 
     // ---------------- object ----------------
