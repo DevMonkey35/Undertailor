@@ -655,7 +655,7 @@ public class MultiRenderer {
      * @see #drawOpenPolygon(float, float...)
      */
     private void drawPolygonOutline(float lineThickness, boolean close, float... points) {
-        if (points.length < 3) {
+        if (points.length < 6) {
             return; // Won't draw anything; does not have at least 3 edges.
         }
 
