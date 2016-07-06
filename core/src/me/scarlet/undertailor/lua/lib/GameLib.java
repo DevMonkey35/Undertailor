@@ -71,7 +71,7 @@ public class GameLib extends LuaLibrary {
 
         // game.setTitle(title)
         set("setTitle", asFunction(vargs -> {
-            Gdx.graphics.setTitle(vargs.arg1().checkjstring());
+            Gdx.graphics.setTitle(vargs.arg1().optjstring(1, "Undertailor"));
             return LuaValue.NIL;
         }));
 
