@@ -149,6 +149,10 @@ public class MultiRenderer {
      * Resets the colors to their default.
      */
     public void resetColors() {
+        if(!this.getClearColor().equals(Color.BLACK)) {
+            this.setClearColor(Color.BLACK);
+        }
+
         if(!this.getBatchColor().equals(Color.WHITE)) {
             this.setBatchColor(Color.WHITE);
         }
