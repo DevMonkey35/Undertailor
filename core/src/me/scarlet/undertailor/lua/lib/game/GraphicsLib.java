@@ -96,13 +96,13 @@ public class GraphicsLib extends LuaLibrary {
 
         // ---------------- draw color functions ----------------
 
-        // graphics.getBatchColor()
-        set("getBatchColor", asFunction(vargs -> {
+        // graphics.getSpriteColor()
+        set("getSpriteColor", asFunction(vargs -> {
             return orNil(renderer.getBatchColor());
         }));
 
-        // graphics.setBatchColor(color)
-        set("setBatchColor", asFunction(vargs -> {
+        // graphics.setSpriteColor(color)
+        set("setSpriteColor", asFunction(vargs -> {
             Color color = Lua.<Color>checkType(vargs.arg1(), LuaColorMeta.class).getObject();
             renderer.setBatchColor(color);
             return NIL;
