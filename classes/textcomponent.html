@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><strong>textcomponent</strong></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>textcomponent</code></h1>
+<p><a href="../classes/textcomponent.html#">textcomponent</a>s are the individual segments of text in a `text
+ object.</p>
+<p> Note that textcomponents are immutable.</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#textcomponent:getText">textcomponent:getText()</a></td>
+	<td class="summary">Returns the text contained by this <a href="../classes/textcomponent.html#">textcomponent</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#textcomponent:getFont">textcomponent:getFont()</a></td>
+	<td class="summary">Returns the <a href="../classes/font.html#">font</a> used to render this <a href="../classes/textcomponent.html#">textcomponent</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#textcomponent:getColor">textcomponent:getColor()</a></td>
+	<td class="summary">Returns the <a href="../classes/color.html#">color</a> used to render this <a href="../classes/textcomponent.html#">textcomponent</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#textcomponent:getSound">textcomponent:getSound()</a></td>
+	<td class="summary">Returns the <a href="../classes/sound.html#">sound</a> played for each segment of this
+ <a href="../classes/textcomponent.html#">textcomponent</a> whenever it gets rendered.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#textcomponent:getStyles">textcomponent:getStyles()</a></td>
+	<td class="summary">Returns an array of text styles used when rendering this
+ <a href="../classes/textcomponent.html#">textcomponent</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#textcomponent:getTextSpeed">textcomponent:getTextSpeed()</a></td>
+	<td class="summary">Returns the speed at which the text in this segment is played, in
+ characters per second.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#textcomponent:getSegmentSize">textcomponent:getSegmentSize()</a></td>
+	<td class="summary">Returns how many characters are in each segment.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#textcomponent:getDelay">textcomponent:getDelay()</a></td>
+	<td class="summary">Returns the amount of time to wait before rendering the text in
+ this <a href="../classes/textcomponent.html#">textcomponent</a>, in seconds.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "textcomponent:getText"></a>
+    <strong>textcomponent:getText()</strong>
+    </dt>
+    <dd>
+    Returns the text contained by this <a href="../classes/textcomponent.html#">textcomponent</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the text of this textcomponent
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "textcomponent:getFont"></a>
+    <strong>textcomponent:getFont()</strong>
+    </dt>
+    <dd>
+    Returns the <a href="../classes/font.html#">font</a> used to render this <a href="../classes/textcomponent.html#">textcomponent</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the font of this textcomponent
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "textcomponent:getColor"></a>
+    <strong>textcomponent:getColor()</strong>
+    </dt>
+    <dd>
+    Returns the <a href="../classes/color.html#">color</a> used to render this <a href="../classes/textcomponent.html#">textcomponent</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the color of this textcomponent
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "textcomponent:getSound"></a>
+    <strong>textcomponent:getSound()</strong>
+    </dt>
+    <dd>
+    Returns the <a href="../classes/sound.html#">sound</a> played for each segment of this
+ <a href="../classes/textcomponent.html#">textcomponent</a> whenever it gets rendered.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the sound played for each segment of this textcomponent
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "textcomponent:getStyles"></a>
+    <strong>textcomponent:getStyles()</strong>
+    </dt>
+    <dd>
+    Returns an array of text styles used when rendering this
+ <a href="../classes/textcomponent.html#">textcomponent</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        an array of text styles
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "textcomponent:getTextSpeed"></a>
+    <strong>textcomponent:getTextSpeed()</strong>
+    </dt>
+    <dd>
+    Returns the speed at which the text in this segment is played, in
+ characters per second.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the speed of this textcomponent's text
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "textcomponent:getSegmentSize"></a>
+    <strong>textcomponent:getSegmentSize()</strong>
+    </dt>
+    <dd>
+    Returns how many characters are in each segment.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+         the count of characters in a segment when rendering this
+   textcomponent
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "textcomponent:getDelay"></a>
+    <strong>textcomponent:getDelay()</strong>
+    </dt>
+    <dd>
+    Returns the amount of time to wait before rendering the text in
+ this <a href="../classes/textcomponent.html#">textcomponent</a>, in seconds.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+         the delay used before this textcomponent is rendered, in
+   seconds
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

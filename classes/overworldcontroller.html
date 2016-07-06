@@ -1,0 +1,628 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+<li><a href="#Camera_control_functions">Camera control functions </a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><strong>overworldcontroller</strong></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>overworldcontroller</code></h1>
+<p><a href="../classes/overworldcontroller.html#">overworldcontroller</a>s are one of the three main subsystems
+ running under an <a href="../classes/environment.html#">environment</a>.</p>
+<p>
+<p> Holds control over the Overworld
+ layer of an environment, is the last to be rendered, and last to
+ be processed, after the <a href="../classes/uicontroller.html#">uicontroller</a>.</p>
+
+<p> This class also holds the functions of the following classes:</p>
+
+<ul>
+    <li><a href="../classes/subsystem.html#">subsystem</a></li>
+    <li><a href="../classes/processable.html#">processable</a></li>
+    <li><a href="../classes/renderable.html#">renderable</a></li>
+    <li><a href="../classes/destructible.html#">destructible</a></li>
+</ul>
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:isCharacter">overworldcontroller:isCharacter(object)</a></td>
+	<td class="summary">Returns whether or not the provided <a href="../classes/worldobject.html#">worldobject</a> is this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s character object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:getCharacter">overworldcontroller:getCharacter()</a></td>
+	<td class="summary">Returns the character <a href="../classes/worldobject.html#">worldobject</a> set for this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setCharacter">overworldcontroller:setCharacter(object)</a></td>
+	<td class="summary">Sets the character <a href="../classes/worldobject.html#">worldobject</a> for this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:getRoom">overworldcontroller:getRoom()</a></td>
+	<td class="summary">Returns the current <a href="../classes/worldroom.html#">worldroom</a> set for this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setRoom">overworldcontroller:setRoom(room[, targetEntrypoint=nil][, transitions=isPlayingTransitions])</a></td>
+	<td class="summary">Sets the current <a href="../classes/worldroom.html#">worldroom</a> for this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:isPlayingTransitions">overworldcontroller:isPlayingTransitions()</a></td>
+	<td class="summary">Returns whether or not this <a href="../classes/overworldcontroller.html#">overworldcontroller</a> will play
+ transitions by default whenever its <a href="../classes/worldroom.html#">worldroom</a> is changed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setPlayingTransitions">overworldcontroller:setPlayingTransitions(playingTransitions)</a></td>
+	<td class="summary">Sets whether or not this <a href="../classes/overworldcontroller.html#">overworldcontroller</a> will play
+ transitions by default whenever its <a href="../classes/worldroom.html#">worldroom</a> is changed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setEntryTransition">overworldcontroller:setEntryTransition(task)</a></td>
+	<td class="summary">Sets the entry transition for whenever this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>
+ changes <a href="../classes/worldroom.html#">worldroom</a>s.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setExitTransition">overworldcontroller:setExitTransition(task)</a></td>
+	<td class="summary">Sets the exit transition for whenever this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>
+ changes <a href="../classes/worldroom.html#">worldroom</a>s.</td>
+	</tr>
+</table>
+<h2><a href="#Camera_control_functions">Camera control functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:getCameraPosition">overworldcontroller:getCameraPosition()</a></td>
+	<td class="summary">Returns the current position of this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s
+ camera.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setCameraPosition">overworldcontroller:setCameraPosition(x, y)</a></td>
+	<td class="summary">Sets the current position of this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:getCameraOffset">overworldcontroller:getCameraOffset()</a></td>
+	<td class="summary">Returns the current positional offset applied to this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setCameraOffset">overworldcontroller:setCameraOffset(x, y)</a></td>
+	<td class="summary">Sets the current positional offset applied to this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:getCameraZoom">overworldcontroller:getCameraZoom()</a></td>
+	<td class="summary">Returns the current zoom level of this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s
+ camera.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setCameraZoom">overworldcontroller:setCameraZoom(zoom)</a></td>
+	<td class="summary">Sets the current zoom level of this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s
+ camera.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:isCameraFixing">overworldcontroller:isCameraFixing()</a></td>
+	<td class="summary">Returns whether or not this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera is
+ constantly fixing its position.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overworldcontroller:setCameraFixing">overworldcontroller:setCameraFixing(fixing)</a></td>
+	<td class="summary">Sets whether or not this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera is
+ constantly fixing its position.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "overworldcontroller:isCharacter"></a>
+    <strong>overworldcontroller:isCharacter(object)</strong>
+    </dt>
+    <dd>
+    Returns whether or not the provided <a href="../classes/worldobject.html#">worldobject</a> is this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s character object. </p>
+
+<p> It is recommended to use this instead of comparing the target
+ object with <code>oc:getCharacter</code>, due to the way Lua integration
+ works. This function simply compares the IDs of the two objects,
+ as the IDs of worldobjects are generated per instance.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">object</span>
+            <span class="types"><a class="type" href="../classes/worldobject.html#">worldobject</a></span>
+         the object to query
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         if the provided worldobject is this overworldcontroller's
+   character object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:getCharacter"></a>
+    <strong>overworldcontroller:getCharacter()</strong>
+    </dt>
+    <dd>
+    Returns the character <a href="../classes/worldobject.html#">worldobject</a> set for this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+         the character object for this overworldcontroller, or nil
+   if not set or destroyed
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setCharacter"></a>
+    <strong>overworldcontroller:setCharacter(object)</strong>
+    </dt>
+    <dd>
+    Sets the character <a href="../classes/worldobject.html#">worldobject</a> for this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">object</span>
+            <span class="types"><a class="type" href="../classes/worldobject.html#">worldobject</a></span>
+         the object to set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:getRoom"></a>
+    <strong>overworldcontroller:getRoom()</strong>
+    </dt>
+    <dd>
+    Returns the current <a href="../classes/worldroom.html#">worldroom</a> set for this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        this overworldcontroller's worldroom, or nil if not set
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setRoom"></a>
+    <strong>overworldcontroller:setRoom(room[, targetEntrypoint=nil][, transitions=isPlayingTransitions])</strong>
+    </dt>
+    <dd>
+    Sets the current <a href="../classes/worldroom.html#">worldroom</a> for this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">room</span>
+            <span class="types"><a class="type" href="../classes/worldroom.html#">worldroom</a></span>
+         the room to set
+        </li>
+        <li><span class="parameter">targetEntrypoint</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the entrypoint to
+   spawn the character object at in the room to be set
+         (<em>default</em> nil)
+        </li>
+        <li><span class="parameter">transitions</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether or not to play
+   transitions when to the target room
+         (<em>default</em> isPlayingTransitions)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:isPlayingTransitions"></a>
+    <strong>overworldcontroller:isPlayingTransitions()</strong>
+    </dt>
+    <dd>
+    Returns whether or not this <a href="../classes/overworldcontroller.html#">overworldcontroller</a> will play
+ transitions by default whenever its <a href="../classes/worldroom.html#">worldroom</a> is changed.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+         if this overworldcontroller plays room transitions by
+   default
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setPlayingTransitions"></a>
+    <strong>overworldcontroller:setPlayingTransitions(playingTransitions)</strong>
+    </dt>
+    <dd>
+    Sets whether or not this <a href="../classes/overworldcontroller.html#">overworldcontroller</a> will play
+ transitions by default whenever its <a href="../classes/worldroom.html#">worldroom</a> is changed.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">playingTransitions</span>
+            <span class="types"><span class="type">bool</span></span>
+         if this overworldcontroller should play
+   transitions by default
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setEntryTransition"></a>
+    <strong>overworldcontroller:setEntryTransition(task)</strong>
+    </dt>
+    <dd>
+    Sets the entry transition for whenever this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>
+ changes <a href="../classes/worldroom.html#">worldroom</a>s.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">task</span>
+            <span class="types"><span class="type">tab</span></span>
+         a table implementing a task for entry transitions
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setExitTransition"></a>
+    <strong>overworldcontroller:setExitTransition(task)</strong>
+    </dt>
+    <dd>
+    Sets the exit transition for whenever this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>
+ changes <a href="../classes/worldroom.html#">worldroom</a>s.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">task</span>
+            <span class="types"><span class="type">tab</span></span>
+         a table implementing a task for exit transitions
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Camera_control_functions"></a>Camera control functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "overworldcontroller:getCameraPosition"></a>
+    <strong>overworldcontroller:getCameraPosition()</strong>
+    </dt>
+    <dd>
+    Returns the current position of this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s
+ camera. </p>
+
+<p> The camera's origin point is in its center.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the current x position of the camera</li>
+        <li>
+        the current y position of the camera</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setCameraPosition"></a>
+    <strong>overworldcontroller:setCameraPosition(x, y)</strong>
+    </dt>
+    <dd>
+    Sets the current position of this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the new x position of the camera
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the new y position of the camera
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:getCameraOffset"></a>
+    <strong>overworldcontroller:getCameraOffset()</strong>
+    </dt>
+    <dd>
+    Returns the current positional offset applied to this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the current x offset of the camera</li>
+        <li>
+        the current y offset of the camera</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setCameraOffset"></a>
+    <strong>overworldcontroller:setCameraOffset(x, y)</strong>
+    </dt>
+    <dd>
+    Sets the current positional offset applied to this
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the new x offset of the camera
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the new y offset of the camera
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:getCameraZoom"></a>
+    <strong>overworldcontroller:getCameraZoom()</strong>
+    </dt>
+    <dd>
+    Returns the current zoom level of this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s
+ camera. </p>
+
+<p> The zoom level is equivalent to the area a single pixel takes on
+ the screen, with the default value of 1 resolving to a 1:1 output
+ on a 640x480 window.</p>
+
+<p> A negative zoom level follows the same rules, but the screen will
+ be inverted.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the zoom level of the camera
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setCameraZoom"></a>
+    <strong>overworldcontroller:setCameraZoom(zoom)</strong>
+    </dt>
+    <dd>
+    Sets the current zoom level of this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s
+ camera.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">zoom</span>
+            <span class="types"><span class="type">number</span></span>
+         the new zoom level to set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:isCameraFixing"></a>
+    <strong>overworldcontroller:isCameraFixing()</strong>
+    </dt>
+    <dd>
+    Returns whether or not this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera is
+ constantly fixing its position. </p>
+
+<p> Camera fixing ensures that the camera will never show areas of the
+ overworld that is considered out of bounds. An area is considered
+ out of bounds when size of the tilemap for the current room does
+ not cover that area. By default, this value is true.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        whether or not the camera is fixing its position
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overworldcontroller:setCameraFixing"></a>
+    <strong>overworldcontroller:setCameraFixing(fixing)</strong>
+    </dt>
+    <dd>
+    Sets whether or not this <a href="../classes/overworldcontroller.html#">overworldcontroller</a>'s camera is
+ constantly fixing its position.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fixing</span>
+            <span class="types"><span class="type">bool</span></span>
+         if the camera should fix its position
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><strong>font</strong></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>font</code></h1>
+<p><a href="../classes/font.html#">font</a> objects store a set of sprites used to display language
+ in-game.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#font:getLineSize">font:getLineSize()</a></td>
+	<td class="summary">Returns the distance between two lines of text rendered with this
+ <a href="../classes/font.html#">font</a>, in pixels.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#font:getLetterSpacing">font:getLetterSpacing(character)</a></td>
+	<td class="summary">Returns the letter spacing for the provided character, when
+ rendered with this <a href="../classes/font.html#">font</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#font:getCharacterList">font:getCharacterList()</a></td>
+	<td class="summary">Returns a string containing all characters supported by this
+ <a href="../classes/font.html#">font</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#font:getCharacterSprite">font:getCharacterSprite(character)</a></td>
+	<td class="summary">Returns the <a href="../classes/sprite.html#">sprite</a> for the provided character when using this
+ <a href="../classes/font.html#">font</a>.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "font:getLineSize"></a>
+    <strong>font:getLineSize()</strong>
+    </dt>
+    <dd>
+    Returns the distance between two lines of text rendered with this
+ <a href="../classes/font.html#">font</a>, in pixels.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the size of lines with this font, in pixels
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "font:getLetterSpacing"></a>
+    <strong>font:getLetterSpacing(character)</strong>
+    </dt>
+    <dd>
+    Returns the letter spacing for the provided character, when
+ rendered with this <a href="../classes/font.html#">font</a>. </p>
+
+<p> Characters past the very first one in the string provided will be
+ ignored.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">character</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the character to query with
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the amount of empty pixels guaranteed to be behind the
+   provided character</li>
+        <li>
+         the amount of empty pixels guaranteed to be in front of
+   the provided character</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "font:getCharacterList"></a>
+    <strong>font:getCharacterList()</strong>
+    </dt>
+    <dd>
+    Returns a string containing all characters supported by this
+ <a href="../classes/font.html#">font</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a string of supported characters
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "font:getCharacterSprite"></a>
+    <strong>font:getCharacterSprite(character)</strong>
+    </dt>
+    <dd>
+    Returns the <a href="../classes/sprite.html#">sprite</a> for the provided character when using this
+ <a href="../classes/font.html#">font</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">character</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the provided character's sprite, or nil if none
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

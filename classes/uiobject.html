@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><strong>uiobject</strong></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>uiobject</code></h1>
+<p><a href="../classes/uiobject.html#">uiobject</a> are the main container objects for <code>uicomponents</code>, used
+ in the UI layer.</p>
+<p>
+
+
+<p> This class also holds the functions of the following classes:</p>
+
+<ul>
+    <li><a href="../classes/eventlistener.html#">eventlistener</a></li>
+    <li><a href="../classes/identifiable.html#">identifiable</a></li>
+    <li><a href="../classes/positionable.html#">positionable</a></li>
+    <li><a href="../classes/destructible.html#">destructible</a></li>
+    <li><a href="../classes/processable.html#">processable</a></li>
+    <li><a href="../classes/renderable.html#">renderable</a></li>
+</ul>
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#uiobject:getMaxLifetime">uiobject:getMaxLifetime()</a></td>
+	<td class="summary">Returns the maximum lifetime this <a href="../classes/uiobject.html#">uiobject</a> will live upon
+ registration, in seconds.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#uiobject:setMaxLifetime">uiobject:setMaxLifetime(seconds)</a></td>
+	<td class="summary">Sets the maximum lifetime this <a href="../classes/uiobject.html#">uiobject</a> will live upon
+ registration, in seconds.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#uiobject:isPastLifetime">uiobject:isPastLifetime()</a></td>
+	<td class="summary">Returns whether or not this <a href="../classes/uiobject.html#">uiobject</a> is past is lifetime.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#uiobject:getLifetime">uiobject:getLifetime()</a></td>
+	<td class="summary">Returns the current lifetime of this <a href="../classes/uiobject.html#">uiobject</a>, in seconds.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#uiobject:resetLifetime">uiobject:resetLifetime()</a></td>
+	<td class="summary">Resets the current lifetime of this <a href="../classes/uiobject.html#">uiobject</a> to 0.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#uiobject:registerComponent">uiobject:registerComponent(component)</a></td>
+	<td class="summary">Registers the provided <a href="../classes/uicomponent.html#">uicomponent</a> into this <a href="../classes/uiobject.html#">uiobject</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#uiobject:remove">uiobject:remove()</a></td>
+	<td class="summary">Removes this <a href="../classes/uiobject.html#">uiobject</a> from processing.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "uiobject:getMaxLifetime"></a>
+    <strong>uiobject:getMaxLifetime()</strong>
+    </dt>
+    <dd>
+    Returns the maximum lifetime this <a href="../classes/uiobject.html#">uiobject</a> will live upon
+ registration, in seconds.  A value of 0 or less indicates an
+ infinite lifetime.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the maximum lifetime of this uiobject in seconds
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "uiobject:setMaxLifetime"></a>
+    <strong>uiobject:setMaxLifetime(seconds)</strong>
+    </dt>
+    <dd>
+    Sets the maximum lifetime this <a href="../classes/uiobject.html#">uiobject</a> will live upon
+ registration, in seconds.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">seconds</span>
+            <span class="types"><span class="type">number</span></span>
+         the new max lifetime for this uiobject, in seconds
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "uiobject:isPastLifetime"></a>
+    <strong>uiobject:isPastLifetime()</strong>
+    </dt>
+    <dd>
+    Returns whether or not this <a href="../classes/uiobject.html#">uiobject</a> is past is lifetime.  This
+ usually is only true for an object that had already been removed
+ from a <a href="../classes/uicontroller.html#">uicontroller</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+         if this uiobject is past its max lifetime, and is
+   scheduled for removal
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "uiobject:getLifetime"></a>
+    <strong>uiobject:getLifetime()</strong>
+    </dt>
+    <dd>
+    Returns the current lifetime of this <a href="../classes/uiobject.html#">uiobject</a>, in seconds.  This
+ initially represents time since registration to a <a href="../classes/uicontroller.html#">uicontroller</a>,
+ however the <code>uio:resetLifetime</code> function can be called to reset
+ lifetime back to 0.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the current lifetime of this <a href="../classes/uiobject.html#">uiobject</a> in seconds
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "uiobject:resetLifetime"></a>
+    <strong>uiobject:resetLifetime()</strong>
+    </dt>
+    <dd>
+    Resets the current lifetime of this <a href="../classes/uiobject.html#">uiobject</a> to 0.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "uiobject:registerComponent"></a>
+    <strong>uiobject:registerComponent(component)</strong>
+    </dt>
+    <dd>
+    Registers the provided <a href="../classes/uicomponent.html#">uicomponent</a> into this <a href="../classes/uiobject.html#">uiobject</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">component</span>
+            <span class="types"><a class="type" href="../classes/uicomponent.html#">uicomponent</a></span>
+         the uicomponent to register
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "uiobject:remove"></a>
+    <strong>uiobject:remove()</strong>
+    </dt>
+    <dd>
+    Removes this <a href="../classes/uiobject.html#">uiobject</a> from processing. </p>
+
+<p> This function differs from calling <a href="../classes/destructible.html#destructible:destroy">destructible:destroy</a> in that
+ it allows the uiobject to be reusable.
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="modules/colors.html">colors</a></li>
+  <li><a href="modules/game.html">game</a></li>
+  <li><a href="modules/game.audio.html">game.audio</a></li>
+  <li><a href="modules/game.control.html">game.control</a></li>
+  <li><a href="modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="modules/texts.html">texts</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="classes/audio.html">audio</a></li>
+  <li><a href="classes/audiodata.html">audiodata</a></li>
+  <li><a href="classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="classes/collider.html">collider</a></li>
+  <li><a href="classes/color.html">color</a></li>
+  <li><a href="classes/destructible.html">destructible</a></li>
+  <li><a href="classes/environment.html">environment</a></li>
+  <li><a href="classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="classes/font.html">font</a></li>
+  <li><a href="classes/identifiable.html">identifiable</a></li>
+  <li><a href="classes/inputdata.html">inputdata</a></li>
+  <li><a href="classes/layerable.html">layerable</a></li>
+  <li><a href="classes/music.html">music</a></li>
+  <li><a href="classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="classes/positionable.html">positionable</a></li>
+  <li><a href="classes/pressdata.html">pressdata</a></li>
+  <li><a href="classes/processable.html">processable</a></li>
+  <li><a href="classes/renderable.html">renderable</a></li>
+  <li><a href="classes/scheduler.html">scheduler</a></li>
+  <li><a href="classes/sound.html">sound</a></li>
+  <li><a href="classes/sounddata.html">sounddata</a></li>
+  <li><a href="classes/sprite.html">sprite</a></li>
+  <li><a href="classes/subsystem.html">subsystem</a></li>
+  <li><a href="classes/text.html">text</a></li>
+  <li><a href="classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="classes/textstyle.html">textstyle</a></li>
+  <li><a href="classes/transform.html">transform</a></li>
+  <li><a href="classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="classes/uiobject.html">uiobject</a></li>
+  <li><a href="classes/worldobject.html">worldobject</a></li>
+  <li><a href="classes/worldroom.html">worldroom</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+
+  <h2>Lua documentation for Lua libraries provided by Undertailor.</h2>
+
+<h2>Modules</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  nowrap><a href="modules/colors.html">colors</a></td>
+		<td class="summary">Colors library for creating instances of <a href="classes/color.html#">color</a>s.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/game.html">game</a></td>
+		<td class="summary"><a href="modules/game.html#">game</a> library for interfacing with core functionality.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/game.audio.html">game.audio</a></td>
+		<td class="summary"><a href="classes/audio.html#">audio</a> library for interfacing with audio.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/game.control.html">game.control</a></td>
+		<td class="summary"><code>control</code> library for interfacing with user input.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/game.graphics.html">game.graphics</a></td>
+		<td class="summary"><code>graphics</code> library for interfacing with graphics and drawing
+ shapes.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/texts.html">texts</a></td>
+		<td class="summary">Text library for creating <a href="classes/text.html#">text</a>s.</td>
+	</tr>
+</table>
+<h2>Classes</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  nowrap><a href="classes/audio.html">audio</a></td>
+		<td class="summary"><a href="classes/audio.html#">audio</a> is the basic implementation for anything that might link
+ to an audio track.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/audiodata.html">audiodata</a></td>
+		<td class="summary"><a href="classes/audiodata.html#">audiodata</a> objects hold audio clips with parameters that may be
+ controlled, such as volume, pitch, and pan.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/audioplayable.html">audioplayable</a></td>
+		<td class="summary"><a href="classes/audioplayable.html#">audioplayable</a> objects give control over the playback of their
+ contained audio track.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/collider.html">collider</a></td>
+		<td class="summary"><a href="classes/collider.html#">collider</a> objects are affected by physics and can interact with
+ each other in the Overworld subsystem.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/color.html">color</a></td>
+		<td class="summary"><a href="classes/color.html#">color</a> objects are data representations of colors.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/destructible.html">destructible</a></td>
+		<td class="summary"><a href="classes/destructible.html#">destructible</a> objects represent objects that may be removed from
+ the game at some point, effectively wiping them out of the
+ render/process loop.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/environment.html">environment</a></td>
+		<td class="summary"><a href="classes/environment.html#">environment</a>s are the main controller for any instance of a set
+ of the 3 major subsystems.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/eventlistener.html">eventlistener</a></td>
+		<td class="summary"><a href="classes/eventlistener.html#">eventlistener</a>s are objects that may receive certain types of
+ data in the occurence of a scenario to generate a reaction.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/font.html">font</a></td>
+		<td class="summary"><a href="classes/font.html#">font</a> objects store a set of sprites used to display language
+ in-game.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/identifiable.html">identifiable</a></td>
+		<td class="summary"><a href="classes/identifiable.html#">identifiable</a> objects have an ID by which they can be referenced
+ by.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/inputdata.html">inputdata</a></td>
+		<td class="summary"><a href="classes/inputdata.html#">inputdata</a> objects are used to store information about the
+ current state of keyboard input.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/layerable.html">layerable</a></td>
+		<td class="summary"><a href="classes/layerable.html#">layerable</a> objects have a notion of the concept of layers.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/music.html">music</a></td>
+		<td class="summary"><a href="classes/music.html#">music</a> objects hold long audio tracks.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/overworldcontroller.html">overworldcontroller</a></td>
+		<td class="summary"><a href="classes/overworldcontroller.html#">overworldcontroller</a>s are one of the three main subsystems
+ running under an <a href="classes/environment.html#">environment</a>.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/positionable.html">positionable</a></td>
+		<td class="summary"><a href="classes/positionable.html#">positionable</a> objects hold their position within their
+ containers.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/pressdata.html">pressdata</a></td>
+		<td class="summary"><a href="classes/pressdata.html#">pressdata</a> objects are databags for the individual state of
+ input for specific keyboard keys, typically managed by an
+ <a href="classes/inputdata.html#">inputdata</a> instance.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/processable.html">processable</a></td>
+		<td class="summary"><a href="classes/processable.html#">processable</a> objects have a routine task function that gets
+ called every frame.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/renderable.html">renderable</a></td>
+		<td class="summary"><a href="classes/renderable.html#">renderable</a> objects have a function specifically for drawing onto
+ the screen.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/scheduler.html">scheduler</a></td>
+		<td class="summary"><a href="classes/scheduler.html#">scheduler</a>s are one of the three main subsystems running under an
+ <a href="classes/environment.html#">environment</a>.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/sound.html">sound</a></td>
+		<td class="summary"><a href="classes/sound.html#">sound</a> objects hold small controllable audio tracks.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/sounddata.html">sounddata</a></td>
+		<td class="summary"><a href="classes/sounddata.html#">sounddata</a> is the controlling object for instances of <a href="classes/sound.html#">sound</a>s.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/sprite.html">sprite</a></td>
+		<td class="summary"><a href="classes/sprite.html#">sprite</a> objects hold the textures for spritesheets passed to
+ Undertailor.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/subsystem.html">subsystem</a></td>
+		<td class="summary"><a href="classes/subsystem.html#">subsystem</a>s are the three subsystems of an <a href="classes/environment.html#">environment</a>, namely
+ the <a href="classes/scheduler.html#">scheduler</a>, the <a href="classes/overworldcontroller.html#">overworldcontroller</a>, and the
+ <a href="classes/uicontroller.html#">uicontroller</a>.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/text.html">text</a></td>
+		<td class="summary"><a href="classes/text.html#">text</a> objects are databags holding a series of characters and
+ parameters to form fully-customizable text objects.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/textcomponent.html">textcomponent</a></td>
+		<td class="summary"><a href="classes/textcomponent.html#">textcomponent</a>s are the individual segments of text in a `text
+ object.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/textstyle.html">textstyle</a></td>
+		<td class="summary"><a href="classes/textstyle.html#">textstyle</a> objects use a function to modify how single characters
+ in rendered <a href="classes/text.html#">text</a> objects look like.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/transform.html">transform</a></td>
+		<td class="summary"><a href="classes/transform.html#">transform</a> objects are databag classes used to dictate how a
+ <a href="classes/renderable.html#">renderable</a> object should be drawn.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/uicomponent.html">uicomponent</a></td>
+		<td class="summary"><a href="classes/uicomponent.html#">uicomponent</a>s are the main processing objects inside a
+ <a href="classes/uicontroller.html#">uicontroller</a> subsystems.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/uicontroller.html">uicontroller</a></td>
+		<td class="summary"><a href="classes/uicontroller.html#">uicontroller</a>s are one of the three main subsystems running under
+ an <a href="classes/environment.html#">environment</a>.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/uiobject.html">uiobject</a></td>
+		<td class="summary"><a href="classes/uiobject.html#">uiobject</a> are the main container objects for <code>uicomponents</code>, used
+ in the UI layer.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/worldobject.html">worldobject</a></td>
+		<td class="summary"><a href="classes/worldobject.html#">worldobject</a>s are the primary functional objects within an
+ <a href="classes/overworldcontroller.html#">overworldcontroller</a>, as well as pretty much the entire engine.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/worldroom.html">worldroom</a></td>
+		<td class="summary"><a href="classes/worldroom.html#">worldroom</a>s are container objects for <a href="classes/worldobject.html#">worldobject</a>s.</td>
+	</tr>
+</table>
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

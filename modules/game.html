@@ -1,0 +1,558 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Sublibraries">Sublibraries </a></li>
+<li><a href="#Environment_functions">Environment functions </a></li>
+<li><a href="#Object_creation_functions">Object creation functions </a></li>
+<li><a href="#Misc_functions">Misc functions </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><strong>game</strong></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>game</code></h1>
+<p><a href="../modules/game.html#">game</a> library for interfacing with core functionality.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Sublibraries">Sublibraries </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#graphics">graphics</a></td>
+	<td class="summary"><a href="../modules/game.graphics.html#">game.graphics</a> library used for controlling how objects are
+ rendered and for shape rendering.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audio">audio</a></td>
+	<td class="summary"><a href="../modules/game.audio.html#">game.audio</a> library used for retrieving and controlling instances
+ of <a href="../classes/audio.html#">audio</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#control">control</a></td>
+	<td class="summary"><a href="../modules/game.control.html#">game.control</a> library used to query user input.</td>
+	</tr>
+</table>
+<h2><a href="#Environment_functions">Environment functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getEnvironment">getEnvironment(name)</a></td>
+	<td class="summary">Returns the <a href="../classes/environment.html#">environment</a> under the given name, or creates a new
+ one if it doesn't exist.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#destroyEnvironment">destroyEnvironment(env)</a></td>
+	<td class="summary">Destroys the given environment.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#destroyEnvironment">destroyEnvironment(name)</a></td>
+	<td class="summary">Destroys the environment of the given name, if it exists.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getActiveEnvironment">getActiveEnvironment()</a></td>
+	<td class="summary">Returns the current active environment, if available.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setActiveEnvironment">setActiveEnvironment(env)</a></td>
+	<td class="summary">Sets the active environment.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setActiveEnvironment">setActiveEnvironment(name)</a></td>
+	<td class="summary">Sets the active environment.</td>
+	</tr>
+</table>
+<h2><a href="#Object_creation_functions">Object creation functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#newWorldObject">newWorldObject(scriptPath)</a></td>
+	<td class="summary">Creates a new <a href="../classes/worldobject.html#">worldobject</a>, implemented by the script at the
+ given path.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#newWorldRoom">newWorldRoom(scriptPath)</a></td>
+	<td class="summary">Creates a new <a href="../classes/worldroom.html#">worldroom</a>, implemented by the script at the
+ given path.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#newUIComponent">newUIComponent(scriptPath)</a></td>
+	<td class="summary">Creates a new <a href="../classes/uicomponent.html#">uicomponent</a>, implemented by the script at the
+ given path.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#newUIObject">newUIObject()</a></td>
+	<td class="summary">Creates a new <a href="../classes/uiobject.html#">uiobject</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#graphics.newRenderable">graphics.newRenderable(scriptPath)</a></td>
+	<td class="summary">Creates a new <a href="../classes/renderable.html#">renderable</a>, implemented by the script at the
+ given path.</td>
+	</tr>
+</table>
+<h2><a href="#Misc_functions">Misc functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getGlobalScheduler">getGlobalScheduler()</a></td>
+	<td class="summary">Returns the global <a href="../classes/scheduler.html#">scheduler</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setTitle">setTitle(title)</a></td>
+	<td class="summary">Sets the title of the game window.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Sublibraries"></a>Sublibraries </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "graphics"></a>
+    <strong>graphics</strong>
+    </dt>
+    <dd>
+    <a href="../modules/game.graphics.html#">game.graphics</a> library used for controlling how objects are
+ rendered and for shape rendering.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audio"></a>
+    <strong>audio</strong>
+    </dt>
+    <dd>
+    <a href="../modules/game.audio.html#">game.audio</a> library used for retrieving and controlling instances
+ of <a href="../classes/audio.html#">audio</a>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "control"></a>
+    <strong>control</strong>
+    </dt>
+    <dd>
+    <a href="../modules/game.control.html#">game.control</a> library used to query user input.
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Environment_functions"></a>Environment functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getEnvironment"></a>
+    <strong>getEnvironment(name)</strong>
+    </dt>
+    <dd>
+    Returns the <a href="../classes/environment.html#">environment</a> under the given name, or creates a new
+ one if it doesn't exist.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the environment
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the environment under the given name, never nil
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "destroyEnvironment"></a>
+    <strong>destroyEnvironment(env)</strong>
+    </dt>
+    <dd>
+    Destroys the given environment. </p>
+
+<p> Alternatively, one can use <code>environment:destroy</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">env</span>
+            <span class="types"><a class="type" href="../classes/environment.html#">environment</a></span>
+         the environment to destroy
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "destroyEnvironment"></a>
+    <strong>destroyEnvironment(name)</strong>
+    </dt>
+    <dd>
+    Destroys the environment of the given name, if it exists.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the environment to destroy
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getActiveEnvironment"></a>
+    <strong>getActiveEnvironment()</strong>
+    </dt>
+    <dd>
+    Returns the current active environment, if available.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the current active environment, or nil if not set
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setActiveEnvironment"></a>
+    <strong>setActiveEnvironment(env)</strong>
+    </dt>
+    <dd>
+    Sets the active environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">env</span>
+            <span class="types"><a class="type" href="../classes/environment.html#">environment</a></span>
+         the environment to set as active, or nil
+   to disable
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setActiveEnvironment"></a>
+    <strong>setActiveEnvironment(name)</strong>
+    </dt>
+    <dd>
+    Sets the active environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the environment to set as active
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Object_creation_functions"></a>Object creation functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "newWorldObject"></a>
+    <strong>newWorldObject(scriptPath)</strong>
+    </dt>
+    <dd>
+    Creates a new <a href="../classes/worldobject.html#">worldobject</a>, implemented by the script at the
+ given path.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">scriptPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the path to the implementing script
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a worldobject
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "newWorldRoom"></a>
+    <strong>newWorldRoom(scriptPath)</strong>
+    </dt>
+    <dd>
+    Creates a new <a href="../classes/worldroom.html#">worldroom</a>, implemented by the script at the
+ given path.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">scriptPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the path to the implementing script
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a worldroom
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "newUIComponent"></a>
+    <strong>newUIComponent(scriptPath)</strong>
+    </dt>
+    <dd>
+    Creates a new <a href="../classes/uicomponent.html#">uicomponent</a>, implemented by the script at the
+ given path.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">scriptPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the path to the implementing script
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a uicomponent
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "newUIObject"></a>
+    <strong>newUIObject()</strong>
+    </dt>
+    <dd>
+    Creates a new <a href="../classes/uiobject.html#">uiobject</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a uiobject
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "graphics.newRenderable"></a>
+    <strong>graphics.newRenderable(scriptPath)</strong>
+    </dt>
+    <dd>
+    Creates a new <a href="../classes/renderable.html#">renderable</a>, implemented by the script at the
+ given path.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">scriptPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the path to the implementing script
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a renderable
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Misc_functions"></a>Misc functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getGlobalScheduler"></a>
+    <strong>getGlobalScheduler()</strong>
+    </dt>
+    <dd>
+    Returns the global <a href="../classes/scheduler.html#">scheduler</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the global scheduler
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setTitle"></a>
+    <strong>setTitle(title)</strong>
+    </dt>
+    <dd>
+    Sets the title of the game window. </p>
+
+<p> Providing nil sets the title to the default.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">title</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the new title of the game window, or nil to default
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

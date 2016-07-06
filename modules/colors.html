@@ -1,0 +1,766 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Library_constants">Library constants </a></li>
+<li><a href="#Library_functions">Library functions </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>colors</strong></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>colors</code></h1>
+<p>Colors library for creating instances of <a href="../classes/color.html#">color</a>s.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Library_constants">Library constants </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#white">white</a></td>
+	<td class="summary"><span style="background-color:#ffffff;color:#ffffff">aaaa</span> Color hex <code>#FFFFFF</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#black">black</a></td>
+	<td class="summary"><span style="background-color:#000000;color:#000000">aaaa</span> Color hex <code>#000000</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#red">red</a></td>
+	<td class="summary"><span style="background-color:#ff0000;color:#ff0000">aaaa</span> Color hex <code>#FF0000</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#blue">blue</a></td>
+	<td class="summary"><span style="background-color:#0000ff;color:#0000ff">aaaa</span> Color hex <code>#0000FF</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#green">green</a></td>
+	<td class="summary"><span style="background-color:#00ff00;color:#00ff00">aaaa</span> Color hex <code>#00FF00</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#brown">brown</a></td>
+	<td class="summary"><span style="background-color:#8b4513;color:#8b4513">aaaa</span> Color hex <code>#8B4513</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#chartreuse">chartreuse</a></td>
+	<td class="summary"><span style="background-color:#7fff00;color:#7fff00">aaaa</span> Color hex <code>#7FFF00</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cyan">cyan</a></td>
+	<td class="summary"><span style="background-color:#00ffff;color:#00ffff">aaaa</span> Color hex <code>#00FFFF</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#coral">coral</a></td>
+	<td class="summary"><span style="background-color:#ff7f50;color:#ff7f50">aaaa</span> Color hex <code>#FF7F50</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#dark_gray">dark_gray</a></td>
+	<td class="summary"><span style="background-color:#3f3f3f;color:#3f3f3f">aaaa</span> Color hex <code>#3F3F3F</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#firebrick">firebrick</a></td>
+	<td class="summary"><span style="background-color:#b22222;color:#b22222">aaaa</span> Color hex <code>#B22222</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#forest">forest</a></td>
+	<td class="summary"><span style="background-color:#228b22;color:#228b22">aaaa</span> Color hex <code>#228B22</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#gold">gold</a></td>
+	<td class="summary"><span style="background-color:#ffd700;color:#ffd700">aaaa</span> Color hex <code>#FFD700</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#goldenrod">goldenrod</a></td>
+	<td class="summary"><span style="background-color:#daa520;color:#daa520">aaaa</span> Color hex <code>#DAA520</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#gray">gray</a></td>
+	<td class="summary"><span style="background-color:#7f7f7f;color:#7f7f7f">aaaa</span> Color hex <code>#7F7F7F</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#light_gray">light_gray</a></td>
+	<td class="summary"><span style="background-color:#bfbfbf;color:#bfbfbf">aaaa</span> Color hex <code>#BFBFBF</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#lime">lime</a></td>
+	<td class="summary"><span style="background-color:#32cd32;color:#32cd32">aaaa</span> Color hex <code>#32CD32</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#magenta">magenta</a></td>
+	<td class="summary"><span style="background-color:#ff00ff;color:#ff00ff">aaaa</span> Color hex <code>#FF00FF</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#maroon">maroon</a></td>
+	<td class="summary"><span style="background-color:#b03060;color:#b03060">aaaa</span> Color hex <code>#B03060</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#navy">navy</a></td>
+	<td class="summary"><span style="background-color:#00007f;color:#00007f">aaaa</span> Color hex <code>#00007F</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#olive">olive</a></td>
+	<td class="summary"><span style="background-color:#6b8e23;color:#6b8e23">aaaa</span> Color hex <code>#6B8E23</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#orange">orange</a></td>
+	<td class="summary"><span style="background-color:#ffa500;color:#ffa500">aaaa</span> Color hex <code>#FFA500</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#pink">pink</a></td>
+	<td class="summary"><span style="background-color:#ff69b4;color:#ff69b4">aaaa</span> Color hex <code>#FF69B4</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#purple">purple</a></td>
+	<td class="summary"><span style="background-color:#a020f0;color:#a020f0">aaaa</span> Color hex <code>#A020F0</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#royal">royal</a></td>
+	<td class="summary"><span style="background-color:#4169e1;color:#4169e1">aaaa</span> Color hex <code>#4169E1</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#salmon">salmon</a></td>
+	<td class="summary"><span style="background-color:#fa8072;color:#fa8072">aaaa</span> Color hex <code>#FA8072</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sky">sky</a></td>
+	<td class="summary"><span style="background-color:#87ceeb;color:#87ceeb">aaaa</span> Color hex <code>#87CEEB</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#slate">slate</a></td>
+	<td class="summary"><span style="background-color:#708090;color:#708090">aaaa</span> Color hex <code>#708090</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tan">tan</a></td>
+	<td class="summary"><span style="background-color:#d2b48c;color:#d2b48c">aaaa</span> Color hex <code>#D2B48C</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#teal">teal</a></td>
+	<td class="summary"><span style="background-color:#007f7f;color:#007f7f">aaaa</span> Color hex <code>#007F7F</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#violet">violet</a></td>
+	<td class="summary"><span style="background-color:#ee82ee;color:#ee82ee">aaaa</span> Color hex <code>#EE82EE</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#yellow">yellow</a></td>
+	<td class="summary"><span style="background-color:#ffff00;color:#ffff00">aaaa</span> Color hex <code>#FFFF00</code>.</td>
+	</tr>
+</table>
+<h2><a href="#Library_functions">Library functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#fromHex">fromHex(hex)</a></td>
+	<td class="summary">Creates a color matching the provided hex value.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fromRGB">fromRGB(r, g, b)</a></td>
+	<td class="summary">Creates a color matching the provided RGB values.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Library_constants"></a>Library constants </h2>
+
+          <div class="section-description">
+           Contains preset colors.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "white"></a>
+    <strong>white</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ffffff;color:#ffffff">aaaa</span> Color hex <code>#FFFFFF</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "black"></a>
+    <strong>black</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#000000;color:#000000">aaaa</span> Color hex <code>#000000</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "red"></a>
+    <strong>red</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ff0000;color:#ff0000">aaaa</span> Color hex <code>#FF0000</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "blue"></a>
+    <strong>blue</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#0000ff;color:#0000ff">aaaa</span> Color hex <code>#0000FF</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "green"></a>
+    <strong>green</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#00ff00;color:#00ff00">aaaa</span> Color hex <code>#00FF00</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "brown"></a>
+    <strong>brown</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#8b4513;color:#8b4513">aaaa</span> Color hex <code>#8B4513</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "chartreuse"></a>
+    <strong>chartreuse</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#7fff00;color:#7fff00">aaaa</span> Color hex <code>#7FFF00</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cyan"></a>
+    <strong>cyan</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#00ffff;color:#00ffff">aaaa</span> Color hex <code>#00FFFF</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "coral"></a>
+    <strong>coral</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ff7f50;color:#ff7f50">aaaa</span> Color hex <code>#FF7F50</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dark_gray"></a>
+    <strong>dark_gray</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#3f3f3f;color:#3f3f3f">aaaa</span> Color hex <code>#3F3F3F</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "firebrick"></a>
+    <strong>firebrick</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#b22222;color:#b22222">aaaa</span> Color hex <code>#B22222</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "forest"></a>
+    <strong>forest</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#228b22;color:#228b22">aaaa</span> Color hex <code>#228B22</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "gold"></a>
+    <strong>gold</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ffd700;color:#ffd700">aaaa</span> Color hex <code>#FFD700</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "goldenrod"></a>
+    <strong>goldenrod</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#daa520;color:#daa520">aaaa</span> Color hex <code>#DAA520</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "gray"></a>
+    <strong>gray</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#7f7f7f;color:#7f7f7f">aaaa</span> Color hex <code>#7F7F7F</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "light_gray"></a>
+    <strong>light_gray</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#bfbfbf;color:#bfbfbf">aaaa</span> Color hex <code>#BFBFBF</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "lime"></a>
+    <strong>lime</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#32cd32;color:#32cd32">aaaa</span> Color hex <code>#32CD32</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "magenta"></a>
+    <strong>magenta</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ff00ff;color:#ff00ff">aaaa</span> Color hex <code>#FF00FF</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "maroon"></a>
+    <strong>maroon</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#b03060;color:#b03060">aaaa</span> Color hex <code>#B03060</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "navy"></a>
+    <strong>navy</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#00007f;color:#00007f">aaaa</span> Color hex <code>#00007F</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "olive"></a>
+    <strong>olive</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#6b8e23;color:#6b8e23">aaaa</span> Color hex <code>#6B8E23</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "orange"></a>
+    <strong>orange</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ffa500;color:#ffa500">aaaa</span> Color hex <code>#FFA500</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pink"></a>
+    <strong>pink</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ff69b4;color:#ff69b4">aaaa</span> Color hex <code>#FF69B4</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "purple"></a>
+    <strong>purple</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#a020f0;color:#a020f0">aaaa</span> Color hex <code>#A020F0</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "royal"></a>
+    <strong>royal</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#4169e1;color:#4169e1">aaaa</span> Color hex <code>#4169E1</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "salmon"></a>
+    <strong>salmon</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#fa8072;color:#fa8072">aaaa</span> Color hex <code>#FA8072</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sky"></a>
+    <strong>sky</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#87ceeb;color:#87ceeb">aaaa</span> Color hex <code>#87CEEB</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "slate"></a>
+    <strong>slate</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#708090;color:#708090">aaaa</span> Color hex <code>#708090</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tan"></a>
+    <strong>tan</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#d2b48c;color:#d2b48c">aaaa</span> Color hex <code>#D2B48C</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "teal"></a>
+    <strong>teal</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#007f7f;color:#007f7f">aaaa</span> Color hex <code>#007F7F</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "violet"></a>
+    <strong>violet</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ee82ee;color:#ee82ee">aaaa</span> Color hex <code>#EE82EE</code>.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "yellow"></a>
+    <strong>yellow</strong>
+    </dt>
+    <dd>
+    <span style="background-color:#ffff00;color:#ffff00">aaaa</span> Color hex <code>#FFFF00</code>.
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Library_functions"></a>Library functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "fromHex"></a>
+    <strong>fromHex(hex)</strong>
+    </dt>
+    <dd>
+    Creates a color matching the provided hex value. </p>
+
+<p> Hex values are in #RRGGBB format.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">hex</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the hex value to create a color with
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fromRGB"></a>
+    <strong>fromRGB(r, g, b)</strong>
+    </dt>
+    <dd>
+    Creates a color matching the provided RGB values. </p>
+
+<p> Values are integers and go up to 255.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">r</span>
+            <span class="types"><span class="type">int</span></span>
+         the red value of the new color
+        </li>
+        <li><span class="parameter">g</span>
+            <span class="types"><span class="type">int</span></span>
+         the green value of the new color
+        </li>
+        <li><span class="parameter">b</span>
+            <span class="types"><span class="type">int</span></span>
+         the blue value of the new color
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

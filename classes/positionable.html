@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><strong>positionable</strong></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>positionable</code></h1>
+<p><a href="../classes/positionable.html#">positionable</a> objects hold their position within their
+ containers.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#positionable:getPosition">positionable:getPosition()</a></td>
+	<td class="summary">Returns the position of this <a href="../classes/positionable.html#">positionable</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#positionable:setPosition">positionable:setPosition(x, y)</a></td>
+	<td class="summary">Sets the position of this <a href="../classes/positionable.html#">positionable</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#positionable:getHeight">positionable:getHeight()</a></td>
+	<td class="summary">Returns the height of this <a href="../classes/positionable.html#">positionable</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#positionable:setHeight">positionable:setHeight(height)</a></td>
+	<td class="summary">Sets the height of this <a href="../classes/positionable.html#">positionable</a>.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "positionable:getPosition"></a>
+    <strong>positionable:getPosition()</strong>
+    </dt>
+    <dd>
+    Returns the position of this <a href="../classes/positionable.html#">positionable</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the x coordinate of this positionable</li>
+        <li>
+        the y coordinate of this positionable</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "positionable:setPosition"></a>
+    <strong>positionable:setPosition(x, y)</strong>
+    </dt>
+    <dd>
+    Sets the position of this <a href="../classes/positionable.html#">positionable</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         the new x coordinate of this positionable
+        </li>
+        <li><span class="parameter">y</span>
+         the new y coordinate of this positionable
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "positionable:getHeight"></a>
+    <strong>positionable:getHeight()</strong>
+    </dt>
+    <dd>
+    Returns the height of this <a href="../classes/positionable.html#">positionable</a>. </p>
+
+<p> Height determines the Y offset for a positionable object in the
+ Overworld, as objects in the Overworld are usually rendered in an
+ order based on their current Y position. To allow objects to have
+ an illusion of altitude without needing to go to an unnecessarily
+ high Y value in order to avoid an object jumping in front of it,
+ height allows the visual Y position of an object to be offset
+ without disturbing the render order.</p>
+
+<p> Height is only used by world objects. This function returns 0 on
+ any other type.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the height of this positionable
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "positionable:setHeight"></a>
+    <strong>positionable:setHeight(height)</strong>
+    </dt>
+    <dd>
+    Sets the height of this <a href="../classes/positionable.html#">positionable</a>. </p>
+
+<p> See <a href="../classes/positionable.html#positionable:getHeight">positionable:getHeight</a> for an explanation on height.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">number</span></span>
+         the new height of this positionable
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+<li><a href="#Map_preparation_functions">Map preparation functions </a></li>
+<li><a href="#Map_functions">Map functions </a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><strong>worldroom</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>worldroom</code></h1>
+<p><a href="../classes/worldroom.html#">worldroom</a>s are container objects for <a href="../classes/worldobject.html#">worldobject</a>s.</p>
+<p>
+
+
+<p> This class also holds the functions of the following classes:</p>
+
+<ul>
+    <li><a href="../classes/destructible.html#">destructible</a></li>
+    <li><a href="../classes/eventlistener.html#">eventlistener</a></li>
+    <li><a href="../classes/renderable.html#">renderable</a></li>
+    <li><a href="../classes/processable.html#">processable</a></li>
+</ul>
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:getOverworld">worldroom:getOverworld()</a></td>
+	<td class="summary">Returns the <a href="../classes/overworldcontroller.html#">overworldcontroller</a> currently set with this
+ <a href="../classes/worldroom.html#">worldroom</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:registerObject">worldroom:registerObject(object)</a></td>
+	<td class="summary">Registers the provided <a href="../classes/worldobject.html#">worldobject</a> into this <a href="../classes/worldroom.html#">worldroom</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:removeObject">worldroom:removeObject(object)</a></td>
+	<td class="summary">Removes the provided <a href="../classes/worldobject.html#">worldobject</a> from this <a href="../classes/worldroom.html#">worldroom</a>, if the
+ former resides inside within worldroom.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:removeObject">worldroom:removeObject(id)</a></td>
+	<td class="summary">Removes the <a href="../classes/worldobject.html#">worldobject</a> owning the provided <code>ID</code> from this
+ <a href="../classes/worldroom.html#">worldroom</a>, if the former resides within this worldroom.</td>
+	</tr>
+</table>
+<h2><a href="#Map_preparation_functions">Map preparation functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:registerEntrypoint">worldroom:registerEntrypoint(name, defpoint, defshape, target, target)</a></td>
+	<td class="summary">Registers a room entrypoint using the provided parameters.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:registerEntrypoint">worldroom:registerEntrypoint(name, spawnX, spawnY, defshape, target, target)</a></td>
+	<td class="summary">Registers a room entrypoint using the provided parameters.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:setTilemap">worldroom:setTilemap(tilemapName)</a></td>
+	<td class="summary">Sets the current tilemap of this <a href="../classes/worldroom.html#">worldroom</a>.</td>
+	</tr>
+</table>
+<h2><a href="#Map_functions">Map functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:getCollisionLayerState">worldroom:getCollisionLayerState(layerName)</a></td>
+	<td class="summary">Returns the current state of the collision layer matching the
+ given name.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:setCollisionLayerState">worldroom:setCollisionLayerState(layerName, state)</a></td>
+	<td class="summary">Sets the current state of the collision layer matching the given
+ name.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:setLayerOpacity">worldroom:setLayerOpacity(layer, opacity)</a></td>
+	<td class="summary">Sets the current opacity of the given layer index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:getMapDefinedShape">worldroom:getMapDefinedShape(defShapeName)</a></td>
+	<td class="summary">Returns the shape data for the provided shape in this
+ <a href="../classes/worldroom.html#">worldroom</a>'s current tilemap.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldroom:getMapDefinedPoint">worldroom:getMapDefinedPoint(defPointName)</a></td>
+	<td class="summary">Returns the coordinates for the provided point in this
+ <a href="../classes/worldroom.html#">worldroom</a>'s current tilemap.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "worldroom:getOverworld"></a>
+    <strong>worldroom:getOverworld()</strong>
+    </dt>
+    <dd>
+    Returns the <a href="../classes/overworldcontroller.html#">overworldcontroller</a> currently set with this
+ <a href="../classes/worldroom.html#">worldroom</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the parent overworldcontroller
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:registerObject"></a>
+    <strong>worldroom:registerObject(object)</strong>
+    </dt>
+    <dd>
+    Registers the provided <a href="../classes/worldobject.html#">worldobject</a> into this <a href="../classes/worldroom.html#">worldroom</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">object</span>
+            <span class="types"><a class="type" href="../classes/worldobject.html#">worldobject</a></span>
+         the worldobject to register
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:removeObject"></a>
+    <strong>worldroom:removeObject(object)</strong>
+    </dt>
+    <dd>
+    Removes the provided <a href="../classes/worldobject.html#">worldobject</a> from this <a href="../classes/worldroom.html#">worldroom</a>, if the
+ former resides inside within worldroom.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">object</span>
+            <span class="types"><a class="type" href="../classes/worldobject.html#">worldobject</a></span>
+         the worldobject to remove
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:removeObject"></a>
+    <strong>worldroom:removeObject(id)</strong>
+    </dt>
+    <dd>
+    Removes the <a href="../classes/worldobject.html#">worldobject</a> owning the provided <code>ID</code> from this
+ <a href="../classes/worldroom.html#">worldroom</a>, if the former resides within this worldroom.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the ID of the worldobject to remove
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Map_preparation_functions"></a>Map preparation functions </h2>
+
+          <div class="section-description">
+           These functions should only be called inside a <a href="../classes/worldroom.html#">worldroom</a>'s
+ create function.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "worldroom:registerEntrypoint"></a>
+    <strong>worldroom:registerEntrypoint(name, defpoint, defshape, target, target)</strong>
+    </dt>
+    <dd>
+    Registers a room entrypoint using the provided parameters.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+
+
+
+        </li>
+        <li><span class="parameter">defpoint</span>
+
+
+
+        </li>
+        <li><span class="parameter">defshape</span>
+
+
+
+        </li>
+        <li><span class="parameter">target</span>
+
+
+
+        </li>
+        <li><span class="parameter">target</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:registerEntrypoint"></a>
+    <strong>worldroom:registerEntrypoint(name, spawnX, spawnY, defshape, target, target)</strong>
+    </dt>
+    <dd>
+    Registers a room entrypoint using the provided parameters.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+
+
+
+        </li>
+        <li><span class="parameter">spawnX</span>
+
+
+
+        </li>
+        <li><span class="parameter">spawnY</span>
+
+
+
+        </li>
+        <li><span class="parameter">defshape</span>
+
+
+
+        </li>
+        <li><span class="parameter">target</span>
+
+
+
+        </li>
+        <li><span class="parameter">target</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:setTilemap"></a>
+    <strong>worldroom:setTilemap(tilemapName)</strong>
+    </dt>
+    <dd>
+    Sets the current tilemap of this <a href="../classes/worldroom.html#">worldroom</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tilemapName</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Map_functions"></a>Map functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "worldroom:getCollisionLayerState"></a>
+    <strong>worldroom:getCollisionLayerState(layerName)</strong>
+    </dt>
+    <dd>
+    Returns the current state of the collision layer matching the
+ given name. </p>
+
+<p> State of collision indicates whether or not the collision shapes
+ set in the layer are active, that is, actively blocking any
+ objects from passing through them.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">layerName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the collison layer to query
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         if the collision layer matching the given name is active,
+   or false if it doesn't exist
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:setCollisionLayerState"></a>
+    <strong>worldroom:setCollisionLayerState(layerName, state)</strong>
+    </dt>
+    <dd>
+    Sets the current state of the collision layer matching the given
+ name. </p>
+
+<p> See <code>wroom:getCollisionLayerState</code> for a brief description on
+ collision layer states.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">layerName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the target collision layer
+        </li>
+        <li><span class="parameter">state</span>
+            <span class="types"><span class="type">bool</span></span>
+         the new state of collision for the layer
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:setLayerOpacity"></a>
+    <strong>worldroom:setLayerOpacity(layer, opacity)</strong>
+    </dt>
+    <dd>
+    Sets the current opacity of the given layer index. </p>
+
+<p> See <code>wroom:getLayerOpacity</code> for a brief description on layer
+ opacity.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">layer</span>
+            <span class="types"><span class="type">int</span></span>
+         the layer index to query
+        </li>
+        <li><span class="parameter">opacity</span>
+            <span class="types"><span class="type">number</span></span>
+         the opacity to set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:getMapDefinedShape"></a>
+    <strong>worldroom:getMapDefinedShape(defShapeName)</strong>
+    </dt>
+    <dd>
+    Returns the shape data for the provided shape in this
+ <a href="../classes/worldroom.html#">worldroom</a>'s current tilemap.  The shape name must be in
+ "layerName:shapeName" form.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">defShapeName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the defined shape, in
+   <code>layerName:shapeName</code> form
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the name of the shape type, can be "rectangle",
+   "circle", "polygon", or "polyline"</li>
+        <li>
+        the x position of the shape's origin point</li>
+        <li>
+        the y position of the shape's origin point</li>
+        <li>
+        if a perfect circle, the radius of the circle</li>
+    </ol>
+     <h3>Or</h3>
+    <ol>
+        <li>
+        the name of the shape type, can be "rectangle",
+   "circle", "polygon", or "polyline"</li>
+        <li>
+        the x position of the shape's origin point</li>
+        <li>
+        the y position of the shape's origin point</li>
+        <li>
+         if not a perfect circle, a table of the shape's
+   vertices</li>
+    </ol>
+     <h3>Or</h3>
+    <ol>
+
+        nil, denoting the shape doesn't exist
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldroom:getMapDefinedPoint"></a>
+    <strong>worldroom:getMapDefinedPoint(defPointName)</strong>
+    </dt>
+    <dd>
+    Returns the coordinates for the provided point in this
+ <a href="../classes/worldroom.html#">worldroom</a>'s current tilemap.  The point name must be in
+ "layerName:pointName" form.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">defPointName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the defined point, in
+   <code>layerName:pointName</code> form
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the x coordinate of the point</li>
+        <li>
+        the y coordinate of the point</li>
+    </ol>
+     <h3>Or</h3>
+    <ol>
+
+        nil, denoting the point doesn't exist
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

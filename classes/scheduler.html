@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><strong>scheduler</strong></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>scheduler</code></h1>
+<p><a href="../classes/scheduler.html#">scheduler</a>s are one of the three main subsystems running under an
+ <a href="../classes/environment.html#">environment</a>.</p>
+<p>
+<p> Used to schedule tasks to occur every frame in the
+ current environment, and is the first to be processed, before
+ the <a href="../classes/uicontroller.html#">uicontroller</a>.</p>
+
+<p> This class also holds the functions of the following classes:</p>
+
+<ul>
+    <li><a href="../classes/subsystem.html#">subsystem</a></li>
+    <li><a href="../classes/processable.html#">processable</a></li>
+    <li><a href="../classes/destructible.html#">destructible</a></li>
+</ul>
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#scheduler:registerTask">scheduler:registerTask(task[, active=false])</a></td>
+	<td class="summary">Registers the provided task implementation into this <a href="../classes/scheduler.html#">scheduler</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scheduler:cancelTask">scheduler:cancelTask(id)</a></td>
+	<td class="summary">Cancels the task with the provided ID.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scheduler:hasTask">scheduler:hasTask(id)</a></td>
+	<td class="summary">Returns whether or not the task of the provided ID is currently
+ being ran by this <a href="../classes/scheduler.html#">scheduler</a>.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "scheduler:registerTask"></a>
+    <strong>scheduler:registerTask(task[, active=false])</strong>
+    </dt>
+    <dd>
+    Registers the provided task implementation into this <a href="../classes/scheduler.html#">scheduler</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">task</span>
+            <span class="types"><span class="type">tab</span></span>
+         the task implementation to register
+        </li>
+        <li><span class="parameter">active</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether or not the task will be active
+         (<em>default</em> false)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the ID of the registered
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scheduler:cancelTask"></a>
+    <strong>scheduler:cancelTask(id)</strong>
+    </dt>
+    <dd>
+    Cancels the task with the provided ID.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the ID of the task to cancel
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scheduler:hasTask"></a>
+    <strong>scheduler:hasTask(id)</strong>
+    </dt>
+    <dd>
+    Returns whether or not the task of the provided ID is currently
+ being ran by this <a href="../classes/scheduler.html#">scheduler</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the ID of the task to query
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        whether or not the task is still being processed
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

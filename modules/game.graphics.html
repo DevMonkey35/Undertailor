@@ -1,0 +1,919 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Retrieval_functions">Retrieval functions </a></li>
+<li><a href="#Color_functions">Color functions </a></li>
+<li><a href="#Shape_drawing">Shape drawing </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><strong>game.graphics</strong></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>game.graphics</code></h1>
+<p><a href="../modules/game.graphics.html">graphics</a> library for interfacing with graphics and drawing
+ shapes.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Retrieval_functions">Retrieval functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getDeltaTime">getDeltaTime()</a></td>
+	<td class="summary">Returns the time passed since the last frame, in seconds.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSprite">getSprite(sheetName, name)</a></td>
+	<td class="summary">Returns the <a href="../classes/sprite.html#">sprite</a> from the provided sheet and index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getDefaultTransform">getDefaultTransform()</a></td>
+	<td class="summary">Returns the default <a href="../classes/transform.html#">transform</a> object.</td>
+	</tr>
+</table>
+<h2><a href="#Color_functions">Color functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getClearColor">getClearColor()</a></td>
+	<td class="summary">Returns the game's current clear <a href="../classes/color.html#">color</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setClearColor">setClearColor(color)</a></td>
+	<td class="summary">Sets the game's current clear <a href="../classes/color.html#">color</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSpriteColor">getSpriteColor()</a></td>
+	<td class="summary">Returns the game's current sprite <a href="../classes/color.html#">color</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setSpriteColor">setSpriteColor(color)</a></td>
+	<td class="summary">Sets the game's current sprite <a href="../classes/color.html#">color</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getShapeColor">getShapeColor()</a></td>
+	<td class="summary">Returns the game's current shape <a href="../classes/color.html#">color</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setShapeColor">setShapeColor(color)</a></td>
+	<td class="summary">Sets the game's current shape <a href="../classes/color.html#">color</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#resetColors">resetColors()</a></td>
+	<td class="summary">Resets all graphic colors to their default values.</td>
+	</tr>
+</table>
+<h2><a href="#Shape_drawing">Shape drawing </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#drawLine">drawLine(x1, y1, x2, y2[, thickness=1.0])</a></td>
+	<td class="summary">Draws a line between the given points.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawArc">drawArc(x, y, radius, startDeg, lengthDeg[, segments=-1])</a></td>
+	<td class="summary">Draws an outline of an arc centered at the given point.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawFilledArc">drawFilledArc(x, y, radius, startDeg, lengthDeg[, segments=-1])</a></td>
+	<td class="summary">Draws a filled arc centered at the given point.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawPolygon">drawPolygon(thickness, vargs)</a></td>
+	<td class="summary">Draws an outline of a polygon.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawOpenPolygon">drawOpenPolygon(thickness, vargs)</a></td>
+	<td class="summary">Draws an outline of a polygon.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawFilledPolygon">drawFilledPolygon(vargs)</a></td>
+	<td class="summary">Draws a filled polygon.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawRectangle">drawRectangle(x, y, width, height[, thickness=1.0])</a></td>
+	<td class="summary">Draws an outline of a rectangle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawFilledRectangle">drawFilledRectangle(x, y, width, height)</a></td>
+	<td class="summary">Draws a filled rectangle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawCircle">drawCircle(x, y, radius)</a></td>
+	<td class="summary">Draws an outline of a circle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawFilledCircle">drawFilledCircle(x, y, radius)</a></td>
+	<td class="summary">Draws a filled circle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawTriangle">drawTriangle(x1, y1, x2, y2, x3, y3[, thickness=1.0])</a></td>
+	<td class="summary">Draws an outline of a triangle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#drawFilledTriangle">drawFilledTriangle(x1, y1, x2, y2, x3, y3)</a></td>
+	<td class="summary">Draws a filled triangle.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Retrieval_functions"></a>Retrieval functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getDeltaTime"></a>
+    <strong>getDeltaTime()</strong>
+    </dt>
+    <dd>
+    Returns the time passed since the last frame, in seconds.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the delta time in seconds
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getSprite"></a>
+    <strong>getSprite(sheetName, name)</strong>
+    </dt>
+    <dd>
+    Returns the <a href="../classes/sprite.html#">sprite</a> from the provided sheet and index.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sheetName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the sheet to pull from
+        </li>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the sprite in the sheet
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the target sprite, or nil if unknown
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getDefaultTransform"></a>
+    <strong>getDefaultTransform()</strong>
+    </dt>
+    <dd>
+    Returns the default <a href="../classes/transform.html#">transform</a> object.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the default transform
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Color_functions"></a>Color functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getClearColor"></a>
+    <strong>getClearColor()</strong>
+    </dt>
+    <dd>
+    Returns the game's current clear <a href="../classes/color.html#">color</a>. </p>
+
+<p> Essentially, the game's background color. On each frame rendered,
+ the screen is cleared using this color before redrawing everything
+ else.</p>
+
+<p> Defaults to black (#000000).
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the current clear color
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setClearColor"></a>
+    <strong>setClearColor(color)</strong>
+    </dt>
+    <dd>
+    Sets the game's current clear <a href="../classes/color.html#">color</a>. </p>
+
+<p> See <a href="../modules/game.graphics.html#getClearColor">graphics.getClearColor</a> for a brief description of clear
+ color.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">color</span>
+            <span class="types"><a class="type" href="../classes/color.html#">color</a></span>
+         the color to set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getSpriteColor"></a>
+    <strong>getSpriteColor()</strong>
+    </dt>
+    <dd>
+    Returns the game's current sprite <a href="../classes/color.html#">color</a>. </p>
+
+<p> Sprite color applies a shade on any sprites drawn in the future,
+ should the color be anything other than white.</p>
+
+<p> Defaults to white (#FFFFFF).
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the current sprite color
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setSpriteColor"></a>
+    <strong>setSpriteColor(color)</strong>
+    </dt>
+    <dd>
+    Sets the game's current sprite <a href="../classes/color.html#">color</a>. </p>
+
+<p> See <a href="../modules/game.graphics.html#getSpriteColor">graphics.getSpriteColor</a> for a brief description of sprite
+ color.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">color</span>
+            <span class="types"><a class="type" href="../classes/color.html#">color</a></span>
+         the color to set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getShapeColor"></a>
+    <strong>getShapeColor()</strong>
+    </dt>
+    <dd>
+    Returns the game's current shape <a href="../classes/color.html#">color</a>. </p>
+
+<p> Shape color will be the color for any shapes drawn in the future.</p>
+
+<p> Defaults to white (#FFFFFF).
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the current shape color
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setShapeColor"></a>
+    <strong>setShapeColor(color)</strong>
+    </dt>
+    <dd>
+    Sets the game's current shape <a href="../classes/color.html#">color</a>. </p>
+
+<p> See <a href="../modules/game.graphics.html#getShapeColor">graphics.getShapeColor</a> for a brief description of shape
+ color.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">color</span>
+            <span class="types"><a class="type" href="../classes/color.html#">color</a></span>
+         the color to set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "resetColors"></a>
+    <strong>resetColors()</strong>
+    </dt>
+    <dd>
+    Resets all graphic colors to their default values. </p>
+
+<p> This is always called at the start of every frame before drawing.
+ Do not call this function whenever something starts to get
+ rendered, if a specific color is needed simply set the target
+ color, the function will check on its own whether or not it needs
+ to change the color. Using this function to ensure the default
+ color will slow down rendering, as it causes the game to flush any
+ graphics to be drawn, which is slower than sending graphics all at
+ once.
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Shape_drawing"></a>Shape drawing </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "drawLine"></a>
+    <strong>drawLine(x1, y1, x2, y2[, thickness=1.0])</strong>
+    </dt>
+    <dd>
+    Draws a line between the given points.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x1</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the first point
+        </li>
+        <li><span class="parameter">y1</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the first point
+        </li>
+        <li><span class="parameter">x2</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the second point
+        </li>
+        <li><span class="parameter">y2</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the second point
+        </li>
+        <li><span class="parameter">thickness</span>
+            <span class="types"><span class="type">number</span></span>
+         the thickness of the line, in pixels
+         (<em>default</em> 1.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawArc"></a>
+    <strong>drawArc(x, y, radius, startDeg, lengthDeg[, segments=-1])</strong>
+    </dt>
+    <dd>
+    Draws an outline of an arc centered at the given point.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the arc's center
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the arc's center
+        </li>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the radius of the circle the arc outlines
+        </li>
+        <li><span class="parameter">startDeg</span>
+            <span class="types"><span class="type">number</span></span>
+         the degrees at which the arc will start, with 0
+   being at the right of the circle
+        </li>
+        <li><span class="parameter">lengthDeg</span>
+            <span class="types"><span class="type">number</span></span>
+         the length of the arc in degrees, starting from
+   <code>startDeg</code> going counter-clockwise
+        </li>
+        <li><span class="parameter">segments</span>
+            <span class="types"><span class="type">number</span></span>
+         the smoothness of the arc, or -1 to
+   automatically calculate
+         (<em>default</em> -1)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawFilledArc"></a>
+    <strong>drawFilledArc(x, y, radius, startDeg, lengthDeg[, segments=-1])</strong>
+    </dt>
+    <dd>
+    Draws a filled arc centered at the given point.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the arc's center
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the arc's center
+        </li>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the radius of the circle the arc outlines
+        </li>
+        <li><span class="parameter">startDeg</span>
+            <span class="types"><span class="type">number</span></span>
+         the degrees at which the arc will start, with 0
+   being at the right of the circle
+        </li>
+        <li><span class="parameter">lengthDeg</span>
+            <span class="types"><span class="type">number</span></span>
+         the length of the arc in degrees, starting from
+   <code>startDeg</code> going counter-clockwise
+        </li>
+        <li><span class="parameter">segments</span>
+            <span class="types"><span class="type">number</span></span>
+         the smoothness of the arc, or -1 to
+   automatically calculate
+         (<em>default</em> -1)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawPolygon"></a>
+    <strong>drawPolygon(thickness, vargs)</strong>
+    </dt>
+    <dd>
+    Draws an outline of a polygon.  The outline is closed.</p>
+
+<p> Points are provided by listing out values, alternating between
+ x and y.</p>
+
+<p> The game will ignore draw calls attempting to draw polygons
+ with less than 3 edges (6 points).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">thickness</span>
+            <span class="types"><span class="type">number</span></span>
+         the thickness of the outline, in pixels
+        </li>
+        <li><span class="parameter">vargs</span>
+            <span class="types"><span class="type">...</span></span>
+         the points of the polygon
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"> <span class="comment">-- Drawing a triangle
+</span> graphics.drawPolygon(<span class="number">1.0</span>, <span class="comment">-- thickness
+</span> <span class="number">0.0</span>, <span class="number">5.0</span>,   <span class="comment">-- top
+</span> -<span class="number">5.0</span>, -<span class="number">5.0</span>, <span class="comment">-- bottom left
+</span> <span class="number">5.0</span>, -<span class="number">5.0</span>)  <span class="comment">-- bottom right
+</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "drawOpenPolygon"></a>
+    <strong>drawOpenPolygon(thickness, vargs)</strong>
+    </dt>
+    <dd>
+    Draws an outline of a polygon.  The outline is left open, meaning
+ there is no line drawn between the first point and the last point.</p>
+
+<p> Points are provided by listing out values, alternating between
+ x and y.</p>
+
+<p> The game will ignore draw calls attempting to draw polygons
+ with less than 3 edges (6 points).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">thickness</span>
+            <span class="types"><span class="type">number</span></span>
+         the thickness of the outline, in pixels
+        </li>
+        <li><span class="parameter">vargs</span>
+            <span class="types"><span class="type">...</span></span>
+         the points of the polygon
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"> <span class="comment">-- Drawing a triangle
+</span> graphics.drawOpenPolygon(<span class="number">1.0</span>, <span class="comment">-- thickness
+</span> <span class="number">0.0</span>, <span class="number">5.0</span>,   <span class="comment">-- top
+</span> -<span class="number">5.0</span>, -<span class="number">5.0</span>, <span class="comment">-- bottom left
+</span> <span class="number">5.0</span>, -<span class="number">5.0</span>)  <span class="comment">-- bottom right
+</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "drawFilledPolygon"></a>
+    <strong>drawFilledPolygon(vargs)</strong>
+    </dt>
+    <dd>
+    Draws a filled polygon. </p>
+
+<p> Points are provided by listing out values, alternating between
+ x and y.</p>
+
+<p> The game will ignore draw calls attempting to draw polygons
+ with less than 3 edges (6 points).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">vargs</span>
+            <span class="types"><span class="type">...</span></span>
+         the points of the polygon
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"> <span class="comment">-- Drawing a triangle
+</span> graphics.drawFilledPolygon(
+ <span class="number">0.0</span>, <span class="number">5.0</span>,   <span class="comment">-- top
+</span> -<span class="number">5.0</span>, -<span class="number">5.0</span>, <span class="comment">-- bottom left
+</span> <span class="number">5.0</span>, -<span class="number">5.0</span>)  <span class="comment">-- bottom right
+</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "drawRectangle"></a>
+    <strong>drawRectangle(x, y, width, height[, thickness=1.0])</strong>
+    </dt>
+    <dd>
+    Draws an outline of a rectangle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the bottom-left of the rectangle
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the bottom-left of the rectangle
+        </li>
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">number</span></span>
+         the width of the rectangle, in pixels
+        </li>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">number</span></span>
+         the height of the rectangle, in pixels
+        </li>
+        <li><span class="parameter">thickness</span>
+            <span class="types"><span class="type">number</span></span>
+         the thickness of the outline,
+   in pixels
+         (<em>default</em> 1.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawFilledRectangle"></a>
+    <strong>drawFilledRectangle(x, y, width, height)</strong>
+    </dt>
+    <dd>
+    Draws a filled rectangle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the bottom-left of the rectangle
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the bottom-left of the rectangle
+        </li>
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">number</span></span>
+         the width of the rectangle, in pixels
+        </li>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">number</span></span>
+         the height of the rectangle, in pixels
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawCircle"></a>
+    <strong>drawCircle(x, y, radius)</strong>
+    </dt>
+    <dd>
+    Draws an outline of a circle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the circle's center
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the circle's center
+        </li>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the radius of the circle
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawFilledCircle"></a>
+    <strong>drawFilledCircle(x, y, radius)</strong>
+    </dt>
+    <dd>
+    Draws a filled circle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the circle's center
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the circle's center
+        </li>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the radius of the circle
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawTriangle"></a>
+    <strong>drawTriangle(x1, y1, x2, y2, x3, y3[, thickness=1.0])</strong>
+    </dt>
+    <dd>
+    Draws an outline of a triangle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x1</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the triangle's first point
+        </li>
+        <li><span class="parameter">y1</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the triangle's first point
+        </li>
+        <li><span class="parameter">x2</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the triangle's second point
+        </li>
+        <li><span class="parameter">y2</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the triangle's second point
+        </li>
+        <li><span class="parameter">x3</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the triangle's third point
+        </li>
+        <li><span class="parameter">y3</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the triangle's third point
+        </li>
+        <li><span class="parameter">thickness</span>
+            <span class="types"><span class="type">number</span></span>
+         the thickness of the outline, in pixels
+         (<em>default</em> 1.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "drawFilledTriangle"></a>
+    <strong>drawFilledTriangle(x1, y1, x2, y2, x3, y3)</strong>
+    </dt>
+    <dd>
+    Draws a filled triangle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x1</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the triangle's first point
+        </li>
+        <li><span class="parameter">y1</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the triangle's first point
+        </li>
+        <li><span class="parameter">x2</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the triangle's second point
+        </li>
+        <li><span class="parameter">y2</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the triangle's second point
+        </li>
+        <li><span class="parameter">x3</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the triangle's third point
+        </li>
+        <li><span class="parameter">y3</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the triangle's third point
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

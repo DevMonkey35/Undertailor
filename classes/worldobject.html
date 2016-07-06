@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+<li><a href="#Bounding_shape_functions">Bounding shape functions </a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><strong>worldobject</strong></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>worldobject</code></h1>
+<p><a href="../classes/worldobject.html#">worldobject</a>s are the primary functional objects within an
+ <a href="../classes/overworldcontroller.html#">overworldcontroller</a>, as well as pretty much the entire engine.</p>
+<p>
+
+
+<p> This class also holds the functions of the following classes:</p>
+
+<ul>
+    <li><a href="../classes/layerable.html#">layerable</a></li>
+    <li><a href="../classes/positionable.html#">positionable</a></li>
+    <li><a href="../classes/eventlistener.html#">eventlistener</a></li>
+    <li><a href="../classes/identifiable.html#">identifiable</a></li>
+    <li><a href="../classes/destructible.html#">destructible</a></li>
+    <li><a href="../classes/collider.html#">collider</a></li>
+    <li><a href="../classes/renderable.html#">renderable</a></li>
+    <li>`processable</li>
+</ul>
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:getRoom">worldobject:getRoom()</a></td>
+	<td class="summary">Returns the current <a href="../classes/worldroom.html#">worldroom</a> this <a href="../classes/worldobject.html#">worldobject</a> resives in.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:getActor">worldobject:getActor()</a></td>
+	<td class="summary">Returns the current <a href="../classes/renderable.html#">renderable</a> actor used to represent this
+ <a href="../classes/worldobject.html#">worldobject</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:setActor">worldobject:setActor(renderable)</a></td>
+	<td class="summary">Sets the <a href="../classes/renderable.html#">renderable</a> actor used to represent this <a href="../classes/worldobject.html#">worldobject</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:isVisible">worldobject:isVisible()</a></td>
+	<td class="summary">Returns whether or not this <a href="../classes/worldobject.html#">worldobject</a> is actually being
+ rendered.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:setVisible">worldobject:setVisible(visible)</a></td>
+	<td class="summary">Sets whether or not this <a href="../classes/worldobject.html#">worldobject</a> is actually being
+ rendered.</td>
+	</tr>
+</table>
+<h2><a href="#Bounding_shape_functions">Bounding shape functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:addBoundingPolygon">worldobject:addBoundingPolygon(vargs)</a></td>
+	<td class="summary">Applies a new bounding polygon to this <a href="../classes/worldobject.html#">worldobject</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:addBoundingCircle">worldobject:addBoundingCircle(radius[, offsetX=0.0][, offsetY=0.0])</a></td>
+	<td class="summary">Applies a new bounding circle shape to this <a href="../classes/worldobject.html#">worldobject</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:addBoundingBox">worldobject:addBoundingBox(width, height[, offsetX=0.0][, offsetY=0.0])</a></td>
+	<td class="summary">Applies a new bounding box shape to this <a href="../classes/worldobject.html#">worldobject</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:addBoundingChain">worldobject:addBoundingChain(...)</a></td>
+	<td class="summary">Applies a new bounding chain shape to this <a href="../classes/worldobject.html#">worldobject</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldobject:addBoundingChainLoop">worldobject:addBoundingChainLoop(...)</a></td>
+	<td class="summary">Applies a new bounding chain shape to this <a href="../classes/worldobject.html#">worldobject</a>.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "worldobject:getRoom"></a>
+    <strong>worldobject:getRoom()</strong>
+    </dt>
+    <dd>
+    Returns the current <a href="../classes/worldroom.html#">worldroom</a> this <a href="../classes/worldobject.html#">worldobject</a> resives in.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        this worldobject's current worldroom
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldobject:getActor"></a>
+    <strong>worldobject:getActor()</strong>
+    </dt>
+    <dd>
+    Returns the current <a href="../classes/renderable.html#">renderable</a> actor used to represent this
+ <a href="../classes/worldobject.html#">worldobject</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a renderable used to represent this worldobject
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldobject:setActor"></a>
+    <strong>worldobject:setActor(renderable)</strong>
+    </dt>
+    <dd>
+    Sets the <a href="../classes/renderable.html#">renderable</a> actor used to represent this <a href="../classes/worldobject.html#">worldobject</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">renderable</span>
+            <span class="types"><a class="type" href="../classes/renderable.html#">renderable</a></span>
+         the new actor to set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldobject:isVisible"></a>
+    <strong>worldobject:isVisible()</strong>
+    </dt>
+    <dd>
+    Returns whether or not this <a href="../classes/worldobject.html#">worldobject</a> is actually being
+ rendered.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        if this worldobject is visible
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldobject:setVisible"></a>
+    <strong>worldobject:setVisible(visible)</strong>
+    </dt>
+    <dd>
+    Sets whether or not this <a href="../classes/worldobject.html#">worldobject</a> is actually being
+ rendered.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">visible</span>
+            <span class="types"><span class="type">bool</span></span>
+         if this worldobject will be visible
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Bounding_shape_functions"></a>Bounding shape functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "worldobject:addBoundingPolygon"></a>
+    <strong>worldobject:addBoundingPolygon(vargs)</strong>
+    </dt>
+    <dd>
+    Applies a new bounding polygon to this <a href="../classes/worldobject.html#">worldobject</a>. </p>
+
+<p> The varargs to be passed are to contain the separate points
+ making up the bounding shape. Polygons are automatically closed,
+ you cannot make open polygons using this function. The passed
+ varargs must contain an equal amount of arguments, and must
+ resolve to at least 3 points. At point 0, 0 is the origin location
+ of this <a href="../classes/worldobject.html#">worldobject</a>. Points are relative to the origin by pixel
+ units.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">vargs</span>
+            <span class="types"><span class="type">...</span></span>
+         the points creating the polygon
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"> <span class="comment">-- With the points (-3, -3), (0, 3), (3, -3) to form a
+</span> <span class="comment">-- triangle, the parameters passed to this function would be:
+</span> obj:addBoundingPolygon(-<span class="number">3</span>, -<span class="number">3</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">3</span>, -<span class="number">3</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "worldobject:addBoundingCircle"></a>
+    <strong>worldobject:addBoundingCircle(radius[, offsetX=0.0][, offsetY=0.0])</strong>
+    </dt>
+    <dd>
+    Applies a new bounding circle shape to this <a href="../classes/worldobject.html#">worldobject</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the radius of the circle around the origin point
+        </li>
+        <li><span class="parameter">offsetX</span>
+            <span class="types"><span class="type">number</span></span>
+         the horizontal offset applied to the
+   bounding circle position, with 0 being the original point at the
+   object's origin
+         (<em>default</em> 0.0)
+        </li>
+        <li><span class="parameter">offsetY</span>
+            <span class="types"><span class="type">number</span></span>
+         the vertical offset applied to the
+   bounding circle position, with 0 being the original point at the
+   object's origin
+         (<em>default</em> 0.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldobject:addBoundingBox"></a>
+    <strong>worldobject:addBoundingBox(width, height[, offsetX=0.0][, offsetY=0.0])</strong>
+    </dt>
+    <dd>
+    Applies a new bounding box shape to this <a href="../classes/worldobject.html#">worldobject</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">number</span></span>
+         the width of the bounding box
+        </li>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">number</span></span>
+         the height of the bounding box
+        </li>
+        <li><span class="parameter">offsetX</span>
+            <span class="types"><span class="type">number</span></span>
+         the horizontal offset applied to the
+   bounding box position, with 0 being the original point at the
+   object's origin
+         (<em>default</em> 0.0)
+        </li>
+        <li><span class="parameter">offsetY</span>
+            <span class="types"><span class="type">number</span></span>
+         the vertical offset applied to the
+   bounding box position, with 0 being the original point at the
+   object's origin
+         (<em>default</em> 0.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldobject:addBoundingChain"></a>
+    <strong>worldobject:addBoundingChain(...)</strong>
+    </dt>
+    <dd>
+    Applies a new bounding chain shape to this <a href="../classes/worldobject.html#">worldobject</a>. </p>
+
+<p> Note that chain shapes react differently to collision. While
+ unlike polygons, they can have an infinite amount of vertices
+ they do not have any notion of mass, and thus cannot collide
+ with another chain shape. Other shape types will still collide
+ with them.</p>
+
+<p> See <code>wobj:addBoundingPolygon</code> for parameter instructions.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldobject:addBoundingChainLoop"></a>
+    <strong>worldobject:addBoundingChainLoop(...)</strong>
+    </dt>
+    <dd>
+    Applies a new bounding chain shape to this <a href="../classes/worldobject.html#">worldobject</a>. </p>
+
+<p> This function differs in that it cleanly and automatically closes
+ the shape generated by the provided vertices.</p>
+
+<p> See <code>wobj:addBoundingChain</code> for info about chain shapes.</p>
+
+<p> See <code>wobj:addBoundingPolygon</code> for parameter instructions.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

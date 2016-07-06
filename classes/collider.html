@@ -1,0 +1,530 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><strong>collider</strong></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>collider</code></h1>
+<p><a href="../classes/collider.html#">collider</a> objects are affected by physics and can interact with
+ each other in the Overworld subsystem.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#collider:getColliderType">collider:getColliderType()</a></td>
+	<td class="summary">Returns the body type of this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:setColliderType">collider:setColliderType(type)</a></td>
+	<td class="summary">Sets the body type of this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:getVelocity">collider:getVelocity()</a></td>
+	<td class="summary">Returns the velocity of this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:setVelocity">collider:setVelocity(velX, velY)</a></td>
+	<td class="summary">Sets the velocity of this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:applyForce">collider:applyForce(forceX, forceY[, localX=0.0][, localY=0.0])</a></td>
+	<td class="summary">Applies a force to this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:applyImpulse">collider:applyImpulse(impX, impY[, localX=0.0][, localY=0.0])</a></td>
+	<td class="summary">Applies an impulse to this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:applyTorque">collider:applyTorque(torque)</a></td>
+	<td class="summary">Applies torque to this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:canCollide">collider:canCollide()</a></td>
+	<td class="summary">Returns whether or not this <a href="../classes/collider.html#">collider</a> can collide with
+ other colliders.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:setCanCollide">collider:setCanCollide(canCollide)</a></td>
+	<td class="summary">Sets whether or not this <a href="../classes/collider.html#">collider</a> can collide with other
+ colliders.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:isRotationFixed">collider:isRotationFixed()</a></td>
+	<td class="summary">Returns whether or not this <a href="../classes/collider.html#">collider</a> is affected by
+ rotational velocity, or torque.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:setRotationFixed">collider:setRotationFixed(rotationFixed)</a></td>
+	<td class="summary">Sets whether or not this <a href="../classes/collider.html#">collider</a> is affected by
+ rotational velocity, or torque.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:getGroupId">collider:getGroupId()</a></td>
+	<td class="summary">Returns the group ID of this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collider:setGroupId">collider:setGroupId(id)</a></td>
+	<td class="summary">Sets the group ID of this <a href="../classes/collider.html#">collider</a>.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "collider:getColliderType"></a>
+    <strong>collider:getColliderType()</strong>
+    </dt>
+    <dd>
+
+<p>Returns the body type of this <a href="../classes/collider.html#">collider</a>. </p>
+
+<p> This function can return 3 integers.</p>
+
+<ul>
+    <li>1 - The body is a static body.</li>
+    <li>2 - The body is a kinematic body.</li>
+    <li>3 - The body is a dynamic body.</li>
+</ul>
+
+
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the body type id of this collider
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:setColliderType"></a>
+    <strong>collider:setColliderType(type)</strong>
+    </dt>
+    <dd>
+    Sets the body type of this <a href="../classes/collider.html#">collider</a>. </p>
+
+<p> See <a href="../classes/collider.html#collider:getColliderType">collider:getColliderType</a> for the possible type IDs.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+            <span class="types"><span class="type">int</span></span>
+         the ID of the body type to set
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../classes/collider.html#collider:getColliderType">collider:getColliderType</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "collider:getVelocity"></a>
+    <strong>collider:getVelocity()</strong>
+    </dt>
+    <dd>
+    Returns the velocity of this <a href="../classes/collider.html#">collider</a>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the velocity of this collider on the x axis</li>
+        <li>
+        the velocity of this collider on the y axis</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:setVelocity"></a>
+    <strong>collider:setVelocity(velX, velY)</strong>
+    </dt>
+    <dd>
+    Sets the velocity of this <a href="../classes/collider.html#">collider</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">velX</span>
+            <span class="types"><span class="type">number</span></span>
+         the new velocity of this collider on the x axis
+        </li>
+        <li><span class="parameter">velY</span>
+            <span class="types"><span class="type">number</span></span>
+         the new velocity of this collider on the y axis
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:applyForce"></a>
+    <strong>collider:applyForce(forceX, forceY[, localX=0.0][, localY=0.0])</strong>
+    </dt>
+    <dd>
+    Applies a force to this <a href="../classes/collider.html#">collider</a>. </p>
+
+<p> Applying a force at a point other than the object's point origin
+ (at local 0, 0) will generate torque, if the object's rotation is
+ not fixed (see <a href="../classes/collider.html#collider:isRotationFixed">collider:isRotationFixed</a>).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">forceX</span>
+            <span class="types"><span class="type">number</span></span>
+         the strength of the force to apply on the x axis
+        </li>
+        <li><span class="parameter">forceY</span>
+            <span class="types"><span class="type">number</span></span>
+         the strength of the force to apply on the y axis
+        </li>
+        <li><span class="parameter">localX</span>
+            <span class="types"><span class="type">number</span></span>
+         the location relative to this collider's
+   origin to apply the force to on the x axis
+         (<em>default</em> 0.0)
+        </li>
+        <li><span class="parameter">localY</span>
+            <span class="types"><span class="type">number</span></span>
+         the location relative to this collider's
+   origin to apply the force to on the y axis
+         (<em>default</em> 0.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:applyImpulse"></a>
+    <strong>collider:applyImpulse(impX, impY[, localX=0.0][, localY=0.0])</strong>
+    </dt>
+    <dd>
+    Applies an impulse to this <a href="../classes/collider.html#">collider</a>. </p>
+
+<p> Applying an impulse at a point other than the object's point
+ origin (at local 0, 0) will generate torque, if the object's
+ rotation is not fixed (see <a href="../classes/collider.html#collider:isRotationFixed">collider:isRotationFixed</a>).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">impX</span>
+            <span class="types"><span class="type">number</span></span>
+         the strength of the impulse to apply on the x axis
+        </li>
+        <li><span class="parameter">impY</span>
+            <span class="types"><span class="type">number</span></span>
+         the strength of the impulse to apply on the y axis
+        </li>
+        <li><span class="parameter">localX</span>
+            <span class="types"><span class="type">number</span></span>
+         the location relative to the collider's
+   origin to apply the impulse to on the x axis
+         (<em>default</em> 0.0)
+        </li>
+        <li><span class="parameter">localY</span>
+            <span class="types"><span class="type">number</span></span>
+         the location relative to the collider's
+   origin to apply the impulse to on the y axis
+         (<em>default</em> 0.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:applyTorque"></a>
+    <strong>collider:applyTorque(torque)</strong>
+    </dt>
+    <dd>
+    Applies torque to this <a href="../classes/collider.html#">collider</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">torque</span>
+            <span class="types"><span class="type">number</span></span>
+         the strength of torque to apply
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:canCollide"></a>
+    <strong>collider:canCollide()</strong>
+    </dt>
+    <dd>
+    Returns whether or not this <a href="../classes/collider.html#">collider</a> can collide with
+ other colliders. </p>
+
+<p> This only affects physical collision, where colliding objects stop
+ each other from passing in their current direction. The collider
+ will still be notified if an object collides with it, even if said
+ object passes through it due to not having physically collided.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        whether or not the provided collider can collide
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:setCanCollide"></a>
+    <strong>collider:setCanCollide(canCollide)</strong>
+    </dt>
+    <dd>
+    Sets whether or not this <a href="../classes/collider.html#">collider</a> can collide with other
+ colliders. </p>
+
+<p> See <a href="../classes/collider.html#collider:canCollide">collider:canCollide</a> for the effects of this property.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">canCollide</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether or not the provided collider should
+   collide with other objects
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:isRotationFixed"></a>
+    <strong>collider:isRotationFixed()</strong>
+    </dt>
+    <dd>
+    Returns whether or not this <a href="../classes/collider.html#">collider</a> is affected by
+ rotational velocity, or torque.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        whether or not the collider is affected by torque
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:setRotationFixed"></a>
+    <strong>collider:setRotationFixed(rotationFixed)</strong>
+    </dt>
+    <dd>
+    Sets whether or not this <a href="../classes/collider.html#">collider</a> is affected by
+ rotational velocity, or torque.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">rotationFixed</span>
+            <span class="types"><span class="type">bool</span></span>
+         whether or not the collider is affected by
+   torque
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:getGroupId"></a>
+    <strong>collider:getGroupId()</strong>
+    </dt>
+    <dd>
+    Returns the group ID of this <a href="../classes/collider.html#">collider</a>. </p>
+
+<p> For objects that can collide, group IDs determine which objects
+ a single object may collide with. Like with the <a href="../classes/collider.html#collider:canCollide">canCollide</a> flag,
+ objects will still be notified if another passes through them
+ despite having collision disabled.</p>
+
+<p> Group ID rules are as follows:</p>
+
+<ul>
+    <li>Objects with the same group ID will not collide with each other.</li>
+    <li>Objects with a negative group ID collide with everything.</li>
+</ul>
+
+<p> The default group ID for any object is -1.
+
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the group ID of the provided collider
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collider:setGroupId"></a>
+    <strong>collider:setGroupId(id)</strong>
+    </dt>
+    <dd>
+    Sets the group ID of this <a href="../classes/collider.html#">collider</a>. </p>
+
+<p> See <a href="../classes/collider.html#collider:getGroupId">collider:getGroupId</a> for a brief explanation on group IDs.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the new group ID of the collider
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

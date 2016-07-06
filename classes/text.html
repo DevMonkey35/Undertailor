@@ -1,0 +1,341 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><a href="../classes/audiodata.html">audiodata</a></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><strong>text</strong></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>text</code></h1>
+<p><a href="../classes/text.html#">text</a> objects are databags holding a series of characters and
+ parameters to form fully-customizable text objects.</p>
+<p>
+
+
+<p> This class also holds the functions of the following classes:</p>
+
+<ul>
+    <li><a href="../classes/renderable.html#">renderable</a></li>
+</ul>
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#text:getBoundedText">text:getBoundedText()</a></td>
+	<td class="summary">Returns the text bounded between this <a href="../classes/text.html#">text</a>'s string bound
+ indices.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#text:getComponents">text:getComponents()</a></td>
+	<td class="summary">Returns an array containing each component held by this <a href="../classes/text.html#">text</a>
+ object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#text:getSpaceTaken">text:getSpaceTaken()</a></td>
+	<td class="summary">Returns the space taken by this <a href="../classes/text.html#">text</a> in pixels, when rendered
+ on a normal scale.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#text:getStringBounds">text:getStringBounds()</a></td>
+	<td class="summary">Returns the current string boundaries set upon this <a href="../classes/text.html#">text</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#text:setStringBounds">text:setStringBounds(first, second)</a></td>
+	<td class="summary">Sets the string boundaries for this <a href="../classes/text.html#">text</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#text:getTextComponentAt">text:getTextComponentAt(index)</a></td>
+	<td class="summary">Returns the <a href="../classes/textcomponent.html#">textcomponent</a> located at the provided index in this
+ <a href="../classes/text.html#">text</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#text:substring">text:substring(first, second)</a></td>
+	<td class="summary">Clones this text, including only the text found within the
+ provided string boundaries.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "text:getBoundedText"></a>
+    <strong>text:getBoundedText()</strong>
+    </dt>
+    <dd>
+    Returns the text bounded between this <a href="../classes/text.html#">text</a>'s string bound
+ indices. </p>
+
+<p> See <a href="../classes/text.html#text:getStringBounds">text:getStringBounds</a> for a brief description on string
+ boundaries.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        this text's currently bounded text
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "text:getComponents"></a>
+    <strong>text:getComponents()</strong>
+    </dt>
+    <dd>
+    Returns an array containing each component held by this <a href="../classes/text.html#">text</a>
+ object.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        this text's current component array, read-only
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "text:getSpaceTaken"></a>
+    <strong>text:getSpaceTaken()</strong>
+    </dt>
+    <dd>
+    Returns the space taken by this <a href="../classes/text.html#">text</a> in pixels, when rendered
+ on a normal scale. </p>
+
+<p> String boundaries are taken into account.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the width of the text</li>
+        <li>
+        the height of the text</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "text:getStringBounds"></a>
+    <strong>text:getStringBounds()</strong>
+    </dt>
+    <dd>
+    Returns the current string boundaries set upon this <a href="../classes/text.html#">text</a>. </p>
+
+<p> String boundaries are a performance-friendly way of isolating
+ certain segments of text within a text object. This serves as an
+ alternative to the <a href="../classes/text.html#text:substring">text:substring</a> function, which generates a
+ new text object on every call, which takes more time and memory
+ than simply modifying the scope of the text, which this function
+ does.</p>
+
+<p> This function should always be used during tasks like rendering,
+ where the object is frequently queried on what to write next.</p>
+
+<p> If both bound values are -1, then it is assumed that no string
+ boundaries are set, allowing <a href="../classes/text.html#text:getBoundedText">text:getBoundedText</a> to return the
+ full contained text, similar to the function of <code>text:getText</code>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        the left bound, or -1 if not set (defaulting to 1)</li>
+        <li>
+         the right bound, or -1 if not set (defaulting to the
+   length of the text)</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "text:setStringBounds"></a>
+    <strong>text:setStringBounds(first, second)</strong>
+    </dt>
+    <dd>
+    Sets the string boundaries for this <a href="../classes/text.html#">text</a>. </p>
+
+<p> See <a href="../classes/text.html#text:getStringBounds">text:getStringBounds</a> for a brief description on string
+ boundaries.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">first</span>
+            <span class="types"><span class="type">int</span></span>
+         the left bound, or -1 to default
+        </li>
+        <li><span class="parameter">second</span>
+            <span class="types"><span class="type">int</span></span>
+         the right bound, or -1 to default
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "text:getTextComponentAt"></a>
+    <strong>text:getTextComponentAt(index)</strong>
+    </dt>
+    <dd>
+    Returns the <a href="../classes/textcomponent.html#">textcomponent</a> located at the provided index in this
+ <a href="../classes/text.html#">text</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the character index to query
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "text:substring"></a>
+    <strong>text:substring(first, second)</strong>
+    </dt>
+    <dd>
+    Clones this text, including only the text found within the
+ provided string boundaries. </p>
+
+<p> Do not use this function repetitively in somewhere like a render
+ function, as creating text over and over is not
+ performance-friendly and makes our garbage collector unhappy. The
+ <a href="../classes/text.html#text:setStringBounds">text:setStringBounds</a> function is much better for such tasks.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">first</span>
+            <span class="types"><span class="type">int</span></span>
+         the left bound
+        </li>
+        <li><span class="parameter">second</span>
+            <span class="types"><span class="type">int</span></span>
+         the right bound
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

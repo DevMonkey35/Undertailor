@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Undertailor Luadocs</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Undertailor Lua API</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../classes/audio.html">audio</a></li>
+  <li><strong>audiodata</strong></li>
+  <li><a href="../classes/audioplayable.html">audioplayable</a></li>
+  <li><a href="../classes/collider.html">collider</a></li>
+  <li><a href="../classes/color.html">color</a></li>
+  <li><a href="../classes/destructible.html">destructible</a></li>
+  <li><a href="../classes/environment.html">environment</a></li>
+  <li><a href="../classes/eventlistener.html">eventlistener</a></li>
+  <li><a href="../classes/font.html">font</a></li>
+  <li><a href="../classes/identifiable.html">identifiable</a></li>
+  <li><a href="../classes/inputdata.html">inputdata</a></li>
+  <li><a href="../classes/layerable.html">layerable</a></li>
+  <li><a href="../classes/music.html">music</a></li>
+  <li><a href="../classes/overworldcontroller.html">overworldcontroller</a></li>
+  <li><a href="../classes/positionable.html">positionable</a></li>
+  <li><a href="../classes/pressdata.html">pressdata</a></li>
+  <li><a href="../classes/processable.html">processable</a></li>
+  <li><a href="../classes/renderable.html">renderable</a></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
+  <li><a href="../classes/sound.html">sound</a></li>
+  <li><a href="../classes/sounddata.html">sounddata</a></li>
+  <li><a href="../classes/sprite.html">sprite</a></li>
+  <li><a href="../classes/subsystem.html">subsystem</a></li>
+  <li><a href="../classes/text.html">text</a></li>
+  <li><a href="../classes/textcomponent.html">textcomponent</a></li>
+  <li><a href="../classes/textstyle.html">textstyle</a></li>
+  <li><a href="../classes/transform.html">transform</a></li>
+  <li><a href="../classes/uicomponent.html">uicomponent</a></li>
+  <li><a href="../classes/uicontroller.html">uicontroller</a></li>
+  <li><a href="../classes/uiobject.html">uiobject</a></li>
+  <li><a href="../classes/worldobject.html">worldobject</a></li>
+  <li><a href="../classes/worldroom.html">worldroom</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>audiodata</code></h1>
+<p><a href="../classes/audiodata.html#">audiodata</a> objects hold audio clips with parameters that may be
+ controlled, such as volume, pitch, and pan.</p>
+<p> </p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:getVolume">audiodata:getVolume()</a></td>
+	<td class="summary">Returns the volume set for this <a href="../classes/audiodata.html#">audiodata</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:setVolume">audiodata:setVolume(volume)</a></td>
+	<td class="summary">Sets a volume of this <a href="../classes/audiodata.html#">audiodata</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:getPitch">audiodata:getPitch()</a></td>
+	<td class="summary">Returns the pitch value set for this <a href="../classes/audiodata.html#">audiodata</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:setPitch">audiodata:setPitch(pitch)</a></td>
+	<td class="summary">Sets the pitch value of this <a href="../classes/audiodata.html#">audiodata</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:getPan">audiodata:getPan()</a></td>
+	<td class="summary">Returns the panning value set for this <a href="../classes/audiodata.html#">audiodata</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:setPan">audiodata:setPan(pan)</a></td>
+	<td class="summary">Sets the panning value of this <a href="../classes/audiodata.html#">audiodata</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:isLooping">audiodata:isLooping()</a></td>
+	<td class="summary">Returns whether or not the audio of this <a href="../classes/audiodata.html#">audiodata</a> is
+ looping.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:setLooping">audiodata:setLooping(looping)</a></td>
+	<td class="summary">Sets whether or not the audio of this <a href="../classes/audiodata.html#">audiodata</a> is
+ looping.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:isPlaying">audiodata:isPlaying()</a></td>
+	<td class="summary">Returns whether or not the audio of this <a href="../classes/audiodata.html#">audiodata</a> is
+ currently playing.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#audiodata:stop">audiodata:stop()</a></td>
+	<td class="summary">Stops the audio associated with this <a href="../classes/audiodata.html#">audiodata</a> from
+ playing.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "audiodata:getVolume"></a>
+    <strong>audiodata:getVolume()</strong>
+    </dt>
+    <dd>
+    Returns the volume set for this <a href="../classes/audiodata.html#">audiodata</a>. </p>
+
+<p> Volumes are between 0.0 and 1.0.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the volume of this <a href="../classes/audiodata.html#">audiodata</a>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:setVolume"></a>
+    <strong>audiodata:setVolume(volume)</strong>
+    </dt>
+    <dd>
+    Sets a volume of this <a href="../classes/audiodata.html#">audiodata</a>. </p>
+
+<p> The provided value is automatically bounded between 0.0 and 1.0.
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">volume</span>
+            <span class="types"><span class="type">number</span></span>
+         the new volume
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:getPitch"></a>
+    <strong>audiodata:getPitch()</strong>
+    </dt>
+    <dd>
+    Returns the pitch value set for this <a href="../classes/audiodata.html#">audiodata</a>. </p>
+
+<p> Pitch values are between 0.5 and 2.0. Note that pitch also affects
+ speed.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the pitch of this <a href="../classes/audiodata.html#">audiodata</a>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:setPitch"></a>
+    <strong>audiodata:setPitch(pitch)</strong>
+    </dt>
+    <dd>
+    Sets the pitch value of this <a href="../classes/audiodata.html#">audiodata</a>. </p>
+
+<p> The provided value is automatically bounded between 0.5 and 2.0.
+ Use 1.0 for default pitch/speed.
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pitch</span>
+            <span class="types"><span class="type">number</span></span>
+         the new pitch
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:getPan"></a>
+    <strong>audiodata:getPan()</strong>
+    </dt>
+    <dd>
+    Returns the panning value set for this <a href="../classes/audiodata.html#">audiodata</a>. </p>
+
+<p> Panning values are between -1.0 and 1.0.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the pan of this <a href="../classes/audiodata.html#">audiodata</a>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:setPan"></a>
+    <strong>audiodata:setPan(pan)</strong>
+    </dt>
+    <dd>
+    Sets the panning value of this <a href="../classes/audiodata.html#">audiodata</a>. </p>
+
+<p> The provided value is automatically bounded between -1.0 and 1.0.
+ Use 0.0 to center audio. Negative values allocate sound to the
+ left speaker, positives to the right.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pan</span>
+            <span class="types"><span class="type">number</span></span>
+         the new pan
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:isLooping"></a>
+    <strong>audiodata:isLooping()</strong>
+    </dt>
+    <dd>
+    Returns whether or not the audio of this <a href="../classes/audiodata.html#">audiodata</a> is
+ looping.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        if this <a href="../classes/audiodata.html#">audiodata</a> is looping
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:setLooping"></a>
+    <strong>audiodata:setLooping(looping)</strong>
+    </dt>
+    <dd>
+    Sets whether or not the audio of this <a href="../classes/audiodata.html#">audiodata</a> is
+ looping.
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">looping</span>
+         whether this <a href="../classes/audiodata.html#">audiodata</a> should loop
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:isPlaying"></a>
+    <strong>audiodata:isPlaying()</strong>
+    </dt>
+    <dd>
+    Returns whether or not the audio of this <a href="../classes/audiodata.html#">audiodata</a> is
+ currently playing.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        if this <a href="../classes/audiodata.html#">audiodata</a> is playing
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "audiodata:stop"></a>
+    <strong>audiodata:stop()</strong>
+    </dt>
+    <dd>
+    Stops the audio associated with this <a href="../classes/audiodata.html#">audiodata</a> from
+ playing.
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-06 08:37:40 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
