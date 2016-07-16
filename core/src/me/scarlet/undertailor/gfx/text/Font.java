@@ -181,9 +181,9 @@ public class Font {
 
     private static Object[] KEY_VERSION = {"version"};
 
-    private static Object[] KEY_LETTER_SPACING = {"sprites", "letterSpacing"};
-    private static Object[] KEY_SPACE_LENGTH = {"sprites", "spaceLength"};
-    private static Object[] KEY_LINE_SIZE = {"sprites", "lineSize"};
+    private static Object[] KEY_LETTER_SPACING = {"font", "letterSpacing"};
+    private static Object[] KEY_SPACE_LENGTH = {"font", "spaceLength"};
+    private static Object[] KEY_LINE_SIZE = {"font", "lineSize"};
 
     private static Object[] KEY_META_LIST = {"sprites", "meta", null};
 
