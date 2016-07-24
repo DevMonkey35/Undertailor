@@ -126,7 +126,8 @@ public class Sprite implements Renderable, Cloneable {
     @Override
     public Sprite clone() {
         Sprite returned = new Sprite(this.renderer, this.region, this.meta);
-        returned.transform = this.transform;
+        returned.sourceObject = this.sourceObject;
+        returned.transform = this.transform.clone();
 
         return returned;
     }
