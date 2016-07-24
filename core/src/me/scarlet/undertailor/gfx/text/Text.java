@@ -594,6 +594,7 @@ public class Text extends TextComponent implements Renderable {
         this.spaceTaken.setItems(0F, 0F);
         dX = 0;
         dY = font.getLineSize();
+        prevSpacing = 0;
 
         this.processCharacters((localIndex, component) -> {
             char character = component.getText().charAt(localIndex.getB());
