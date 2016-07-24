@@ -1,14 +1,17 @@
 { // cfg version 1
 	"version": 1,
 	"sprites": {
-		"defaults": { // everything defaults to 0 initially, these override
-			// these are also pretty much only for SFE
-			"originX": 9.5
-		},
+		// defaults
+		"offX": 0,
+		"offY": 0,
+		"originX": 9.5,
+		"originY": 0,
 		"meta": {
 			"0": { // bunch of metadata, key defines target sprite index
 				"posX": 0,
 				"posY": 0,
+				"offX": 0,
+				"offY": 0,
 				"sizeX": 19,
 				"sizeY": 29,
 				"originX": 12,

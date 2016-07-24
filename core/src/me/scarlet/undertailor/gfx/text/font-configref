@@ -1,20 +1,14 @@
 { // cfg version 0
 	"version": 1,
 	"font": { // defaults
-		"letterSpacing": 2,
 		"spaceLength": 8,
 		"lineSize": 13,
-	},
-	"sprites" {
+		"spaceL": 2,
+		"spaceR": 2,
 		"meta": {
 			"A": {
-				"posX": 0,
-				"posY": 0,
-				"sizeX": 19,
-				"sizeY": 29,
-				"letterSpacing": 2, // specific letter spacing for certain characters, for each side of the letter
-				"letterSpacingLeft": 2, // specific letter spacing to the left for this character, overrides letterSpacing
-				"letterSpacingRight": 2 // specific letter spacing to the right for this character, overrides letterSpacing
+				"spaceL": 2, // specific letter spacing to the left for this character
+				"spaceR": 2 // specific letter spacing to the right for this character
 			}
 		}
 	}

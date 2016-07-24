@@ -181,17 +181,17 @@ public class Font {
 
     private static Object[] KEY_VERSION = {"version"};
 
-    private static Object[] KEY_LETTER_SPACING = {"font", "letterSpacing"};
     private static Object[] KEY_SPACE_LENGTH = {"font", "spaceLength"};
     private static Object[] KEY_LINE_SIZE = {"font", "lineSize"};
+    private static Object[] KEY_LETTER_SPACING_LEFT = {"font", "spaceL"};
+    private static Object[] KEY_LETTER_SPACING_RIGHT = {"font", "spaceR"};
 
     private static Object[] KEY_META_LIST = {"sprites", "meta", null};
 
     // inside a meta block
 
-    private static Object[] KEY_META_LETTER_SPACING = {"letterSpacing"};
-    private static Object[] KEY_META_LETTER_SPACING_LEFT = {"letterSpacingLeft"};
-    private static Object[] KEY_META_LETTER_SPACING_RIGHT = {"letterSpacingRight"};
+    private static Object[] KEY_META_LETTER_SPACING_LEFT = {"spaceL"};
+    private static Object[] KEY_META_LETTER_SPACING_RIGHT = {"spaceR"};
 
 
     /**
@@ -199,7 +199,7 @@ public class Font {
      * 
      * <p>Responsible for loading the font data.</p>
      * 
-     * <p>Implementing configuration version 0.</p>
+     * <p>Implementing configuration version 1.</p>
      */
     private void loadConfig(ConfigurationNode rootNode) throws BadAssetException {
         int version = rootNode.getNode(KEY_VERSION).getInt(-1);
@@ -210,17 +210,24 @@ public class Font {
             throw new UnsupportedOperationException(message);
         }
 
-        // font.letterSpacing
-        checkExists(rootNode.getNode(KEY_LETTER_SPACING));
-        float defaultLetterSpacing =
-            checkValue(rootNode.getNode(KEY_LETTER_SPACING).getFloat(0), value -> {
+        // font.letterSpacingLeft
+        // font.letterSpacingRight
+        checkExists(rootNode.getNode(KEY_LETTER_SPACING_LEFT));
+        checkExists(rootNode.getNode(KEY_LETTER_SPACING_RIGHT));
+        this.defaultLetterSpacing =
+            new Pair<>(checkValue(rootNode.getNode(KEY_LETTER_SPACING_LEFT).getFloat(0), value -> {
                 if (value < 0) {
                     return "Cannot use negative letter spacing";
                 }
 
                 return null;
-            });
-        this.defaultLetterSpacing = new Pair<>(defaultLetterSpacing, defaultLetterSpacing);
+            }), checkValue(rootNode.getNode(KEY_LETTER_SPACING_RIGHT).getFloat(0), value -> {
+                if (value < 0) {
+                    return "Cannot use negative letter spacing";
+                }
+
+                return null;
+            }));
 
         // font.spaceLength
         checkExists(rootNode.getNode(KEY_SPACE_LENGTH));
@@ -246,19 +253,9 @@ public class Font {
         for (ConfigurationNode node : rootNode.getNode(KEY_META_LIST).getChildrenMap().values()) {
             char character = node.getKey().toString().charAt(0);
 
-            float letterSpacing = checkValue(
-                node.getNode(KEY_META_LETTER_SPACING).getFloat(this.defaultLetterSpacing.getA()),
-                value -> {
-                    if (value < 0) {
-                        return "Cannot use negative letter spacing";
-                    }
-
-                    return null;
-                });
-
             Pair<Float> spacingPair = new Pair<>();
-            spacingPair.setA(checkValue(
-                node.getNode(KEY_META_LETTER_SPACING_LEFT).getFloat(letterSpacing), value -> {
+            spacingPair
+                .setA(checkValue(node.getNode(KEY_META_LETTER_SPACING_LEFT).getFloat(0), value -> {
                     if (value < 0) {
                         return "Cannot use negative letter spacing";
                     }
@@ -266,8 +263,8 @@ public class Font {
                     return null;
                 }));
 
-            spacingPair.setB(checkValue(
-                node.getNode(KEY_META_LETTER_SPACING_RIGHT).getFloat(letterSpacing), value -> {
+            spacingPair
+                .setB(checkValue(node.getNode(KEY_META_LETTER_SPACING_RIGHT).getFloat(0), value -> {
                     if (value < 0) {
                         return "Cannot use negative letter spacing";
                     }

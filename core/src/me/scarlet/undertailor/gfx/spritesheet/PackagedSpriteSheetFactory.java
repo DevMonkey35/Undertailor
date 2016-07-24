@@ -217,6 +217,8 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
     private static Object[] KEY_META_POSY = {"posY"};
     private static Object[] KEY_META_SIZEX = {"sizeX"};
     private static Object[] KEY_META_SIZEY = {"sizeY"};
+    private static Object[] KEY_META_OFFX = {"offX"};
+    private static Object[] KEY_META_OFFY = {"offY"};
     private static Object[] KEY_META_ORIGINX = {"originX"};
     private static Object[] KEY_META_ORIGINY = {"originY"};
 
@@ -238,6 +240,18 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
             throw new UnsupportedOperationException(message);
         }
 
+        // Read default values for the two things that can be defaulted.
+        int defOffX = 0;
+        int defOffY = 0;
+        float defOriginX = 0F;
+        float defOriginY = 0F;
+
+        defOffX = this.sheetConfig.getNode("sprites", "offX").getInt(0);
+        defOffY = this.sheetConfig.getNode("sprites", "offY").getInt(0);
+        defOriginX = this.sheetConfig.getNode("sprites", "originX").getFloat(0F);
+        defOriginY = this.sheetConfig.getNode("sprites", "originY").getFloat(0F);
+
+        // Read each individual sprite.
         Map<Object, ? extends ConfigurationNode> metaNodes =
             this.sheetConfig.getNode(KEY_META_LIST).getChildrenMap();
         for (ConfigurationNode meta : metaNodes.values()) {
@@ -249,8 +263,10 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
             int posY = meta.getNode(KEY_META_POSY).getInt(0);
             int sizeX = meta.getNode(KEY_META_SIZEX).getInt(0);
             int sizeY = meta.getNode(KEY_META_SIZEY).getInt(0);
-            metadata.originX = meta.getNode(KEY_META_ORIGINX).getFloat(0);
-            metadata.originY = meta.getNode(KEY_META_ORIGINY).getFloat(0);
+            metadata.offX = meta.getNode(KEY_META_OFFX).getInt(defOffX);
+            metadata.offY = meta.getNode(KEY_META_OFFY).getInt(defOffY);
+            metadata.originX = meta.getNode(KEY_META_ORIGINX).getFloat(defOriginX);
+            metadata.originY = meta.getNode(KEY_META_ORIGINY).getFloat(defOriginY);
 
             Sprite added = new Sprite(this.renderer,
                 new TextureRegion(texture, posX, posY, sizeX, sizeY), metadata);
