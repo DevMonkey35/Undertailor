@@ -39,7 +39,6 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
-import me.scarlet.undertailor.gfx.spritesheet.Sprite.SpriteMeta;
 import me.scarlet.undertailor.gfx.text.TextStyle.DisplayMeta;
 import me.scarlet.undertailor.gfx.text.parse.ParsedText;
 import me.scarlet.undertailor.util.Pair;
@@ -232,54 +231,67 @@ public class Text extends TextComponent implements Renderable {
     }
 
     // method-specific variables because stupid scope rules
-    float dX, dY, spacing;
+    float dX, dY, prevSpacing;
 
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         dX = x;
         dY = y;
+        prevSpacing = 0;
 
         this.processCharacters((localIndex, component) -> {
             char character = component.getText().charAt(localIndex.getB());
 
-            if (character == ' ') {
+            if (character == ' ') { // space?
                 dX += font.getSpaceLength() * transform.getScaleX();
-            } else if (character == '\n') {
+                prevSpacing = 0;
+            } else if (character == '\n') { // new line?
                 dX = x;
                 dY -= font.getLineSize() * transform.getScaleY();
-            } else {
+                prevSpacing = 0;
+            } else { // character?
                 Sprite sprite = this.font.getCharacterSprite(character);
-                SpriteMeta sMeta = sprite.getMeta();
-                Pair<Float> letterSpacing = font.getLetterSpacing(character);
-                this.m_drawnTransform = this.transform.copyInto(this.m_drawnTransform);
 
-                DisplayMeta dMeta = Text.generateDisplayMeta();
-                if (!component.getStyles().isEmpty()) {
-                    component.getStyles().forEach(style -> {
-                        style.apply(dMeta, TimeUtils.timeSinceMillis(this.instantiationTime),
-                            character, localIndex.getA() + localIndex.getB(),
-                            this.getText().length());
-                    });
+                if (sprite != null) { // character actually exists?
+                    // grab the stuff we're using
+                    Pair<Float> letterSpacing = font.getLetterSpacing(character);
+                    // reset the drawing transform
+                    this.m_drawnTransform = this.transform.copyInto(this.m_drawnTransform);
 
-                    this.m_drawnTransform
-                        .setScaleX(this.m_drawnTransform.getScaleX() * dMeta.scaleX);
-                    this.m_drawnTransform
-                        .setScaleY(this.m_drawnTransform.getScaleY() * dMeta.scaleY);
-                    this.m_drawnTransform.addRotation(dMeta.rotation);
+                    // process display meta from styles
+                    DisplayMeta dMeta = Text.generateDisplayMeta();
+                    if (!component.getStyles().isEmpty()) {
+                        component.getStyles().forEach(style -> {
+                            style.apply(dMeta, TimeUtils.timeSinceMillis(this.instantiationTime),
+                                character, localIndex.getA() + localIndex.getB(),
+                                this.getText().length());
+                        });
+
+                        this.m_drawnTransform
+                            .setScaleX(this.m_drawnTransform.getScaleX() * dMeta.scaleX);
+                        this.m_drawnTransform
+                            .setScaleY(this.m_drawnTransform.getScaleY() * dMeta.scaleY);
+                        this.m_drawnTransform.addRotation(dMeta.rotation);
+                    }
+
+                    // process character right vs left spacing from previous character
+                    if (prevSpacing > 0) {
+                        dX += Math.max(prevSpacing, letterSpacing.getA())
+                            * m_drawnTransform.getScaleX();
+                    }
+
+                    // set our color and final drawing positions
+                    font.getRenderer().setBatchColor(component.getColor());
+                    float dpX = dX + (dMeta.offX * m_drawnTransform.getScaleX());
+                    float dpY = dY + (dMeta.offY * m_drawnTransform.getScaleY());
+
+                    sprite.render(dpX, dpY, m_drawnTransform);
+
+                    // save this character's right-spacing for the next character
+                    prevSpacing = letterSpacing.getB();
+                    // offset the marker
+                    dX += sprite.getTextureRegion().getRegionWidth() * m_drawnTransform.getScaleX();
                 }
-
-                if (letterSpacing.getA() > spacing) {
-                    dX += (letterSpacing.getA() - spacing) * m_drawnTransform.getScaleX();
-                }
-
-                font.getRenderer().setBatchColor(component.getColor());
-                sprite.draw(dX + ((sMeta.originX + dMeta.offX) * (m_drawnTransform.getScaleX())),
-                    dY + ((sMeta.originY + dMeta.offY) * (m_drawnTransform.getScaleY())),
-                    m_drawnTransform);
-
-                spacing = letterSpacing.getB();
-                dX += (sprite.getTextureRegion().getRegionWidth() + spacing)
-                    * m_drawnTransform.getScaleX();
             }
         });
     }
@@ -558,9 +570,6 @@ public class Text extends TextComponent implements Renderable {
         }
     }
 
-    // method-specific variables cuz stupid scope rules
-    // float dX, dY; (reused)
-
     /**
      * Internal method.
      * 
@@ -571,6 +580,9 @@ public class Text extends TextComponent implements Renderable {
         this.calculateSpace();
         this.calculateLines();
     }
+
+    // method-specific variables cuz stupid scope rules
+    // float dX, dY; (reused)
 
     /**
      * Internal method.
@@ -586,28 +598,41 @@ public class Text extends TextComponent implements Renderable {
         this.processCharacters((localIndex, component) -> {
             char character = component.getText().charAt(localIndex.getB());
 
-            if (character == ' ') {
-                dX += font.getSpaceLength();
-            } else if (character == '\n') {
-                if (this.spaceTaken.getA() < dX)
+            if (character == ' ') { // space?
+                dX += font.getSpaceLength() * transform.getScaleX();
+                prevSpacing = 0;
+            } else if (character == '\n') { // new line?
+                if (dX > this.spaceTaken.getA()) {
                     this.spaceTaken.setA(dX);
-                dX = 0;
-                dY += font.getLineSize();
-            } else {
-                Sprite sprite = this.font.getCharacterSprite(character);
-                Pair<Float> letterSpacing = font.getLetterSpacing(character);
-
-                if (letterSpacing.getA() > spacing) {
-                    dX += letterSpacing.getA() - spacing;
                 }
 
-                spacing = letterSpacing.getB();
-                dX += (sprite.getTextureRegion().getRegionWidth() + spacing);
+                dX = 0;
+                dY -= font.getLineSize() * transform.getScaleY();
+                prevSpacing = 0;
+            } else { // character?
+                Sprite sprite = this.font.getCharacterSprite(character);
+
+                if (sprite != null) { // character actually exists?
+                    // grab the stuff we're using
+                    Pair<Float> letterSpacing = font.getLetterSpacing(character);
+
+                    // process character right vs left spacing from previous character
+                    if (prevSpacing > 0) {
+                        dX += Math.max(prevSpacing, letterSpacing.getA());
+                    }
+
+                    // save this character's right-spacing for the next character
+                    prevSpacing = letterSpacing.getB();
+                    // offset the marker
+                    dX += sprite.getTextureRegion().getRegionWidth();
+                }
             }
         });
 
-        if (this.spaceTaken.getA() < dX)
+        if (dX > this.spaceTaken.getA()) {
             this.spaceTaken.setA(dX);
+        }
+
         this.spaceTaken.setB(dY);
     }
 
