@@ -188,7 +188,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
             drawY = pos.y * OverworldController.METERS_TO_PIXELS;
         }
 
-        this.actor.draw(drawX, drawY + height, proxyTransform);
+        this.actor.draw(drawX, drawY + height);
     }
 
     // -------- processable --------
@@ -364,11 +364,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     /**
      * Returns the {@link Renderable} serving as the graphic
      * used to display this {@link WorldObject}.
-     * 
-     * <p>While it is possible to access the
-     * {@link Transform} of the provided Renderable, its own
-     * transform is ignored in favor of applying the
-     * Transform set on this {@link WorldObject}.</p>
      * 
      * @return the Renderable actor of this WorldObject
      */
