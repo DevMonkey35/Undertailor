@@ -61,7 +61,7 @@ public class Tile implements Renderable {
     }
 
     @Override
-    public void draw(float x, float y, Transform transform) {
-        this.renderable.draw(x, y, transform);
+    public void render(float x, float y, Transform transform) {
+        this.renderable.render(x, y, transform);
     }
 }

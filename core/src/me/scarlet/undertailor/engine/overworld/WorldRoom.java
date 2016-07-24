@@ -140,14 +140,14 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     public void setTransform(Transform transform) {}
 
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         Set<Layerable> rendered = this.getInRenderOrder();
         MultiRenderer renderer = this.controller.getRenderer();
         rendered.forEach(obj -> {
             float alpha = this.opacityMapping.containsKey(obj.getLayer())
                 ? this.opacityMapping.get(obj.getLayer()) : 1.0F;
             renderer.setBatchColor(renderer.getBatchColor(), alpha);
-            ((Renderable) obj).draw();
+            ((Renderable) obj).render();
         });
     }
 

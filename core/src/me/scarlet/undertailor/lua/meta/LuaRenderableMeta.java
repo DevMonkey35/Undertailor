@@ -78,7 +78,7 @@ public class LuaRenderableMeta implements LuaObjectMeta {
         // renderable:draw([x, y, transform])
         set("draw", asFunction(vargs -> {
             if(vargs.narg() == 0) {
-                obj(vargs).draw();
+                obj(vargs).render();
                 return NIL;
             }
 
@@ -87,9 +87,9 @@ public class LuaRenderableMeta implements LuaObjectMeta {
             Transform transform = vargs.isnil(4) ? null
                 : Lua.<Transform>checkType(vargs.arg(4), LuaTransformMeta.class).getObject();
             if (transform == null) {
-                obj(vargs).draw(x, y);
+                obj(vargs).render(x, y);
             } else {
-                obj(vargs).draw(x, y, transform);
+                obj(vargs).render(x, y, transform);
             }
 
             return NIL;

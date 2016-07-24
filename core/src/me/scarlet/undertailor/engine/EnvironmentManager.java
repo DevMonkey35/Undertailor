@@ -94,10 +94,10 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     // Ignores provided positions.
     // Ignores transform.
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         Environment active = this.getActiveEnvironment();
         if (active != null) {
-            active.draw();
+            active.render();
         }
     }
 

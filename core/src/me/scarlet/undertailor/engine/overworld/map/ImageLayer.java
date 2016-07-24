@@ -104,7 +104,7 @@ public class ImageLayer implements Layerable, Renderable, Positionable, Identifi
     // Ignores transform.
     // Intended to only render on the overworld.
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         renderer.draw(image, this.position.x, this.position.y);
     }
 }

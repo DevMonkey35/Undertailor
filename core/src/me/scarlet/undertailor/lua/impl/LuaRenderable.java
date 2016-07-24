@@ -46,7 +46,7 @@ import java.io.FileNotFoundException;
 public class LuaRenderable implements LuaImplementable<Renderable>, Renderable {
 
     public static final String FUNC_CREATE = "create";
-    public static final String FUNC_DRAW = "draw";
+    public static final String FUNC_RENDER = "render";
 
     private Transform transform;
     private LuaObjectValue<Renderable> luaObj;
@@ -87,9 +87,9 @@ public class LuaRenderable implements LuaImplementable<Renderable>, Renderable {
     }
 
     @Override
-    public void draw(float x, float y, Transform transform) {
-        if(this.hasFunction(FUNC_DRAW)) {
-            this.invokeSelf(FUNC_DRAW, valueOf(x), valueOf(y), orNil(transform));
+    public void render(float x, float y, Transform transform) {
+        if(this.hasFunction(FUNC_RENDER)) {
+            this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y), orNil(transform));
         }
     }
 

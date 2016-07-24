@@ -81,7 +81,7 @@ public class TileLayer implements Layerable, Renderable, Identifiable {
     // Ignores transform.
     // Origin bottomleft.
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         int tileY = parent.getHeight() - 1;
         int tileX = 0;
 
@@ -90,7 +90,7 @@ public class TileLayer implements Layerable, Renderable, Identifiable {
                 Tile tile = parent.getTile(tiles[i]);
                 float drawX = (x + (20 * tileX));
                 float drawY = (y + (20 * tileY));
-                tile.draw(drawX, drawY);
+                tile.render(drawX, drawY);
             }
 
             tileX++;

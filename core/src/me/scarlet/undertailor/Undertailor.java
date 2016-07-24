@@ -195,7 +195,7 @@ public class Undertailor extends ApplicationAdapter {
         this.renderer.clear();
         this.input.update(); // Prepare input for current frame.
 
-        this.environments.draw();
+        this.environments.render();
         this.environments.process();
 
         this.renderer.flush(); // Flush graphics for next frame.

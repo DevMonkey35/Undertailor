@@ -96,7 +96,7 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
     }
 
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         if (this.hasFunction(FUNC_RENDER)) {
             this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y), orNil(transform));
         }

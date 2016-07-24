@@ -102,11 +102,11 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     public void setTransform(Transform transform) {} // Cannot transform the rendering of the Overworld.
 
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         this.renderer.setProjectionMatrix(this.camera.combined);
 
         if (this.room != null) {
-            this.room.draw();
+            this.room.render();
         }
 
         if (Undertailor.isDebug()) {

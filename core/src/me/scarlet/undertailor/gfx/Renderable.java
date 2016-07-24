@@ -64,8 +64,8 @@ public interface Renderable {
      * a given position or {@link Transform} in its
      * rendering.</p>
      */
-    public default void draw() {
-        this.draw(0, 0);
+    public default void render() {
+        this.render(0, 0);
     }
 
     /**
@@ -74,8 +74,8 @@ public interface Renderable {
      * 
      * @param pos the position to draw at
      */
-    public default void draw(Vector2 pos) {
-        this.draw(pos.x, pos.y);
+    public default void render(Vector2 pos) {
+        this.render(pos.x, pos.y);
     }
 
     /**
@@ -85,8 +85,8 @@ public interface Renderable {
      * @param x the x coordinate of the position to draw at
      * @param y the y coordinate of the position to draw at
      */
-    public default void draw(float x, float y) {
-        this.draw(x, y, this.getTransform());
+    public default void render(float x, float y) {
+        this.render(x, y, this.getTransform());
     }
 
     /**
@@ -97,8 +97,8 @@ public interface Renderable {
      * @param transform the transformations to apply to the
      *        drawn object
      */
-    public default void draw(Vector2 pos, Transform transform) {
-        this.draw(pos.x, pos.y, transform);
+    public default void render(Vector2 pos, Transform transform) {
+        this.render(pos.x, pos.y, transform);
     }
 
     /**
@@ -110,5 +110,5 @@ public interface Renderable {
      * @param transform the transformations to apply to the
      *        drawn object
      */
-    public void draw(float x, float y, Transform transform);
+    public void render(float x, float y, Transform transform);
 }

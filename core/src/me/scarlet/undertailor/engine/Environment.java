@@ -74,9 +74,9 @@ public class Environment implements Processable, Renderable, Destructible {
     public void setTransform(Transform transform) {}
 
     @Override
-    public void draw(float x, float y, Transform transform) {
-        this.overworld.draw();
-        this.ui.draw();
+    public void render(float x, float y, Transform transform) {
+        this.overworld.render();
+        this.ui.render();
     }
 
     @Override

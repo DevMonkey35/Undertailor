@@ -120,11 +120,11 @@ public class UIController implements Processable, Renderable, Destructible, Subs
     }
 
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         if (!destroyed) {
             this.renderer.setProjectionMatrix(this.camera.combined);
-            this.bObj.values().forEach(UIObject::draw);
-            this.aObj.values().forEach(UIObject::draw);
+            this.bObj.values().forEach(UIObject::render);
+            this.aObj.values().forEach(UIObject::render);
         }
     }
 

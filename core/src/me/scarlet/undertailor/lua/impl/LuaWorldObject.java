@@ -81,12 +81,12 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
     }
 
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         if (this.hasFunction(FUNC_PRERENDER)) {
             this.invokeSelf(FUNC_PRERENDER);
         }
 
-        super.draw(x, y, transform);
+        super.render(x, y, transform);
 
         if (this.hasFunction(FUNC_POSTRENDER)) {
             this.invokeSelf(FUNC_POSTRENDER);

@@ -281,7 +281,7 @@ public class FrameAnimation extends Animation {
     }
 
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         Transform drawnTransform = transform.copyInto(PROXY_TRANSFORM);
         Pair<KeyFrame> frames = this.getCurrentFrame();
         KeyFrame drawn = frames.getA();
@@ -314,7 +314,7 @@ public class FrameAnimation extends Animation {
             drawnTransform.setFlipY(drawnTransform.getFlipY() && first.flipY);
         }
 
-        drawn.getFrame().draw(x, y, drawnTransform);
+        drawn.getFrame().render(x, y, drawnTransform);
     }
 
     @Override

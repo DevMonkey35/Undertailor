@@ -103,7 +103,7 @@ public class Sprite implements Renderable, Cloneable {
     }
 
     @Override
-    public void draw(float posX, float posY, Transform transform) {
+    public void render(float posX, float posY, Transform transform) {
         float originX = 0, originY = 0;
         int offX = 0, offY = 0;
 

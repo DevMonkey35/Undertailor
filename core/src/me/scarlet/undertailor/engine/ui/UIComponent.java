@@ -150,7 +150,7 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
     public abstract boolean catchEvent(String eventName, Object... data);
 
     @Override
-    public abstract void draw(float x, float y, Transform transform);
+    public abstract void render(float x, float y, Transform transform);
 
     // ---------------- object ----------------
 

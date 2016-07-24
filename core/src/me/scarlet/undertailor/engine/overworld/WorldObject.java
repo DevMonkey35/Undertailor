@@ -166,7 +166,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     // Ignores provided positions.
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         if (!this.visible || this.destroyed || this.actor == null) {
             return;
         }
@@ -188,7 +188,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
             drawY = pos.y * OverworldController.METERS_TO_PIXELS;
         }
 
-        this.actor.draw(drawX, drawY + height);
+        this.actor.render(drawX, drawY + height);
     }
 
     // -------- processable --------

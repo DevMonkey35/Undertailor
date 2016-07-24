@@ -136,13 +136,13 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     // Ignores provided position.
     // Ignores own transform.
     @Override
-    public void draw(float x, float y, Transform transform) {
+    public void render(float x, float y, Transform transform) {
         if (this.destroyed) {
             return;
         }
 
         this.components.forEach(comp -> {
-            comp.draw(comp.getScreenPosition());
+            comp.render(comp.getScreenPosition());
         });
     }
 
