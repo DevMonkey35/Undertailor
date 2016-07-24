@@ -172,6 +172,31 @@ public class Lua {
     }
 
     /**
+     * Returns the {@link LuaObjectMeta} registered with the
+     * provided typename.
+     * 
+     * @param metaName the typename to match
+     * 
+     * @return the LuaObjectMeta matching the given
+     *         typename, or null if doesn't exist
+     */
+    public static LuaObjectMeta getMeta(String metaName) {
+        for (LuaObjectMeta meta : Lua.PMETA.values()) {
+            if (meta.getTypeName().equals(metaName)) {
+                return meta;
+            }
+        }
+
+        for (LuaObjectMeta meta : Lua.META.values()) {
+            if (meta.getTypeName().equals(metaName)) {
+                return meta;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns the {@link LuaObjectMeta} associated with the
      * provided object.
      * 

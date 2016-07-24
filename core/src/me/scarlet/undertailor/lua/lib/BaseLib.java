@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
+import me.scarlet.undertailor.lua.LuaObjectMeta;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 
 import java.io.File;
 import java.util.HashMap;
@@ -127,6 +129,27 @@ public class BaseLib extends LuaLibrary {
         // dofile(path) -- Loads a file. Does not cache.
         this.set("dofile", asFunction(vargs -> {
             return BaseLib.doFile(globals, vargs.arg(1).checkjstring());
+        }));
+
+        // istype(obj, type) -- Checks the type.
+        this.set("istype", asFunction(vargs -> {
+            LuaValue obj = vargs.checkvalue(1);
+            String typename = vargs.checkjstring(2);
+
+            // simply check the object typename first
+            if (obj.typename().equals(typename)) {
+                return valueOf(true);
+            }
+
+            // wasn't? check for if its a tailor type
+            if (obj instanceof LuaObjectValue<?>) {
+                LuaObjectMeta meta = Lua.getMeta(typename);
+                if (meta != null) {
+                    return valueOf(meta.getTargetObjectClass().isInstance(obj));
+                }
+            }
+
+            return valueOf(false);
         }));
     }
 
