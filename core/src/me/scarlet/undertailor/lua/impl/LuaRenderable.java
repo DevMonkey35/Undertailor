@@ -51,10 +51,14 @@ public class LuaRenderable implements LuaImplementable<Renderable>, Renderable {
     private Transform transform;
     private LuaObjectValue<Renderable> luaObj;
 
-    public LuaRenderable(ScriptManager manager, File luaFile)
-        throws FileNotFoundException, LuaScriptException {
+    public LuaRenderable() {
         this.transform = new Transform();
         this.luaObj = LuaObjectValue.of(this);
+    }
+
+    public LuaRenderable(ScriptManager manager, File luaFile)
+        throws FileNotFoundException, LuaScriptException {
+        this();
         this.luaObj.load(manager, luaFile);
 
         if(this.hasFunction(FUNC_CREATE)) {

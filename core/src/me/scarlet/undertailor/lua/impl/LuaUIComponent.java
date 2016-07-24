@@ -55,9 +55,13 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
 
     private LuaObjectValue<UIComponent> luaObj;
 
+    public LuaUIComponent() {
+        this.luaObj = LuaObjectValue.of(this);
+    }
+
     public LuaUIComponent(ScriptManager manager, File luaFile)
         throws FileNotFoundException, LuaScriptException {
-        this.luaObj = LuaObjectValue.of(this);
+        this();
         this.luaObj.load(manager, luaFile);
 
         if (this.hasFunction(FUNC_CREATE)) {
@@ -77,7 +81,7 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
 
     @Override
     public void onClaim(UIObject parent) {
-        if(this.hasFunction(FUNC_ONCLAIM)) {
+        if (this.hasFunction(FUNC_ONCLAIM)) {
             this.invokeSelf(FUNC_ONCLAIM, orNil(parent));
         }
     }
@@ -93,7 +97,7 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
 
     @Override
     public void draw(float x, float y, Transform transform) {
-        if(this.hasFunction(FUNC_RENDER)) {
+        if (this.hasFunction(FUNC_RENDER)) {
             this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y), orNil(transform));
         }
     }

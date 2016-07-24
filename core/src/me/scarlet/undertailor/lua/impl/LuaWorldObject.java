@@ -56,12 +56,16 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
 
     private LuaObjectValue<WorldObject> luaObj;
 
+    public LuaWorldObject() {
+        this.luaObj = LuaObjectValue.of(this);
+    }
+
     public LuaWorldObject(ScriptManager manager, File luaFile)
         throws FileNotFoundException, LuaScriptException {
-        this.luaObj = LuaObjectValue.of(this);
+        this();
         this.luaObj.load(manager, luaFile);
 
-        if(this.hasFunction(FUNC_CREATE)) {
+        if (this.hasFunction(FUNC_CREATE)) {
             this.invokeSelf(FUNC_CREATE);
         }
     }
