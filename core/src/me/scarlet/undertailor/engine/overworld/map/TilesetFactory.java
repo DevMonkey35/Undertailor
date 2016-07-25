@@ -64,12 +64,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
 
-    static final TilesetReader READER;
     static final Logger log = LoggerFactory.getLogger(TilesetFactory.class);
-
-    static {
-        READER = new TilesetReader();
-    }
 
     /**
      * {@link Resource} implementation for interfacing with
@@ -135,6 +130,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     private File textureFile;
     private TilesetReader reader;
     private MultiRenderer renderer;
+    private boolean reading;
 
     private List<Sprite> tiles;
     private Map<Integer, Animation> animatedTiles;
@@ -146,6 +142,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
 
         this.textureFile = textureFile;
         this.renderer = renderer;
+        this.reading = false;
 
         this.tsxFile = new File(textureFile.getParentFile(),
             textureFile.getName().substring(0, textureFile.getName().length() - 4) + ".tsx");
@@ -166,7 +163,11 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 if (tsxFile.exists()) {
-                    this.meta = reader.read(tsxFile);
+                    if(!reading) {
+                        this.reading = true;
+                        this.meta = reader.read(tsxFile);
+                        this.reading = false;
+                    }
                 }
 
                 if (texture.get() == null) {

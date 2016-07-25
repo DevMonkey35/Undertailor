@@ -43,6 +43,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import me.scarlet.undertailor.AssetManager;
 import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
+import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
+import me.scarlet.undertailor.exception.BadAssetException;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.util.Wrapper;
 import me.scarlet.undertailor.util.XMLUtil;
@@ -121,8 +123,14 @@ public class TilemapReader extends DefaultHandler {
                 name = name.substring(0, name.length() - 4);
             }
 
+            Tileset tileset = this.tilesets.getTileset(name);
+            if (tileset == null) {
+                throw new SAXException(
+                    new BadAssetException("Could not find tileset under id " + name));
+            }
+
             this.tilemap.tilesets.put(Integer.parseInt(attributes.getValue("", "firstgid")),
-                this.tilesets.getTileset(name));
+                tileset);
         }
 
         if (this.checkElement("map", "layer", qName)) {
@@ -160,8 +168,11 @@ public class TilemapReader extends DefaultHandler {
         if (this.currentImageLayer != null && this.checkElement("imagelayer", "image", qName)) {
             this.wrapper.set(null);
             String[] sourceNameSplit = attributes.getValue("", "source").split("/");
-            File file = new File(new File(AssetManager.rootDirectory.getAbsolutePath(), AssetManager.DIR_TILEMAP_IMAGES),
-                sourceNameSplit[sourceNameSplit.length - 1]);
+            File file =
+                new File(
+                    new File(AssetManager.rootDirectory.getAbsolutePath(),
+                        AssetManager.DIR_TILEMAP_IMAGES),
+                    sourceNameSplit[sourceNameSplit.length - 1]);
             AssetManager.addTask(() -> {
                 synchronized (wrapper) {
                     this.wrapper.set(new Texture(Gdx.files.absolute(file.getAbsolutePath())));
@@ -193,7 +204,8 @@ public class TilemapReader extends DefaultHandler {
             this.currentShape = new ShapeData();
             this.currentShape.name = attributes.getValue("", "name");
             this.currentShape.position.x = Float.parseFloat(attributes.getValue("", "x"));
-            this.currentShape.position.y = this.toGDXPoint(Float.parseFloat(attributes.getValue("", "y")));
+            this.currentShape.position.y =
+                this.toGDXPoint(Float.parseFloat(attributes.getValue("", "y")));
 
             // only circle/rectangle have these
             String shapeWidth = attributes.getValue("", "width");
@@ -246,13 +258,15 @@ public class TilemapReader extends DefaultHandler {
                 }
             }
 
-            if(this.currentImageLayer != null && key.equals("threshold")) {
+            if (this.currentImageLayer != null && key.equals("threshold")) {
                 try {
                     float threshold = Float.parseFloat(value);
-                    if(threshold > 1.0) threshold = 1F;
-                    if(threshold < 0) threshold = 0F;
+                    if (threshold > 1.0)
+                        threshold = 1F;
+                    if (threshold < 0)
+                        threshold = 0F;
                     this.currentImageLayer.threshold = threshold;
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     log.warn("Invalid threshold value " + value + " for image layer " + layerName);
                     log.warn(layerName + " threshold value defaulted to 0");
                 }
@@ -337,7 +351,7 @@ public class TilemapReader extends DefaultHandler {
             this.currentObjectLayer = null;
         }
 
-        if(this.checkElement("map", "imagelayer", qName)) {
+        if (this.checkElement("map", "imagelayer", qName)) {
             if (this.currentImageLayer != null) {
                 if (!this.currentImageLayer.layerSet) {
                     log.warn("Layer \"" + layerName + "\" is missing layer property");

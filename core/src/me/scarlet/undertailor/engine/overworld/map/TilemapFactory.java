@@ -34,7 +34,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
@@ -334,10 +333,8 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
             try {
                 reader.read(tmxFile, this.getResourceReference());
             } catch (Exception e) {
-                String message = "Failed to load tilemap";
-                if (e instanceof SAXException)
-                    message += " (malformed XML)";
-
+                String message = "Failed to load tilemap " + this.tmxFile.getAbsolutePath() + " ("
+                    + e.getMessage() + ")";
                 log.error(message, e);
             }
 
