@@ -293,6 +293,14 @@ public class TextComponent {
                                     Float.valueOf(rgb[2]),
                                     rgb.length >= 4 ? Float.valueOf(rgb[3]) : 255F);
                             } else {
+                                if (!value.startsWith("#")) {
+                                    value = "#" + value;
+                                }
+
+                                if (value.length() < 7) {
+                                    throw new IllegalArgumentException();
+                                }
+
                                 builder.setColor(Color.valueOf(value));
                             }
                         } else if (paramType == TextParam.DELAY) {
@@ -302,7 +310,7 @@ public class TextComponent {
                         } else if (paramType == TextParam.SPEED) {
                             builder.setSpeed(Float.valueOf(value));
                         }
-                    } catch (NumberFormatException e) {
+                    } catch (Exception e) {
                         logger.warn(
                             "Invalid value " + value + " for parameter " + paramType.toString());
                     }
