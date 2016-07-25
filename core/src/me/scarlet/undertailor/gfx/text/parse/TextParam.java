@@ -42,28 +42,22 @@ import me.scarlet.undertailor.gfx.text.TextComponent;
  */
 public enum TextParam {
 
-    FONT("FONT", ""), STYLE("STYLE", ""), COLOR("COLOR", ""), SOUND("SOUND", ""), SPEED("SPEED",
-        ""), DELAY("DELAY", ""), SEGMENTSIZE("SEGMENTSIZE", ""), UNDEFINED("UNDEFINED", "");
+    FONT("FONT"), STYLE("STYLE"), COLOR("COLOR"), SOUND("SOUND"), SPEED("SPEED"), DELAY(
+        "DELAY"), SEGMENTSIZE("SEGMENTSIZE"), UNDEFINED("UNDEFINED");
 
     private final String name;
-    private final String defaultValue;
 
-    TextParam(String name, String defaultValue) {
+    TextParam(String name) {
         this.name = name;
-        this.defaultValue = defaultValue;
     }
 
     public String getName() {
         return this.name;
     }
 
-    public String getDefaultValue() {
-        return this.defaultValue;
-    }
-
     @Override
     public String toString() {
-        return String.format("[%s:%s]", this.getName(), this.getDefaultValue());
+        return this.getName();
     }
 
     public static TextParam of(String string) {

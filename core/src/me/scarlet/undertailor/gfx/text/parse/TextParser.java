@@ -97,10 +97,8 @@ public final class TextParser {
                 }
 
                 String value;
-                if (array.length < 2) {
-                    value = textParam.getDefaultValue();
-                } else if (array[1].isEmpty()) {
-                    value = textParam.getDefaultValue();
+                if (array.length < 2 || array[1].isEmpty()) {
+                    value = "";
                 } else {
                     value = array[1];
                 }
