@@ -88,9 +88,11 @@ public class TileLayer implements Layerable, Renderable, Identifiable {
         for (int i = 0; i < tiles.length; i++) {
             if (tiles[i] != 0) {
                 Tile tile = parent.getTile(tiles[i]);
-                float drawX = (x + (20 * tileX));
-                float drawY = (y + (20 * tileY));
-                tile.render(drawX, drawY);
+                if(tile != null) {
+                    float drawX = (x + (20 * tileX));
+                    float drawY = (y + (20 * tileY));
+                    tile.render(drawX, drawY);
+                }
             }
 
             tileX++;

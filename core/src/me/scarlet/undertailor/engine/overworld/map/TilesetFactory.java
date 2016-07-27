@@ -95,7 +95,11 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
             if (!this.tiles.containsKey(index)) {
                 Renderable renderable = factory.animatedTiles.get(index);
                 if (renderable == null) {
-                    renderable = factory.tiles.get(index);
+                    if(index < factory.tiles.size()) {
+                        renderable = factory.tiles.get(index);
+                    } else {
+                        return null;
+                    }
                 }
 
                 if (renderable instanceof FrameAnimation) {
