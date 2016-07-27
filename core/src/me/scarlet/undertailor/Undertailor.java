@@ -33,6 +33,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.physics.box2d.Box2D;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,18 @@ public class Undertailor extends ApplicationAdapter {
         log.info("Running Undertailor version " + Undertailor.version + "!");
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             log.error("Uncaught exception. Program will close.", e);
-            this.exit(true);
+            Platform.runLater(() -> {
+                new ErrorWindow(e).showAndWait();
+                this.exit(true);
+            });
+
+            synchronized(this) {
+                while(true) {
+                    try {
+                        this.wait();
+                    } catch (Exception ignored) {}
+                }
+            }
         });
     }
 
@@ -169,7 +181,7 @@ public class Undertailor extends ApplicationAdapter {
         this.environments = new EnvironmentManager(this);
 
         File assetDir = null;
-        if(this.options.useCustomDir) {
+        if (this.options.useCustomDir) {
             assetDir = this.options.assetDir;
         } else {
             assetDir = new File(System.getProperty("user.dir"));
@@ -209,7 +221,7 @@ public class Undertailor extends ApplicationAdapter {
     // ---------------- methods ----------------
 
     void exit(boolean crash) {
-        if(crash) {
+        if (crash) {
             this.options.skipLauncher = false;
             this.options.save();
         }
