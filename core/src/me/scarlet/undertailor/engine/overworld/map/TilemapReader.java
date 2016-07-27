@@ -54,7 +54,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.xml.parsers.SAXParser;
@@ -66,6 +69,7 @@ import javax.xml.parsers.SAXParser;
 public class TilemapReader extends DefaultHandler {
 
     static final Logger log = LoggerFactory.getLogger(TilemapReader.class);
+    static final String[] supportedCompression = {"csv", "base64"};
 
     private TilesetManager tilesets;
 
@@ -84,6 +88,7 @@ public class TilemapReader extends DefaultHandler {
     private Wrapper<Object> wrapper;
     private String layerName;
     private String tileData;
+    private String comp;
 
     public TilemapReader(TilesetManager tilesets, MultiRenderer renderer) {
         tree = new ArrayList<>();
@@ -93,6 +98,7 @@ public class TilemapReader extends DefaultHandler {
         this.tilemap = null;
         this.currentTileLayer = null;
         this.tileData = null;
+        this.comp = null;
         this.parser = XMLUtil.generateParser();
         this.wrapper = new Wrapper<>();
     }
@@ -157,12 +163,14 @@ public class TilemapReader extends DefaultHandler {
         }
 
         if (this.currentTileLayer != null && this.checkElement("layer", "data", qName)) {
-            if (!attributes.getValue("", "encoding").equalsIgnoreCase("csv")) {
+            String compression = attributes.getValue("", "encoding");
+            if (!this.isCompressionSupported(compression)) {
                 throw new UnsupportedOperationException(
-                    "Undertailor will only support Tiled maps saved in CSV format");
-            } else {
-                this.tileData = "";
+                    "Undertailor does not support Tiled maps saved in " + compression + " format");
             }
+
+            this.comp = compression;
+            this.tileData = "";
         }
 
         if (this.currentImageLayer != null && this.checkElement("imagelayer", "image", qName)) {
@@ -279,7 +287,7 @@ public class TilemapReader extends DefaultHandler {
         if (this.tileData != null) {
             for (int i = 0; i < length; i++) {
                 char character = ch[i + start];
-                if (character == '\n') {
+                if (character == '\n' || character == ' ') {
                     continue;
                 } else {
                     this.tileData += character;
@@ -291,15 +299,9 @@ public class TilemapReader extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (this.checkElement("layer", "data", qName)) {
-            String[] tileSplit = this.tileData.split(",");
-            int[] tiles = new int[tileSplit.length];
-
-            for (int i = 0; i < tiles.length; i++) {
-                tiles[i] = Integer.parseInt(tileSplit[i]);
-            }
-
-            this.currentTileLayer.tiles = tiles;
+            this.currentTileLayer.tiles = this.parseData(this.comp, this.tileData);
             this.tileData = null;
+            this.comp = null;
         }
 
         if (this.checkElement("map", "layer", qName)) {
@@ -446,6 +448,40 @@ public class TilemapReader extends DefaultHandler {
         }
 
         return false;
+    }
+
+    private boolean isCompressionSupported(String str) {
+        for (String comp : supportedCompression) {
+            if (comp.equalsIgnoreCase(str)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int[] parseData(String comp, String tileData) {
+        int[] tiles = null;
+        if (comp.equalsIgnoreCase("csv")) {
+            String[] tileSplit = tileData.split(",");
+            tiles = new int[tileSplit.length];
+
+            for (int i = 0; i < tiles.length; i++) {
+                tiles[i] = Integer.parseInt(tileSplit[i]);
+            }
+        }
+
+        if (comp.equalsIgnoreCase("base64")) {
+            ByteBuffer buf = ByteBuffer.wrap(Base64.getDecoder().decode(tileData));
+            buf.order(ByteOrder.LITTLE_ENDIAN);
+            int count = buf.limit() / 4;
+            tiles = new int[count];
+            for (int i = 0; i < count; i++) {
+                tiles[i] = buf.getInt();
+            }
+        }
+
+        return tiles;
     }
 
     float toGDXPoint(float y) {
