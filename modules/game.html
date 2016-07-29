@@ -143,17 +143,17 @@
 <h2><a href="#Object_creation_functions">Object creation functions </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#newWorldObject">newWorldObject([scriptPath=nil])</a></td>
+	<td class="name" nowrap><a href="#newWorldObject">newWorldObject([scriptPath=nil][, ...=nil])</a></td>
 	<td class="summary">Creates a new <a href="../classes/worldobject.html#">worldobject</a>, implemented by the script at the
  given path.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#newWorldRoom">newWorldRoom(scriptPath)</a></td>
+	<td class="name" nowrap><a href="#newWorldRoom">newWorldRoom(scriptPath[, ...=nil])</a></td>
 	<td class="summary">Creates a new <a href="../classes/worldroom.html#">worldroom</a>, implemented by the script at the
  given path.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#newUIComponent">newUIComponent([scriptPath=nil])</a></td>
+	<td class="name" nowrap><a href="#newUIComponent">newUIComponent([scriptPath=nil][, ...=nil])</a></td>
 	<td class="summary">Creates a new <a href="../classes/uicomponent.html#">uicomponent</a>, implemented by the script at the
  given path.</td>
 	</tr>
@@ -162,7 +162,7 @@
 	<td class="summary">Creates a new <a href="../classes/uiobject.html#">uiobject</a>.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#newRenderable">newRenderable([scriptPath=nil])</a></td>
+	<td class="name" nowrap><a href="#newRenderable">newRenderable([scriptPath=nil][, ...=nil])</a></td>
 	<td class="summary">Creates a new <a href="../classes/renderable.html#">renderable</a>, implemented by the script at the
  given path.</td>
 	</tr>
@@ -378,7 +378,7 @@
     <dl class="function">
     <dt>
     <a name = "newWorldObject"></a>
-    <strong>newWorldObject([scriptPath=nil])</strong>
+    <strong>newWorldObject([scriptPath=nil][, ...=nil])</strong>
     </dt>
     <dd>
     Creates a new <a href="../classes/worldobject.html#">worldobject</a>, implemented by the script at the
@@ -390,6 +390,12 @@
         <li><span class="parameter">scriptPath</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          the path to the implementing script
+         (<em>default</em> nil)
+        </li>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">vargs</span></span>
+         creation parameters, passed to the
+   implementing script's <code>create</code> function
          (<em>default</em> nil)
         </li>
     </ul>
@@ -406,7 +412,7 @@
 </dd>
     <dt>
     <a name = "newWorldRoom"></a>
-    <strong>newWorldRoom(scriptPath)</strong>
+    <strong>newWorldRoom(scriptPath[, ...=nil])</strong>
     </dt>
     <dd>
     Creates a new <a href="../classes/worldroom.html#">worldroom</a>, implemented by the script at the
@@ -418,6 +424,12 @@
         <li><span class="parameter">scriptPath</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          the path to the implementing script
+        </li>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">vargs</span></span>
+         creation parameters, passed to the
+   implementing script's <code>create</code> function
+         (<em>default</em> nil)
         </li>
     </ul>
 
@@ -433,7 +445,7 @@
 </dd>
     <dt>
     <a name = "newUIComponent"></a>
-    <strong>newUIComponent([scriptPath=nil])</strong>
+    <strong>newUIComponent([scriptPath=nil][, ...=nil])</strong>
     </dt>
     <dd>
     Creates a new <a href="../classes/uicomponent.html#">uicomponent</a>, implemented by the script at the
@@ -445,6 +457,12 @@
         <li><span class="parameter">scriptPath</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          the path to the implementing script
+         (<em>default</em> nil)
+        </li>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">vargs</span></span>
+         creation parameters, passed to the
+   implementing script's <code>create</code> function
          (<em>default</em> nil)
         </li>
     </ul>
@@ -480,7 +498,7 @@
 </dd>
     <dt>
     <a name = "newRenderable"></a>
-    <strong>newRenderable([scriptPath=nil])</strong>
+    <strong>newRenderable([scriptPath=nil][, ...=nil])</strong>
     </dt>
     <dd>
     Creates a new <a href="../classes/renderable.html#">renderable</a>, implemented by the script at the
@@ -492,6 +510,12 @@
         <li><span class="parameter">scriptPath</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          the path to the implementing script
+         (<em>default</em> nil)
+        </li>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">vargs</span></span>
+         creation parameters, passed to the
+   implementing script's <code>create</code> function
          (<em>default</em> nil)
         </li>
     </ul>
@@ -559,7 +583,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
-<i style="float:right;">Last updated 2016-07-23 23:54:57 </i>
+<i style="float:right;">Last updated 2016-07-28 20:07:38 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
