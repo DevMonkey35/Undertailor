@@ -33,6 +33,8 @@ package me.scarlet.undertailor.lua.impl;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static org.luaj.vm2.LuaValue.valueOf;
 
+import org.luaj.vm2.Varargs;
+
 import me.scarlet.undertailor.engine.ui.UIComponent;
 import me.scarlet.undertailor.engine.ui.UIObject;
 import me.scarlet.undertailor.exception.LuaScriptException;
@@ -59,13 +61,18 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
         this.luaObj = LuaObjectValue.of(this);
     }
 
-    public LuaUIComponent(ScriptManager manager, File luaFile)
+    public LuaUIComponent(ScriptManager manager, File luaFile, Object... params)
+        throws FileNotFoundException, LuaScriptException {
+        this(manager, luaFile, params.length > 0 ? LuaUtil.varargsOf(params) : null);
+    }
+
+    public LuaUIComponent(ScriptManager manager, File luaFile, Varargs params)
         throws FileNotFoundException, LuaScriptException {
         this();
         this.luaObj.load(manager, luaFile);
 
         if (this.hasFunction(FUNC_CREATE)) {
-            this.invokeSelf(FUNC_CREATE);
+            this.invokeSelf(FUNC_CREATE, params);
         }
     }
 

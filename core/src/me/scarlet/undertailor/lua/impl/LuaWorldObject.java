@@ -32,6 +32,8 @@ package me.scarlet.undertailor.lua.impl;
 
 import static me.scarlet.undertailor.lua.LuaObjectValue.of;
 
+import org.luaj.vm2.Varargs;
+
 import me.scarlet.undertailor.engine.Collider;
 import me.scarlet.undertailor.engine.overworld.WorldObject;
 import me.scarlet.undertailor.exception.LuaScriptException;
@@ -60,13 +62,18 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
         this.luaObj = LuaObjectValue.of(this);
     }
 
-    public LuaWorldObject(ScriptManager manager, File luaFile)
+    public LuaWorldObject(ScriptManager manager, File luaFile, Object... params)
+        throws FileNotFoundException, LuaScriptException {
+        this(manager, luaFile, params.length > 0 ? LuaUtil.varargsOf(params) : null);
+    }
+
+    public LuaWorldObject(ScriptManager manager, File luaFile, Varargs params)
         throws FileNotFoundException, LuaScriptException {
         this();
         this.luaObj.load(manager, luaFile);
 
         if (this.hasFunction(FUNC_CREATE)) {
-            this.invokeSelf(FUNC_CREATE);
+            this.invokeSelf(FUNC_CREATE, params);
         }
     }
 

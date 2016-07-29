@@ -118,14 +118,14 @@ public class GameLib extends LuaLibrary {
 
         // ---------------- object gen ----------------
 
-        // game.newWorldObject([scriptPath])
+        // game.newWorldObject([scriptPath, params])
         set("newWorldObject", asFunction(vargs -> {
             String filePath = vargs.optjstring(1, null);
             LuaWorldObject obj;
             try {
                 if (filePath != null) {
                     obj = new LuaWorldObject(scriptMan,
-                        new File(scriptMan.getScriptPath(), filePath));
+                        new File(scriptMan.getScriptPath(), filePath), vargs.subargs(2));
                 } else {
                     obj = new LuaWorldObject();
                 }
@@ -136,12 +136,13 @@ public class GameLib extends LuaLibrary {
             return obj.getObjectValue();
         }));
 
-        // game.newWorldRoom(scriptPath)
+        // game.newWorldRoom(scriptPath[, params])
         set("newWorldRoom", asFunction(vargs -> {
             String filePath = vargs.checkjstring(1);
             LuaWorldRoom obj;
             try {
-                obj = new LuaWorldRoom(scriptMan, new File(scriptMan.getScriptPath(), filePath));
+                obj = new LuaWorldRoom(scriptMan, new File(scriptMan.getScriptPath(), filePath),
+                    vargs.subargs(2));
             } catch (Exception e) {
                 throw new LuaError(e);
             }
@@ -149,14 +150,14 @@ public class GameLib extends LuaLibrary {
             return obj.getObjectValue();
         }));
 
-        // game.newUIComponent([scriptPath])
+        // game.newUIComponent([scriptPath, params])
         set("newUIComponent", asFunction(vargs -> {
             String filePath = vargs.optjstring(1, null);
             LuaUIComponent obj;
             try {
                 if (filePath != null) {
                     obj = new LuaUIComponent(scriptMan,
-                        new File(scriptMan.getScriptPath(), filePath));
+                        new File(scriptMan.getScriptPath(), filePath), vargs.subargs(2));
                 } else {
                     obj = new LuaUIComponent();
                 }
@@ -172,14 +173,14 @@ public class GameLib extends LuaLibrary {
             return orNil(new UIObject());
         }));
 
-        // game.newRenderable([scriptPath])
+        // game.newRenderable([scriptPath, params])
         set("newRenderable", asFunction(vargs -> {
             String filePath = vargs.optjstring(1, null);
             LuaRenderable obj;
             try {
                 if (filePath != null) {
-                    obj =
-                        new LuaRenderable(scriptMan, new File(scriptMan.getScriptPath(), filePath));
+                    obj = new LuaRenderable(scriptMan,
+                        new File(scriptMan.getScriptPath(), filePath), vargs.subargs(2));
                 } else {
                     obj = new LuaRenderable();
                 }

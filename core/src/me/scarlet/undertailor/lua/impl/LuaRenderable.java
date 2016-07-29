@@ -33,12 +33,15 @@ package me.scarlet.undertailor.lua.impl;
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static org.luaj.vm2.LuaValue.valueOf;
 
+import org.luaj.vm2.Varargs;
+
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.ScriptManager;
+import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,13 +59,18 @@ public class LuaRenderable implements LuaImplementable<Renderable>, Renderable {
         this.luaObj = LuaObjectValue.of(this);
     }
 
-    public LuaRenderable(ScriptManager manager, File luaFile)
+    public LuaRenderable(ScriptManager manager, File luaFile, Object... params)
+        throws FileNotFoundException, LuaScriptException {
+        this(manager, luaFile, params.length > 0 ? LuaUtil.varargsOf(params) : null);
+    }
+
+    public LuaRenderable(ScriptManager manager, File luaFile, Varargs params)
         throws FileNotFoundException, LuaScriptException {
         this();
         this.luaObj.load(manager, luaFile);
 
-        if(this.hasFunction(FUNC_CREATE)) {
-            this.invokeSelf(FUNC_CREATE);
+        if (this.hasFunction(FUNC_CREATE)) {
+            this.invokeSelf(FUNC_CREATE, params);
         }
     }
 
@@ -88,7 +96,7 @@ public class LuaRenderable implements LuaImplementable<Renderable>, Renderable {
 
     @Override
     public void render(float x, float y, Transform transform) {
-        if(this.hasFunction(FUNC_RENDER)) {
+        if (this.hasFunction(FUNC_RENDER)) {
             this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y), orNil(transform));
         }
     }

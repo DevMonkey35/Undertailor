@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.lua.impl;
 
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.engine.overworld.WorldRoom;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
@@ -52,7 +53,12 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
 
     private LuaObjectValue<WorldRoom> luaObj;
 
-    public LuaWorldRoom(ScriptManager manager, File luaFile)
+    public LuaWorldRoom(ScriptManager manager, File luaFile, Object... params)
+        throws FileNotFoundException, LuaScriptException {
+        this(manager, luaFile, params.length > 0 ? LuaUtil.varargsOf(params) : null);
+    }
+
+    public LuaWorldRoom(ScriptManager manager, File luaFile, Varargs params)
         throws FileNotFoundException, LuaScriptException {
         super(null);
 
@@ -60,7 +66,7 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
         this.luaObj.load(manager, luaFile);
 
         if (this.hasFunction(FUNC_CREATE)) {
-            this.invokeSelf(FUNC_CREATE);
+            this.invokeSelf(FUNC_CREATE, params);
             LuaValue value = this.luaObj.getmetatable().get(LuaWorldRoomMeta.METAKEY_MAP);
             if (!value.isnil() && value.isuserdata()) {
                 super.tilemap = (Tilemap) value.checkuserdata();
