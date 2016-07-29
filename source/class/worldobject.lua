@@ -38,7 +38,7 @@
 -- * `destructible`
 -- * `collider`
 -- * `renderable`
--- * `processable
+-- * `processable`
 --
 -- @classmod worldobject
 -- @alias wobj
@@ -103,7 +103,7 @@ function wobj:setVisible(visible) end
 -- -- triangle, the parameters passed to this function would be:
 -- obj:addBoundingPolygon(-3, -3, 0, 3, 3, -3)
 --
--- @tparam ... vargs the points creating the polygon
+-- @tparam vargs ... the points creating the polygon
 --
 function wobj:addBoundingPolygon(...) end
 
@@ -145,6 +145,8 @@ function wobj:addBoundingBox(width, height, offsetX, offsetY) end
 --
 -- See `wobj:addBoundingPolygon` for parameter instructions.
 --
+-- @tparam vargs ... the points creating the chain
+--
 function wobj:addBoundingChain(...) end
 
 ---
@@ -156,5 +158,7 @@ function wobj:addBoundingChain(...) end
 -- See `wobj:addBoundingChain` for info about chain shapes.
 --
 -- See `wobj:addBoundingPolygon` for parameter instructions.
+--
+-- @tparam vargs ... the points creating the chain
 --
 function wobj:addBoundingChainLoop(...) end

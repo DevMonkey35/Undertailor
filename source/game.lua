@@ -109,6 +109,10 @@ function game.setActiveEnvironment(name) end
 
 ---
 -- Object creation functions.
+--
+-- The three primary implementable types, `worldobject`,
+-- `uicomponent`, and `renderable` can be called without providing
+-- a script path for external implementation.
 -- @section
 --
 
@@ -116,31 +120,37 @@ function game.setActiveEnvironment(name) end
 -- Creates a new `worldobject`, implemented by the script at the
 -- given path.
 --
--- @string scriptPath the path to the implementing script
+-- @string[opt=nil] scriptPath the path to the implementing script
+-- @tparam[opt=nil] vargs ... creation parameters, passed to the
+--   implementing script's `create` function
 --
 -- @return a worldobject
 --
-function game.newWorldObject(scriptPath) end
+function game.newWorldObject(scriptPath, ...) end
 
 ---
 -- Creates a new `worldroom`, implemented by the script at the
 -- given path.
 --
 -- @string scriptPath the path to the implementing script
+-- @tparam[opt=nil] vargs ... creation parameters, passed to the
+--   implementing script's `create` function
 --
 -- @return a worldroom
 --
-function game.newWorldRoom(scriptPath) end
+function game.newWorldRoom(scriptPath, ...) end
 
 ---
 -- Creates a new `uicomponent`, implemented by the script at the
 -- given path.
 --
--- @string scriptPath the path to the implementing script
+-- @string[opt=nil] scriptPath the path to the implementing script
+-- @tparam[opt=nil] vargs ... creation parameters, passed to the
+--   implementing script's `create` function
 --
 -- @return a uicomponent
 --
-function game.newUIComponent(scriptPath) end
+function game.newUIComponent(scriptPath, ...) end
 
 ---
 -- Creates a new `uiobject`.
@@ -153,11 +163,13 @@ function game.newUIObject() end
 -- Creates a new `renderable`, implemented by the script at the
 -- given path.
 --
--- @string scriptPath the path to the implementing script
+-- @string[opt=nil] scriptPath the path to the implementing script
+-- @tparam[opt=nil] vargs ... creation parameters, passed to the
+--   implementing script's `create` function
 --
 -- @return a renderable
 --
-function graphics.newRenderable(scriptPath) end
+function game.newRenderable(scriptPath, ...) end
 
 ---
 -- Misc functions.
