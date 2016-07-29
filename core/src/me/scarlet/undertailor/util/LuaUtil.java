@@ -175,7 +175,9 @@ public class LuaUtil {
                 continue;
             }
 
-            if (NumberUtil.isNumber(obj)) {
+            if(obj instanceof LuaValue) {
+                vargs[i] = (LuaValue) obj;
+            } else if (NumberUtil.isNumber(obj)) {
                 vargs[i] = LuaValue.valueOf((double) obj);
             } else if (Boolean.class.isInstance(obj)) {
                 vargs[i] = LuaValue.valueOf((boolean) obj);
