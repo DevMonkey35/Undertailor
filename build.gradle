@@ -5,7 +5,7 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
-    
+
     dependencies {
         classpath "nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0"
         classpath "org.ajoberstar:grgit:1.1.0"
@@ -38,7 +38,7 @@ allprojects {
         mapping {
             java = "PHP"
         }
-        
+
         excludes([
             "assets/**",
             "mod/**",
@@ -46,7 +46,7 @@ allprojects {
             "**/log4j.properties",
             "test/**"
         ])
-        
+
         header rootProject.file("LICENSE")
     }
 }
@@ -55,7 +55,7 @@ ext {
     git = org.ajoberstar.grgit.Grgit.open(file('.'))
     revision = git.head().abbreviatedId
     version = "1.0"
-    
+
     finalVersion = "${version}-${revision}"
     mainClassName = "me.scarlet.undertailor.desktop.DesktopLauncher"
 }
@@ -72,7 +72,7 @@ project(":core") {
         compile 'org.luaj:luaj-jse:3.0.1'
         compile "org.slf4j:slf4j-log4j12:1.7.21"
         compile 'ninja.leaping.configurate:configurate-json:3.0'
-        
+
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
@@ -90,7 +90,7 @@ task run(type: JavaExec) {
     main = project.mainClassName
     classpath = project(":desktop").sourceSets.main.runtimeClasspath
     standardInput = System.in
-    
+
     workingDir = new File("../test/")
     workingDir.mkdirs()
     ignoreExitValue = true
@@ -105,8 +105,8 @@ task dist(type: Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
-    
-    baseName = "undertailor-" + rootProject.ext.finalVersion
+
+    baseName = "undertailor"
 }
 
 dist.dependsOn project(":core").licenseMain
