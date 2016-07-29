@@ -44,6 +44,11 @@ import me.scarlet.undertailor.util.LuaUtil;
  */
 public interface Task extends Processable {
 
+    public static final String FIELD_NAME = "name";
+
+    public static final String FUNC_PROCESS = "process";
+    public static final String FUNC_ONFINISH = "onFinish";
+
     /**
      * Generates a {@link Task} based on the contents of the
      * provided Lua value.
@@ -88,17 +93,17 @@ public interface Task extends Processable {
             return new Task() {
                 @Override
                 public String getName() {
-                    return table.get("name").optjstring(null);
+                    return table.get(FIELD_NAME).optjstring(null);
                 }
 
                 @Override
                 public boolean process(Object... params) {
-                    return table.get("process").checkfunction().invoke(table, LuaUtil.varargsOf(params)).toboolean(1);
+                    return table.get(FUNC_PROCESS).checkfunction().invoke(table, LuaUtil.varargsOf(params)).toboolean(1);
                 }
 
                 @Override
                 public void onFinish(boolean forced) {
-                    LuaFunction func = table.get("onFinish").optfunction(null);
+                    LuaFunction func = table.get(FUNC_ONFINISH).optfunction(null);
                     if(func != null) {
                         func.invoke(table, LuaValue.valueOf(forced));
                     }
