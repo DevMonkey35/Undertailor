@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.engine.overworld;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,9 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.util.Pair;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Subsystem within an {@link Environment} running the
@@ -275,11 +279,23 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
 
         Task roomTask = new Task() {
 
-            boolean set = false;
+            boolean set;
+            Set<WorldObject> persistent;
+
+            {
+                this.set = false;
+                this.persistent = new HashSet<>();
+            }
 
             public boolean process(Object... params) {
                 if (!set) {
                     if (OverworldController.this.room != null) {
+                        OverworldController.this.room.getObjects().forEach(obj -> {
+                            if (obj.isPersistent()) {
+                                this.persistent.add(obj);
+                            }
+                        });
+
                         OverworldController.this.room.release(OverworldController.this);
                         OverworldController.this.room = null;
                     }
@@ -293,17 +309,30 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
                     // update the camera since the room has changed
                     camera.fixPosition();
 
+                    // register each object first
+                    this.persistent.forEach(room::registerObject);
+
                     // did we have an entrypoint to go to?
-                    if (OverworldController.this.character != null) {
-                        if (targetEntrypoint != null) {
-                            Entrypoint target =
-                                OverworldController.this.room.getEntrypoint(targetEntrypoint);
-                            OverworldController.this.character
-                                .setPosition(target.getTargetSpawnpoint());
+                    Entrypoint target = null;
+                    if (targetEntrypoint != null) {
+                        target = OverworldController.this.room.getEntrypoint(targetEntrypoint);
+                    }
+
+                    if (target != null) {
+                        Vector2 spawn = target.getTargetSpawnpoint();
+                        if (spawn != null && OverworldController.this.character != null) {
+                            OverworldController.this.character.setPosition(spawn);
                         }
 
-                        OverworldController.this.room
-                            .registerObject(OverworldController.this.character);
+                        // entrypoint was true
+                        this.persistent.forEach(obj -> {
+                            obj.onPersist(room, true);
+                        });
+                    } else {
+                        // entrypoint was false
+                        this.persistent.forEach(obj -> {
+                            obj.onPersist(room, false);
+                        });
                     }
 
                     return false;

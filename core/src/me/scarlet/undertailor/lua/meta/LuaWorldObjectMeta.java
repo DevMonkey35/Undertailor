@@ -100,6 +100,17 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
             return NIL;
         }));
 
+        // worldObject:isPersistent()
+        set("isPersistent", asFunction(vargs -> {
+            return valueOf(obj(vargs).isPersistent());
+        }));
+
+        // worldObject:setPersistent(persistent)
+        set("setPersistent", asFunction(vargs -> {
+            obj(vargs).setPersistent(vargs.checkboolean(2));
+            return NIL;
+        }));
+
         // lua-only functions
 
         // bounding shape creation methods respect overworld scale
@@ -110,7 +121,7 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
                 throw new LuaError("uneven points");
             }
 
-            if(vargs.narg() < 6) {
+            if (vargs.narg() < 6) {
                 throw new LuaError("Polygons must have at least 3 points");
             }
 

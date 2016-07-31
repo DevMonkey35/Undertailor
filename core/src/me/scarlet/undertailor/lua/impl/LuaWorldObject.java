@@ -36,6 +36,7 @@ import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.engine.Collider;
 import me.scarlet.undertailor.engine.overworld.WorldObject;
+import me.scarlet.undertailor.engine.overworld.WorldRoom;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.lua.LuaImplementable;
@@ -55,6 +56,7 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
     public static final String FUNC_ENDCOLLISION = "endCollision";
     public static final String FUNC_PRERENDER = "preRender";
     public static final String FUNC_POSTRENDER = "postRender";
+    public static final String FUNC_ONPERSIST = "onPersist";
 
     private LuaObjectValue<WorldObject> luaObj;
 
@@ -129,6 +131,13 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
     public void endCollision(Collider collider) {
         if (this.hasFunction(FUNC_ENDCOLLISION)) {
             this.invokeSelf(FUNC_ENDCOLLISION, of(collider));
+        }
+    }
+
+    @Override
+    public void onPersist(WorldRoom newRoom, boolean entrypoint) {
+        if (this.hasFunction(FUNC_ONPERSIST)) {
+            this.invokeSelf(FUNC_ONPERSIST, LuaUtil.varargsOf(newRoom, entrypoint));
         }
     }
 }

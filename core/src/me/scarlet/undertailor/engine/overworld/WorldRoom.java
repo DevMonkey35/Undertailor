@@ -184,7 +184,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
             WorldObject next = iterator.next();
             iterator.remove();
             next.release(this);
-            if (!this.controller.isCharacter(next)) {
+            if (!next.isPersistent()) {
                 next.destroy();
             }
         }
@@ -312,14 +312,31 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     }
 
     /**
+     * Returns all {@link WorldObject}s registered with this
+     * {@link WorldRoom}. <strong>This list is NOT to be
+     * modified.</p>
+     * 
+     * <p>Use {@link #registerObject(WorldObject)} and
+     * {@link #removeObject(WorldObject)} to modify this
+     * Set.</p>
+     * 
+     * @return a Set containing this WorldRoom's
+     *         WorldObjects; should NOT be directly modified
+     */
+    public Set<WorldObject> getObjects() {
+        return this.obj;
+    }
+
+    /**
      * Registers the provided {@link WorldObject} with this
      * {@link WorldRoom}.
      * 
      * @param obj the WorldObject to register
      */
     public void registerObject(WorldObject obj) {
-        if(obj.isDestroyed()) {
-            log.warn("attempted to submit destroyed worldobject to a worldroom; cannot accept a destroyed object");
+        if (obj.isDestroyed()) {
+            log.warn(
+                "attempted to submit destroyed worldobject to a worldroom; cannot accept a destroyed object");
             return;
         }
 

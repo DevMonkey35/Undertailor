@@ -64,6 +64,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     private WorldRoom room;
     private boolean visible;
     private boolean destroyed;
+    private boolean persistent;
 
     private Body body;
     private BodyDef def; // acts as a proxy object for position
@@ -84,6 +85,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         this.proxyTransform = new Transform();
         this.boundingQueue = new HashSet<>();
         this.def = new BodyDef();
+        this.persistent = false;
         this.visible = true;
 
         this.def.active = true;
@@ -211,7 +213,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     @Override
     public void destroy() {
-        if(this.destroyed) {
+        if (this.destroyed) {
             return;
         }
 
@@ -437,6 +439,38 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         this.visible = visible;
     }
 
+    /**
+     * Returns whether or not this {@link WorldObject} will
+     * be preserved between rooms.
+     * 
+     * <p>This is automagically true if this WorldObject is
+     * currently registered with a {@link WorldRoom}, and is
+     * the character object of said WorldRoom's
+     * {@link OverworldController}.</p>
+     * 
+     * @return if this WorldObject is persistent
+     */
+    public boolean isPersistent() {
+        if (this.getRoom() != null) {
+            if (this.getRoom().getOverworld().isCharacter(this)) {
+                return true;
+            }
+        }
+
+        return this.persistent;
+    }
+
+    /**
+     * Sets whether or not this {@link WorldObject} will be
+     * preserved between rooms.
+     * 
+     * @param persistent if this WorldObject should be
+     *        persistent
+     */
+    public void setPersistent(boolean persistent) {
+        this.persistent = persistent;
+    }
+
     // ---------------- internal ----------------
 
     /**
@@ -480,6 +514,18 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
      * @return generic return value
      */
     public abstract boolean processObject(Object... params);
+
+    /**
+     * Called when this {@link WorldObject} is currently
+     * deemed persistent and changes {@link WorldRoom}s.
+     * 
+     * @param newRoom the new WorldRoom this WorldObject was
+     *        transferred to
+     * @param entrypoint whether persistence occurred
+     *        because the character object entered an
+     *        entrypoint
+     */
+    public abstract void onPersist(WorldRoom newRoom, boolean entrypoint);
 
     @Override
     public abstract boolean catchEvent(String eventName, Object... data);
