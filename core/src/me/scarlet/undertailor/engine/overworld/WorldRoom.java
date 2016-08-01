@@ -183,10 +183,11 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
         while (iterator.hasNext()) {
             WorldObject next = iterator.next();
             iterator.remove();
-            next.release(this);
             if (!next.isPersistent()) {
                 next.destroy();
             }
+
+            next.release(this);
         }
 
         this.entrypoints.values().forEach(entrypoint -> {
@@ -238,6 +239,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                 this.entrypointQueue = null;
                 this.bodyQueue = null;
                 this.prepared = true;
+                this.onLoad();
             }
 
             return false;
@@ -556,4 +558,13 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      * the objects' processing.</p>
      */
     public abstract void processRoom();
+
+    /**
+     * Called right when this room's tilemap finishes
+     * loading.
+     * 
+     * <p>Entrypoint preparation methods should be called
+     * here.</p>
+     */
+    public abstract void onLoad();
 }

@@ -59,6 +59,8 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.SAXParser;
 
@@ -221,6 +223,11 @@ public class TilemapReader extends DefaultHandler {
 
             String shapeHeight = attributes.getValue("", "height");
             this.currentShape.shapeHeight = shapeHeight == null ? 0 : Float.valueOf(shapeHeight);
+
+            String type = attributes.getValue("", "type");
+            if (type != null && type.equalsIgnoreCase("entrypoint")) {
+                this.tilemap.entrypoints.put(this.getQualifiedShapeName(), "");
+            }
         }
 
         if (this.checkElement("object", "polygon", qName)
@@ -231,6 +238,18 @@ public class TilemapReader extends DefaultHandler {
                 String[] point = points[i].split(",");
                 this.currentShape.shapeVertices[i * 2] = Float.parseFloat(point[0]);
                 this.currentShape.shapeVertices[(i * 2) + 1] = Float.parseFloat(point[1]);
+            }
+        }
+
+        // object custom props
+        if (this.currentShape != null && this.checkElement("properties", "property", qName)) {
+            if (attributes.getValue("", "name").equalsIgnoreCase("spawn")) {
+                String targetPoint = attributes.getValue("", "value");
+                if (targetPoint.split(":").length == 1) { // if they didn't qualify the name
+                    targetPoint = this.currentObjectLayer.name + ":" + targetPoint; // qualify it for them, defaulting to the current layer
+                }
+
+                this.tilemap.entrypoints.put(this.getQualifiedShapeName(), targetPoint);
             }
         }
 
@@ -375,6 +394,35 @@ public class TilemapReader extends DefaultHandler {
         this.tilemap.tileLayers.sort((l1, l2) -> {
             return Short.compare(l1.getLayer(), l2.getLayer());
         });
+
+        // check the entrypoints
+        // we have to access the layer list directly, since the method does not return anything if the map hasn't been deemed fully loaded
+        Map<String, ObjectLayer> layers = this.tilemap.objects;
+        for (Entry<String, String> entry : this.tilemap.entrypoints.entrySet()) {
+            // check that the entrypoint itself is a shape, not a point
+            ObjectLayer layer;
+            String sLayer = entry.getKey().split(":")[0];
+            String sName = entry.getKey().split(":")[1];
+            layer = layers.get(sLayer);
+
+            if (layer == null || layer.getShape(sName) == null) {
+                throw new SAXException("Entrypoint " + entry.getKey() + " is not a shape");
+            }
+
+            // check that the target has a point
+            if (entry.getValue() == null || entry.getValue().trim().isEmpty()) {
+                continue;
+            } else {
+                String pLayer = entry.getValue().split(":")[0];
+                String pName = entry.getValue().split(":")[1];
+                layer = layers.get(pLayer);
+
+                if (layer == null || layer.getPoint(pName) == null) {
+                    throw new SAXException("Entrypoint " + entry.getKey()
+                        + " resolves to invalid spawn point " + entry.getValue());
+                }
+            }
+        }
     }
 
     // ---------------- object ----------------
@@ -429,6 +477,21 @@ public class TilemapReader extends DefaultHandler {
         }
 
         return this.tree.get(this.tree.size() - 2);
+    }
+
+    /**
+     * Internal method.
+     * 
+     * <p>Returns the qualified name of the current shape.
+     * Will return null if there is no current shape or
+     * object layer.</p>
+     */
+    private String getQualifiedShapeName() {
+        if (this.currentObjectLayer == null || this.currentShape == null) {
+            return null;
+        }
+
+        return this.currentObjectLayer.name + ":" + this.currentShape.name;
     }
 
     /**

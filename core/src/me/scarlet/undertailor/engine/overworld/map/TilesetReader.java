@@ -116,7 +116,7 @@ public class TilesetReader extends DefaultHandler {
         throws SAXException {
         this.tree.add(qName);
 
-        if(this.checkElement("", "tileset", qName)) {
+        if (this.checkElement("", "tileset", qName)) {
             this.meta.tileWidth = Integer.parseInt(attributes.getValue("", "tilewidth"));
             this.meta.tileHeight = Integer.parseInt(attributes.getValue("", "tileheight"));
         }

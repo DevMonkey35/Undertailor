@@ -45,97 +45,80 @@ import java.util.function.Supplier;
 public class Entrypoint implements Collider, Modular<WorldRoom> {
 
     private Body body;
+    private boolean used;
     private WorldRoom parent;
     private ShapeData bodyData;
     private Vector2 spawnPoint;
 
     private String name;
-    private String[] defPoint;
-    private String[] defShape;
-    private boolean used;
+    private String mapEntrypoint;
     private String targetEntrypoint;
     private Supplier<WorldRoom> targetRoom;
 
-    /**
-     * @param name the name of this Entrypoint
-     * @param spawnX the x-coordinate of the spawn position
-     *        for the character object when using this
-     *        Entrypoint
-     * @param spawnY the y-coordinate of the spawn position
-     *        for the character object when using this
-     *        Entrypoint
-     */
-    public Entrypoint(String name, float spawnX, float spawnY) {
-        this(name, spawnX, spawnY, null, null, null);
+    private Entrypoint(String mapEntrypoint) {
+        this.used = false;
+        this.parent = null;
+
+        this.name = null;
+        this.mapEntrypoint = mapEntrypoint;
+        this.targetEntrypoint = null;
+        this.targetRoom = null;
+
+        if (this.mapEntrypoint.split(":").length < 2) {
+            throw new IllegalArgumentException("Entrypoint name must be in layer:point format");
+        }
     }
 
     /**
+     * 
      * @param name the name of this Entrypoint
-     * @param spawnX the x-coordinate of the spawn position
-     *        for the character object when using this
-     *        Entrypoint
-     * @param spawnY the y-coordinate of the spawn position
-     *        for the character object when using this
-     *        Entrypoint
-     * @param defShape the name of the definition layer and
-     *        shape used to create the hitbox for this
-     *        entrypoint, in the form of
-     *        <code>layer:shapeName"</code>
-     * @param targetRoom a Supplier queried to create a new
-     *        instance of the room to set when this
-     *        Entrypoint is activated
-     * @param targetEntrypoint the name of entrypoint in the
-     *        target room to spawn at
+     * @param mapEntrypoint the name of the shape defined
+     *        for this Entrypoint
      */
-    public Entrypoint(String name, float spawnX, float spawnY, String defShape,
-        Supplier<WorldRoom> targetRoom, String targetEntrypoint) {
+    public Entrypoint(String name, String mapEntrypoint) {
+        this(mapEntrypoint);
+
         this.name = name;
-        this.used = false;
-        this.parent = null;
+    }
+
+    /**
+     * 
+     * @param name the name of this Entrypoint
+     * @param mapEntrypoint the name of the shape defined
+     *        for this Entrypoint
+     * @param targetRoom the supplier giving an instance of
+     *        the target room
+     * @param spawnX the x-coordinate of the position to
+     *        spawn at in the target room
+     * @param spawnY the y-coordinate of the position to
+     *        spawn at in the target room
+     */
+    public Entrypoint(String name, String mapEntrypoint, Supplier<WorldRoom> targetRoom,
+        float spawnX, float spawnY) {
+        this(mapEntrypoint);
+
+        this.name = name;
+        this.targetRoom = targetRoom;
         this.spawnPoint = new Vector2(spawnX, spawnY);
-        this.defPoint = null;
-        this.defShape = defShape.split(":");
-        this.targetRoom = targetRoom;
-        this.targetEntrypoint = targetEntrypoint;
-    }
-
-    public Entrypoint(String name, String defPoint) {
-        this(name, defPoint, null, null, null);
     }
 
     /**
+     * 
      * @param name the name of this Entrypoint
-     * @param defPoint the name of the definition layer and
-     *        point where the character object will be set
-     *        to spawn at
-     * @param defShape the name of the definition layer and
-     *        shape used to create the hitbox for this
-     *        entrypoint, in the form of
-     *        <code>layer:shapeName"</code>
-     * @param targetRoom a Supplier queried to create a new
-     *        instance of the room to set when this
-     *        Entrypoint is activated
-     * @param targetEntrypoint the name of entrypoint in the
-     *        target room to spawn at
+     * @param mapEntrypoint the name of the shape defined
+     *        for this Entrypoint
+     * @param targetRoom the supplier giving an instance of
+     *        the target room
+     * @param targetEntrypoint the name of the entrypoint to
+     *        spawn at in the target room
      */
-    public Entrypoint(String name, String defPoint, String defShape, Supplier<WorldRoom> targetRoom,
+    public Entrypoint(String name, String mapEntrypoint, Supplier<WorldRoom> targetRoom,
         String targetEntrypoint) {
+        this(mapEntrypoint);
+
         this.name = name;
-        this.used = false;
-        this.parent = null;
-        this.spawnPoint = null;
-        this.defPoint = defPoint.split(":");
-        this.defShape = defShape.split(":");
         this.targetRoom = targetRoom;
         this.targetEntrypoint = targetEntrypoint;
-
-        if (defPoint.length() < 2) {
-            throw new IllegalArgumentException("point must be in form \"defLayerName:pointName\"");
-        }
-
-        if (defShape.length() < 2) {
-            throw new IllegalArgumentException("shape must be in form \"defLayerName:shapeName\"");
-        }
     }
 
     /**
@@ -154,7 +137,7 @@ public class Entrypoint implements Collider, Modular<WorldRoom> {
      * @return the spawn location for this entrypoint
      */
     public Vector2 getTargetSpawnpoint() {
-        return this.spawnPoint;
+        return this.spawnPoint == null ? this.bodyData.getPosition() : this.spawnPoint;
     }
 
     // ---------------- modular ----------------
@@ -163,9 +146,17 @@ public class Entrypoint implements Collider, Modular<WorldRoom> {
     public boolean claim(WorldRoom parent) {
         if (this.parent == null) {
             this.parent = parent;
+
+            String[] defShape = this.mapEntrypoint.split(":");
             this.bodyData = this.parent.getMap().getDefinedShape(defShape[0], defShape[1]);
-            if (this.defPoint != null) {
-                this.spawnPoint = this.parent.getMap().getDefinedPoint(defPoint[0], defPoint[1]);
+            if (this.spawnPoint == null) {
+                String rawPoint = this.parent.getMap().getEntrypointSpawn(this.mapEntrypoint);
+
+                if (rawPoint != null && !rawPoint.trim().isEmpty()) {
+                    String[] defPoint = rawPoint.split(":");
+                    this.spawnPoint =
+                        this.parent.getMap().getDefinedPoint(defPoint[0], defPoint[1]);
+                }
             }
 
             if (this.bodyData != null) {
@@ -212,6 +203,10 @@ public class Entrypoint implements Collider, Modular<WorldRoom> {
 
     @Override
     public void startCollision(Collider collider) {
+        if (this.targetRoom == null) {
+            return;
+        }
+
         if (this.parent == null) {
             return;
         }
@@ -222,8 +217,8 @@ public class Entrypoint implements Collider, Modular<WorldRoom> {
 
         if (collider instanceof WorldObject) {
             if (this.parent.getOverworld().isCharacter((WorldObject) collider)) {
-                this.parent.getOverworld().setRoom(this.targetRoom.get(), this.targetEntrypoint);
                 this.used = true;
+                this.parent.getOverworld().setRoom(this.targetRoom.get(), this.targetEntrypoint);
             }
         }
     }

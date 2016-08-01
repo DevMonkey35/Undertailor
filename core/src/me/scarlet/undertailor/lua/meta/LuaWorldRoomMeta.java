@@ -86,47 +86,48 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
             return orNil(obj(vargs).getOverworld());
         }));
 
-        // worldRoom:registerEntrypoint(name, defpoint[, defshape, target room file, target entrypoint])
-        // worldRoom:registerEntrypoint(name, spawnX, spawnY[, defshape, target room file, target entrypoint])
+        // worldRoom:registerEntrypoint(defPoint[, target room file, target entrypoint])
+        // worldRoom:registerEntrypoint(defPoint[, target room file, target x, target y])
         set("registerEntrypoint", asFunction(vargs -> {
-            String pointName = vargs.checkjstring(2);
-            String defPoint = null;
+            String defPoint = vargs.checkjstring(2);
+            String targetRoom = vargs.optjstring(3, null);
+
+            String targetPoint = null;
+            // or
             float spawnPointX = 0F;
             float spawnPointY = 0F;
-            String defShape = null;
-            final String targetRoom;
+
             Supplier<WorldRoom> targetRoomSup = null;
-            String targetPoint = null;
-            if (vargs.narg() == 6) { // named a def point
-                defPoint = vargs.checkjstring(3);
-                defShape = vargs.checkjstring(4);
-                targetRoom = vargs.checkjstring(5);
-                targetPoint = vargs.checkjstring(6);
-            } else { // named their own point
-                spawnPointX = vargs.checknumber(3).tofloat();
-                spawnPointY = vargs.checknumber(4).tofloat();
-                defShape = vargs.checkjstring(5);
-                targetRoom = vargs.checkjstring(6);
-                targetPoint = vargs.checkjstring(7);
+            if (vargs.narg() == 5) { // named their own point
+                spawnPointX = vargs.checknumber(4).tofloat();
+                spawnPointY = vargs.checknumber(5).tofloat();
+            } else { // named a def point
+                targetPoint = vargs.optjstring(4, null);
             }
 
-            targetRoomSup = () -> {
-                try {
-                    return new LuaWorldRoom(tailor.getAssetManager().getScriptManager(),
-                        new File(AssetManager.rootDirectory, targetRoom));
-                } catch (Exception e) {
-                    Lua.error("Failed to load WorldRoom", e);
-                }
+            if (targetRoom != null) {
+                targetRoomSup = () -> {
+                    try {
+                        return new LuaWorldRoom(tailor.getAssetManager().getScriptManager(),
+                            new File(AssetManager.rootDirectory, targetRoom));
+                    } catch (Exception e) {
+                        Lua.error("Failed to load WorldRoom", e);
+                    }
 
-                return null;
-            };
+                    return null;
+                };
+            }
 
             Entrypoint point;
-            if (defPoint == null) {
-                point = new Entrypoint(pointName, spawnPointX, spawnPointY, defShape, targetRoomSup,
-                    targetPoint);
+            if (targetRoom == null) {
+                point = new Entrypoint(defPoint, defPoint);
             } else {
-                point = new Entrypoint(pointName, defPoint, defShape, targetRoomSup, targetPoint);
+                if (targetPoint != null) {
+                    point = new Entrypoint(defPoint, defPoint, targetRoomSup, targetPoint);
+                } else {
+                    point =
+                        new Entrypoint(defPoint, defPoint, targetRoomSup, spawnPointX, spawnPointY);
+                }
             }
 
             obj(vargs).registerEntrypoint(point);
@@ -180,15 +181,6 @@ public class LuaWorldRoomMeta implements LuaObjectMeta {
         }));
 
         // lua-only functions
-
-        // worldRoom:setTilemap(tilemapName)
-        set("setTilemap", asFunction(vargs -> {
-            Tilemap tilemap =
-                tailor.getAssetManager().getTilemapManager().getTilemap(vargs.checkjstring(2));
-            convert(vargs.arg1()).getmetatable().set(LuaWorldRoomMeta.METAKEY_MAP,
-                LuaValue.userdataOf(tilemap));
-            return NIL;
-        }));
 
         /*
          * Shape data is weird in Lua, as we don't wanna

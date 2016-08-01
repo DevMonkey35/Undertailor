@@ -30,22 +30,24 @@
 
 package me.scarlet.undertailor.lua.impl;
 
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.Varargs;
 
+import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.engine.overworld.WorldRoom;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.ScriptManager;
-import me.scarlet.undertailor.lua.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 
 public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoom> {
+
+    public static final String FIELD_TILEMAP = "__map";
 
     public static final String FUNC_CREATE = "create";
     public static final String FUNC_PROCESS = "process";
@@ -65,12 +67,15 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
         this.luaObj = LuaObjectValue.of(this);
         this.luaObj.load(manager, luaFile);
 
-        if (this.hasFunction(FUNC_CREATE)) {
-            this.invokeSelf(FUNC_CREATE, params);
-            LuaValue value = this.luaObj.getmetatable().get(LuaWorldRoomMeta.METAKEY_MAP);
-            if (!value.isnil() && value.isuserdata()) {
-                super.tilemap = (Tilemap) value.checkuserdata();
+        String loadedMap = this.luaObj.get(FIELD_TILEMAP).optjstring(null);
+        if (loadedMap != null) {
+            Tilemap map = Undertailor.getInstance().getAssetManager().getTilemapManager()
+                .getTilemap(loadedMap);
+            if (map == null) {
+                throw new LuaError("unknown tilemap " + loadedMap);
             }
+
+            super.tilemap = map;
         }
     }
 
@@ -83,6 +88,13 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
     public LuaObjectValue<WorldRoom> getObjectValue() {
         return this.luaObj;
     }
+
+    @Override
+    public void onLoad() {
+        if (this.hasFunction(FUNC_CREATE)) {
+            this.invokeSelf(FUNC_CREATE);
+        }
+    };
 
     @Override
     public void processRoom() {

@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
+import me.scarlet.undertailor.exception.BadAssetException;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.resource.Resource;
@@ -78,11 +79,13 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
         float spaceY;
         List<TileLayer> tileLayers;
         List<ImageLayer> imageLayers;
+        Map<String, String> entrypoints;
         Map<String, ObjectLayer> objects;
         TreeMap<Integer, Tileset> tilesets;
 
         Tilemap() {
             this.objects = new HashMap<>();
+            this.entrypoints = new HashMap<>();
             this.tileLayers = new ArrayList<>();
             this.imageLayers = new ArrayList<>();
             this.tilesets = new TreeMap<>(Integer::compare);
@@ -246,10 +249,8 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
                 return null;
             }
 
-            String layerName = defLayerName;
-            if (layerName.charAt(0) != OBJ_DEF_LAYER_PREFIX) {
-                layerName = OBJ_DEF_LAYER_PREFIX + layerName;
-            }
+            String layerName = defLayerName.charAt(0) == OBJ_DEF_LAYER_PREFIX ? defLayerName
+                : OBJ_DEF_LAYER_PREFIX + defLayerName;
 
             if (this.getObjectLayer(layerName) != null) {
                 return this.getObjectLayer(layerName).getShape(shapeName);
@@ -274,12 +275,30 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
                 return null;
             }
 
-            String layerName = OBJ_DEF_LAYER_PREFIX + defLayerName;
+            String layerName = defLayerName.charAt(0) == OBJ_DEF_LAYER_PREFIX ? defLayerName
+                : OBJ_DEF_LAYER_PREFIX + defLayerName;
             if (this.getObjectLayer(layerName) != null) {
                 return this.getObjectLayer(layerName).getPoint(pointName);
             }
 
             return null;
+        }
+
+        /**
+         * Returns the name of the spawnpoint of the
+         * provided entrypoint, in <code>layer:point</code>
+         * format. The point name is to be in the form of
+         * <code>layer:point</code>.
+         * 
+         * @param entrypointName the name of the entrypoint,
+         *        in <code>layer:point</code> format
+         * 
+         * @return the entrypoint's target spawnpoint, in
+         *         <code>layer:point</code> format, or null
+         *         if the entrypoint didn't exist
+         */
+        public String getEntrypointSpawn(String entrypointName) {
+            return this.entrypoints.get(entrypointName);
         }
 
         /**
@@ -335,7 +354,11 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
             } catch (Exception e) {
                 String message = "Failed to load tilemap " + this.tmxFile.getAbsolutePath() + " ("
                     + e.getMessage() + ")";
-                log.error(message, e);
+                BadAssetException thrown = new BadAssetException(message);
+                thrown.initCause(e);
+
+                Thread.getDefaultUncaughtExceptionHandler()
+                    .uncaughtException(Thread.currentThread(), thrown);
             }
 
             return null;
