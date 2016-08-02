@@ -85,6 +85,27 @@ function wobj:isVisible() end
 function wobj:setVisible(visible) end
 
 ---
+-- Returns whether or not this `worldobject` will be kept when the
+-- Overworld controller changes rooms, if it was inside the active
+-- room.
+--
+-- This is automatically true if this worldobject is the Overworld's
+-- character object.
+--
+-- @return if this worldobject is persistent
+--
+function wobj:isPersistent() end
+
+---
+-- Sets whether or not this `worldobject` will be kept when the
+-- Overworld controller changes rooms, if it was inside the active
+-- room.
+--
+-- @bool visible if this worldobject will be persistent
+--
+function wobj:setPersistent(visible) end
+
+---
 -- Bounding shape functions.
 -- @section
 
