@@ -75,25 +75,38 @@ function wroom:removeObject(id) end
 ---
 -- Map preparation functions.
 --
--- These functions should only be called inside a `worldroom`'s
--- create function.
+-- While entrypoints can be added at any time during a `worldroom`'s
+-- lifetime, it is recommended they only be added during the room's
+-- `create` function.
+--
 -- @section
 --
 
 ---
 -- Registers a room entrypoint using the provided parameters.
 --
-function wroom:registerEntrypoint(name, defpoint[, defshape, target room file, target entrypoint]) end
+-- @string defPoint the name of the entrypoint registered by the map,
+--   in layer:point format
+-- @string[opt=nil] targetRoom a path leading to the script of the
+--   target room, starting from the scripts folder
+-- @string[opt=nil] targetPoint the name of the entrypoint to spawn
+--   at in the target room
+--
+function wroom:registerEntrypoint(defPoint, targetRoom, targetPoint) end
 
 ---
 -- Registers a room entrypoint using the provided parameters.
 --
-function wroom:registerEntrypoint(name, spawnX, spawnY[, defshape, target room file, target entrypoint]) end
-
----
--- Sets the current tilemap of this `worldroom`.
+-- @string defPoint the name of the entrypoint registered by the map,
+--   in layer:point format
+-- @string[opt=nil] targetRoom a path leading to the script of the
+--   target room, starting from the scripts folder
+-- @number targetPointX the x-coordinate of the point to spawn at in
+--   the target room
+-- @number targetPointY the y-coordinate of the point to spawn at in
+--   the target room
 --
-function wroom:setTilemap(tilemapName) end
+function wroom:registerEntrypoint(defPoint, targetRoom, targetPointX, targetPointY) end
 
 ---
 -- Map functions.
