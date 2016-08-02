@@ -128,16 +128,12 @@
 <h2><a href="#Map_preparation_functions">Map preparation functions </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#worldroom:registerEntrypoint">worldroom:registerEntrypoint(name, defpoint, defshape, target, target)</a></td>
+	<td class="name" nowrap><a href="#worldroom:registerEntrypoint">worldroom:registerEntrypoint(defPoint[, targetRoom=nil][, targetPoint=nil])</a></td>
 	<td class="summary">Registers a room entrypoint using the provided parameters.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#worldroom:registerEntrypoint">worldroom:registerEntrypoint(name, spawnX, spawnY, defshape, target, target)</a></td>
+	<td class="name" nowrap><a href="#worldroom:registerEntrypoint">worldroom:registerEntrypoint(defPoint[, targetRoom=nil], targetPointX, targetPointY)</a></td>
 	<td class="summary">Registers a room entrypoint using the provided parameters.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#worldroom:setTilemap">worldroom:setTilemap(tilemapName)</a></td>
-	<td class="summary">Sets the current tilemap of this <a href="../classes/worldroom.html#">worldroom</a>.</td>
 	</tr>
 </table>
 <h2><a href="#Map_functions">Map functions </a></h2>
@@ -264,13 +260,14 @@
     <h2 class="section-header has-description"><a name="Map_preparation_functions"></a>Map preparation functions </h2>
 
           <div class="section-description">
-           These functions should only be called inside a <a href="../classes/worldroom.html#">worldroom</a>'s
- create function.
+           While entrypoints can be added at any time during a <a href="../classes/worldroom.html#">worldroom</a>'s
+ lifetime, it is recommended they only be added during the room's
+ <code>create</code> function.
           </div>
     <dl class="function">
     <dt>
     <a name = "worldroom:registerEntrypoint"></a>
-    <strong>worldroom:registerEntrypoint(name, defpoint, defshape, target, target)</strong>
+    <strong>worldroom:registerEntrypoint(defPoint[, targetRoom=nil][, targetPoint=nil])</strong>
     </dt>
     <dd>
     Registers a room entrypoint using the provided parameters.
@@ -278,30 +275,22 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">name</span>
-
-
-
+        <li><span class="parameter">defPoint</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the entrypoint registered by the map,
+   in layer:point format
         </li>
-        <li><span class="parameter">defpoint</span>
-
-
-
+        <li><span class="parameter">targetRoom</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         a path leading to the script of the
+   target room, starting from the scripts folder
+         (<em>default</em> nil)
         </li>
-        <li><span class="parameter">defshape</span>
-
-
-
-        </li>
-        <li><span class="parameter">target</span>
-
-
-
-        </li>
-        <li><span class="parameter">target</span>
-
-
-
+        <li><span class="parameter">targetPoint</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the entrypoint to spawn
+   at in the target room
+         (<em>default</em> nil)
         </li>
     </ul>
 
@@ -312,7 +301,7 @@
 </dd>
     <dt>
     <a name = "worldroom:registerEntrypoint"></a>
-    <strong>worldroom:registerEntrypoint(name, spawnX, spawnY, defshape, target, target)</strong>
+    <strong>worldroom:registerEntrypoint(defPoint[, targetRoom=nil], targetPointX, targetPointY)</strong>
     </dt>
     <dd>
     Registers a room entrypoint using the provided parameters.
@@ -320,57 +309,26 @@
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">name</span>
-
-
-
+        <li><span class="parameter">defPoint</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the name of the entrypoint registered by the map,
+   in layer:point format
         </li>
-        <li><span class="parameter">spawnX</span>
-
-
-
+        <li><span class="parameter">targetRoom</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         a path leading to the script of the
+   target room, starting from the scripts folder
+         (<em>default</em> nil)
         </li>
-        <li><span class="parameter">spawnY</span>
-
-
-
+        <li><span class="parameter">targetPointX</span>
+            <span class="types"><span class="type">number</span></span>
+         the x-coordinate of the point to spawn at in
+   the target room
         </li>
-        <li><span class="parameter">defshape</span>
-
-
-
-        </li>
-        <li><span class="parameter">target</span>
-
-
-
-        </li>
-        <li><span class="parameter">target</span>
-
-
-
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "worldroom:setTilemap"></a>
-    <strong>worldroom:setTilemap(tilemapName)</strong>
-    </dt>
-    <dd>
-    Sets the current tilemap of this <a href="../classes/worldroom.html#">worldroom</a>.
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">tilemapName</span>
-
-
-
+        <li><span class="parameter">targetPointY</span>
+            <span class="types"><span class="type">number</span></span>
+         the y-coordinate of the point to spawn at in
+   the target room
         </li>
     </ul>
 
@@ -569,7 +527,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
-<i style="float:right;">Last updated 2016-07-28 20:07:38 </i>
+<i style="float:right;">Last updated 2016-08-02 14:12:54 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
