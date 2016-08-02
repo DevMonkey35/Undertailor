@@ -405,6 +405,12 @@ public class TilemapReader extends DefaultHandler {
             String sName = entry.getKey().split(":")[1];
             layer = layers.get(sLayer);
 
+            if (sLayer.charAt(0) != TilemapFactory.OBJ_DEF_LAYER_PREFIX) {
+                throw new SAXException(
+                    "Entrypoints may only be defined within definition layers (offending point "
+                        + sLayer + ":" + (sName.equalsIgnoreCase("null") ? "" : sName) + ")");
+            }
+
             if (layer == null || layer.getShape(sName) == null) {
                 throw new SAXException("Entrypoint " + entry.getKey() + " is not a shape");
             }
