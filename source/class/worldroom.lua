@@ -138,7 +138,7 @@ function wroom:getCollisionLayerState(layerName) end
 -- @string layerName the name of the target collision layer
 -- @bool state the new state of collision for the layer
 --
-function wroom:setCollisionLayerState(layerName, state)
+function wroom:setCollisionLayerState(layerName, state) end
 
 ---
 -- Returns the current opacity set for the given layer index.
