@@ -30,7 +30,6 @@
 
 package me.scarlet.undertailor;
 
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -108,24 +107,13 @@ public class ErrorWindow extends Stage {
             wrap.getPrefWidth(), Priority.ALWAYS, HPos.RIGHT, false));
         footer.getColumnConstraints().add(new ColumnConstraints(0, confirm.getPrefWidth(),
             confirm.getPrefWidth(), Priority.ALWAYS, HPos.RIGHT, false));
-        GridPane.setColumnIndex(wrap, 1);
+        GridPane.setColumnIndex(wrap, 0);
         GridPane.setColumnIndex(confirm, 2);
         GridPane.setHalignment(confirm, HPos.RIGHT);
 
         confirm.setOnMouseReleased(event -> this.close());
-
-        wrap.selectedProperty().addListener(
-            (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                if (newValue) {
-                    errr.setWrapText(true);
-                } else {
-                    errr.setWrapText(false);
-                }
-            });
-
-        if (!wrap.isSelected()) {
-            wrap.fire();
-        }
+        errr.wrapTextProperty().bind(wrap.selectedProperty());
+        wrap.setSelected(false); // by default, don't wrap
 
         vbox.getChildren().add(sep);
         vbox.getChildren().add(info);
