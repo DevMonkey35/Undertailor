@@ -50,6 +50,8 @@ function pressdata:getLastReleaseTime() end
 -- If 0 is passed for time, this function returns whether or not the
 -- key had been released in the current frame.
 --
+-- @number[opt=0] time the time frame to search in
+--
 -- @return whether this key had been released within the last given
 --   seconds, or within the current frame
 --
@@ -69,6 +71,8 @@ function pressdata:getLastPressTime() end
 --
 -- If 0 is passed for time, this function returns whether or not the
 -- key had been pressed in the current frame.
+--
+-- @number[opt=0] time the time frame to search in
 --
 -- @return whether this key had been pressed within the last given
 --   seconds, or within the current frame
