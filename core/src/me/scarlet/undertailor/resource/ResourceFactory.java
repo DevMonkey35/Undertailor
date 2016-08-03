@@ -225,8 +225,13 @@ public abstract class ResourceFactory<V extends Disposable, T extends Resource<V
      */
     @SuppressWarnings("javadoc")
     public final T getResource() {
+        // We HAVE to keep this variable here inside the main scope of the method.
+        // This makes Java think the resource may potentially still be in use, and not a weak reference.
+        // Therefore, it becomes impossible for our resource handler to accidentally garbage collect the
+        //   resource before we've even finished making it.
+        T resource = null;
         if (this.reference == null || this.reference.get() == null) {
-            T resource = this.newResource();
+            resource = this.newResource();
             this.reference = new ResourceReference<>(resource, ResourceHandler.QUEUE, this);
         }
 
