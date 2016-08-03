@@ -168,7 +168,7 @@ public class PressData {
     void up() {
         this.isPressed = false;
         this.holdTime = TimeUtils.timeSinceMillis(this.holdTime);
-        this.lastReleaseTick = parent.currentTick;
+        this.lastReleaseTick = parent.currentTick + 1;
         this.lastReleaseTime = TimeUtils.millis();
     }
 
@@ -181,7 +181,7 @@ public class PressData {
     void down() {
         this.isPressed = true;
         this.holdTime = TimeUtils.millis();
-        this.lastPressTick = parent.currentTick;
+        this.lastPressTick = parent.currentTick + 1;
         this.lastPressTime = TimeUtils.millis();
     }
 }
