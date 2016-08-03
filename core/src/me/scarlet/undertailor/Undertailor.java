@@ -192,6 +192,7 @@ public class Undertailor extends ApplicationAdapter {
         File mainFile = new File(assetDir, "main.lua");
         if (mainFile.exists()) {
             try {
+                log.info("------------------ Executing main.lua script. ------------------");
                 this.assets.getScriptManager().runScript(mainFile);
             } catch (FileNotFoundException wontHappen) {
             }
