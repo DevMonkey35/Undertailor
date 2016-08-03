@@ -401,6 +401,10 @@ public class Text extends TextComponent implements Renderable {
      * @return the TextComponent owning the character
      */
     public TextComponent getTextComponentAt(int index) {
+        if(index < 0 || index >= this.getText().length()) {
+            return null;
+        }
+
         return this.components.get(this.components.lowerKey(index + 1));
     }
 
