@@ -48,6 +48,9 @@ import java.util.List;
  */
 public class TextComponent {
 
+    static final float DEFAULT_SPEED = 35.0F;
+    static final int DEFAULT_SEGMENT = 1;
+
     /**
      * Builder-type class for building {@link TextComponent}
      * s.
@@ -303,12 +306,14 @@ public class TextComponent {
 
                                 builder.setColor(Color.valueOf(value));
                             }
-                        } else if (paramType == TextParam.DELAY) {
-                            builder.setDelay(Float.valueOf(value));
-                        } else if (paramType == TextParam.SEGMENTSIZE) {
-                            builder.setSegmentSize(Integer.valueOf(value));
-                        } else if (paramType == TextParam.SPEED) {
-                            builder.setSpeed(Float.valueOf(value));
+                        } else {
+                            if (paramType == TextParam.DELAY) {
+                                builder.setDelay(Float.valueOf(value));
+                            } else if (paramType == TextParam.SEGMENTSIZE) {
+                                builder.setSegmentSize(Integer.valueOf(value));
+                            } else if (paramType == TextParam.SPEED) {
+                                builder.setSpeed(Float.valueOf(value));
+                            }
                         }
                     } catch (Exception e) {
                         logger.warn(
@@ -426,8 +431,12 @@ public class TextComponent {
      * @return the text speed for this component
      */
     public float getTextSpeed() {
-        if (this.speed <= -1 && parent != null) {
-            return this.parent.getTextSpeed();
+        if (this.speed <= -1) {
+            if(parent == null) {
+                return DEFAULT_SPEED;
+            } else {
+                return this.parent.getTextSpeed();
+            }
         }
 
         return this.speed;
@@ -441,8 +450,12 @@ public class TextComponent {
      * @return the segment size value for this component
      */
     public int getSegmentSize() {
-        if (this.segmentSize <= -1 && parent != null) {
-            return this.parent.getSegmentSize();
+        if (this.segmentSize <= -1) {
+            if(parent == null) {
+                return DEFAULT_SEGMENT;
+            } else {
+                return this.parent.getSegmentSize();
+            }
         }
 
         return this.segmentSize;
