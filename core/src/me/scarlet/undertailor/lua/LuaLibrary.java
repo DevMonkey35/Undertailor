@@ -71,7 +71,13 @@ public class LuaLibrary extends TwoArgFunction {
             this.postinit((LuaTable) env, env);
             return env;
         } else {
-            LuaTable table = new LuaTable();
+            LuaTable table;
+            if (env.get(name).istable()) {
+                table = env.get(name).checktable();
+            } else {
+                table = new LuaTable();
+            }
+
             this.inject(table);
 
             if (env != null)
