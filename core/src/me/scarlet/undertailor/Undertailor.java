@@ -89,17 +89,21 @@ public class Undertailor extends ApplicationAdapter {
         new ResourceHandler().start();
         log.info("Running Undertailor version " + Undertailor.version + "!");
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            // Don't allow more exceptions to be caught by this handler.
+            Thread.setDefaultUncaughtExceptionHandler(null);
+
             log.error("Uncaught exception. Program will close.", e);
             Platform.runLater(() -> {
                 new ErrorWindow(e).showAndWait();
                 this.exit(true);
             });
 
-            synchronized(this) {
-                while(true) {
+            synchronized (this) {
+                while (true) {
                     try {
                         this.wait();
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         });
