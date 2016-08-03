@@ -52,6 +52,7 @@ import me.scarlet.undertailor.lua.lib.BaseLib;
 import me.scarlet.undertailor.lua.lib.ColorsLib;
 import me.scarlet.undertailor.lua.lib.GameLib;
 import me.scarlet.undertailor.lua.lib.MetaLib;
+import me.scarlet.undertailor.lua.lib.OsLib;
 import me.scarlet.undertailor.lua.lib.TextsLib;
 import me.scarlet.undertailor.util.LuaUtil;
 
@@ -98,6 +99,7 @@ public class ScriptManager {
         libraries.add(new JseOsLib());
 
         libraries.add(new BaseLib());
+        libraries.add(new OsLib());
         libraries.add(new GameLib(undertailor));
         libraries.add(new ColorsLib());
         libraries.add(new TextsLib(undertailor));
