@@ -69,7 +69,7 @@ public class LuaPressDataMeta implements LuaObjectMeta {
 
         // pressData:justReleased(time)
         set("justReleased", asFunction(vargs -> {
-            return valueOf(obj(vargs).justReleased((long) (vargs.checknumber(2).tofloat() * 1000.0F)));
+            return valueOf(obj(vargs).justReleased((long) (vargs.optdouble(2, 0) * 1000.0F)));
         }));
 
         // time value converted to seconds
@@ -80,7 +80,7 @@ public class LuaPressDataMeta implements LuaObjectMeta {
 
         // pressData:justPressed(time)
         set("justPressed", asFunction(vargs -> {
-            return valueOf(obj(vargs).justPressed((long) (vargs.checknumber(2).tofloat() * 1000.0F)));
+            return valueOf(obj(vargs).justPressed((long) (vargs.optdouble(2, 0) * 1000.0F)));
         }));
 
         // time value converted to seconds
