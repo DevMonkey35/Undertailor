@@ -32,10 +32,20 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Methods">Methods</a></li>
+<li><a href="#Functions">Functions</a></li>
 </ul>
 
 
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../modules/colors.html">colors</a></li>
+  <li><a href="../modules/game.html">game</a></li>
+  <li><a href="../modules/game.audio.html">game.audio</a></li>
+  <li><a href="../modules/game.control.html">game.control</a></li>
+  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
+  <li><strong>os</strong></li>
+  <li><a href="../modules/texts.html">texts</a></li>
+</ul>
 <h2>Classes</h2>
 <ul class="$(kind=='Topics' and '' or 'nowrap'">
   <li><a href="../classes/audio.html">audio</a></li>
@@ -56,7 +66,7 @@
   <li><a href="../classes/pressdata.html">pressdata</a></li>
   <li><a href="../classes/processable.html">processable</a></li>
   <li><a href="../classes/renderable.html">renderable</a></li>
-  <li><strong>scheduler</strong></li>
+  <li><a href="../classes/scheduler.html">scheduler</a></li>
   <li><a href="../classes/sound.html">sound</a></li>
   <li><a href="../classes/sounddata.html">sounddata</a></li>
   <li><a href="../classes/sprite.html">sprite</a></li>
@@ -71,53 +81,42 @@
   <li><a href="../classes/worldobject.html">worldobject</a></li>
   <li><a href="../classes/worldroom.html">worldroom</a></li>
 </ul>
-<h2>Modules</h2>
-<ul class="$(kind=='Topics' and '' or 'nowrap'">
-  <li><a href="../modules/colors.html">colors</a></li>
-  <li><a href="../modules/game.html">game</a></li>
-  <li><a href="../modules/game.audio.html">game.audio</a></li>
-  <li><a href="../modules/game.control.html">game.control</a></li>
-  <li><a href="../modules/game.graphics.html">game.graphics</a></li>
-  <li><a href="../modules/os.html">os</a></li>
-  <li><a href="../modules/texts.html">texts</a></li>
-</ul>
 
 </div>
 
 <div id="content">
 
-<h1>Class <code>scheduler</code></h1>
-<p><a href="../classes/scheduler.html#">scheduler</a>s are one of the three main subsystems running under an
- <a href="../classes/environment.html#">environment</a>.</p>
+<h1>Module <code>os</code></h1>
+<p>An expansion of the base <a href="../modules/os.html#">os</a> library of Lua.</p>
 <p>
-<p> Used to schedule tasks to occur every frame in the
- current environment, and is the first to be processed, before
- the <a href="../classes/uicontroller.html#">uicontroller</a>.</p>
 
-<p> This class also holds the functions of the following classes:</p>
+
+<p> This library includes the functions that come with Lua's normal
+ <a href="../modules/os.html#">os</a> lib, and the functions listed below. Exceptions are the
+ following blacklisted functions:</p>
 
 <ul>
-    <li><a href="../classes/subsystem.html#">subsystem</a></li>
-    <li><a href="../classes/processable.html#">processable</a></li>
-    <li><a href="../classes/destructible.html#">destructible</a></li>
+    <li>execute</li>
+    <li>exit</li>
+    <li>remove</li>
+    <li>rename</li>
+    <li>setlocale</li>
+    <li>tmpname</li>
 </ul>
 </p>
 
 
-<h2><a href="#Methods">Methods</a></h2>
+<h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#scheduler:registerTask">scheduler:registerTask(task[, active=false])</a></td>
-	<td class="summary">Registers the provided task implementation into this <a href="../classes/scheduler.html#">scheduler</a>.</td>
+	<td class="name" nowrap><a href="#timeMillis">timeMillis()</a></td>
+	<td class="summary">Returns how much time has passed since the midnight of January 1,
+ 1970, in milliseconds.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#scheduler:cancelTask">scheduler:cancelTask(id)</a></td>
-	<td class="summary">Cancels the task with the provided ID.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#scheduler:hasTask">scheduler:hasTask(id)</a></td>
-	<td class="summary">Returns whether or not the task of the provided ID is currently
- being ran by this <a href="../classes/scheduler.html#">scheduler</a>.</td>
+	<td class="name" nowrap><a href="#sinceMillis">sinceMillis(millis)</a></td>
+	<td class="summary">Returns how much time has passed since the provided time value, in
+ milliseconds.</td>
 	</tr>
 </table>
 
@@ -125,34 +124,23 @@
 <br/>
 
 
-    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
 
     <dl class="function">
     <dt>
-    <a name = "scheduler:registerTask"></a>
-    <strong>scheduler:registerTask(task[, active=false])</strong>
+    <a name = "timeMillis"></a>
+    <strong>timeMillis()</strong>
     </dt>
     <dd>
-    Registers the provided task implementation into this <a href="../classes/scheduler.html#">scheduler</a>.
+    Returns how much time has passed since the midnight of January 1,
+ 1970, in milliseconds.
 
 
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">task</span>
-            <span class="types"><span class="type">tab</span></span>
-         the task implementation to register
-        </li>
-        <li><span class="parameter">active</span>
-            <span class="types"><span class="type">bool</span></span>
-         whether or not the task will be active
-         (<em>default</em> false)
-        </li>
-    </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        the ID of the registered
+        basically os.time(), except in milliseconds
     </ol>
 
 
@@ -160,47 +148,27 @@
 
 </dd>
     <dt>
-    <a name = "scheduler:cancelTask"></a>
-    <strong>scheduler:cancelTask(id)</strong>
+    <a name = "sinceMillis"></a>
+    <strong>sinceMillis(millis)</strong>
     </dt>
     <dd>
-    Cancels the task with the provided ID.
+    Returns how much time has passed since the provided time value, in
+ milliseconds.
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">id</span>
+        <li><span class="parameter">millis</span>
             <span class="types"><span class="type">int</span></span>
-         the ID of the task to cancel
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "scheduler:hasTask"></a>
-    <strong>scheduler:hasTask(id)</strong>
-    </dt>
-    <dd>
-    Returns whether or not the task of the provided ID is currently
- being ran by this <a href="../classes/scheduler.html#">scheduler</a>.
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">id</span>
-            <span class="types"><span class="type">int</span></span>
-         the ID of the task to query
+         a point in time, usually returned by <code>os.timeMillis()</code>
+   in milliseconds
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        whether or not the task is still being processed
+        how much time has passed since <code>time</code>
     </ol>
 
 
