@@ -155,7 +155,7 @@ function game.newUIComponent(scriptPath, ...) end
 ---
 -- Creates a new `uiobject`.
 --
--- @boolean[opt=false] if the uiobject is active
+-- @bool[opt=false] active if the uiobject is active
 --
 -- @return a uiobject
 --
