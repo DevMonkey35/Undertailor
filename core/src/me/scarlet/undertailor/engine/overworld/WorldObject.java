@@ -40,12 +40,14 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import me.scarlet.undertailor.engine.Collider;
 import me.scarlet.undertailor.engine.Destructible;
-import me.scarlet.undertailor.engine.EventListener;
 import me.scarlet.undertailor.engine.Identifiable;
 import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.Modular;
 import me.scarlet.undertailor.engine.Positionable;
 import me.scarlet.undertailor.engine.Processable;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventHelper;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
@@ -65,6 +67,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     private boolean visible;
     private boolean destroyed;
     private boolean persistent;
+    private EventHelper events;
 
     private Body body;
     private BodyDef def; // acts as a proxy object for position
@@ -95,6 +98,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
         this.groupId = -1;
         this.canCollide = true;
+        this.events = new EventHelper();
     }
 
     // ---------------- g/s object params / a whole lot of abstract method implementation god damnit ----------------
@@ -163,6 +167,13 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         Transform.setOrDefault(this.transform, transform);
     }
 
+    // -------- eventlistener --------
+
+    @Override
+    public EventHelper getEventHelper() {
+        return this.events;
+    }
+
     // ---------------- functional ----------------
     // -------- renderable --------
 
@@ -191,6 +202,17 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         }
 
         this.actor.render(drawX, drawY + height);
+    }
+
+    // -------- eventlistener --------
+
+    @Override
+    public boolean callEvent(Event event) {
+        if(this.destroyed) {
+            return false;
+        }
+
+        return this.events.processEvent(event);
     }
 
     // -------- processable --------
@@ -528,9 +550,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
      *        entrypoint
      */
     public abstract void onPersist(WorldRoom newRoom, boolean entrypoint);
-
-    @Override
-    public abstract boolean catchEvent(String eventName, Object... data);
 
     @Override
     public abstract void startCollision(Collider collider);

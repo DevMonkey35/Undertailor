@@ -35,6 +35,9 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventHelper;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.engine.scheduler.Scheduler;
 import me.scarlet.undertailor.engine.ui.UIController;
@@ -44,17 +47,19 @@ import me.scarlet.undertailor.gfx.Transform;
 /**
  * A primary system running a single game environment.
  */
-public class Environment implements Processable, Renderable, Destructible {
+public class Environment implements Processable, Renderable, Destructible, EventListener {
 
     private UIController ui;
     private Scheduler scheduler;
     private OverworldController overworld;
     private EnvironmentManager manager;
+    private EventHelper events;
     private boolean destroyed;
     private String name;
 
     public Environment(Undertailor tailor, String name) {
         this.name = name;
+        this.events = new EventHelper();
         this.manager = tailor.getEnvironmentManager();
         this.scheduler = new Scheduler(this);
         this.overworld =
@@ -64,6 +69,24 @@ public class Environment implements Processable, Renderable, Destructible {
     }
 
     // ---------------- abstract method implementation ----------------
+
+    @Override
+    public EventHelper getEventHelper() {
+        return this.events;
+    }
+
+    @Override
+    public boolean callEvent(Event event) {
+        if (this.destroyed) {
+            return false;
+        }
+
+        if (!events.processEvent(event)) {
+            return this.ui.callEvent(event) || this.overworld.callEvent(event);
+        }
+
+        return true;
+    }
 
     @Override
     public Transform getTransform() {
@@ -94,7 +117,7 @@ public class Environment implements Processable, Renderable, Destructible {
 
     @Override
     public void destroy() {
-        if(this.destroyed) {
+        if (this.destroyed) {
             return;
         }
 

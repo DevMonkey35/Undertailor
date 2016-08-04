@@ -31,14 +31,15 @@
 package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
-import static me.scarlet.undertailor.util.LuaUtil.asJavaVargs;
 import static org.luaj.vm2.LuaValue.NIL;
+import static org.luaj.vm2.LuaValue.valueOf;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
-import me.scarlet.undertailor.engine.EventListener;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
@@ -56,15 +57,25 @@ public class LuaEventListenerMeta implements LuaObjectMeta {
     static EventListener obj(Varargs args) {
         return convert(args.arg1()).getObject();
     }
-    
+
     private LuaTable metatable;
-    
+
     public LuaEventListenerMeta() {
         this.metatable = new LuaTable();
 
-        // eventListener:catch(eventName, ...)
-        set("catchEvent", asFunction(vargs -> {
-            obj(vargs).catchEvent(vargs.checkjstring(2), asJavaVargs(vargs.subargs(3)));
+        // eventListener:callEvent(event)
+        set("callEvent", asFunction(vargs -> {
+            Event event = Event.asLuaEvent(vargs.checktable(2).unpack());
+            return valueOf(obj(vargs).callEvent(event));
+        }));
+
+        // eventListener:onEvent(eventId, handler)
+        set("onEvent", asFunction(vargs -> {
+            obj(vargs).getEventHelper().registerHandler(vargs.checkjstring(2), event -> {
+                return vargs.checkfunction(3).invoke(event.asLua().unpack().subargs(2))
+                    .toboolean(1);
+            });
+
             return NIL;
         }));
     }

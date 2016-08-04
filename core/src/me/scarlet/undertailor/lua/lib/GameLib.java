@@ -41,6 +41,7 @@ import org.luaj.vm2.LuaValue;
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.EnvironmentManager;
+import me.scarlet.undertailor.engine.events.Event;
 import me.scarlet.undertailor.engine.ui.UIObject;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.ScriptManager;
@@ -112,6 +113,22 @@ public class GameLib extends LuaLibrary {
                 Environment env = LuaEnvironmentMeta.convert(vargs.checknotnil(1)).getObject();
                 envMan.setActiveEnvironment(env);
             }
+
+            return NIL;
+        }));
+
+        // game.callEvent(event)
+        set("callEvent", asFunction(vargs -> {
+            Event event = Event.asLuaEvent(vargs.checktable(1).unpack());
+            return valueOf(envMan.callEvent(event));
+        }));
+
+        // game.onEvent(eventId, handler)
+        set("onEvent", asFunction(vargs -> {
+            envMan.getEventHelper().registerHandler(vargs.checkjstring(1), event -> {
+                return vargs.checkfunction(2).invoke(event.asLua().unpack().subargs(2))
+                    .toboolean(1);
+            });
 
             return NIL;
         }));

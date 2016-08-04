@@ -38,6 +38,9 @@ import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.Subsystem;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventHelper;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
@@ -52,13 +55,15 @@ import java.util.TreeMap;
  * Subsystem within an {@link Environment} running the
  * processes of a user interface.
  */
-public class UIController implements Processable, Renderable, Destructible, Subsystem {
+public class UIController
+    implements Processable, Renderable, Destructible, Subsystem, EventListener {
 
     static final Logger log = LoggerFactory.getLogger(UIController.class);
 
     private boolean destroyed;
 
     private Set<Long> removed;
+    private EventHelper events;
     private MultiRenderer renderer;
     private Environment environment;
     private OrthographicCamera camera;
@@ -70,6 +75,7 @@ public class UIController implements Processable, Renderable, Destructible, Subs
         this.renderer = renderer;
         this.environment = parent;
         this.removed = new HashSet<>();
+        this.events = new EventHelper();
         this.camera = new OrthographicCamera(OverworldController.RENDER_WIDTH,
             OverworldController.RENDER_HEIGHT);
         this.camera.position.x += OverworldController.RENDER_WIDTH / 2F;
@@ -78,6 +84,37 @@ public class UIController implements Processable, Renderable, Destructible, Subs
 
         this.aObj = new TreeMap<>(Long::compare);
         this.bObj = new TreeMap<>(Long::compare);
+    }
+
+    @Override
+    public EventHelper getEventHelper() {
+        return this.events;
+    }
+
+    @Override
+    public boolean callEvent(Event event) {
+        if (this.destroyed) {
+            return false;
+        }
+
+        if (!this.events.processEvent(event)) {
+            boolean processed = false;
+            for (UIObject obj : aObj.values()) {
+                if (obj.callEvent(event)) {
+                    processed = true;
+                }
+            }
+
+            for (UIObject obj : bObj.values()) {
+                if (obj.callEvent(event)) {
+                    processed = true;
+                }
+            }
+
+            return processed;
+        }
+
+        return true;
     }
 
     @Override

@@ -41,6 +41,9 @@ import me.scarlet.undertailor.engine.Destructible;
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.Subsystem;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventHelper;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.engine.scheduler.Scheduler;
 import me.scarlet.undertailor.engine.scheduler.Task;
 import me.scarlet.undertailor.gfx.MultiRenderer;
@@ -55,7 +58,7 @@ import java.util.Set;
  * Subsystem within an {@link Environment} running the
  * processes of an overworld.
  */
-public class OverworldController implements Processable, Renderable, Subsystem, Destructible {
+public class OverworldController implements Processable, Renderable, Subsystem, Destructible, EventListener {
 
     static final Logger log = LoggerFactory.getLogger(OverworldController.class);
     public static final float PIXELS_TO_METERS = 0.025F;
@@ -68,6 +71,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     private MultiRenderer renderer;
     private Environment environment;
     private OverworldCamera camera;
+    private EventHelper events;
     private Viewport viewport;
 
     // overworld-related
@@ -78,6 +82,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     private WorldRoom room;
 
     public OverworldController(MultiRenderer renderer, Environment environment, Viewport viewport) {
+        this.events = new EventHelper();
         this.camera = new OverworldCamera(this);
         this.collision = new CollisionHandler(camera, true);
         this.transitions = new Pair<>();
@@ -91,6 +96,24 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     }
 
     // ---------------- abstract method implementation ----------------
+
+    @Override
+    public EventHelper getEventHelper() {
+        return this.events;
+    }
+
+    @Override
+    public boolean callEvent(Event event) {
+        if(this.destroyed) {
+            return false;
+        }
+
+        if(!this.events.processEvent(event)) {
+            return this.room.callEvent(event);
+        }
+
+        return true;
+    }
 
     @Override
     public Environment getEnvironment() {

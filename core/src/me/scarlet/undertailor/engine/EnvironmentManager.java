@@ -36,6 +36,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import me.scarlet.undertailor.LaunchOptions.ViewportType;
 import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventHelper;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.engine.scheduler.Scheduler;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
@@ -50,6 +53,7 @@ import java.util.Map.Entry;
 public class EnvironmentManager implements EventListener, Processable, Renderable {
 
     private Undertailor tailor;
+    private EventHelper events;
     private Scheduler globalSched;
     private String activeEnvironment;
     private Map<String, Environment> environments;
@@ -58,6 +62,7 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     public EnvironmentManager(Undertailor tailor) {
         this.tailor = tailor;
         this.activeEnvironment = null;
+        this.events = new EventHelper();
         this.environments = new HashMap<>();
         this.globalSched = new Scheduler(null);
 
@@ -76,8 +81,21 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     public void setTransform(Transform transform) {}
 
     @Override
-    public boolean catchEvent(String eventName, Object... data) {
-        return false;
+    public EventHelper getEventHelper() {
+        return this.events;
+    }
+
+    @Override
+    public boolean callEvent(Event event) {
+        if (!events.processEvent(event)) {
+            if(this.getActiveEnvironment() != null) {
+                return this.getActiveEnvironment().callEvent(event);
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     @Override

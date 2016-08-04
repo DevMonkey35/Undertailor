@@ -28,7 +28,7 @@
  * IN THE SOFTWARE.
  */
 
-package me.scarlet.undertailor.engine;
+package me.scarlet.undertailor.engine.events;
 
 /**
  * Skeleton implementation for classes that are able to
@@ -37,18 +37,28 @@ package me.scarlet.undertailor.engine;
 public interface EventListener {
 
     /**
-     * Catches and processes an event.
+     * Returns the {@link EventHelper} managing and
+     * processing events for this {@link EventListener}.
      * 
-     * <p>The return value represents whether or not the
-     * event has been "consumed" by this process method,
-     * that is, whether or not the event should continue to
-     * be passed down the chain of event receivers.</p>
-     * 
-     * @param eventName the name of the event
-     * @param data the data associated with the event
-     * 
-     * @return whether or not the event should continue to
-     *         the next listener
+     * @return this EventListener's helper
      */
-    boolean catchEvent(String eventName, Object... data);
+    EventHelper getEventHelper();
+
+    /**
+     * Processes the provided {@link Event}.
+     * 
+     * <p>This is the primary method for anything that
+     * supports event handling. It is in this method where
+     * an {@link EventListener} processes the given event
+     * and then decides whether or not it should be passed
+     * down its event chain. The return value presents
+     * whether or not the provided Event was ever processed
+     * by any event handler, including the ones farther down
+     * this listener's chain.</p>
+     * 
+     * @param event the Event to process
+     * 
+     * @return if the event was ever processed
+     */
+    public boolean callEvent(Event event);
 }

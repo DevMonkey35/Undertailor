@@ -33,10 +33,12 @@ package me.scarlet.undertailor.engine.ui;
 import com.badlogic.gdx.math.Vector2;
 
 import me.scarlet.undertailor.engine.Destructible;
-import me.scarlet.undertailor.engine.EventListener;
 import me.scarlet.undertailor.engine.Modular;
 import me.scarlet.undertailor.engine.Positionable;
 import me.scarlet.undertailor.engine.Processable;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventHelper;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
@@ -48,6 +50,7 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
     Modular<UIObject>, Destructible {
 
     private boolean destroyed;
+    private EventHelper events;
     private Transform transform;
     private Vector2 screenProxy;
     private Vector2 position;
@@ -57,8 +60,23 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
         this.screenProxy = new Vector2();
         this.transform = new Transform();
         this.position = new Vector2(0, 0);
+        this.events = new EventHelper();
         this.destroyed = false;
         this.parent = null;
+    }
+
+    @Override
+    public EventHelper getEventHelper() {
+        return this.events;
+    }
+
+    @Override
+    public boolean callEvent(Event event) {
+        if(this.destroyed) {
+            return false;
+        }
+
+        return this.events.processEvent(event);
     }
 
     @Override
@@ -145,9 +163,6 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
      * @param parent the parent UIObject
      */
     public abstract void onClaim(UIObject parent);
-
-    @Override
-    public abstract boolean catchEvent(String eventName, Object... data);
 
     @Override
     public abstract void render(float x, float y, Transform transform);

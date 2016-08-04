@@ -39,13 +39,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.engine.Destructible;
-import me.scarlet.undertailor.engine.EventListener;
 import me.scarlet.undertailor.engine.Identifiable;
 import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.Modular;
 import me.scarlet.undertailor.engine.Positionable;
 import me.scarlet.undertailor.engine.PotentialDelay;
 import me.scarlet.undertailor.engine.Processable;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventHelper;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.engine.overworld.map.TileLayer;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
@@ -109,6 +111,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     // primary
     private boolean destroyed;
     protected Tilemap tilemap;
+    private EventHelper events;
     private Set<WorldObject> obj;
     private OverworldController controller;
     private Map<String, Entrypoint> entrypoints;
@@ -118,6 +121,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     public WorldRoom(Tilemap map) {
         this.destroyed = false;
         this.prepared = false;
+        this.events = new EventHelper();
         this.bodyQueue = new HashSet<>();
         this.entrypointQueue = new HashSet<>();
 
@@ -130,6 +134,31 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     }
 
     // ---------------- abstract method implementation ----------------
+
+    @Override
+    public EventHelper getEventHelper() {
+        return this.events;
+    }
+
+    @Override
+    public boolean callEvent(Event event) {
+        if(this.destroyed) {
+            return false;
+        }
+
+        if (!this.events.processEvent(event)) {
+            boolean processed = false;
+            for (WorldObject obj : this.obj) {
+                if (obj.callEvent(event)) {
+                    processed = true;
+                }
+            }
+
+            return processed;
+        }
+
+        return true;
+    }
 
     @Override
     public Transform getTransform() {
@@ -545,9 +574,6 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     }
 
     // ---------------- abstract definitions ----------------
-
-    @Override
-    public abstract boolean catchEvent(String eventName, Object... data);
 
     /**
      * Called before processing the rest of the room.

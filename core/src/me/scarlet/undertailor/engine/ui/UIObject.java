@@ -36,11 +36,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.engine.Destructible;
-import me.scarlet.undertailor.engine.EventListener;
 import me.scarlet.undertailor.engine.Identifiable;
 import me.scarlet.undertailor.engine.Modular;
 import me.scarlet.undertailor.engine.Positionable;
 import me.scarlet.undertailor.engine.Processable;
+import me.scarlet.undertailor.engine.events.Event;
+import me.scarlet.undertailor.engine.events.EventHelper;
+import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
@@ -68,6 +70,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     private boolean active;
     private Vector2 position;
     private boolean destroyed;
+    private EventHelper events;
     private UIController parent;
     private List<UIComponent> components;
 
@@ -79,8 +82,34 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
 
         this.parent = null;
         this.destroyed = false;
+        this.events = new EventHelper();
         this.position = new Vector2(0, 0);
         this.components = new ArrayList<>();
+    }
+
+    @Override
+    public EventHelper getEventHelper() {
+        return this.events;
+    }
+
+    @Override
+    public boolean callEvent(Event event) {
+        if (this.destroyed) {
+            return false;
+        }
+
+        if (!this.events.processEvent(event)) {
+            boolean processed = false;
+            for (UIComponent comp : this.components) {
+                if (comp.callEvent(event)) {
+                    processed = true;
+                }
+            }
+
+            return processed;
+        }
+
+        return true;
     }
 
     @Override
@@ -179,11 +208,6 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
             return processed.process();
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean catchEvent(String eventName, Object... data) {
         return false;
     }
 

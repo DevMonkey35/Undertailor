@@ -51,7 +51,6 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
 
     public static final String FUNC_CREATE = "create";
     public static final String FUNC_PROCESS = "process";
-    public static final String FUNC_CATCHEVENT = "catchEvent";
     public static final String FUNC_STARTCOLLISION = "startCollision";
     public static final String FUNC_ENDCOLLISION = "endCollision";
     public static final String FUNC_PRERENDER = "preRender";
@@ -109,15 +108,6 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
         }
 
         return false;
-    }
-
-    @Override
-    public boolean catchEvent(String eventName, Object... data) {
-        if (this.hasFunction(FUNC_CATCHEVENT)) {
-            return this.invokeSelf(FUNC_CATCHEVENT, LuaUtil.varargsOf(data)).toboolean(1);
-        }
-
-        return true;
     }
 
     @Override

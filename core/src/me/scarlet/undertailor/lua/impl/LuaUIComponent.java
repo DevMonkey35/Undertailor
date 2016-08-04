@@ -53,7 +53,6 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
     public static final String FUNC_RENDER = "render";
     public static final String FUNC_PROCESS = "process";
     public static final String FUNC_ONCLAIM = "onClaim";
-    public static final String FUNC_CATCHEVENT = "catchEvent";
 
     private LuaObjectValue<UIComponent> luaObj;
 
@@ -107,14 +106,5 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
         if (this.hasFunction(FUNC_RENDER)) {
             this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y), orNil(transform));
         }
-    }
-
-    @Override
-    public boolean catchEvent(String eventName, Object... data) {
-        if (this.hasFunction(FUNC_CATCHEVENT)) {
-            return this.invokeSelf(FUNC_CATCHEVENT, LuaUtil.varargsOf(data)).toboolean(1);
-        }
-
-        return true;
     }
 }

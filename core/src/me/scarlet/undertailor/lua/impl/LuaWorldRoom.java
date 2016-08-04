@@ -51,7 +51,6 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
 
     public static final String FUNC_CREATE = "create";
     public static final String FUNC_PROCESS = "process";
-    public static final String FUNC_CATCHEVENT = "catchEvent";
 
     private LuaObjectValue<WorldRoom> luaObj;
 
@@ -101,14 +100,5 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
         if (this.hasFunction(FUNC_PROCESS)) {
             this.invokeSelf(FUNC_PROCESS);
         }
-    }
-
-    @Override
-    public boolean catchEvent(String eventName, Object... data) {
-        if (this.hasFunction(FUNC_CATCHEVENT)) {
-            return this.invokeSelf(FUNC_CATCHEVENT, LuaUtil.varargsOf(data)).toboolean(1);
-        }
-
-        return false;
     }
 }
