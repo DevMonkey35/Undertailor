@@ -175,7 +175,7 @@ public class LuaUtil {
                 continue;
             }
 
-            if(obj instanceof LuaValue) {
+            if (obj instanceof LuaValue) {
                 vargs[i] = (LuaValue) obj;
             } else if (NumberUtil.isNumber(obj)) {
                 vargs[i] = LuaValue.valueOf((double) obj);
@@ -196,6 +196,8 @@ public class LuaUtil {
      * versions of the values within the provided
      * {@link Varargs}.
      * 
+     * <p>Note that tables are not converted.</p>
+     * 
      * @param vargs the Varargs to process
      * 
      * @return a new Object array containing Java variants
@@ -212,6 +214,8 @@ public class LuaUtil {
                     obj[i] = arg.todouble();
                 } else if (arg.isboolean()) {
                     obj[i] = arg.toboolean();
+                } else if (arg.istable()) {
+                    obj[i] = arg;
                 } else {
                     obj[i] = arg.tojstring();
                 }
