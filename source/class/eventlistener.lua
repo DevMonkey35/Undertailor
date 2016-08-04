@@ -34,10 +34,45 @@
 local eventlistener = {}
 
 ---
--- Pokes this `eventlistener` with an occurence of the given name and
--- associated data.
+-- Pokes this `eventlistener` with an occurrence of the given event,
+-- and returns true if any response was generated.
 --
--- @string eventName the name of the event
--- @tparam vargs ... eventdata
+-- In their initial form, events are tables. When passing a new event
+-- to this function, it should be presented as an array table holding
+-- the ID of the event, followed by any of its parameters.
 --
-function eventlistener.catchEvent(eventName, ...) end
+-- @usage
+--   local listener -- our listener
+--   local event = {"myEvent", "param1"}
+--
+--   -- any handlers listening for "myEvent" will be triggered
+--   listener:callEvent(event)
+--
+-- @tparam table event the event
+--
+-- @return if any handler responded to the event and processed it
+--
+function eventlistener:callEvent(event) end
+
+---
+-- Registers a new handler for the specified event type ID.
+--
+-- Handlers are functions, receiving whether or not the event being
+-- provided had previously been processed by another handler (a
+-- handler before them returned true), followed by the parameters
+-- associated with the event.
+--
+-- The following example continues off of the one seen in
+-- `eventlistener:callEvent`.
+--
+-- @usage
+--   local listener -- our listener
+--
+--   listener:onEvent("myEvent", function(processed, p1)
+--     print(p1) -- will print param1
+--   end)
+--
+-- @string eventId the event type ID to add a new handler for
+-- @function handler the handler of the event
+--
+function eventlistener:onEvent(eventId, handler) end
