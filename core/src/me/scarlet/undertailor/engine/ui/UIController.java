@@ -97,24 +97,24 @@ public class UIController
             return false;
         }
 
-        if (!this.events.processEvent(event)) {
-            boolean processed = false;
-            for (UIObject obj : aObj.values()) {
-                if (obj.callEvent(event)) {
-                    processed = true;
-                }
-            }
-
-            for (UIObject obj : bObj.values()) {
-                if (obj.callEvent(event)) {
-                    processed = true;
-                }
-            }
-
-            return processed;
+        boolean processed = false;
+        if (this.events.processEvent(event)) {
+            processed = true;
         }
 
-        return true;
+        for (UIObject obj : aObj.values()) {
+            if (obj.callEvent(event)) {
+                processed = true;
+            }
+        }
+
+        for (UIObject obj : bObj.values()) {
+            if (obj.callEvent(event)) {
+                processed = true;
+            }
+        }
+
+        return processed;
     }
 
     @Override

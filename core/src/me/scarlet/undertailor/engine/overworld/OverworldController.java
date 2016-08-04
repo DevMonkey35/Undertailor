@@ -108,11 +108,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
             return false;
         }
 
-        if(!this.events.processEvent(event)) {
-            return this.room.callEvent(event);
-        }
-
-        return true;
+        return this.events.processEvent(event) || this.room.callEvent(event);
     }
 
     @Override

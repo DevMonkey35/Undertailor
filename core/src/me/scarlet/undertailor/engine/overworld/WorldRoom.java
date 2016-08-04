@@ -142,22 +142,22 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
 
     @Override
     public boolean callEvent(Event event) {
-        if(this.destroyed) {
+        if (this.destroyed) {
             return false;
         }
 
-        if (!this.events.processEvent(event)) {
-            boolean processed = false;
-            for (WorldObject obj : this.obj) {
-                if (obj.callEvent(event)) {
-                    processed = true;
-                }
-            }
-
-            return processed;
+        boolean processed = false;
+        if (this.events.processEvent(event)) {
+            processed = true;
         }
 
-        return true;
+        for (WorldObject obj : this.obj) {
+            if (obj.callEvent(event)) {
+                processed = true;
+            }
+        }
+
+        return processed;
     }
 
     @Override

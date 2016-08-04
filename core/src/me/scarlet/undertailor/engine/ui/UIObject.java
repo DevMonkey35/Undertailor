@@ -98,18 +98,18 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
             return false;
         }
 
-        if (!this.events.processEvent(event)) {
-            boolean processed = false;
-            for (UIComponent comp : this.components) {
-                if (comp.callEvent(event)) {
-                    processed = true;
-                }
-            }
-
-            return processed;
+        boolean processed = false;
+        if (this.events.processEvent(event)) {
+            processed = true;
         }
 
-        return true;
+        for (UIComponent comp : this.components) {
+            if (comp.callEvent(event)) {
+                processed = true;
+            }
+        }
+
+        return processed;
     }
 
     @Override

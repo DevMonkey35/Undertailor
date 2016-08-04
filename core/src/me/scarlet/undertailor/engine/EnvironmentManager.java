@@ -87,15 +87,23 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
 
     @Override
     public boolean callEvent(Event event) {
-        if (!events.processEvent(event)) {
-            if(this.getActiveEnvironment() != null) {
-                return this.getActiveEnvironment().callEvent(event);
-            }
-
-            return false;
+        boolean processed = false;
+        if (events.processEvent(event)) {
+            processed = true;
         }
 
-        return true;
+        // make sure the active environment gets the event first
+        if (this.getActiveEnvironment() != null) {
+            return this.getActiveEnvironment().callEvent(event);
+        }
+
+        for (Environment env : this.environments.values()) {
+            if (!env.equals(this.getActiveEnvironment()) && env.callEvent(event)) {
+                processed = true;
+            }
+        }
+
+        return processed;
     }
 
     @Override

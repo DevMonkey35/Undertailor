@@ -81,11 +81,7 @@ public class Environment implements Processable, Renderable, Destructible, Event
             return false;
         }
 
-        if (!events.processEvent(event)) {
-            return this.ui.callEvent(event) || this.overworld.callEvent(event);
-        }
-
-        return true;
+        return this.events.processEvent(event) || this.ui.callEvent(event) || this.overworld.callEvent(event);
     }
 
     @Override
