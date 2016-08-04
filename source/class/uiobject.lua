@@ -45,6 +45,13 @@
 local uio = {}
 
 ---
+-- Returns whether or not this `uiobject` is active.
+--
+-- @return if this uiobject is active
+--
+function uio:isActive() end
+
+---
 -- Returns the maximum lifetime this `uiobject` will live upon
 -- registration, in seconds. A value of 0 or less indicates an
 -- infinite lifetime.

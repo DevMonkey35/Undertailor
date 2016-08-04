@@ -59,10 +59,8 @@ function uicon:getUIObject(id) end
 -- Registers the provided `uiobject` into this `uicontroller`.
 --
 -- @tparam uiobject object the uiobject to register
--- @bool active[opt=false] whether or not the object is an active
---   object
 --
-function uicon:registerUIObject(object, active) end
+function uicon:registerUIObject(object) end
 
 ---
 -- Removes the `uiobject` owning the specified ID, if registered with

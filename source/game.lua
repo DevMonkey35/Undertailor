@@ -155,9 +155,11 @@ function game.newUIComponent(scriptPath, ...) end
 ---
 -- Creates a new `uiobject`.
 --
+-- @boolean[opt=false] if the uiobject is active
+--
 -- @return a uiobject
 --
-function game.newUIObject() end
+function game.newUIObject(active) end
 
 ---
 -- Creates a new `renderable`, implemented by the script at the
