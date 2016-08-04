@@ -63,6 +63,11 @@ public class LuaUIObjectMeta implements LuaObjectMeta {
     public LuaUIObjectMeta() {
         this.metatable = new LuaTable();
 
+        // uiObject:isActive()
+        set("isActive", asFunction(vargs -> {
+            return valueOf(obj(vargs).isActive());
+        }));
+
         // uiObject:getMaxLifetime()
         // Converts time unit to seconds.
         set("getMaxLifetime", asFunction(vargs -> {

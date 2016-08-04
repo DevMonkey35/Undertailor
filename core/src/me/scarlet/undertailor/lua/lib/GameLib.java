@@ -168,9 +168,9 @@ public class GameLib extends LuaLibrary {
             return obj.getObjectValue();
         }));
 
-        // game.newUIObject()
+        // game.newUIObject([active])
         set("newUIObject", asFunction(vargs -> {
-            return orNil(new UIObject());
+            return orNil(new UIObject(vargs.optboolean(1, false)));
         }));
 
         // game.newRenderable([scriptPath, params])

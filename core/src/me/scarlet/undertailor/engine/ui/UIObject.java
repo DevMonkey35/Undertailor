@@ -52,8 +52,8 @@ import java.util.List;
  * Container class for a set of {@link UIComponent}s working
  * together.
  */
-public class UIObject implements Identifiable, Processable, Renderable, EventListener, Positionable, Destructible,
-    Modular<UIController> {
+public class UIObject implements Identifiable, Processable, Renderable, EventListener, Positionable,
+    Destructible, Modular<UIController> {
 
     static long objId;
     static final Logger log = LoggerFactory.getLogger(UIObject.class);
@@ -65,15 +65,18 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     private long id;
     private long lifetime;
     private long lifestart;
+    private boolean active;
     private Vector2 position;
     private boolean destroyed;
     private UIController parent;
     private List<UIComponent> components;
 
-    public UIObject() {
+    public UIObject(boolean active) {
         this.id = objId++;
         this.lifetime = -1;
         this.lifestart = -1;
+        this.active = active;
+
         this.parent = null;
         this.destroyed = false;
         this.position = new Vector2(0, 0);
@@ -156,7 +159,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
             this.lifestart = TimeUtils.millis();
         }
 
-        if(this.isPastLifetime()) {
+        if (this.isPastLifetime()) {
             this.destroy();
             return false;
         }
@@ -185,6 +188,16 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     }
 
     // ---------------- object ----------------
+
+    /**
+     * Returns whether or not this {@link UIObject} is
+     * considered "active."
+     * 
+     * @return if this UIObject is active
+     */
+    public boolean isActive() {
+        return this.active;
+    }
 
     /**
      * Returns the maximum lifetime, in milliseconds for
@@ -221,11 +234,11 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
      * @return if this UIObject is past its max lifetime
      */
     public boolean isPastLifetime() {
-        if(this.lifetime <= 0) {
+        if (this.lifetime <= 0) {
             return false;
         }
 
-        if(this.lifestart <= 0) {
+        if (this.lifestart <= 0) {
             return false;
         }
 
@@ -243,7 +256,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
      * @return the current lifetime of this UIObject
      */
     public long getLifetime() {
-        if(this.lifestart < 0) {
+        if (this.lifestart < 0) {
             return 0;
         }
 
@@ -288,7 +301,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
      * {@link UIController#removeUIObject(UIObject)}.</p>
      */
     public void remove() {
-        if(this.parent != null) {
+        if (this.parent != null) {
             this.parent.removeUIObject(this);
         }
     }

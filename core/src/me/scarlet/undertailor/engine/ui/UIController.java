@@ -166,9 +166,8 @@ public class UIController implements Processable, Renderable, Destructible, Subs
      * {@link UIController}.
      * 
      * @param obj the UIObject to register
-     * @param active whether or not the UIObject is "active"
      */
-    public long registerUIObject(UIObject obj, boolean active) {
+    public long registerUIObject(UIObject obj) {
         if (this.destroyed) {
             return -1;
         }
@@ -179,7 +178,7 @@ public class UIController implements Processable, Renderable, Destructible, Subs
             return -1;
         }
 
-        if (active) {
+        if (obj.isActive()) {
             this.aObj.put(obj.getId(), obj);
         } else {
             this.bObj.put(obj.getId(), obj);

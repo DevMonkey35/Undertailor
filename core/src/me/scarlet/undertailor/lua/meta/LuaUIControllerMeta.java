@@ -69,11 +69,10 @@ public class LuaUIControllerMeta implements LuaObjectMeta {
             return orNil(obj(vargs).getUIObject(vargs.checklong(2)));
         }));
 
-        // controller:registerUIObject(object[, active])
+        // controller:registerUIObject(object)
         set("registerUIObject", asFunction(vargs -> {
             UIObject object = LuaUIObjectMeta.convert(vargs.checknotnil(2)).getObject();
-            boolean active = vargs.optboolean(3, false);
-            return valueOf(obj(vargs).registerUIObject(object, active));
+            return valueOf(obj(vargs).registerUIObject(object));
         }));
 
         // controller:removeUIObject(id)
