@@ -181,7 +181,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     }
 
     @Override
-    public final boolean process(Object... params) {
+    public final boolean process() {
         this.processRoom();
         Iterator<WorldObject> iter = obj.iterator();
         while (iter.hasNext()) {
@@ -189,7 +189,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
             if (next.isDestroyed()) {
                 iter.remove();
             } else {
-                next.process(params);
+                next.process();
             }
         }
 

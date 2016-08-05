@@ -99,7 +99,7 @@ public class Environment implements Processable, Renderable, Destructible, Event
     }
 
     @Override
-    public boolean process(Object... params) {
+    public boolean process() {
         scheduler.process();
         ui.process();
         overworld.process();

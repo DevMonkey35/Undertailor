@@ -31,7 +31,6 @@
 package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
-import static me.scarlet.undertailor.util.LuaUtil.asJavaVargs;
 import static org.luaj.vm2.LuaValue.NIL;
 
 import org.luaj.vm2.LuaTable;
@@ -62,9 +61,9 @@ public class LuaProcessableMeta implements LuaObjectMeta {
     public LuaProcessableMeta() {
         this.metatable = new LuaTable();
 
-        // processable:process(...)
+        // processable:process()
         set("process", asFunction(vargs -> {
-            obj(vargs).process(asJavaVargs(vargs.subargs(2)));
+            obj(vargs).process();
             return NIL;
         }));
     }

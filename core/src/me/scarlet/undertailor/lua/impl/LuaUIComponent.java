@@ -93,7 +93,7 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
     }
 
     @Override
-    protected boolean processComponent(Object... params) {
+    protected boolean processComponent() {
         if (this.hasFunction(FUNC_PROCESS)) {
             return this.invokeSelf(FUNC_PROCESS).toboolean(1);
         }

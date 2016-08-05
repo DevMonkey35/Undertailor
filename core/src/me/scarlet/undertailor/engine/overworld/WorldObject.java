@@ -218,12 +218,12 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     // -------- processable --------
 
     @Override
-    public final boolean process(Object... params) {
+    public final boolean process() {
         if (this.destroyed) {
             return false;
         }
 
-        return this.processObject(params);
+        return this.processObject();
     }
 
     // -------- destructible --------
@@ -533,11 +533,9 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
      * Executes the routine processing of this
      * {@link WorldObject}.
      * 
-     * @param params generic parameters
-     * 
      * @return generic return value
      */
-    public abstract boolean processObject(Object... params);
+    public abstract boolean processObject();
 
     /**
      * Called when this {@link WorldObject} is currently

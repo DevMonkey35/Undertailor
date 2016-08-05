@@ -36,7 +36,6 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
 import me.scarlet.undertailor.engine.Processable;
-import me.scarlet.undertailor.util.LuaUtil;
 
 /**
  * Functional class used to perform a task to run across
@@ -68,7 +67,7 @@ public interface Task extends Processable {
      * 
      * <pre>
      * "name": {@link #getName()},
-     * "process": {@link #process(Object...)},
+     * "process": {@link #process()},
      * "onFinish": {@link #onFinish(boolean)}
      * </pre>
      * 
@@ -85,8 +84,8 @@ public interface Task extends Processable {
      */
     public static Task asLuaTask(LuaValue value) {
         if(value.isfunction()) {
-            return (params) -> {
-                return value.invoke(LuaUtil.varargsOf(params)).toboolean(1);
+            return () -> {
+                return value.invoke().toboolean(1);
             };
         } else if(value.istable()) {
             LuaTable table = value.checktable();
@@ -97,8 +96,8 @@ public interface Task extends Processable {
                 }
 
                 @Override
-                public boolean process(Object... params) {
-                    return table.get(FUNC_PROCESS).checkfunction().invoke(table, LuaUtil.varargsOf(params)).toboolean(1);
+                public boolean process() {
+                    return table.get(FUNC_PROCESS).checkfunction().invoke(table).toboolean(1);
                 }
 
                 @Override
@@ -125,7 +124,7 @@ public interface Task extends Processable {
 
     /**
      * Called when this {@link Task} finishes (when
-     * {@link #process(Object...)} returns false).
+     * {@link #process()} returns false).
      * 
      * @param forced if the task was ended preemptively by
      *        means of an error or a scheduler call
@@ -144,5 +143,5 @@ public interface Task extends Processable {
      *         frame
      */
     @Override
-    boolean process(Object... params);
+    boolean process();
 }

@@ -40,9 +40,7 @@ public interface Processable {
      * Processes this {@link Processable} object for the
      * current frame.
      * 
-     * @param params generic parameters
-     * 
      * @return generic return value
      */
-    public boolean process(Object... params);
+    public boolean process();
 }

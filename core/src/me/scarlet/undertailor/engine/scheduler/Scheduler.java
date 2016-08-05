@@ -77,7 +77,7 @@ public class Scheduler implements Processable, Subsystem, Destructible {
     }
 
     @Override
-    public boolean process(Object... params) {
+    public boolean process() {
         Iterator<Entry<Long, Task>> iterator = tasks.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<Long, Task> entry = iterator.next();

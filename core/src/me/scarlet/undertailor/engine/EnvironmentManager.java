@@ -107,11 +107,11 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     }
 
     @Override
-    public boolean process(Object... params) {
-        this.globalSched.process(params);
+    public boolean process() {
+        this.globalSched.process();
         Environment active = this.getActiveEnvironment();
         if (active != null) {
-            return active.process(params);
+            return active.process();
         }
 
         return false;

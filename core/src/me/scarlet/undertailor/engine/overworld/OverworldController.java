@@ -142,13 +142,13 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     }
 
     @Override
-    public boolean process(Object... params) {
+    public boolean process() {
         this.collision.step(Gdx.graphics.getRawDeltaTime());
         if (this.room != null) {
             if (this.room.isDestroyed()) {
                 this.room = null;
             } else {
-                this.room.process(params);
+                this.room.process();
             }
         }
 
@@ -306,7 +306,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
                 this.persistent = new HashSet<>();
             }
 
-            public boolean process(Object... params) {
+            public boolean process() {
                 if (!set) {
                     if (OverworldController.this.room != null) {
                         OverworldController.this.room.getObjects().forEach(obj -> {

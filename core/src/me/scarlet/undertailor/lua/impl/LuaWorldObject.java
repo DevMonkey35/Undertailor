@@ -102,7 +102,7 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
     }
 
     @Override
-    public boolean processObject(Object... params) {
+    public boolean processObject() {
         if (this.hasFunction(FUNC_PROCESS)) {
             return this.invokeSelf(FUNC_PROCESS).toboolean(1);
         }

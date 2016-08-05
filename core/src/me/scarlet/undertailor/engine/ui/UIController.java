@@ -123,7 +123,7 @@ public class UIController
     }
 
     @Override
-    public boolean process(Object... params) {
+    public boolean process() {
         if (!this.destroyed) {
             Iterator<UIObject> iter = bObj.values().iterator();
             while (iter.hasNext()) {
@@ -131,7 +131,7 @@ public class UIController
                 if (next.isDestroyed() || this.removed.contains(next.getId())) {
                     iter.remove();
                 } else {
-                    next.process(params);
+                    next.process();
                 }
             }
 
@@ -147,7 +147,7 @@ public class UIController
             }
 
             if (processed != null) {
-                processed.process(params);
+                processed.process();
             }
 
             return true;

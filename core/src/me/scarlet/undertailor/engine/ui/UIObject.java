@@ -179,7 +179,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     }
 
     @Override
-    public boolean process(Object... params) {
+    public boolean process() {
         if (this.destroyed) {
             return false;
         }

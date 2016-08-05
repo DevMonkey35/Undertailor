@@ -136,9 +136,9 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
     }
 
     @Override
-    public final boolean process(Object... params) {
+    public final boolean process() {
         if (!this.destroyed) {
-            return this.processComponent(params);
+            return this.processComponent();
         }
 
         return false;
@@ -154,7 +154,7 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
      * 
      * @return generic return value
      */
-    protected abstract boolean processComponent(Object... params);
+    protected abstract boolean processComponent();
 
     /**
      * Called when this {@link UIComponent} gets registered
