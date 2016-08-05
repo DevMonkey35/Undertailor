@@ -477,8 +477,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
             if (this.getRoom().getOverworld().isCharacter(this)) {
                 return true;
             }
-            
-            System.out.println("not character");
         }
 
         return this.persistent;
