@@ -33,6 +33,7 @@ package me.scarlet.undertailor.gfx.text;
 import static me.scarlet.undertailor.util.ConfigUtil.checkExists;
 import static me.scarlet.undertailor.util.ConfigUtil.checkValue;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 import org.slf4j.Logger;
@@ -51,8 +52,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -72,14 +71,14 @@ public class Font {
     private float spaceLength;
     private String characterList;
     private Pair<Float> defaultLetterSpacing;
-    private Map<Character, Pair<Float>> letterSpacing;
+    private ObjectMap<Character, Pair<Float>> letterSpacing;
 
     public Font(String fontName, MultiRenderer renderer, ZipFile sourceFile)
         throws BadAssetException {
         PackagedSpriteSheetFactory sheetFactory =
             new PackagedSpriteSheetFactory("#fnt-" + fontName, renderer, sourceFile);
         this.sheet = sheetFactory.getResource();
-        this.letterSpacing = new HashMap<>();
+        this.letterSpacing = new ObjectMap<>();
         this.renderer = renderer;
 
         InputStream configStream = null; // load the configuration json inside the archive for later reading

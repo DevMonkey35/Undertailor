@@ -30,14 +30,12 @@
 
 package me.scarlet.undertailor.lua;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.TwoArgFunction;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A collection of actions executable by reference of a Lua
@@ -46,11 +44,11 @@ import java.util.Map;
 public class LuaLibrary extends TwoArgFunction {
 
     private String name;
-    private Map<String, LuaFunction> functions;
+    private ObjectMap<String, LuaFunction> functions;
 
     public LuaLibrary(String name) {
         this.name = name;
-        this.functions = new HashMap<>();
+        this.functions = new ObjectMap<>();
     }
 
     // ---------------- abstract method implementation ----------------
@@ -111,7 +109,7 @@ public class LuaLibrary extends TwoArgFunction {
      * @param table the table to inject into
      */
     public final void inject(LuaTable table) {
-        functions.keySet().forEach(key -> {
+        functions.keys().forEach(key -> {
             table.set(key, functions.get(key));
         });
     }

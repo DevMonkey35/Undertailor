@@ -31,8 +31,7 @@
 package me.scarlet.undertailor.input;
 
 import com.badlogic.gdx.Input.Keys;
-
-import java.util.Map;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /**
  * Withholds all data relevant to input caught by its
@@ -45,9 +44,9 @@ public class InputData {
 
     long currentTick;
     boolean isConsumed;
-    private Map<Integer, PressData> pressData;
+    private ObjectMap<Integer, PressData> pressData;
 
-    InputData(Map<Integer, PressData> pressData) {
+    InputData(ObjectMap<Integer, PressData> pressData) {
         this.isConsumed = false;
         this.pressData = pressData;
     }

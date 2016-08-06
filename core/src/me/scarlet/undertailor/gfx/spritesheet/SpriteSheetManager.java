@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.gfx.spritesheet;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +38,6 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.util.FileUtil;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -50,11 +49,11 @@ public class SpriteSheetManager {
     private static Logger log = LoggerFactory.getLogger(SpriteSheetManager.class);
 
     private MultiRenderer renderer;
-    private Map<String, SpriteSheetFactory> sheets;
+    private ObjectMap<String, SpriteSheetFactory> sheets;
 
     public SpriteSheetManager(MultiRenderer renderer) {
         this.renderer = renderer;
-        this.sheets = new HashMap<>();
+        this.sheets = new ObjectMap<>();
     }
 
     /**
@@ -83,11 +82,11 @@ public class SpriteSheetManager {
      */
     public void loadSpriteSheets(File rootDirectory) {
         log.info("Loading spritesheet assets from directory " + rootDirectory.getAbsolutePath());
-        Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
+        ObjectMap<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
             return file.getName().endsWith(".spritesheet");
         });
 
-        for (String key : files.keySet()) {
+        for (String key : files.keys()) {
             File targetFile = files.get(key);
             try {
                 this.sheets.put(key,
@@ -103,6 +102,6 @@ public class SpriteSheetManager {
             }
         }
 
-        log.info(this.sheets.size() + " spritesheet(s) loaded.");
+        log.info(this.sheets.size + " spritesheet(s) loaded.");
     }
 }

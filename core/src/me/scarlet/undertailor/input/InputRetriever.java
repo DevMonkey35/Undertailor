@@ -33,9 +33,7 @@ package me.scarlet.undertailor.input;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /**
  * Handles input tracking operations. Intended to be set as
@@ -90,11 +88,11 @@ public class InputRetriever implements InputProcessor {
 
     private long tick;
     private InputData currentData;
-    private Map<Integer, PressData> pressData;
+    private ObjectMap<Integer, PressData> pressData;
 
     public InputRetriever() {
         this.tick = 0;
-        this.pressData = new HashMap<>();
+        this.pressData = new ObjectMap<>();
         this.currentData = new InputData(pressData);
     }
 

@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.lua;
 
+import com.badlogic.gdx.utils.Array;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaTable;
@@ -59,8 +60,6 @@ import me.scarlet.undertailor.util.LuaUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Manager class responsible for generating {@link Globals}
@@ -74,13 +73,13 @@ public class ScriptManager {
     private Undertailor undertailor;
 
     private File scriptPath;
-    private List<LuaValue> libraries;
-    private List<Class<? extends LuaValue>> baseLibraries;
+    private Array<LuaValue> libraries;
+    private Array<Class<? extends LuaValue>> baseLibraries;
 
     public ScriptManager(Undertailor undertailor) {
         this.scriptPath = null;
-        this.libraries = new ArrayList<>();
-        this.baseLibraries = new ArrayList<>();
+        this.libraries = new Array<>(true, 8);
+        this.baseLibraries = new Array<>(true, 8);
         this.undertailor = undertailor;
     }
 
@@ -145,7 +144,7 @@ public class ScriptManager {
      * @param library a LuaLibrary to register
      */
     public void registerLibrary(LuaLibrary library) {
-        if (!this.libraries.contains(library))
+        if (!this.libraries.contains(library, false))
             this.libraries.add(library);
     }
 

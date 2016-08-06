@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.lua;
 
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -72,11 +74,6 @@ import me.scarlet.undertailor.lua.meta.LuaWorldObjectMeta;
 import me.scarlet.undertailor.lua.meta.LuaWorldRoomMeta;
 import me.scarlet.undertailor.util.LuaUtil;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Static implementation of a class that holds meta data for
  * {@link LuaObjectValue}s.
@@ -84,18 +81,18 @@ import java.util.Set;
 public class Lua {
 
     static final Logger log = LoggerFactory.getLogger(Lua.class);
-    static final Set<LuaObjectMeta> metas;
+    static final ObjectSet<LuaObjectMeta> metas;
 
-    private static final Map<Class<?>, LuaObjectMeta> META;
-    private static final Map<Class<?>, LuaObjectMeta> PMETA;
-    private static final Map<Class<?>, LuaTable> METATABLES;
+    private static final ObjectMap<Class<?>, LuaObjectMeta> META;
+    private static final ObjectMap<Class<?>, LuaObjectMeta> PMETA;
+    private static final ObjectMap<Class<?>, LuaTable> METATABLES;
     private static final String INVALID_TYPE_MSG = "bad argument: %s expected, got %s";
 
     static {
-        metas = new HashSet<>();
-        META = new HashMap<>();
-        PMETA = new HashMap<>();
-        METATABLES = new HashMap<>();
+        metas = new ObjectSet<>();
+        META = new ObjectMap<>();
+        PMETA = new ObjectMap<>();
+        METATABLES = new ObjectMap<>();
 
         loadMeta(LuaAudioDataMeta.class);
         loadMeta(LuaAudioMeta.class);
@@ -288,8 +285,8 @@ public class Lua {
 
         LuaTable functable = new LuaTable();
         Lua.metas.clear();
-        Lua.metas.addAll(Lua.PMETA.values());
-        Lua.metas.addAll(Lua.META.values());
+        Lua.PMETA.values().forEach(Lua.metas::add);
+        Lua.META.values().forEach(Lua.metas::add);
 
         Lua.metas.forEach(meta -> {
             if (meta.getTargetObjectClass().isInstance(obj) && meta.getMetatable() != null) {

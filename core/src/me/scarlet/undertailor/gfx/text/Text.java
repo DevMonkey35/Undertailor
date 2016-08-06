@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.gfx.text;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +42,9 @@ import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
 import me.scarlet.undertailor.gfx.text.TextStyle.DisplayMeta;
 import me.scarlet.undertailor.gfx.text.parse.ParsedText;
+import me.scarlet.undertailor.util.CollectionUtil;
 import me.scarlet.undertailor.util.Pair;
 
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.function.BiConsumer;
 
 /**
@@ -91,10 +90,10 @@ public class Text extends TextComponent implements Renderable {
                 component.parent = (Text) this.component;
 
                 Text text = ((Text) this.component);
-                if (text.components.isEmpty()) {
+                if (text.components.size <= 0) {
                     text.components.put(0, component);
                 } else {
-                    int last = text.components.lastKey();
+                    int last = CollectionUtil.lastKey(text.components);
                     int map = last + text.components.get(last).text.length();
                     text.components.put(map, component);
                 }
@@ -120,7 +119,7 @@ public class Text extends TextComponent implements Renderable {
          *         draw with
          */
         public Text build() {
-            if (((Text) this.component).components.isEmpty()) {
+            if (((Text) this.component).components.size <= 0) {
                 throw new IllegalArgumentException("Cannot create text with no components");
             }
 
@@ -198,16 +197,14 @@ public class Text extends TextComponent implements Renderable {
     private Pair<Float> spaceTaken;
     private long instantiationTime;
     private Pair<Integer> stringBounds;
-    private TreeMap<Integer, TextComponent> components; // integer marks start index of the component
+    private OrderedMap<Integer, TextComponent> components; // integer marks start index of the component
 
     // objects held so we don't spam new objects
     private Pair<Integer> m_valuePair;
     private Transform m_drawnTransform;
 
     private Text() {
-        this.components = new TreeMap<>((Integer i1, Integer i2) -> {
-            return Integer.compare(i1, i2);
-        });
+        this.components = new OrderedMap<>();
 
         this.instantiationTime = TimeUtils.millis();
         this.stringBounds = new Pair<>(0, 0);
@@ -260,7 +257,7 @@ public class Text extends TextComponent implements Renderable {
 
                     // process display meta from styles
                     DisplayMeta dMeta = Text.generateDisplayMeta();
-                    if (!component.getStyles().isEmpty()) {
+                    if (component.getStyles().size > 0) {
                         component.getStyles().forEach(style -> {
                             style.apply(dMeta, TimeUtils.timeSinceMillis(this.instantiationTime),
                                 character, localIndex.getA() + localIndex.getB(),
@@ -319,7 +316,7 @@ public class Text extends TextComponent implements Renderable {
      * 
      * @return a Collection of this Text's TextComponents
      */
-    public Collection<TextComponent> getComponents() {
+    public OrderedMap.Values<TextComponent> getComponents() {
         return this.components.values();
     }
 
@@ -401,11 +398,18 @@ public class Text extends TextComponent implements Renderable {
      * @return the TextComponent owning the character
      */
     public TextComponent getTextComponentAt(int index) {
-        if(index < 0 || index >= this.getText().length()) {
+        if (index < 0 || index >= this.getText().length()) {
             return null;
         }
 
-        return this.components.get(this.components.lowerKey(index + 1));
+        for(int i = index + 1; i >= 0; i--) {
+            TextComponent comp = this.components.get(i);
+            if(comp != null) {
+                return comp;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -446,59 +450,59 @@ public class Text extends TextComponent implements Renderable {
 
         if (boundL == 0 && boundR == 0) {
             this.components.values().forEach(builder::addComponents);
-        } else if (this.components.size() == 1) {
+        } else if (this.components.size == 1) {
             TextComponent.Builder compBuilder = TextComponent.builder();
-            TextComponent source = this.components.firstEntry().getValue();
+            TextComponent source = this.components.get(CollectionUtil.firstKey(this.components));
             compBuilder.copy(source);
             compBuilder.setText(source.getText().substring(start, end));
             builder.addComponents(compBuilder.build());
         } else {
-            for (Entry<Integer, TextComponent> entry : this.components.entrySet()) {
+            for (OrderedMap.Entry<Integer, TextComponent> entry : this.components.entries()) {
                 if (first != null) { // if first is null, we've found the first component to iterate through
-                    if (entry.getValue() != first) {
+                    if (entry.value != first) {
                         continue;
                     }
                 }
 
-                if (entry.getValue() == first || entry.getValue() == last) {
-                    if (entry.getValue() == first && entry.getValue() == last) {
+                if (entry.value == first || entry.value == last) {
+                    if (entry.value == first && entry.value == last) {
                         TextComponent.Builder compBuilder = TextComponent.builder();
-                        int leftStringBound = boundL - entry.getKey();
+                        int leftStringBound = boundL - entry.key;
 
-                        compBuilder.copy(entry.getValue());
-                        compBuilder.setText(entry.getValue().getText().substring(leftStringBound,
+                        compBuilder.copy(entry.value);
+                        compBuilder.setText(entry.value.getText().substring(leftStringBound,
                             leftStringBound + (boundR - boundL)));
                         builder.addComponents(compBuilder.build());
                         break;
                     } else {
-                        if (entry.getValue() == first) {
-                            if (boundL != -1 && entry.getKey() < boundL) {
+                        if (entry.value == first) {
+                            if (boundL != -1 && entry.key < boundL) {
                                 TextComponent.Builder compBuilder = TextComponent.builder();
 
-                                compBuilder.copy(entry.getValue());
+                                compBuilder.copy(entry.value);
                                 compBuilder.setText(
-                                    entry.getValue().getText().substring(boundL - entry.getKey()));
+                                    entry.value.getText().substring(boundL - entry.key));
                                 builder.addComponents(compBuilder.build());
                             }
 
                             first = null;
                         }
 
-                        if (entry.getValue() == last && boundR != -1
-                            && entry.getKey() + entry.getValue().text.length() > boundR) {
-                            String newText = entry.getValue().text;
+                        if (entry.value == last && boundR != -1
+                            && entry.key + entry.value.text.length() > boundR) {
+                            String newText = entry.value.text;
                             TextComponent.Builder compBuilder = TextComponent.builder();
 
                             newText = newText.substring(0,
-                                newText.length() - (newText.length() + entry.getKey() - boundR));
-                            compBuilder.copy(entry.getValue());
+                                newText.length() - (newText.length() + entry.key - boundR));
+                            compBuilder.copy(entry.value);
                             compBuilder.setText(newText);
                             builder.addComponents(compBuilder.build());
                             break;
                         }
                     }
                 } else {
-                    builder.addComponents(entry.getValue());
+                    builder.addComponents(entry.value);
                 }
             }
         }
@@ -544,9 +548,9 @@ public class Text extends TextComponent implements Renderable {
 
         TextComponent first = boundL == 0 ? null : this.getTextComponentAt(boundL);
         TextComponent last = boundR == 0 ? null : this.getTextComponentAt(boundR);
-        for (Entry<Integer, TextComponent> entry : this.components.entrySet()) {
+        for (OrderedMap.Entry<Integer, TextComponent> entry : this.components.entries()) {
             if (first != null) { // if first is null, we've found the first component to iterate through
-                if (entry.getValue() != first) {
+                if (entry.value != first) {
                     continue;
                 }
 
@@ -554,21 +558,21 @@ public class Text extends TextComponent implements Renderable {
             }
 
             int localIndex = 0;
-            if (boundL != 0 && entry.getKey() < boundL) {
-                localIndex += boundL - entry.getKey();
+            if (boundL != 0 && entry.key < boundL) {
+                localIndex += boundL - entry.key;
             }
 
-            this.m_valuePair.setA(entry.getKey());
-            for (int ind = localIndex; ind < entry.getValue().getText().length(); ind++) {
+            this.m_valuePair.setA(entry.key);
+            for (int ind = localIndex; ind < entry.value.getText().length(); ind++) {
                 this.m_valuePair.setB(ind);
-                consumer.accept(this.m_valuePair, entry.getValue());
+                consumer.accept(this.m_valuePair, entry.value);
 
-                if (boundR != 0 && entry.getKey() + ind >= boundR) {
+                if (boundR != 0 && entry.key + ind >= boundR) {
                     return;
                 }
             }
 
-            if (entry.getValue() == last) {
+            if (entry.value == last) {
                 return;
             }
         }

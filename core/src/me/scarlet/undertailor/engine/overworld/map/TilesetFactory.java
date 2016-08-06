@@ -33,6 +33,9 @@ package me.scarlet.undertailor.engine.overworld.map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +55,6 @@ import me.scarlet.undertailor.util.Tuple;
 import me.scarlet.undertailor.util.Wrapper;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -73,11 +72,11 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     public static class Tileset extends Resource<Texture> {
 
         private TilesetFactory factory;
-        private Map<Integer, Tile> tiles;
+        private IntMap<Tile> tiles;
 
         public Tileset(TilesetFactory factory) {
             this.factory = factory;
-            this.tiles = new HashMap<>();
+            this.tiles = new IntMap<>();
         }
 
         /**
@@ -95,7 +94,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
             if (!this.tiles.containsKey(index)) {
                 Renderable renderable = factory.animatedTiles.get(index);
                 if (renderable == null) {
-                    if(index < factory.tiles.size()) {
+                    if(index < factory.tiles.size) {
                         renderable = factory.tiles.get(index);
                     } else {
                         return null;
@@ -136,13 +135,13 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     private MultiRenderer renderer;
     private boolean reading;
 
-    private List<Sprite> tiles;
-    private Map<Integer, Animation> animatedTiles;
+    private Array<Sprite> tiles;
+    private ObjectMap<Integer, Animation> animatedTiles;
 
     public TilesetFactory(MultiRenderer renderer, File textureFile) {
-        this.tiles = new ArrayList<>();
+        this.tiles = new Array<>(true, 8);
         this.reader = new TilesetReader();
-        this.animatedTiles = new HashMap<>();
+        this.animatedTiles = new ObjectMap<>();
 
         this.textureFile = textureFile;
         this.renderer = renderer;
@@ -252,11 +251,13 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
         }
 
         if (this.meta != null) {
-            this.meta.getAnimations().forEach((id, animations) -> {
-                KeyFrame[] frames = new KeyFrame[animations.size() + 1];
+            this.meta.getAnimations().forEach(entry -> {
+                int id = entry.key;
+                Array<Tuple<Integer, Long>> animations = entry.value;
+                KeyFrame[] frames = new KeyFrame[animations.size + 1];
 
                 long currentTime = 0;
-                for (int i = 0; i < animations.size(); i++) {
+                for (int i = 0; i < animations.size; i++) {
                     Tuple<Integer, Long> tupleFrame = animations.get(i);
                     if (i != 0) {
                         currentTime += animations.get(i - 1).getB();
@@ -265,7 +266,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
                     frames[i] = new KeyFrame(currentTime, this.tiles.get(tupleFrame.getA()));
                 }
 
-                Tuple<Integer, Long> last = animations.get(animations.size() - 1);
+                Tuple<Integer, Long> last = animations.get(animations.size - 1);
                 frames[frames.length - 1] = new KeyFrame(currentTime + last.getB(),
                     this.tiles.get(animations.get(0).getA()));
 

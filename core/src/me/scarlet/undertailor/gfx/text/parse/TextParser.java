@@ -30,11 +30,9 @@
 
 package me.scarlet.undertailor.gfx.text.parse;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,23 +47,23 @@ public final class TextParser {
     private static final Pattern CATCH_PATTERN =
         Pattern.compile("((?<!\\\\)\\[([^\\n\\[\\]]+?)(?<!\\\\)\\])+");
 
-    public static List<TextPiece> parse(String input) {
-        List<TextPiece> pieces = Lists.newArrayList();
+    public static Array<TextPiece> parse(String input) {
+        Array<TextPiece> pieces = new Array<>(true, 16);
 
-        Map<TextParam, String> current = Maps.newHashMap();
+        ObjectMap<TextParam, String> current = new ObjectMap<>();
         for (String piece : separate(input)) {
             if (CATCH_PATTERN.matcher(piece).matches()) {
                 current.putAll(parseMatches(piece));
             } else {
-                pieces.add(TextPiece.of(Maps.newHashMap(current), piece));
+                pieces.add(TextPiece.of(new ObjectMap<>(current), piece));
             }
         }
 
         return pieces;
     }
 
-    public static List<String> separate(String input) {
-        List<String> results = Lists.newArrayList();
+    public static Array<String> separate(String input) {
+        Array<String> results = new Array<>(true, 16);
         Matcher regex = CATCH_PATTERN.matcher(input);
         int lastIndex = 0;
 
@@ -82,8 +80,8 @@ public final class TextParser {
         return results;
     }
 
-    public static Map<TextParam, String> parseMatches(String input) {
-        Map<TextParam, String> params = Maps.newHashMap();
+    public static ObjectMap<TextParam, String> parseMatches(String input) {
+        ObjectMap<TextParam, String> params = new ObjectMap<>();
         Matcher regex = CATCH_PATTERN.matcher(input);
 
         while (regex.find()) {

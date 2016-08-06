@@ -35,6 +35,10 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntFloatMap;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,12 +59,8 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * A container for entities within an Overworld.
@@ -68,69 +68,70 @@ import java.util.TreeSet;
 public abstract class WorldRoom implements Renderable, Processable, Destructible, EventListener,
     Modular<OverworldController>, PotentialDelay {
 
-    static final Set<Layerable> RENDER_ORDER;
+    static final Comparator<Layerable> RENDER_COMPARATOR;
     static final Logger log = LoggerFactory.getLogger(WorldRoom.class);
 
     static {
-        RENDER_ORDER = new TreeSet<>((Layerable obj1, Layerable obj2) -> {
-            // assumed that each entry is an instance of layerable, and worldobjects are instances of positionable
+        RENDER_COMPARATOR = (Layerable obj1, Layerable obj2) -> {
+            // World Objects and Image Layers MUST come on top of a Tile Layer.
+            // Positionable identifies both World Objects and Image Layers.
+
             if (obj1.getLayer() == obj2.getLayer()) {
-                if (obj1 instanceof Positionable && obj2 instanceof Positionable) {
-                    Positionable wobj1 = (Positionable) obj1;
-                    Positionable wobj2 = (Positionable) obj2;
+                if(obj1 instanceof Positionable && obj2 instanceof Positionable) {
+                    float y1 = ((Positionable) obj1).getPosition().y;
+                    float y2 = ((Positionable) obj2).getPosition().y;
 
-                    if (wobj1.getPosition().y == wobj2.getPosition().y) {
-                        return 1; // doesn't matter as long as its not 0
-                    } else {
-                        return Float.compare(wobj2.getPosition().y, wobj1.getPosition().y);
-                    }
-                } else {
-                    if (obj1 instanceof Identifiable && obj2 instanceof Identifiable) {
-                        Identifiable iobj1 = (Identifiable) obj1;
-                        Identifiable iobj2 = (Identifiable) obj2;
-                        if (obj1 instanceof WorldObject) { // tilemap layer vs worldobj
-                            return 1;
-                        } else { // tilemap layer vs tilemap layer
-                            return Long.compare(iobj1.getId(), iobj2.getId());
-                        }
+                    if(y1 == y2) {
+                        return 1;
                     }
 
-                    return 1;
+                    return Float.compare(y2, y1);
                 }
-            } else {
-                return Short.compare(obj1.getLayer(), obj2.getLayer());
+
+                if(obj1 instanceof TileLayer && obj2 instanceof TileLayer) {
+                    long i1 = ((Identifiable) obj1).getId();
+                    long i2 = ((Identifiable) obj2).getId();
+
+                    return Long.compare(i1, i2);
+                }
+
+                return obj1 instanceof TileLayer ? -1 : 1;
             }
-        });
+
+            return Short.compare(obj1.getLayer(), obj2.getLayer());
+        };
     }
 
     // while delayed
     private boolean prepared;
-    private Set<WorldObject> bodyQueue;
-    private Set<Entrypoint> entrypointQueue;
+    private ObjectSet<WorldObject> bodyQueue;
+    private ObjectSet<Entrypoint> entrypointQueue;
 
     // primary
     private boolean destroyed;
     protected Tilemap tilemap;
     private EventHelper events;
-    private Set<WorldObject> obj;
+    private ObjectSet<WorldObject> obj;
     private OverworldController controller;
-    private Map<String, Entrypoint> entrypoints;
-    private Map<String, Set<Body>> collisionLayers;
-    private Map<Short, Float> opacityMapping;
+    private ObjectMap<String, Entrypoint> entrypoints;
+    private ObjectMap<String, ObjectSet<Body>> collisionLayers;
+    private IntFloatMap opacityMapping;
+    private Array<Layerable> renderOrder;
 
     public WorldRoom(Tilemap map) {
         this.destroyed = false;
         this.prepared = false;
         this.events = new EventHelper();
-        this.bodyQueue = new HashSet<>();
-        this.entrypointQueue = new HashSet<>();
+        this.bodyQueue = new ObjectSet<>();
+        this.entrypointQueue = new ObjectSet<>();
 
         this.tilemap = map;
         this.controller = null;
-        this.obj = new HashSet<>();
-        this.entrypoints = new HashMap<>();
-        this.opacityMapping = new HashMap<>();
-        this.collisionLayers = new HashMap<>();
+        this.obj = new ObjectSet<>();
+        this.entrypoints = new ObjectMap<>();
+        this.opacityMapping = new IntFloatMap();
+        this.collisionLayers = new ObjectMap<>();
+        this.renderOrder = new Array<>(true, 16);
     }
 
     // ---------------- abstract method implementation ----------------
@@ -170,12 +171,10 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
 
     @Override
     public void render(float x, float y, Transform transform) {
-        Set<Layerable> rendered = this.getInRenderOrder();
+        Array<Layerable> rendered = this.getInRenderOrder();
         MultiRenderer renderer = this.controller.getRenderer();
         rendered.forEach(obj -> {
-            float alpha = this.opacityMapping.containsKey(obj.getLayer())
-                ? this.opacityMapping.get(obj.getLayer()) : 1.0F;
-            renderer.setBatchColor(renderer.getBatchColor(), alpha);
+            renderer.setBatchColor(renderer.getBatchColor(), this.getLayerOpacity(obj.getLayer()));
             ((Renderable) obj).render();
         });
     }
@@ -354,7 +353,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      * @return a Set containing this WorldRoom's
      *         WorldObjects; should NOT be directly modified
      */
-    public Set<WorldObject> getObjects() {
+    public ObjectSet<WorldObject> getObjects() {
         return this.obj;
     }
 
@@ -373,6 +372,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
 
         if (obj.claim(this)) {
             this.obj.add(obj);
+            this.renderOrder.add(obj);
         }
     }
 
@@ -385,6 +385,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     public void removeObject(WorldObject obj) {
         if (obj.release(this)) {
             this.obj.remove(obj);
+            this.renderOrder.removeValue(obj, false);
             obj.destroy();
         }
     }
@@ -452,11 +453,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      *         defaulting to 1.0
      */
     public float getLayerOpacity(short layer) {
-        if (this.opacityMapping.containsKey(layer)) {
-            return this.opacityMapping.get(layer);
-        }
-
-        return 1F;
+        return this.opacityMapping.get(layer, 1.0F);
     }
 
     /**
@@ -469,7 +466,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      */
     public void setLayerOpacity(short layer, float opacity) {
         if (opacity >= 1F) {
-            this.opacityMapping.remove(layer); // defaults to 1F;
+            this.opacityMapping.remove(layer, 1F); // defaults to 1F;
             return;
         }
 
@@ -503,10 +500,9 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      * TileLayers are expected to only be one per layer,
      * however there can be multiple objects on one layer.
      * Render order for WorldObjects prioritizes objects
-     * with a higher Y position, ensuring objects
-     * "in the back" appear how they should. For objects
-     * with a same Y position, its first come, first
-     * serve.</p>
+     * with a higher Y position, ensuring objects "in the
+     * back" appear how they should. For objects with a same
+     * Y position, its first come, first serve.</p>
      * 
      * <p>Rules for draw order are as follows (tl;dr).</p>
      * 
@@ -525,17 +521,9 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      *     layers react in Tiled for reference.
      * </pre>
      */
-    private Set<Layerable> getInRenderOrder() {
-        RENDER_ORDER.clear();
-
-        if (tilemap != null) {
-            tilemap.getTileLayers().forEach(RENDER_ORDER::add);
-            tilemap.getImageLayers().forEach(RENDER_ORDER::add);
-        }
-
-        obj.forEach(RENDER_ORDER::add);
-
-        return RENDER_ORDER;
+    private Array<Layerable> getInRenderOrder() {
+        this.renderOrder.sort(RENDER_COMPARATOR);
+        return this.renderOrder;
     }
 
     /**
@@ -558,7 +546,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                 && layer.getName().charAt(0) == TilemapFactory.OBJ_DEF_LAYER_PREFIX) {
                 // def layer, ignore
             } else {
-                Set<Body> layerBodies = new HashSet<>();
+                ObjectSet<Body> layerBodies = new ObjectSet<>();
                 layer.getShapes().forEach(data -> {
                     def.position.set(data.getPosition());
                     def.position.x = def.position.x * OverworldController.PIXELS_TO_METERS;
@@ -571,6 +559,9 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                 this.collisionLayers.put(layer.getName(), layerBodies);
             }
         });
+
+        map.getTileLayers().forEach(this.renderOrder::add);
+        map.getImageLayers().forEach(this.renderOrder::add);
     }
 
     // ---------------- abstract definitions ----------------

@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.engine.scheduler;
 
+import com.badlogic.gdx.utils.LongMap;
+import com.badlogic.gdx.utils.OrderedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +40,7 @@ import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.Processable;
 import me.scarlet.undertailor.engine.Subsystem;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * Implementation of a task handling class performing sets
@@ -59,14 +57,14 @@ public class Scheduler implements Processable, Subsystem, Destructible {
 
     private Environment env;
     private boolean destroyed;
-    private Map<Long, Task> tasks;
-    private Map<Long, Task> activeTasks;
+    private LongMap<Task> tasks;
+    private OrderedMap<Long, Task> activeTasks;
 
     public Scheduler(Environment env) {
         this.env = env;
         this.destroyed = false;
-        this.tasks = new HashMap<>();
-        this.activeTasks = new LinkedHashMap<>();
+        this.tasks = new LongMap<>();
+        this.activeTasks = new OrderedMap<>();
     }
 
     // ---------------- abstract method implementation ----------------
@@ -78,11 +76,11 @@ public class Scheduler implements Processable, Subsystem, Destructible {
 
     @Override
     public boolean process() {
-        Iterator<Entry<Long, Task>> iterator = tasks.entrySet().iterator();
+        Iterator<LongMap.Entry<Task>> iterator = tasks.entries().iterator();
         while (iterator.hasNext()) {
-            Entry<Long, Task> entry = iterator.next();
-            long id = entry.getKey();
-            Task task = entry.getValue();
+            LongMap.Entry<Task> entry = iterator.next();
+            long id = entry.key;
+            Task task = entry.value;
             String taskName =
                 (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
 
@@ -101,32 +99,26 @@ public class Scheduler implements Processable, Subsystem, Destructible {
             }
         }
 
-        iterator = activeTasks.entrySet().iterator();
-        long id = -1;
-        Task task = null;
-        String taskName = null;
-        while (iterator.hasNext()) {
-            Entry<Long, Task> entry = iterator.next();
-            id = entry.getKey();
-            task = entry.getValue();
-            taskName =
-                (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
-            break;
-        }
+        if (activeTasks.size > 0) {
+            long id = activeTasks.orderedKeys().get(0);
+            Task task = activeTasks.get(id);
 
-        if(task != null) {
-            try {
-                if (!task.process()) {
+            if (task != null) {
+                String taskName =
+                    (task.getName() == null ? "#" + id : task.getName() + " (#" + id + ")");
+                try {
+                    if (!task.process()) {
+                        this.activeTasks.remove(id);
+                        log.debug("active task " + taskName + " finished and was removed");
+                        task.onFinish(false);
+                    }
+                } catch (Exception e) {
+                    log.warn("active task " + taskName + " was removed due to caught error: "
+                        + e.getClass().getSimpleName() + ": " + e.getMessage());
+                    e.printStackTrace();
+                    task.onFinish(true);
                     this.activeTasks.remove(id);
-                    log.debug("active task " + taskName + " finished and was removed");
-                    task.onFinish(false);
                 }
-            } catch (Exception e) {
-                log.warn("active task " + taskName + " was removed due to caught error: "
-                    + e.getClass().getSimpleName() + ": " + e.getMessage());
-                e.printStackTrace();
-                task.onFinish(true);
-                this.activeTasks.remove(id);
             }
         }
 
@@ -140,7 +132,7 @@ public class Scheduler implements Processable, Subsystem, Destructible {
 
     @Override
     public void destroy() {
-        if(this.destroyed) {
+        if (this.destroyed) {
             return;
         }
 
@@ -176,7 +168,7 @@ public class Scheduler implements Processable, Subsystem, Destructible {
      * @return the id assigned to the task
      */
     public long registerTask(Task task, boolean active) {
-        if(task == null) {
+        if (task == null) {
             return -1;
         }
 

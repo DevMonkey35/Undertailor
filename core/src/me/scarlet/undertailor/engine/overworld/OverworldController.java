@@ -32,6 +32,7 @@ package me.scarlet.undertailor.engine.overworld;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +51,6 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.util.Pair;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Subsystem within an {@link Environment} running the
@@ -299,11 +297,11 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
         Task roomTask = new Task() {
 
             boolean set;
-            Set<WorldObject> persistent;
+            ObjectSet<WorldObject> persistent;
 
             {
                 this.set = false;
-                this.persistent = new HashSet<>();
+                this.persistent = new ObjectSet<>();
             }
 
             public boolean process() {

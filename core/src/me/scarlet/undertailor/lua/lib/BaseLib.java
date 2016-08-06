@@ -32,6 +32,7 @@ package me.scarlet.undertailor.lua.lib;
 
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -45,8 +46,6 @@ import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Replaces core functions to either function correctly with
@@ -56,10 +55,10 @@ public class BaseLib extends LuaLibrary {
 
     static Logger log = LoggerFactory.getLogger(BaseLib.class);
     private static String scriptPath;
-    private static final Map<String, Varargs> LOADED;
+    private static final ObjectMap<String, Varargs> LOADED;
 
     static {
-        LOADED = new HashMap<>();
+        LOADED = new ObjectMap<>();
     }
 
     /**

@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.gfx.text;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +39,6 @@ import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.audio.SoundFactory.Sound;
 import me.scarlet.undertailor.gfx.text.parse.TextParam;
 import me.scarlet.undertailor.gfx.text.parse.TextPiece;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A segment of text with a number of properties within a
@@ -252,9 +250,9 @@ public class TextComponent {
      * @param piece the TextPiece to read from
      */
     protected static void applyParameters(Builder builder, Undertailor tailor, TextPiece piece) {
-        piece.getParams().entrySet().forEach(entry -> {
-            TextParam paramType = entry.getKey();
-            String value = entry.getValue();
+        piece.getParams().entries().forEach(entry -> {
+            TextParam paramType = entry.key;
+            String value = entry.value;
             if (value == null || value.trim().isEmpty()) {
                 return;
             }
@@ -335,7 +333,7 @@ public class TextComponent {
     Font font;
     Color color;
     Sound sound;
-    List<TextStyle> styles;
+    Array<TextStyle> styles;
     float speed; // characters per second
     int segmentSize; // "flame" < size 1 = "f", size 2 = "fl"
     float delay; // delay before the component is played
@@ -345,7 +343,7 @@ public class TextComponent {
         this.font = null;
         this.color = null;
         this.sound = null;
-        this.styles = new ArrayList<>();
+        this.styles = new Array<>(true, 4);
         this.speed = -1;
         this.segmentSize = -1;
         this.delay = 0F;
@@ -414,8 +412,8 @@ public class TextComponent {
      * 
      * @return the TextStyles for this component
      */
-    public List<TextStyle> getStyles() {
-        if (this.styles.isEmpty() && parent != null) {
+    public Array<TextStyle> getStyles() {
+        if (this.styles.size <= 0 && parent != null) {
             return parent.getStyles();
         }
 

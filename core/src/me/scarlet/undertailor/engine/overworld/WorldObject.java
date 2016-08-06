@@ -37,6 +37,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.ObjectSet;
 
 import me.scarlet.undertailor.engine.Collider;
 import me.scarlet.undertailor.engine.Destructible;
@@ -50,9 +51,6 @@ import me.scarlet.undertailor.engine.events.EventHelper;
 import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * An entity within an Overworld.
@@ -73,7 +71,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     private BodyDef def; // acts as a proxy object for position
     private short groupId;
     private boolean canCollide;
-    private Set<Shape> boundingQueue;
+    private ObjectSet<Shape> boundingQueue;
 
     private short layer;
     private float height;
@@ -86,10 +84,11 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         this.destroyed = false;
         this.transform = new Transform();
         this.proxyTransform = new Transform();
-        this.boundingQueue = new HashSet<>();
+        this.boundingQueue = new ObjectSet<>();
         this.def = new BodyDef();
         this.persistent = false;
         this.visible = true;
+        this.layer = 0;
 
         this.def.active = true;
         this.def.awake = true;

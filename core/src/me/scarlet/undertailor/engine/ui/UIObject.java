@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.engine.ui;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +47,7 @@ import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Container class for a set of {@link UIComponent}s working
@@ -72,7 +71,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     private boolean destroyed;
     private EventHelper events;
     private UIController parent;
-    private List<UIComponent> components;
+    private Array<UIComponent> components;
 
     public UIObject(boolean active) {
         this.id = objId++;
@@ -84,7 +83,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
         this.destroyed = false;
         this.events = new EventHelper();
         this.position = new Vector2(0, 0);
-        this.components = new ArrayList<>();
+        this.components = new Array<>(true, 8);
     }
 
     @Override

@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.engine.overworld.map;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -39,8 +40,6 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.util.FileUtil;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Manager class for {@link Tileset} instances.
@@ -50,10 +49,10 @@ public class TilesetManager {
     static final Logger log = LoggerFactory.getLogger(TilesetManager.class);
 
     private MultiRenderer renderer;
-    private Map<String, TilesetFactory> tilesets;
+    private ObjectMap<String, TilesetFactory> tilesets;
 
     public TilesetManager(MultiRenderer renderer) {
-        this.tilesets = new HashMap<>();
+        this.tilesets = new ObjectMap<>();
         this.renderer = renderer;
     }
 
@@ -82,10 +81,10 @@ public class TilesetManager {
     public void load(File rootDirectory) {
         log.info("Loading tilesets from directory " + rootDirectory.getAbsolutePath());
 
-        Map<String, File> files =
+        ObjectMap<String, File> files =
             FileUtil.loadWithIdentifiers(rootDirectory, file -> file.getName().endsWith(".png"), false);
 
-        files.keySet().forEach(key -> {
+        files.keys().forEach(key -> {
             File targetFile = files.get(key);
             try {
                 this.tilesets.put(key, new TilesetFactory(renderer, targetFile));
@@ -102,6 +101,6 @@ public class TilesetManager {
             }
         });
 
-        log.info(this.tilesets.size() + " tileset(s) loaded.");
+        log.info(this.tilesets.size + " tileset(s) loaded.");
     }
 }

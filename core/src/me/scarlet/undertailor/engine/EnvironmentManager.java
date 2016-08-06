@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.engine;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -43,10 +44,6 @@ import me.scarlet.undertailor.engine.scheduler.Scheduler;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 /**
  * Manager class for {@link Environment} instances.
  */
@@ -56,14 +53,14 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     private EventHelper events;
     private Scheduler globalSched;
     private String activeEnvironment;
-    private Map<String, Environment> environments;
+    private ObjectMap<String, Environment> environments;
     private Class<? extends Viewport> viewportType;
 
     public EnvironmentManager(Undertailor tailor) {
         this.tailor = tailor;
         this.activeEnvironment = null;
         this.events = new EventHelper();
-        this.environments = new HashMap<>();
+        this.environments = new ObjectMap<>();
         this.globalSched = new Scheduler(null);
 
         this.viewportType = tailor.getLaunchOptions().scaling == ViewportType.FIT
@@ -217,9 +214,9 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     public void setActiveEnvironment(Environment env) {
         this.activeEnvironment = null;
 
-        for (Entry<String, Environment> entry : this.environments.entrySet()) {
-            if (entry.getValue().equals(env)) {
-                this.activeEnvironment = entry.getKey();
+        for (ObjectMap.Entry<String, Environment> entry : this.environments.entries()) {
+            if (entry.value.equals(env)) {
+                this.activeEnvironment = entry.key;
                 break;
             }
         }

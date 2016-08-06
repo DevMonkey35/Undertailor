@@ -31,7 +31,10 @@
 package me.scarlet.undertailor.engine.overworld.map;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.OrderedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +48,7 @@ import me.scarlet.undertailor.resource.Resource;
 import me.scarlet.undertailor.resource.ResourceFactory;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -77,18 +74,18 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
         int height;
         float spaceX;
         float spaceY;
-        List<TileLayer> tileLayers;
-        List<ImageLayer> imageLayers;
-        Map<String, String> entrypoints;
-        Map<String, ObjectLayer> objects;
-        TreeMap<Integer, Tileset> tilesets;
+        Array<TileLayer> tileLayers;
+        Array<ImageLayer> imageLayers;
+        ObjectMap<String, String> entrypoints;
+        ObjectMap<String, ObjectLayer> objects;
+        OrderedMap<Integer, Tileset> tilesets;
 
         Tilemap() {
-            this.objects = new HashMap<>();
-            this.entrypoints = new HashMap<>();
-            this.tileLayers = new ArrayList<>();
-            this.imageLayers = new ArrayList<>();
-            this.tilesets = new TreeMap<>(Integer::compare);
+            this.objects = new ObjectMap<>();
+            this.entrypoints = new ObjectMap<>();
+            this.tileLayers = new Array<>(true, 16);
+            this.imageLayers = new Array<>(true, 16);
+            this.tilesets = new OrderedMap<>();
         }
 
         @Override
@@ -163,7 +160,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * 
          * @return the TileLayers held by this Tilemap
          */
-        public List<TileLayer> getTileLayers() {
+        public Array<TileLayer> getTileLayers() {
             if (!this.isLoaded()) {
                 return null;
             }
@@ -171,7 +168,14 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
             return this.tileLayers;
         }
 
-        public List<ImageLayer> getImageLayers() {
+        /**
+         * Returns the {@link ImageLayer}s held by this
+         * {@link Tilemap}. Sorting behavior is similar to
+         * that of {@link #getTileLayers()}.
+         * 
+         * @return the ImageLayers held by this TileMap
+         */
+        public Array<ImageLayer> getImageLayers() {
             if (!this.isLoaded()) {
                 return null;
             }
@@ -210,7 +214,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
          * @return a Collection of this Tilemap's
          *         ObjectLayers
          */
-        public Collection<ObjectLayer> getObjectLayers() {
+        public ObjectMap.Values<ObjectLayer> getObjectLayers() {
             if (!this.isLoaded()) {
                 return null;
             }
@@ -316,7 +320,7 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
                 return -1;
             }
 
-            return this.tileLayers.get(this.tileLayers.size() - 1).getLayer();
+            return this.tileLayers.get(this.tileLayers.size - 1).getLayer();
         }
 
         /**
@@ -333,8 +337,13 @@ public class TilemapFactory extends ResourceFactory<Disposable, Tilemap> {
                 return null;
             }
 
-            Entry<Integer, Tileset> entry = tilesets.lowerEntry(gid + 1);
-            return entry.getValue().getTile(gid - entry.getKey());
+            for(int i = gid; i >= 0; i--) {
+                if(tilesets.containsKey(i)) {
+                    return tilesets.get(i).getTile(gid - i);
+                }
+            }
+
+            return null;
         }
     }
 

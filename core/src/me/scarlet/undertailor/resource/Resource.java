@@ -30,10 +30,8 @@
 
 package me.scarlet.undertailor.resource;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Wrapping class providing the functional methods for usage
@@ -56,12 +54,12 @@ public abstract class Resource<T extends Disposable> {
 
     T disposable;
     boolean loaded;
-    List<Runnable> actionQueue;
+    Array<Runnable> actionQueue;
 
     protected Resource() {
         this.loaded = false;
         this.disposable = null;
-        this.actionQueue = new ArrayList<>();
+        this.actionQueue = new Array<>(true, 16);
     }
 
     /**

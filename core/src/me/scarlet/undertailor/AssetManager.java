@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor;
 
+import com.badlogic.gdx.utils.Array;
+
 import me.scarlet.undertailor.audio.AudioManager;
 import me.scarlet.undertailor.engine.overworld.map.TilemapManager;
 import me.scarlet.undertailor.engine.overworld.map.TilesetManager;
@@ -39,18 +41,16 @@ import me.scarlet.undertailor.gfx.text.TextStyleManager;
 import me.scarlet.undertailor.lua.ScriptManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Manager class for all the managers.
  */
 public class AssetManager {
 
-    static final List<Runnable> loadTasks;
+    static final Array<Runnable> loadTasks;
 
     static {
-        loadTasks = new ArrayList<>();
+        loadTasks = new Array<>(true, 8);
     }
 
     /**
@@ -63,7 +63,7 @@ public class AssetManager {
      * @param run the task to run
      */
     public static void addTask(Runnable run) {
-        synchronized(AssetManager.class) {
+        synchronized (AssetManager.class) {
             loadTasks.add(run);
         }
     }
@@ -131,11 +131,11 @@ public class AssetManager {
      * <p>Must be called every frame.</p>
      */
     public void update() {
-        synchronized(AssetManager.class) {
-            if(!AssetManager.loadTasks.isEmpty()) {
+        synchronized (AssetManager.class) {
+            if (AssetManager.loadTasks.size > 0) {
                 Runnable run = AssetManager.loadTasks.get(0);
                 run.run();
-                AssetManager.loadTasks.remove(run);
+                AssetManager.loadTasks.removeValue(run, false);
             }
         }
     }

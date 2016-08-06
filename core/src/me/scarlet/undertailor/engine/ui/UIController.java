@@ -31,6 +31,8 @@
 package me.scarlet.undertailor.engine.ui;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.utils.ObjectSet;
+import com.badlogic.gdx.utils.OrderedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +48,7 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
 import me.scarlet.undertailor.gfx.Transform;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * Subsystem within an {@link Environment} running the
@@ -62,19 +61,19 @@ public class UIController
 
     private boolean destroyed;
 
-    private Set<Long> removed;
+    private ObjectSet<Long> removed;
     private EventHelper events;
     private MultiRenderer renderer;
     private Environment environment;
     private OrthographicCamera camera;
-    private TreeMap<Long, UIObject> aObj; // active
-    private TreeMap<Long, UIObject> bObj; // background
+    private OrderedMap<Long, UIObject> aObj; // active
+    private OrderedMap<Long, UIObject> bObj; // background
 
     public UIController(Environment parent, MultiRenderer renderer) {
         this.destroyed = false;
         this.renderer = renderer;
         this.environment = parent;
-        this.removed = new HashSet<>();
+        this.removed = new ObjectSet<>();
         this.events = new EventHelper();
         this.camera = new OrthographicCamera(OverworldController.RENDER_WIDTH,
             OverworldController.RENDER_HEIGHT);
@@ -82,8 +81,8 @@ public class UIController
         this.camera.position.y += OverworldController.RENDER_HEIGHT / 2F;
         this.camera.update();
 
-        this.aObj = new TreeMap<>(Long::compare);
-        this.bObj = new TreeMap<>(Long::compare);
+        this.aObj = new OrderedMap<>();
+        this.bObj = new OrderedMap<>();
     }
 
     @Override

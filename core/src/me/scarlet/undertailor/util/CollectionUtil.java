@@ -28,38 +28,51 @@
  * IN THE SOFTWARE.
  */
 
-package me.scarlet.undertailor.gfx.text.parse;
+package me.scarlet.undertailor.util;
 
-import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.OrderedMap;
 
 /**
- * A segment of parameterized text.
- * 
- * @author FerusGrim
+ * Utilities for the collection classes within
+ * {@link com.badlogic.gdx.utils}.
  */
-public class TextPiece {
+public class CollectionUtil {
 
-    private final ObjectMap<TextParam, String> params;
-    private String message;
+    /**
+     * Returns the first key that was registered into the
+     * provided {@link OrderedMap}.
+     * 
+     * @param map the OrderedMap to query
+     * 
+     * @return the first key in the provided OrderedMap, or
+     *         null if the map was empty
+     */
+    public static <T> T firstKey(OrderedMap<T, ?> map) {
+        Array<T> array = map.orderedKeys();
+        if (array.size > 0) {
+            return array.get(0);
+        }
 
-    public TextPiece(String message, ObjectMap<TextParam, String> params) {
-        this.message = message;
-        this.params = params;
+        return null;
     }
 
-    public ObjectMap<TextParam, String> getParams() {
-        return this.params;
+    /**
+     * Returns the last key that was registered into the
+     * provided {@link OrderedMap}.
+     * 
+     * @param map the OrderedMap to query
+     * 
+     * @return the last key in the provided OrderedMap, or
+     *         null if the map was empty
+     */
+    public static <T> T lastKey(OrderedMap<T, ?> map) {
+        Array<T> array = map.orderedKeys();
+        if (array.size > 0) {
+            return array.get(array.size - 1);
+        }
+
+        return null;
     }
 
-    public String getMessage() {
-        return this.message;
-    }
-
-    public static TextPiece of(ObjectMap<TextParam, String> params, String message) {
-        return new TextPiece(message, params);
-    }
-
-    public static TextPiece of(String message) {
-        return new TextPiece(message, new ObjectMap<>());
-    }
 }

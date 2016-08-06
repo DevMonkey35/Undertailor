@@ -34,6 +34,7 @@ import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.ObjectSet;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -55,15 +56,13 @@ import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
 import me.scarlet.undertailor.lua.meta.LuaEnvironmentMeta;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Game library accessible through Lua.
  */
 public class GameLib extends LuaLibrary {
 
-    private Set<LuaLibrary> childLibraries;
+    private ObjectSet<LuaLibrary> childLibraries;
 
     public GameLib(Undertailor undertailor) {
         super("game");
@@ -210,7 +209,7 @@ public class GameLib extends LuaLibrary {
 
         // ---------------- child lib ----------------
 
-        this.childLibraries = new HashSet<>();
+        this.childLibraries = new ObjectSet<>();
 
         childLibraries.add(new AudioLib(undertailor.getAssetManager().getAudioManager()));
         childLibraries.add(new GraphicsLib(undertailor));

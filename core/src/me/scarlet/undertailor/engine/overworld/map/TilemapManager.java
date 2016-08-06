@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.engine.overworld.map;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -39,8 +40,6 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.util.FileUtil;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Manager class for {@link Tilemap} instances.
@@ -51,10 +50,10 @@ public class TilemapManager {
 
     private MultiRenderer renderer;
     private TilesetManager tilesets;
-    private Map<String, TilemapFactory> tilemaps;
+    private ObjectMap<String, TilemapFactory> tilemaps;
 
     public TilemapManager(MultiRenderer renderer, TilesetManager tilesets) {
-        this.tilemaps = new HashMap<>();
+        this.tilemaps = new ObjectMap<>();
         this.tilesets = tilesets;
         this.renderer = renderer;
     }
@@ -87,10 +86,10 @@ public class TilemapManager {
         File imgDir = new File(rootDirectory, "images/");
         imgDir.mkdirs();
 
-        Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory,
+        ObjectMap<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory,
             file -> file.getName().endsWith(".tmx"), false);
 
-        files.keySet().forEach(key -> {
+        files.keys().forEach(key -> {
             if(!key.startsWith("images.") && !key.startsWith("tilesets.")) {
                 File targetFile = files.get(key);
                 try {
@@ -109,6 +108,6 @@ public class TilemapManager {
             }
         });
 
-        log.info(this.tilemaps.size() + " tilemap(s) loaded.");
+        log.info(this.tilemaps.size + " tilemap(s) loaded.");
     }
 }

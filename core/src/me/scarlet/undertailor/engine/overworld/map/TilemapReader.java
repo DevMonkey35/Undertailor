@@ -33,6 +33,8 @@ package me.scarlet.undertailor.engine.overworld.map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -41,6 +43,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import me.scarlet.undertailor.AssetManager;
+import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.overworld.map.ObjectLayer.ShapeData;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
@@ -56,11 +59,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Comparator;
 
 import javax.xml.parsers.SAXParser;
 
@@ -73,10 +73,18 @@ public class TilemapReader extends DefaultHandler {
     static final Logger log = LoggerFactory.getLogger(TilemapReader.class);
     static final String[] supportedCompression = {"csv", "base64"};
 
+    static final Comparator<Layerable> LAYER_COMPARATOR;
+
+    static {
+        LAYER_COMPARATOR = (l1, l2) -> {
+            return Short.compare(l1.getLayer(), l2.getLayer());
+        };
+    }
+
     private TilesetManager tilesets;
 
     // processing vars;
-    private List<String> tree;
+    private Array<String> tree;
 
     private short layerId;
     private Tilemap tilemap;
@@ -93,7 +101,7 @@ public class TilemapReader extends DefaultHandler {
     private String comp;
 
     public TilemapReader(TilesetManager tilesets, MultiRenderer renderer) {
-        tree = new ArrayList<>();
+        tree = new Array<>(true, 16);
         this.tilesets = tilesets;
         this.renderer = renderer;
 
@@ -386,23 +394,24 @@ public class TilemapReader extends DefaultHandler {
             }
         }
 
-        this.tree.remove(qName);
+        this.tree.removeValue(qName, false);
     }
 
     @Override
     public void endDocument() throws SAXException {
-        this.tilemap.tileLayers.sort((l1, l2) -> {
-            return Short.compare(l1.getLayer(), l2.getLayer());
-        });
+        // sort the maps and things
+        this.tilemap.tileLayers.sort(TilemapReader.LAYER_COMPARATOR);
+        this.tilemap.imageLayers.sort(TilemapReader.LAYER_COMPARATOR);
+        this.tilemap.tilesets.orderedKeys().sort();
 
         // check the entrypoints
         // we have to access the layer list directly, since the method does not return anything if the map hasn't been deemed fully loaded
-        Map<String, ObjectLayer> layers = this.tilemap.objects;
-        for (Entry<String, String> entry : this.tilemap.entrypoints.entrySet()) {
+        ObjectMap<String, ObjectLayer> layers = this.tilemap.objects;
+        for (ObjectMap.Entry<String, String> entry : this.tilemap.entrypoints.entries()) {
             // check that the entrypoint itself is a shape, not a point
             ObjectLayer layer;
-            String sLayer = entry.getKey().split(":")[0];
-            String sName = entry.getKey().split(":")[1];
+            String sLayer = entry.key.split(":")[0];
+            String sName = entry.key.split(":")[1];
             layer = layers.get(sLayer);
 
             if (sLayer.charAt(0) != TilemapFactory.OBJ_DEF_LAYER_PREFIX) {
@@ -412,20 +421,20 @@ public class TilemapReader extends DefaultHandler {
             }
 
             if (layer == null || layer.getShape(sName) == null) {
-                throw new SAXException("Entrypoint " + entry.getKey() + " is not a shape");
+                throw new SAXException("Entrypoint " + entry.key + " is not a shape");
             }
 
             // check that the target has a point
-            if (entry.getValue() == null || entry.getValue().trim().isEmpty()) {
+            if (entry.value == null || entry.value.trim().isEmpty()) {
                 continue;
             } else {
-                String pLayer = entry.getValue().split(":")[0];
-                String pName = entry.getValue().split(":")[1];
+                String pLayer = entry.value.split(":")[0];
+                String pName = entry.value.split(":")[1];
                 layer = layers.get(pLayer);
 
                 if (layer == null || layer.getPoint(pName) == null) {
-                    throw new SAXException("Entrypoint " + entry.getKey()
-                        + " resolves to invalid spawn point " + entry.getValue());
+                    throw new SAXException("Entrypoint " + entry.key
+                        + " resolves to invalid spawn point " + entry.value);
                 }
             }
         }
@@ -478,11 +487,11 @@ public class TilemapReader extends DefaultHandler {
      * it is the root node).</p>
      */
     private String getParentElement() {
-        if (this.tree.size() == 1) {
+        if (this.tree.size == 1) {
             return "";
         }
 
-        return this.tree.get(this.tree.size() - 2);
+        return this.tree.get(this.tree.size - 2);
     }
 
     /**

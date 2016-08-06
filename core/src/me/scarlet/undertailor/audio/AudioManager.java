@@ -31,6 +31,7 @@ package me.scarlet.undertailor.audio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.utils.ObjectMap;
 import mod.com.badlogic.gdx.backends.lwjgl.audio.OpenALAudio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,6 @@ import me.scarlet.undertailor.util.BoundedFloat;
 import me.scarlet.undertailor.util.FileUtil;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -64,8 +63,8 @@ public class AudioManager {
     private BoundedFloat soundVolume;
     private BoundedFloat musicVolume;
 
-    private Map<String, Audio> sounds;
-    private Map<String, Audio> music;
+    private ObjectMap<String, Audio> sounds;
+    private ObjectMap<String, Audio> music;
 
     public AudioManager(Undertailor undertailor) {
         if (!AudioManager.audioReplaced) {
@@ -90,8 +89,8 @@ public class AudioManager {
         this.masterVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
         this.musicVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
         this.soundVolume = new BoundedFloat(0.0F, 1.0F, 1.0F);
-        this.sounds = new HashMap<>();
-        this.music = new HashMap<>();
+        this.sounds = new ObjectMap<>();
+        this.music = new ObjectMap<>();
     }
 
     // ---------------- g/s volumes ----------------
@@ -251,20 +250,20 @@ public class AudioManager {
         log.info("Loading " + resourceNamePlural.toLowerCase() + " from directory "
             + rootDirectory.getAbsolutePath());
 
-        Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
+        ObjectMap<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
             String fileName = file.getName();
             return fileName.endsWith(".ogg") || fileName.endsWith(".wav")
                 || fileName.endsWith(".mp3");
         });
 
-        Map<String, Audio> targetMap;
+        ObjectMap<String, Audio> targetMap;
         if (audioClass == Music.class) {
             targetMap = this.music;
         } else {
             targetMap = this.sounds;
         }
 
-        for (String key : files.keySet()) {
+        for (String key : files.keys()) {
             File audioFile = files.get(key);
             try {
                 if (targetMap.containsKey(key)) {
@@ -283,7 +282,7 @@ public class AudioManager {
             }
         }
 
-        log.info(targetMap.size() + " " + resourceNamePlural.toLowerCase()
+        log.info(targetMap.size + " " + resourceNamePlural.toLowerCase()
             + (audioClass == Music.class ? " tracks(s)" : "") + " loaded.");
     }
 }

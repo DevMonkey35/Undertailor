@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.gfx.text;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +40,6 @@ import me.scarlet.undertailor.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -52,11 +51,11 @@ public class FontManager {
     private static Logger log = LoggerFactory.getLogger(FontManager.class);
 
     private MultiRenderer renderer;
-    private Map<String, Font> fonts;
+    private ObjectMap<String, Font> fonts;
 
     public FontManager(MultiRenderer renderer) {
         this.renderer = renderer;
-        this.fonts = new HashMap<>();
+        this.fonts = new ObjectMap<>();
     }
 
     /**
@@ -79,11 +78,11 @@ public class FontManager {
      */
     public void loadFonts(File rootDirectory) {
         log.info("Loading fonts from directory " + rootDirectory.getAbsolutePath());
-        Map<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
+        ObjectMap<String, File> files = FileUtil.loadWithIdentifiers(rootDirectory, file -> {
             return file.getName().endsWith(".font");
         });
 
-        for (String key : files.keySet()) {
+        for (String key : files.keys()) {
             File fontFile = files.get(key);
             if (key.startsWith("styles.")) {
                 continue;
@@ -107,6 +106,6 @@ public class FontManager {
             }
         }
 
-        log.info(fonts.size() + " font(s) loaded.");
+        log.info(fonts.size + " font(s) loaded.");
     }
 }

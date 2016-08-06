@@ -30,10 +30,9 @@
 
 package me.scarlet.undertailor.engine.events;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
+
 import java.util.function.Function;
 
 /**
@@ -42,10 +41,10 @@ import java.util.function.Function;
  */
 public class EventHelper {
 
-    private Map<String, Set<Function<Event, Boolean>>> handlers;
+    private ObjectMap<String, ObjectSet<Function<Event, Boolean>>> handlers;
 
     public EventHelper() {
-        this.handlers = new HashMap<>();
+        this.handlers = new ObjectMap<>();
     }
 
     /**
@@ -68,10 +67,10 @@ public class EventHelper {
      * @param handler the handler that responds to the event
      */
     public void registerHandler(String eventId, Function<Event, Boolean> handler) {
-        Set<Function<Event, Boolean>> handlerSet = this.handlers.get(eventId);
+        ObjectSet<Function<Event, Boolean>> handlerSet = this.handlers.get(eventId);
 
         if (handlerSet == null) {
-            handlerSet = new HashSet<>();
+            handlerSet = new ObjectSet<>();
             this.handlers.put(eventId, handlerSet);
         }
 
@@ -93,7 +92,7 @@ public class EventHelper {
      */
     public boolean processEvent(Event event) {
         if (this.handlers.containsKey(event.getId())) {
-            Set<Function<Event, Boolean>> handlers = this.handlers.get(event.getId());
+            ObjectSet<Function<Event, Boolean>> handlers = this.handlers.get(event.getId());
             for (Function<Event, Boolean> handler : handlers) {
                 if (handler.apply(event)) {
                     event.processed = true;

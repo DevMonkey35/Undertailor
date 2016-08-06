@@ -30,10 +30,10 @@
 
 package me.scarlet.undertailor.util;
 
+import com.badlogic.gdx.utils.ObjectMap;
+
 import java.io.File;
 import java.io.FileFilter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Utility class for interaction with files.
@@ -53,7 +53,7 @@ public class FileUtil {
      * 
      * @see #loadWithIdentifiers(File, FileFilter, boolean)
      */
-    public static Map<String, File> loadWithIdentifiers(File root, FileFilter filter) {
+    public static ObjectMap<String, File> loadWithIdentifiers(File root, FileFilter filter) {
         return loadWithIdentifiers(root, filter, true);
     }
 
@@ -101,8 +101,8 @@ public class FileUtil {
      * 
      * @return a mapping of identifier and File pairs
      */
-    public static Map<String, File> loadWithIdentifiers(File root, FileFilter filter, boolean recursive) {
-        return loadWithIdentifiers(new HashMap<>(), recursive, null, root, filter);
+    public static ObjectMap<String, File> loadWithIdentifiers(File root, FileFilter filter, boolean recursive) {
+        return loadWithIdentifiers(new ObjectMap<>(), recursive, null, root, filter);
     }
 
     /**
@@ -114,7 +114,7 @@ public class FileUtil {
      * 
      * @see #loadWithIdentifiers(File, FileFilter)
      */
-    private static Map<String, File> loadWithIdentifiers(Map<String, File> parentMap,
+    private static ObjectMap<String, File> loadWithIdentifiers(ObjectMap<String, File> parentMap,
         boolean recursive, String append, File root, FileFilter filter) {
         if (!root.exists()) {
             root.mkdirs();

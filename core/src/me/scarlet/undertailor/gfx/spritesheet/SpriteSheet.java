@@ -30,7 +30,7 @@
 
 package me.scarlet.undertailor.gfx.spritesheet;
 
-import java.util.Collection;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Skeleton implementation of a spritesheet.
@@ -62,7 +62,7 @@ public interface SpriteSheet {
      * 
      * @return a Collection of Sprites
      */
-    public Collection<Sprite> getSprites();
+    public Array<Sprite> getSprites();
 
     /**
      * Returns the number of {@link Sprite}s held by this
@@ -70,7 +70,7 @@ public interface SpriteSheet {
      * 
      * <p>For factory-generated SpriteSheets, this method
      * proves more efficient than simply calling
-     * {@link Collection#size()} on the value returned by
+     * {@link Array#size} on the value returned by
      * {@link #getSprites()}, since the sheet can simply
      * return the count of sprites held by its factory.</p>
      * 

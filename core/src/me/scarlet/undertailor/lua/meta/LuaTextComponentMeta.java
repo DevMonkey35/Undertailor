@@ -34,6 +34,7 @@ import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.valueOf;
 
+import com.badlogic.gdx.utils.Array;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -44,8 +45,6 @@ import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.util.LuaUtil;
-
-import java.util.List;
 
 /**
  * Metadata for {@link LuaObjectValue}s holding
@@ -88,9 +87,9 @@ public class LuaTextComponentMeta implements LuaObjectMeta {
 
         // textComponent:getStyles()
         set("getStyles", asFunction(vargs -> {
-            List<TextStyle> styles = obj(vargs).getStyles();
-            LuaValue[] returned = new LuaValue[styles.size()];
-            for (int i = 0; i < styles.size(); i++) {
+            Array<TextStyle> styles = obj(vargs).getStyles();
+            LuaValue[] returned = new LuaValue[styles.size];
+            for (int i = 0; i < styles.size; i++) {
                 returned[i] = orNil(styles.get(i));
             }
 

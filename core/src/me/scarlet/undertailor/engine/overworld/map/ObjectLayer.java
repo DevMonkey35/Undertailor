@@ -35,12 +35,11 @@ import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
 
 import me.scarlet.undertailor.engine.overworld.OverworldController;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -225,12 +224,12 @@ public class ObjectLayer {
     // ---------------- object ----------------
 
     String name;
-    Set<ShapeData> shapes;
-    Map<String, Vector2> points;
+    ObjectSet<ShapeData> shapes;
+    ObjectMap<String, Vector2> points;
 
     ObjectLayer() {
-        this.shapes = new HashSet<>();
-        this.points = new HashMap<>();
+        this.shapes = new ObjectSet<>();
+        this.points = new ObjectMap<>();
     }
 
     /**
@@ -248,7 +247,7 @@ public class ObjectLayer {
      * 
      * @return all this ObjectLayer's ShapeData
      */
-    public Set<ShapeData> getShapes() {
+    public ObjectSet<ShapeData> getShapes() {
         return this.shapes;
     }
 

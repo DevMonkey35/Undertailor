@@ -34,6 +34,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.json.JSONConfigurationLoader;
 import org.slf4j.Logger;
@@ -51,8 +53,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipFile;
@@ -73,11 +73,13 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
     public static class PackagedSpriteSheet extends Resource<Texture> implements SpriteSheet {
 
         private PackagedSpriteSheetFactory factory;
-        private Map<String, Sprite> sprites;
+        private ObjectMap<String, Sprite> sprites;
+        private Array<Sprite> spriteColl;
 
         public PackagedSpriteSheet(PackagedSpriteSheetFactory factory) {
             this.factory = factory;
-            this.sprites = new HashMap<>();
+            this.sprites = new ObjectMap<>();
+            this.spriteColl = null;
         }
 
         // ---------------- abstract method implementation ----------------
@@ -116,15 +118,22 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
         }
 
         @Override
-        public Collection<Sprite> getSprites() {
-            factory.sprites.keySet().forEach(this::getSprite);
+        public Array<Sprite> getSprites() {
+            if (this.spriteColl == null) {
+                this.spriteColl = new Array<>(true, 16);
+            }
 
-            return sprites.values();
+            this.spriteColl.clear();
+            factory.sprites.keys().forEach(key -> {
+                this.spriteColl.add(this.getSprite(key));
+            });
+
+            return this.spriteColl;
         }
 
         @Override
         public int getSpriteCount() {
-            return factory.sprites.size();
+            return factory.sprites.size;
         }
     }
 
@@ -136,7 +145,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
     private String name;
     private ZipFile sourceFile;
     private MultiRenderer renderer;
-    private Map<String, Sprite> sprites;
+    private ObjectMap<String, Sprite> sprites;
     private ConfigurationNode sheetConfig;
 
     public PackagedSpriteSheetFactory(String name, MultiRenderer renderer, ZipFile sourceFile) {
@@ -144,7 +153,7 @@ public class PackagedSpriteSheetFactory extends ResourceFactory<Texture, Package
         this.renderer = renderer;
         this.sourceFile = sourceFile;
 
-        this.sprites = new HashMap<>();
+        this.sprites = new ObjectMap<>();
 
         InputStream configStream = null; // load the configuration json inside the archive for later reading
         try {

@@ -32,6 +32,8 @@ package me.scarlet.undertailor.audio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.LongMap;
+import com.badlogic.gdx.utils.LongMap.Keys;
 import mod.com.badlogic.gdx.backends.lwjgl.audio.OpenALAudio;
 import org.lwjgl.openal.AL10;
 
@@ -42,9 +44,6 @@ import me.scarlet.undertailor.util.BoundedFloat;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -232,11 +231,11 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
     private File soundFile;
     private String audioName;
     private AudioManager manager;
-    private Map<Long, WeakReference<SoundData>> soundData;
+    private LongMap<WeakReference<SoundData>> soundData;
 
     public SoundFactory(String audioName, AudioManager manager, File soundFile)
         throws UnsupportedAudioFileException {
-        this.soundData = new HashMap<>();
+        this.soundData = new LongMap<>();
         this.audioName = audioName;
         this.soundFile = soundFile;
         this.manager = manager;
@@ -306,9 +305,9 @@ public class SoundFactory extends ResourceFactory<com.badlogic.gdx.audio.Sound, 
      * the IDs of entries that are not playing.</p>
      */
     private boolean isPlaying() {
-        Iterator<Long> keySet = this.soundData.keySet().iterator();
+        Keys keySet = this.soundData.keys();
         long current = -1;
-        while (keySet.hasNext()) {
+        while (keySet.hasNext) {
             current = keySet.next();
 
             if (this.soundData.get(current).get() == null) {

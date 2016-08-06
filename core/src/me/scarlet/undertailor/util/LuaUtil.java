@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.util;
 
+import com.badlogic.gdx.utils.ObjectSet;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -38,8 +39,6 @@ import org.luaj.vm2.lib.VarArgFunction;
 
 import me.scarlet.undertailor.lua.LuaObjectValue;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -48,10 +47,10 @@ import java.util.function.Function;
  */
 public class LuaUtil {
 
-    static final Set<Object> MISC_SET;
+    static final ObjectSet<Object> MISC_SET;
 
     static {
-        MISC_SET = new HashSet<>();
+        MISC_SET = new ObjectSet<>();
     }
 
     /**
@@ -114,7 +113,7 @@ public class LuaUtil {
         MISC_SET.clear();
         iterateTable(table, MISC_SET::add);
 
-        return MISC_SET.size();
+        return MISC_SET.size;
     }
 
     /**

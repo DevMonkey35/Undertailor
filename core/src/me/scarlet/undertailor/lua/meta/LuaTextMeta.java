@@ -37,11 +37,13 @@ import static me.scarlet.undertailor.util.LuaUtil.varargsOf;
 import static org.luaj.vm2.LuaValue.NIL;
 import static org.luaj.vm2.LuaValue.valueOf;
 
+import com.badlogic.gdx.utils.Array;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.gfx.text.Text;
+import me.scarlet.undertailor.gfx.text.TextComponent;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
@@ -52,6 +54,8 @@ import me.scarlet.undertailor.util.Pair;
  * objects.
  */
 public class LuaTextMeta implements LuaObjectMeta {
+
+    static Array<TextComponent> returnArray;
 
     public static LuaObjectValue<Text> convert(LuaValue value) {
         return Lua.checkType(value, LuaTextMeta.class);
@@ -75,10 +79,15 @@ public class LuaTextMeta implements LuaObjectMeta {
 
         // text:getComponents()
         set("getComponents", asFunction(vargs -> {
-            Object[] components = obj(vargs).getComponents().toArray();
-            LuaValue[] returned = new LuaValue[components.length];
+            if(LuaTextMeta.returnArray == null) {
+                LuaTextMeta.returnArray = new Array<>(true, 16);
+            }
+
+            LuaTextMeta.returnArray.clear();
+            Array<TextComponent> components = obj(vargs).getComponents().toArray(LuaTextMeta.returnArray);
+            LuaValue[] returned = new LuaValue[components.size];
             for (int i = 0; i < returned.length; i++) {
-                returned[i] = orNil(components[i]);
+                returned[i] = orNil(components.get(i));
             }
 
             return arrayOf(returned);

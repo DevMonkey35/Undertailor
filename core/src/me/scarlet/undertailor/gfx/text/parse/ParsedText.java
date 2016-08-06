@@ -30,7 +30,7 @@
 
 package me.scarlet.undertailor.gfx.text.parse;
 
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Holds a set of {@link TextPiece}s generated from a
@@ -40,13 +40,13 @@ import java.util.List;
  */
 public class ParsedText {
 
-    private final List<TextPiece> pieces;
+    private final Array<TextPiece> pieces;
 
-    public ParsedText(List<TextPiece> pieces) {
+    public ParsedText(Array<TextPiece> pieces) {
         this.pieces = pieces;
     }
 
-    public List<TextPiece> getPieces() {
+    public Array<TextPiece> getPieces() {
         return this.pieces;
     }
 

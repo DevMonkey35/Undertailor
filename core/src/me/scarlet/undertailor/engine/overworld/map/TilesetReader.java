@@ -30,6 +30,8 @@
 
 package me.scarlet.undertailor.engine.overworld.map;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -44,10 +46,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
 
@@ -64,10 +62,10 @@ public class TilesetReader extends DefaultHandler {
 
         private int tileWidth;
         private int tileHeight;
-        private Map<Integer, List<Tuple<Integer, Long>>> animations;
+        private ObjectMap<Integer, Array<Tuple<Integer, Long>>> animations;
 
         public TilesetMeta() {
-            this.animations = new HashMap<>();
+            this.animations = new ObjectMap<>();
         }
 
         public int getTileWidth() {
@@ -84,7 +82,7 @@ public class TilesetReader extends DefaultHandler {
          * 
          * @return a Map of animations
          */
-        public Map<Integer, List<Tuple<Integer, Long>>> getAnimations() {
+        public ObjectMap<Integer, Array<Tuple<Integer, Long>>> getAnimations() {
             return this.animations;
         }
     }
@@ -94,10 +92,10 @@ public class TilesetReader extends DefaultHandler {
 
     // processing vars;
     private int id;
-    private List<String> tree;
+    private Array<String> tree;
 
     public TilesetReader() {
-        this.tree = new ArrayList<>();
+        this.tree = new Array<>(true, 8);
         this.parser = XMLUtil.generateParser();
     }
 
@@ -127,10 +125,10 @@ public class TilesetReader extends DefaultHandler {
 
         if (this.checkElement("animation", "frame", qName)) {
             if (!this.meta.animations.containsKey(this.id)) {
-                this.meta.animations.put(this.id, new ArrayList<>());
+                this.meta.animations.put(this.id, new Array<>(true, 8));
             }
 
-            List<Tuple<Integer, Long>> animations = this.meta.animations.get(this.id);
+            Array<Tuple<Integer, Long>> animations = this.meta.animations.get(this.id);
             animations.add(new Tuple<>(Integer.parseInt(attributes.getValue("", "tileid")),
                 Long.parseLong(attributes.getValue("", "duration"))));
         }
@@ -142,7 +140,7 @@ public class TilesetReader extends DefaultHandler {
             this.id = -1;
         }
 
-        this.tree.remove(qName);
+        this.tree.removeValue(qName, false);
     }
 
     // ---------------- object ----------------
@@ -190,11 +188,11 @@ public class TilesetReader extends DefaultHandler {
      * it is the root node).</p>
      */
     private String getParentElement() {
-        if (this.tree.size() == 1) {
+        if (this.tree.size == 1) {
             return "";
         }
 
-        return this.tree.get(this.tree.size() - 2);
+        return this.tree.get(this.tree.size - 2);
     }
 
     /**

@@ -31,14 +31,13 @@
 package me.scarlet.undertailor.resource;
 
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Holds two threads responsible for the automatic disposal
@@ -62,8 +61,8 @@ public class ResourceHandler {
 
     static final ReferenceQueue<Resource<?>> QUEUE;
 
-    private static final Set<Disposable> DEFERRED_CANCEL;
-    private static final Set<Reference<?>> DEFERRED_RESOURCES;
+    private static final ObjectSet<Disposable> DEFERRED_CANCEL;
+    private static final ObjectSet<Reference<?>> DEFERRED_RESOURCES;
     private static final Logger log = LoggerFactory.getLogger(ResourceHandler.class);
 
     /**
@@ -80,8 +79,8 @@ public class ResourceHandler {
 
     static {
         QUEUE = new ReferenceQueue<>();
-        DEFERRED_CANCEL = new HashSet<>();
-        DEFERRED_RESOURCES = new HashSet<>();
+        DEFERRED_CANCEL = new ObjectSet<>();
+        DEFERRED_RESOURCES = new ObjectSet<>();
     }
 
     private Thread handlerThread;
@@ -108,7 +107,7 @@ public class ResourceHandler {
                 } catch (InterruptedException ignore) {
                 }
             }
-        } , ResourceHandler.THREAD_ID_DISPOSER);
+        }, ResourceHandler.THREAD_ID_DISPOSER);
 
         this.deferrenceThread = new Thread(() -> {
             while (true) {
@@ -119,7 +118,7 @@ public class ResourceHandler {
 
                 synchronized (ResourceHandler.DEFERRED_RESOURCES) {
                     synchronized (ResourceHandler.DEFERRED_CANCEL) {
-                        if (!ResourceHandler.DEFERRED_RESOURCES.isEmpty()) {
+                        if (ResourceHandler.DEFERRED_RESOURCES.size > 0) {
                             Iterator<Reference<?>> iterator =
                                 ResourceHandler.DEFERRED_RESOURCES.iterator();
                             while (iterator.hasNext()) {
@@ -127,7 +126,7 @@ public class ResourceHandler {
                                     (ResourceReference<D, Resource<D>>) iterator.next();
                                 String resourceTypeName = reference.getResourceClass().getName();
 
-                                if (!ResourceHandler.DEFERRED_CANCEL.isEmpty()
+                                if (ResourceHandler.DEFERRED_CANCEL.size > 0
                                     && ResourceHandler.DEFERRED_CANCEL
                                         .contains(reference.disposable)) {
                                     log.info("Canceling disposal of deferred resource of type "
@@ -155,7 +154,7 @@ public class ResourceHandler {
                     }
                 }
             }
-        } , ResourceHandler.THREAD_ID_DEFERRER);
+        }, ResourceHandler.THREAD_ID_DEFERRER);
 
         this.handlerThread.setDaemon(true);
         this.deferrenceThread.setDaemon(true);
