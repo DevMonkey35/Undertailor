@@ -33,6 +33,7 @@ package me.scarlet.undertailor.lua;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
 import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.slf4j.Logger;
@@ -78,6 +79,7 @@ import me.scarlet.undertailor.util.LuaUtil;
  * Static implementation of a class that holds meta data for
  * {@link LuaObjectValue}s.
  */
+@SuppressWarnings("unchecked")
 public class Lua {
 
     static final Logger log = LoggerFactory.getLogger(Lua.class);
@@ -86,6 +88,7 @@ public class Lua {
     private static final ObjectMap<Class<?>, LuaObjectMeta> META;
     private static final ObjectMap<Class<?>, LuaObjectMeta> PMETA;
     private static final ObjectMap<Class<?>, LuaTable> METATABLES;
+    private static final ObjectMap<String, LuaFunction> GLOBAL_METATABLE;
     private static final String INVALID_TYPE_MSG = "bad argument: %s expected, got %s";
 
     static {
@@ -93,6 +96,27 @@ public class Lua {
         META = new ObjectMap<>();
         PMETA = new ObjectMap<>();
         METATABLES = new ObjectMap<>();
+        GLOBAL_METATABLE = new ObjectMap<>();
+
+        // Metamethods implementation for all LuaObjectValues.
+
+        GLOBAL_METATABLE.put(LuaValue.EQ.tojstring(), LuaUtil.asFunction(vargs -> {
+            if(vargs.isnil(2)) {
+                // We'll still get called for nil. Automagically return false for nil.
+                return LuaValue.valueOf(false);
+            }
+
+            // obj1, us, is guaranteed to be an object value
+            LuaObjectValue<? super Object> obj1 = (LuaObjectValue<? super Object>) vargs.arg(1);
+            LuaValue obj2 = vargs.arg(2);
+
+            if (obj2 instanceof LuaObjectValue) {
+                return LuaValue.valueOf(
+                    obj1.getObject() == ((LuaObjectValue<? super Object>) obj2).getObject());
+            }
+
+            return LuaValue.valueOf(false);
+        }));
 
         loadMeta(LuaAudioDataMeta.class);
         loadMeta(LuaAudioMeta.class);
@@ -151,7 +175,6 @@ public class Lua {
      * @return the appropriately typed LuaValue as a
      *         LuaObjectValue
      */
-    @SuppressWarnings("unchecked")
     public static <T> LuaObjectValue<T> checkType(LuaValue value,
         Class<? extends LuaObjectMeta> clazz) {
         LuaObjectMeta meta = Lua.getMeta(clazz);
@@ -302,7 +325,15 @@ public class Lua {
 
         if (LuaUtil.getTableSize(functable) > 0) {
             LuaTable metatable = new LuaTable();
+
+            // add the object's metatable functions
             metatable.set("__index", functable);
+
+            // add the stuff we do for every metatable
+            GLOBAL_METATABLE.entries().forEach(entry -> {
+                metatable.set(entry.key, entry.value);
+            });
+
             Lua.METATABLES.put(obj.getClass(), metatable);
             return metatable;
         } else {
