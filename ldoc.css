@@ -5,8 +5,8 @@ body {
     margin-left: 1em;
     margin-right: 1em;
     font-family: "Lato", arial, helvetica, geneva, sans-serif;
-    background-color: #ffffff; margin: 0px;
-    color: #1c4e68;
+    background-color: #333333; margin: 0px;
+    color: #007acc;
 }
 
 code, tt { font-family: monospace; font-size: 1.1em; }
@@ -36,11 +36,11 @@ h2, h3, h4 {
     font-weight: 700;
     margin: 15px 0 10px 0; }
 h2 { font-size: 1.25em; color: #ea316e; }
-h3 { font-size: 1.15em; }
+h3 { font-size: 1.15em; color: #f4ee7f; }
 h4 { font-size: 1.06em; }
 
-a:link { font-weight: bold; color: #1c4e68; text-decoration: none; }
-a:visited { font-weight: bold; color: #1e86be; text-decoration: none; }
+a:link { font-weight: bold; color: #cccccc; text-decoration: none; }
+a:visited { font-weight: bold; color: #828282; text-decoration: none; }
 a:link:hover { text-decoration: underline; }
 
 hr {
@@ -59,8 +59,7 @@ p.name {
 }
 
 pre {
-    background-color: rgb(245, 245, 245);
-    border: 1px solid #C0C0C0; /* silver */
+    background-color: #141414;
     padding: 10px;
     margin: 10px 0 10px 0;
     overflow: auto;
@@ -77,7 +76,7 @@ table.index td { text-align: left; vertical-align: top; }
 #container {
     margin-left: 1em;
     margin-right: 1em;
-    background-color: #e0f4fc;
+    background-color: #1e1e1e;
 }
 
 #product {
@@ -91,8 +90,7 @@ table.index td { text-align: left; vertical-align: top; }
 }
 
 #main {
-    background-color: #e0f4fc;
-    border-left: 2px solid #b1e3fa;
+    background-color: #1e1e1e;
 }
 
 
@@ -100,18 +98,16 @@ table.index td { text-align: left; vertical-align: top; }
     float: left;
     width: 14em;
     vertical-align: top;
-    background-color: #e0f4fc;
+    background-color: #333333;
     overflow: visible;
 }
 
 #navigation h2 {
-    background-color:#aee7ff;
+    background-color:#3f3f46;
     font-size:1.1em;
-    color:#25aae1;
+    color:#cccccc;
     text-align: left;
     padding:0.2em;
-    border-top:1px solid #b1e3fa;
-    border-bottom:1px solid #b1e3fa;
 }
 
 #navigation h1 {
@@ -143,17 +139,16 @@ table.index td { text-align: left; vertical-align: top; }
 #content {
     margin-left: 14em;
     padding: 1em;
-    border-left: 2px solid #b1e3fa;
-    border-right: 2px solid #b1e3fa;
-    background-color: #ffffff;
+    background-color: #1e1e1e;
 }
 
 #about {
     clear: both;
     padding: 5px;
-    border-top: 2px solid #b1e3fa;
-    background-color: #ffffff;
+    background-color: #007acc;
+    margin-left: -1.5em;
     font-size: 10px;
+    color: #ffffff;
 }
 
 @media print {
@@ -207,24 +202,24 @@ table.module_list td.summary { width: 100%; }
 table.function_list {
     border-width: 1px;
     border-style: solid;
-    border-color: #b1e3fa;
+    border-color: #007acc;
     border-collapse: collapse;
 }
 table.function_list td {
     border-width: 1px;
     padding: 3px;
     border-style: solid;
-    border-color: #b1e3fa;
+    border-color: #007acc;
 }
-table.function_list td.name { background-color: #e0f4fc; min-width: 200px; }
-table.function_list td.summary { width: 100%; }
+table.function_list td.name { background-color: #007acc; min-width: 300px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; overflow: hidden; }
+table.function_list td.summary { width: 100%; color: #796ead; }
 
 ul.nowrap {
     overflow:auto;
     white-space:nowrap;
 }
 
-dl.table dt, dl.function dt {border-top: 1px solid #b1e3fa; padding-top: 1em;}
+dl.table dt, dl.function dt {border-top: 1px solid #b1e3fa; padding-top: 1em; color: #cccccc; }
 dl.table dd, dl.function dd {padding-bottom: 1em; margin: 10px 0 0 20px;}
 dl.table h3, dl.function h3 {font-size: .95em;}
 
