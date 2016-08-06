@@ -54,6 +54,9 @@ import java.util.function.BiConsumer;
  */
 public class Text extends TextComponent implements Renderable {
 
+    static final char SPACE = ' ';
+    static final char NEWLINE = '\n';
+
     /**
      * Builder-type class for building {@link Text}s.
      */
@@ -86,7 +89,7 @@ public class Text extends TextComponent implements Renderable {
          */
         public Builder addComponents(TextComponent... components) {
             for (TextComponent component : components) {
-                this.component.text += component.text;
+                this.component.text = this.component.text.concat(component.text);
                 component.parent = (Text) this.component;
 
                 Text text = ((Text) this.component);
@@ -239,10 +242,10 @@ public class Text extends TextComponent implements Renderable {
         this.processCharacters((localIndex, component) -> {
             char character = component.getText().charAt(localIndex.getB());
 
-            if (character == ' ') { // space?
+            if (character == SPACE) { // space?
                 dX += font.getSpaceLength() * transform.getScaleX();
                 prevSpacing = 0;
-            } else if (character == '\n') { // new line?
+            } else if (character == NEWLINE) { // new line?
                 dX = x;
                 dY -= font.getLineSize() * transform.getScaleY();
                 prevSpacing = 0;
@@ -382,8 +385,12 @@ public class Text extends TextComponent implements Renderable {
             throw new IllegalArgumentException("First bound cannot be greater than second bound");
         }
 
+        int oFirst = this.stringBounds.getA();
+        int oSecond = this.stringBounds.getB();
         this.stringBounds.setItems(first, second);
-        this.refreshValues();
+        if (oFirst != first || oSecond != second) {
+            this.refreshValues();
+        }
     }
 
     // ---------------- functional --------------------
@@ -402,9 +409,9 @@ public class Text extends TextComponent implements Renderable {
             return null;
         }
 
-        for(int i = index + 1; i >= 0; i--) {
+        for (int i = index + 1; i >= 0; i--) {
             TextComponent comp = this.components.get(i);
-            if(comp != null) {
+            if (comp != null) {
                 return comp;
             }
         }
@@ -480,8 +487,8 @@ public class Text extends TextComponent implements Renderable {
                                 TextComponent.Builder compBuilder = TextComponent.builder();
 
                                 compBuilder.copy(entry.value);
-                                compBuilder.setText(
-                                    entry.value.getText().substring(boundL - entry.key));
+                                compBuilder
+                                    .setText(entry.value.getText().substring(boundL - entry.key));
                                 builder.addComponents(compBuilder.build());
                             }
 

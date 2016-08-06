@@ -44,7 +44,6 @@ import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.spritesheet.PackagedSpriteSheetFactory;
 import me.scarlet.undertailor.gfx.spritesheet.PackagedSpriteSheetFactory.PackagedSpriteSheet;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
-import me.scarlet.undertailor.gfx.spritesheet.SpriteSheet;
 import me.scarlet.undertailor.util.Pair;
 import me.scarlet.undertailor.util.StreamUtil;
 
@@ -69,7 +68,6 @@ public class Font {
 
     private float lineSize;
     private float spaceLength;
-    private String characterList;
     private Pair<Float> defaultLetterSpacing;
     private ObjectMap<Character, Pair<Float>> letterSpacing;
 
@@ -153,19 +151,6 @@ public class Font {
     }
 
     /**
-     * Returns the list of characters supported by this
-     * {@link Font}, in the order of appearance on its
-     * {@link SpriteSheet} starting from the top-left,
-     * left-to-right.
-     * 
-     * @return a String holding the supported characters for
-     *         this Font
-     */
-    public String getCharacterList() {
-        return this.characterList;
-    }
-
-    /**
      * Returns the {@link Sprite} assigned to the provided
      * character as denoted by this {@link Font}, or null if
      * the character is unsupported.
@@ -173,7 +158,7 @@ public class Font {
      * @param character the target character
      */
     public Sprite getCharacterSprite(char character) {
-        return this.sheet.getSprite("" + character);
+        return this.sheet.getSprite(Character.toString(character));
     }
 
     // ---------------- configuration loader ----------------

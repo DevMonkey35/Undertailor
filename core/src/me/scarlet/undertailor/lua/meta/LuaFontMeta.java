@@ -86,11 +86,6 @@ public class LuaFontMeta implements LuaObjectMeta {
             return varargsOf(valueOf(spacing.getA()), valueOf(spacing.getB()));
         }));
 
-        // font:getCharacterList()
-        set("getCharacterList", asFunction(vargs -> {
-            return valueOf(obj(vargs).getCharacterList());
-        }));
-
         // font:getCharacterSprite(char)
         set("getCharacterSprite", asFunction(vargs -> {
             String str = vargs.checkjstring(2);
