@@ -56,6 +56,7 @@ import me.scarlet.undertailor.lua.meta.LuaPositionableMeta;
 import me.scarlet.undertailor.lua.meta.LuaPressDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaProcessableMeta;
 import me.scarlet.undertailor.lua.meta.LuaRenderableMeta;
+import me.scarlet.undertailor.lua.meta.LuaSchedulerMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundDataMeta;
 import me.scarlet.undertailor.lua.meta.LuaSoundMeta;
 import me.scarlet.undertailor.lua.meta.LuaSpriteMeta;
@@ -114,6 +115,7 @@ public class Lua {
         loadMeta(LuaPressDataMeta.class);
         loadMeta(LuaProcessableMeta.class);
         loadMeta(LuaRenderableMeta.class);
+        loadMeta(LuaSchedulerMeta.class);
         loadMeta(LuaSoundDataMeta.class);
         loadMeta(LuaSoundMeta.class);
         loadMeta(LuaSpriteMeta.class);
