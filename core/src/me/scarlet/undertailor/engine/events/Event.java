@@ -77,6 +77,10 @@ public class Event {
      * stops colliding with another object.
      */
     public static final String EVT_STOPCOLLIDE = "onStopCollide";
+    /**
+     * Called by the system when the window focus changes.
+     */
+    public static final String EVT_FOCUSCHANGED = "focusChanged";
 
     EventListener source;
     boolean processed;

@@ -30,13 +30,10 @@
 
 package me.scarlet.undertailor.lua.impl;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.of;
-
 import org.luaj.vm2.Varargs;
 
-import me.scarlet.undertailor.engine.Collider;
+import me.scarlet.undertailor.engine.events.Event;
 import me.scarlet.undertailor.engine.overworld.WorldObject;
-import me.scarlet.undertailor.engine.overworld.WorldRoom;
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.lua.LuaImplementable;
@@ -76,6 +73,21 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
         if (this.hasFunction(FUNC_CREATE)) {
             this.invokeSelf(FUNC_CREATE, params);
         }
+
+        this.getEventHelper().registerHandler(Event.EVT_PERSIST, evt -> {
+            this.invokeSelf(FUNC_ONPERSIST, LuaUtil.varargsOf(evt.getParameters()));
+            return false;
+        });
+
+        this.getEventHelper().registerHandler(Event.EVT_STARTCOLLIDE, evt -> {
+            this.invokeSelf(FUNC_STARTCOLLISION, LuaUtil.varargsOf(evt.getParameters()));
+            return false;
+        });
+
+        this.getEventHelper().registerHandler(Event.EVT_STOPCOLLIDE, evt -> {
+            this.invokeSelf(FUNC_ENDCOLLISION, LuaUtil.varargsOf(evt.getParameters()));
+            return false;
+        });
     }
 
     @Override
@@ -108,26 +120,5 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
         }
 
         return false;
-    }
-
-    @Override
-    public void startCollision(Collider collider) {
-        if (this.hasFunction(FUNC_STARTCOLLISION)) {
-            this.invokeSelf(FUNC_STARTCOLLISION, of(collider));
-        }
-    }
-
-    @Override
-    public void endCollision(Collider collider) {
-        if (this.hasFunction(FUNC_ENDCOLLISION)) {
-            this.invokeSelf(FUNC_ENDCOLLISION, of(collider));
-        }
-    }
-
-    @Override
-    public void onPersist(WorldRoom newRoom, boolean entrypoint) {
-        if (this.hasFunction(FUNC_ONPERSIST)) {
-            this.invokeSelf(FUNC_ONPERSIST, LuaUtil.varargsOf(newRoom, entrypoint));
-        }
     }
 }

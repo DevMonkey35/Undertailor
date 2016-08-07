@@ -97,7 +97,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
         this.groupId = -1;
         this.canCollide = true;
-        this.events = new EventHelper();
+        this.events = new EventHelper(this);
     }
 
     // ---------------- g/s object params / a whole lot of abstract method implementation god damnit ----------------
@@ -207,7 +207,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     @Override
     public boolean callEvent(Event event) {
-        if(this.destroyed) {
+        if (this.destroyed) {
             return false;
         }
 
@@ -255,6 +255,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         if (this.room == null) {
             this.room = room;
             this.room.requestBody(this);
+            this.callEvent(new Event(Event.EVT_CLAIM));
             return true;
         }
 
@@ -370,6 +371,16 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     @Override
     public void setGroupId(short id) {
         this.groupId = id;
+    }
+
+    @Override
+    public void startCollision(Collider collider) {
+        this.callEvent(new Event(Event.EVT_STARTCOLLIDE, collider));
+    }
+
+    @Override
+    public void endCollision(Collider collider) {
+        this.callEvent(new Event(Event.EVT_STOPCOLLIDE, collider));
     }
 
     // -------------------------------- object --------------------------------
@@ -533,22 +544,4 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
      * @return generic return value
      */
     public abstract boolean processObject();
-
-    /**
-     * Called when this {@link WorldObject} is currently
-     * deemed persistent and changes {@link WorldRoom}s.
-     * 
-     * @param newRoom the new WorldRoom this WorldObject was
-     *        transferred to
-     * @param entrypoint whether persistence occurred
-     *        because the character object entered an
-     *        entrypoint
-     */
-    public abstract void onPersist(WorldRoom newRoom, boolean entrypoint);
-
-    @Override
-    public abstract void startCollision(Collider collider);
-
-    @Override
-    public abstract void endCollision(Collider collider);
 }

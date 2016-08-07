@@ -77,18 +77,18 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
             // Positionable identifies both World Objects and Image Layers.
 
             if (obj1.getLayer() == obj2.getLayer()) {
-                if(obj1 instanceof Positionable && obj2 instanceof Positionable) {
+                if (obj1 instanceof Positionable && obj2 instanceof Positionable) {
                     float y1 = ((Positionable) obj1).getPosition().y;
                     float y2 = ((Positionable) obj2).getPosition().y;
 
-                    if(y1 == y2) {
+                    if (y1 == y2) {
                         return 1;
                     }
 
                     return Float.compare(y2, y1);
                 }
 
-                if(obj1 instanceof TileLayer && obj2 instanceof TileLayer) {
+                if (obj1 instanceof TileLayer && obj2 instanceof TileLayer) {
                     long i1 = ((Identifiable) obj1).getId();
                     long i2 = ((Identifiable) obj2).getId();
 
@@ -121,7 +121,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     public WorldRoom(Tilemap map) {
         this.destroyed = false;
         this.prepared = false;
-        this.events = new EventHelper();
+        this.events = new EventHelper(this);
         this.bodyQueue = new ObjectSet<>();
         this.entrypointQueue = new ObjectSet<>();
 
@@ -251,7 +251,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     @Override
     public boolean poke() {
         if (!prepared) {
-            if (this.tilemap.isLoaded()) {
+            if (this.tilemap == null || this.tilemap.isLoaded()) {
                 this.bodyQueue.forEach(
                     obj -> obj.createBody(this.controller.getCollisionHandler().getWorld()));
                 this.entrypointQueue.forEach(entrypoint -> {
@@ -268,6 +268,8 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                 this.bodyQueue = null;
                 this.prepared = true;
                 this.onLoad();
+
+                this.callEvent(new Event(Event.EVT_LOAD));
             }
 
             return false;

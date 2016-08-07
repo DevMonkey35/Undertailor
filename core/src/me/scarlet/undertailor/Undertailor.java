@@ -34,11 +34,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import javafx.application.Platform;
+import org.lwjgl.opengl.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.scarlet.undertailor.engine.Environment;
 import me.scarlet.undertailor.engine.EnvironmentManager;
+import me.scarlet.undertailor.engine.events.Event;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.input.InputRetriever;
 import me.scarlet.undertailor.resource.ResourceHandler;
@@ -75,8 +77,10 @@ public class Undertailor extends ApplicationAdapter {
     private EnvironmentManager environments;
     private MultiRenderer renderer;
     private AssetManager assets;
+    private boolean focused;
 
     public Undertailor(LaunchOptions options, LwjglApplicationConfiguration lwjglConfig) {
+        this.focused = Display.isActive();
         this.options = options;
         this.lwjglConfig = lwjglConfig;
         Undertailor.instance = this;
@@ -216,6 +220,10 @@ public class Undertailor extends ApplicationAdapter {
         this.environments.process();
 
         this.renderer.flush(); // Flush graphics for next frame.
+        if (this.focused != Display.isActive()) {
+            this.focused = Display.isActive();
+            this.environments.callEvent(new Event(Event.EVT_FOCUSCHANGED));
+        }
     }
 
     @Override

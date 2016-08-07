@@ -59,7 +59,7 @@ public class Environment implements Processable, Renderable, Destructible, Event
 
     public Environment(Undertailor tailor, String name) {
         this.name = name;
-        this.events = new EventHelper();
+        this.events = new EventHelper(this);
         this.manager = tailor.getEnvironmentManager();
         this.scheduler = new Scheduler(this);
         this.overworld =

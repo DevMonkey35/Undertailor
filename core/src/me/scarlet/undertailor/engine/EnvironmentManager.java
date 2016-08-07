@@ -59,7 +59,7 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
     public EnvironmentManager(Undertailor tailor) {
         this.tailor = tailor;
         this.activeEnvironment = null;
-        this.events = new EventHelper();
+        this.events = new EventHelper(this);
         this.environments = new ObjectMap<>();
         this.globalSched = new Scheduler(null);
 

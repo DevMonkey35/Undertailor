@@ -81,7 +81,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
 
         this.parent = null;
         this.destroyed = false;
-        this.events = new EventHelper();
+        this.events = new EventHelper(this);
         this.position = new Vector2(0, 0);
         this.components = new Array<>(true, 8);
     }
@@ -147,6 +147,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     public boolean claim(UIController parent) {
         if (this.parent == null) {
             this.parent = parent;
+            this.callEvent(new Event(Event.EVT_CLAIM));
             return true;
         }
 

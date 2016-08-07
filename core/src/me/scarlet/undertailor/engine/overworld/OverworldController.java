@@ -56,9 +56,11 @@ import me.scarlet.undertailor.util.Pair;
  * Subsystem within an {@link Environment} running the
  * processes of an overworld.
  */
-public class OverworldController implements Processable, Renderable, Subsystem, Destructible, EventListener {
+public class OverworldController
+    implements Processable, Renderable, Subsystem, Destructible, EventListener {
 
     static final Logger log = LoggerFactory.getLogger(OverworldController.class);
+
     public static final float PIXELS_TO_METERS = 0.025F;
     public static final float METERS_TO_PIXELS = 40.0F;
     public static final float RENDER_WIDTH = 640.0F;
@@ -80,7 +82,7 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
     private WorldRoom room;
 
     public OverworldController(MultiRenderer renderer, Environment environment, Viewport viewport) {
-        this.events = new EventHelper();
+        this.events = new EventHelper(this);
         this.camera = new OverworldCamera(this);
         this.collision = new CollisionHandler(camera, true);
         this.transitions = new Pair<>();
@@ -102,11 +104,11 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
 
     @Override
     public boolean callEvent(Event event) {
-        if(this.destroyed) {
+        if (this.destroyed) {
             return false;
         }
 
-        return this.events.processEvent(event) || this.room.callEvent(event);
+        return this.events.processEvent(event) || (this.room == null ? false : this.room.callEvent(event));
     }
 
     @Override
@@ -335,26 +337,22 @@ public class OverworldController implements Processable, Renderable, Subsystem, 
                         target = OverworldController.this.room.getEntrypoint(targetEntrypoint);
                     }
 
+                    Event evt = new Event(Event.EVT_PERSIST, room, target != null);
                     if (target != null) {
                         Vector2 spawn = target.getTargetSpawnpoint();
                         if (spawn != null && OverworldController.this.character != null) {
                             OverworldController.this.character.setPosition(spawn);
                         }
-
-                        // entrypoint was true
-                        this.persistent.forEach(obj -> {
-                            obj.onPersist(room, true);
-                        });
-                    } else {
-                        // entrypoint was false
-                        this.persistent.forEach(obj -> {
-                            obj.onPersist(room, false);
-                        });
                     }
+
+                    this.persistent.forEach(obj -> {
+                        obj.callEvent(evt);
+                    });
 
                     return false;
                 }
 
+                OverworldController.this.callEvent(new Event(Event.EVT_ROOMCHANGE));
                 return true;
             }
         };

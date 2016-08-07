@@ -74,7 +74,7 @@ public class UIController
         this.renderer = renderer;
         this.environment = parent;
         this.removed = new ObjectSet<>();
-        this.events = new EventHelper();
+        this.events = new EventHelper(this);
         this.camera = new OrthographicCamera(OverworldController.RENDER_WIDTH,
             OverworldController.RENDER_HEIGHT);
         this.camera.position.x += OverworldController.RENDER_WIDTH / 2F;

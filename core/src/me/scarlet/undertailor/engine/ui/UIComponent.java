@@ -60,7 +60,7 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
         this.screenProxy = new Vector2();
         this.transform = new Transform();
         this.position = new Vector2(0, 0);
-        this.events = new EventHelper();
+        this.events = new EventHelper(this);
         this.destroyed = false;
         this.parent = null;
     }
@@ -104,6 +104,7 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
         if(this.parent == null) {
             this.parent = parent;
             this.onClaim(parent);
+            this.callEvent(new Event(Event.EVT_CLAIM));
             return true;
         }
 
