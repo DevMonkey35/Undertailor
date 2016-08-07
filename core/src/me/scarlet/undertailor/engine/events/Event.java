@@ -34,6 +34,12 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
+import me.scarlet.undertailor.engine.EnvironmentManager;
+import me.scarlet.undertailor.engine.Modular;
+import me.scarlet.undertailor.engine.overworld.OverworldController;
+import me.scarlet.undertailor.engine.overworld.WorldObject;
+import me.scarlet.undertailor.engine.overworld.WorldRoom;
+import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.util.LuaUtil;
 
 /**
@@ -41,6 +47,38 @@ import me.scarlet.undertailor.util.LuaUtil;
  */
 public class Event {
 
+    /**
+     * Called by an {@link OverworldController} on itself
+     * after successfully changing rooms.
+     */
+    public static final String EVT_ROOMCHANGE = "onRoomChange";
+    /**
+     * Called by {@link WorldObject}s on themselves after
+     * persisting through rooms.
+     */
+    public static final String EVT_PERSIST = "onPersist";
+    /**
+     * Called by {@link Modular} objects when they get
+     * claimed by a parent.
+     */
+    public static final String EVT_CLAIM = "onClaim";
+    /**
+     * Called by a {@link WorldRoom} on itself after loading
+     * (right after its create function).
+     */
+    public static final String EVT_LOAD = "onLoad";
+    /**
+     * Called by a {@link WorldObject} on itself when it
+     * collides with another object.
+     */
+    public static final String EVT_STARTCOLLIDE = "onCollide";
+    /**
+     * Called by a {@link WorldObject} on itself when it
+     * stops colliding with another object.
+     */
+    public static final String EVT_STOPCOLLIDE = "onStopCollide";
+
+    EventListener source;
     boolean processed;
     private String id;
     private Object[] params;
@@ -73,10 +111,11 @@ public class Event {
 
         this.table = new LuaTable();
         this.table.set(1, this.id);
-        this.table.set(2, LuaValue.valueOf(this.processed));
+        this.table.set(2, LuaValue.NIL);
+        this.table.set(3, LuaValue.valueOf(this.processed));
         Varargs luaParams = LuaUtil.varargsOf(this.params);
         for (int i = 0; i < this.params.length; i++) {
-            this.table.set(3 + i, luaParams.arg(i + 1));
+            this.table.set(4 + i, luaParams.arg(i + 1));
         }
     }
 
@@ -114,17 +153,17 @@ public class Event {
      * instance.
      * 
      * <p>An event instance is an array table, containing
-     * the following:</p>
-     * <ul>
-     * <li>the type ID of this Event</li>
+     * the following:</p> <ul> <li>the type ID of this
+     * Event</li> <li>the source of the event</li>
      * <li>whether this event had been processed</li>
-     * <li>the parameters of the event</li>
-     * </ul>
+     * <li>the parameters of the event</li> </ul>
      * 
      * @return the Lua version of this Event
      */
     public LuaTable asLua() {
-        this.table.set(2, LuaValue.valueOf(this.processed));
+        this.table.set(2,
+            source instanceof EnvironmentManager ? LuaValue.NIL : LuaObjectValue.of(source));
+        this.table.set(3, LuaValue.valueOf(this.processed));
         return this.table;
     }
 }

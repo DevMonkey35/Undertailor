@@ -43,6 +43,7 @@ import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.util.LuaUtil;
 
 /**
  * Metadata for {@link LuaObjectValue}s holding
@@ -72,8 +73,8 @@ public class LuaEventListenerMeta implements LuaObjectMeta {
         // eventListener:onEvent(eventId, handler)
         set("onEvent", asFunction(vargs -> {
             obj(vargs).getEventHelper().registerHandler(vargs.checkjstring(2), event -> {
-                return vargs.checkfunction(3).invoke(event.asLua().unpack().subargs(2))
-                    .toboolean(1);
+                Varargs params = LuaUtil.unpack(event.asLua(), 3 + event.getParameters().length);
+                return vargs.checkfunction(3).invoke(params.subargs(2)).toboolean(1);
             });
 
             return NIL;

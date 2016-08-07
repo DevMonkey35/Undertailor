@@ -223,4 +223,13 @@ public class LuaUtil {
 
         return obj;
     }
+
+    public static Varargs unpack(LuaTable table, int len) {
+        LuaValue[] vargs = new LuaValue[len];
+        for(int i = 0; i < len; i++) {
+            vargs[i] = table.get(i + 1);
+        }
+
+        return LuaValue.varargsOf(vargs);
+    }
 }

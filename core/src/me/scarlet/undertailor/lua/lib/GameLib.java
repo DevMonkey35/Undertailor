@@ -38,6 +38,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.Undertailor;
 import me.scarlet.undertailor.engine.Environment;
@@ -54,6 +55,7 @@ import me.scarlet.undertailor.lua.lib.game.AudioLib;
 import me.scarlet.undertailor.lua.lib.game.ControlLib;
 import me.scarlet.undertailor.lua.lib.game.GraphicsLib;
 import me.scarlet.undertailor.lua.meta.LuaEnvironmentMeta;
+import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
 
@@ -125,7 +127,8 @@ public class GameLib extends LuaLibrary {
         // game.onEvent(eventId, handler)
         set("onEvent", asFunction(vargs -> {
             envMan.getEventHelper().registerHandler(vargs.checkjstring(1), event -> {
-                return vargs.checkfunction(2).invoke(event.asLua().unpack().subargs(2))
+                Varargs params = LuaUtil.unpack(event.asLua(), 3 + event.getParameters().length);
+                return vargs.checkfunction(2).invoke(params.subargs(2))
                     .toboolean(1);
             });
 

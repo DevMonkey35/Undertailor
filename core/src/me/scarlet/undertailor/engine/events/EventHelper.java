@@ -41,9 +41,11 @@ import java.util.function.Function;
  */
 public class EventHelper {
 
+    private EventListener owner;
     private ObjectMap<String, ObjectSet<Function<Event, Boolean>>> handlers;
 
-    public EventHelper() {
+    public EventHelper(EventListener owner) {
+        this.owner = owner;
         this.handlers = new ObjectMap<>();
     }
 
@@ -91,6 +93,10 @@ public class EventHelper {
      *         current chain
      */
     public boolean processEvent(Event event) {
+        if (event.source == null) {
+            event.source = owner;
+        }
+
         if (this.handlers.containsKey(event.getId())) {
             ObjectSet<Function<Event, Boolean>> handlers = this.handlers.get(event.getId());
             for (Function<Event, Boolean> handler : handlers) {
