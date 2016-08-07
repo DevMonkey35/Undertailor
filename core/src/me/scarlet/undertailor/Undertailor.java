@@ -80,7 +80,7 @@ public class Undertailor extends ApplicationAdapter {
     private boolean focused;
 
     public Undertailor(LaunchOptions options, LwjglApplicationConfiguration lwjglConfig) {
-        this.focused = Display.isActive();
+        this.focused = false;
         this.options = options;
         this.lwjglConfig = lwjglConfig;
         Undertailor.instance = this;
