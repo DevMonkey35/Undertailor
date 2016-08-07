@@ -62,4 +62,4 @@ function renderable:setTransform(transform) end
 -- @tparam[opt=renderable:getTransform] transform transform the
 --   transform to draw with
 --
-function renderable:draw(x, y, transform) end
+function renderable:render(x, y, transform) end
