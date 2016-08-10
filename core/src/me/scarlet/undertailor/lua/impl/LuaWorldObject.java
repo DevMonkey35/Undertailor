@@ -58,6 +58,7 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
 
     public LuaWorldObject() {
         this.luaObj = LuaObjectValue.of(this);
+        this.init();
     }
 
     public LuaWorldObject(ScriptManager manager, File luaFile, Object... params)
@@ -74,6 +75,18 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
             this.invokeSelf(FUNC_CREATE, params);
         }
 
+        this.init();
+    }
+
+    /**
+     * Common initialization for implemented and plain
+     * {@link LuaWorldObject}s.
+     * 
+     * <p>Usually, this method will only exist in an
+     * implementation class should certain functions be
+     * called indirectly, e.g. through an event handler.</p>
+     */
+    private void init() {
         this.getEventHelper().registerHandler(Event.EVT_PERSIST, evt -> {
             this.invokeSelf(FUNC_ONPERSIST, LuaUtil.varargsOf(evt.getParameters()));
             return false;
