@@ -99,7 +99,7 @@ public class LuaUtil {
             public Varargs invoke(Varargs args) {
                 try {
                     return func.apply(args);
-                } catch(Throwable e) {
+                } catch (Throwable e) {
                     throw LuaUtil.causedError(e);
                 }
             }
@@ -229,6 +229,20 @@ public class LuaUtil {
         return obj;
     }
 
+    /**
+     * Utility method for more reliably unpacking a
+     * {@link LuaTable}.
+     * 
+     * <p>Alternative for LuaTable.unpack(), of which stops
+     * upon finding a nil value during numerical key
+     * iteration.</p>
+     * 
+     * @param table the table to unpack
+     * @param len the expected length of table and thus the
+     *        maximum length of the returned varargs
+     * 
+     * @return the unpacked table
+     */
     public static Varargs unpack(LuaTable table, int len) {
         LuaValue[] vargs = new LuaValue[len];
         for (int i = 0; i < len; i++) {
@@ -238,6 +252,14 @@ public class LuaUtil {
         return LuaValue.varargsOf(vargs);
     }
 
+    /**
+     * Generates a {@link LuaError} to throw if there was a
+     * potential cause of an exception.
+     * 
+     * @param cause the cause of the exception
+     * 
+     * @return the LuaError to throw
+     */
     public static LuaError causedError(Throwable cause) {
         LuaError err;
         if (cause instanceof IllegalArgumentException) {
