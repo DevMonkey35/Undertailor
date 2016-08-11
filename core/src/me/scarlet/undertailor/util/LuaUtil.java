@@ -31,6 +31,7 @@
 package me.scarlet.undertailor.util;
 
 import com.badlogic.gdx.utils.ObjectSet;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -96,7 +97,11 @@ public class LuaUtil {
         return new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs args) {
-                return func.apply(args);
+                try {
+                    return func.apply(args);
+                } catch(Throwable e) {
+                    throw LuaUtil.causedError(e);
+                }
             }
         };
     }
@@ -226,10 +231,24 @@ public class LuaUtil {
 
     public static Varargs unpack(LuaTable table, int len) {
         LuaValue[] vargs = new LuaValue[len];
-        for(int i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++) {
             vargs[i] = table.get(i + 1);
         }
 
         return LuaValue.varargsOf(vargs);
+    }
+
+    public static LuaError causedError(Throwable cause) {
+        LuaError err;
+        if (cause instanceof IllegalArgumentException) {
+            err = new LuaError("bad argument: (Java)" + cause.getMessage());
+        } else if (cause instanceof LuaError) {
+            return (LuaError) cause;
+        } else {
+            return new LuaError(cause);
+        }
+
+        err.initCause(cause);
+        return err;
     }
 }

@@ -72,7 +72,7 @@ public class ErrorWindow extends Stage {
         } else {
             StringWriter writer = new StringWriter();
             thrown.printStackTrace(new PrintWriter(writer));
-            errr.appendText(writer.toString());
+            errr.appendText(writer.toString().replaceAll("org.luaj.vm2.LuaError: ", ""));
         }
 
         Label last = new Label(

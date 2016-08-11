@@ -35,7 +35,6 @@ import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectSet;
-import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -149,7 +148,7 @@ public class GameLib extends LuaLibrary {
                     obj = new LuaWorldObject();
                 }
             } catch (Exception e) {
-                throw new LuaError(e);
+                throw LuaUtil.causedError(e);
             }
 
             return obj.getObjectValue();
@@ -163,7 +162,7 @@ public class GameLib extends LuaLibrary {
                 obj = new LuaWorldRoom(scriptMan, new File(scriptMan.getScriptPath(), filePath),
                     vargs.subargs(2));
             } catch (Exception e) {
-                throw new LuaError(e);
+                throw LuaUtil.causedError(e);
             }
 
             return obj.getObjectValue();
@@ -181,7 +180,7 @@ public class GameLib extends LuaLibrary {
                     obj = new LuaUIComponent();
                 }
             } catch (Exception e) {
-                throw new LuaError(e);
+                throw LuaUtil.causedError(e);
             }
 
             return obj.getObjectValue();
@@ -204,7 +203,7 @@ public class GameLib extends LuaLibrary {
                     obj = new LuaRenderable();
                 }
             } catch (Exception e) {
-                throw new LuaError(e);
+                throw LuaUtil.causedError(e);
             }
 
             return obj.getObjectValue();
