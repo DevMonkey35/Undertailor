@@ -32,6 +32,7 @@ package me.scarlet.undertailor.engine.ui;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Array.ArrayIterable;
 import com.badlogic.gdx.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,8 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     private EventHelper events;
     private UIController parent;
     private Array<UIComponent> components;
+    // we're nested under UIController's iterators, so we need this
+    private Array.ArrayIterable<UIComponent> compIterator;
 
     public UIObject(boolean active) {
         this.id = objId++;
@@ -84,6 +87,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
         this.events = new EventHelper(this);
         this.position = new Vector2(0, 0);
         this.components = new Array<>(true, 8);
+        this.compIterator = new ArrayIterable<>(this.components, true);
     }
 
     @Override
@@ -193,19 +197,14 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
             return false;
         }
 
-        Iterator<UIComponent> iter = this.components.iterator();
-        UIComponent processed = null;
+        Iterator<UIComponent> iter = this.compIterator.iterator();
         while (iter.hasNext()) {
             UIComponent next = iter.next();
             if (next.isDestroyed()) {
                 iter.remove();
             } else {
-                processed = next;
+                next.process();
             }
-        }
-
-        if (processed != null) {
-            return processed.process();
         }
 
         return false;
