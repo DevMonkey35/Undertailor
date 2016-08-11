@@ -182,7 +182,20 @@ public class LuaUtil {
             if (obj instanceof LuaValue) {
                 vargs[i] = (LuaValue) obj;
             } else if (NumberUtil.isNumber(obj)) {
-                vargs[i] = LuaValue.valueOf((double) obj);
+                // Apparently, Java's strict about number casting.
+                // Maybe its because they aren't primitive types
+                // anymore when they're here.
+                if (obj instanceof Integer) {
+                    vargs[i] = LuaValue.valueOf((int) obj);
+                } else if (obj instanceof Long) {
+                    vargs[i] = LuaValue.valueOf((long) obj);
+                } else if (obj instanceof Short) {
+                    vargs[i] = LuaValue.valueOf((short) obj);
+                } else if (obj instanceof Float) {
+                    vargs[i] = LuaValue.valueOf((float) obj);
+                } else {
+                    vargs[i] = LuaValue.valueOf((double) obj);
+                }
             } else if (Boolean.class.isInstance(obj)) {
                 vargs[i] = LuaValue.valueOf((boolean) obj);
             } else if (String.class.isInstance(obj)) {
