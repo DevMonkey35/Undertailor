@@ -276,6 +276,11 @@ public class MusicFactory extends ResourceFactory<com.badlogic.gdx.audio.Music, 
     }
 
     @Override
+    protected boolean disposeOnGameThread() {
+        return true;
+    }
+
+    @Override
     protected CompletableFuture<com.badlogic.gdx.audio.Music> loadDisposable() {
         return CompletableFuture.completedFuture(
             Gdx.audio.newMusic(Gdx.files.absolute(this.musicFile.getAbsolutePath())));
