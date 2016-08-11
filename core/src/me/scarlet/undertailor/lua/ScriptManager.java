@@ -30,11 +30,11 @@
 
 package me.scarlet.undertailor.lua;
 
-import com.badlogic.gdx.utils.Array;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.Bit32Lib;
 import org.luaj.vm2.lib.DebugLib;
@@ -58,6 +58,7 @@ import me.scarlet.undertailor.lua.lib.TextsLib;
 import me.scarlet.undertailor.util.LuaUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -73,36 +74,15 @@ public class ScriptManager {
     private Undertailor undertailor;
 
     private File scriptPath;
-    private Array<LuaValue> libraries;
-    private Array<Class<? extends LuaValue>> baseLibraries;
+    private Globals globals;
 
     public ScriptManager(Undertailor undertailor) {
         this.scriptPath = null;
-        this.libraries = new Array<>(true, 8);
-        this.baseLibraries = new Array<>(true, 8);
         this.undertailor = undertailor;
     }
 
     public void load() {
-        // base libs are libs that require a new instance for each Globals environment
-        baseLibraries.add(JseBaseLib.class);
-        baseLibraries.add(PackageLib.class);
-        baseLibraries.add(DebugLib.class);
-        baseLibraries.add(BaseLib.class);
-
-        // generic libs can use the same instance across each Globals environment
-        libraries.add(new Bit32Lib());
-        libraries.add(new TableLib());
-        libraries.add(new StringLib());
-        libraries.add(new JseMathLib());
-        libraries.add(new JseOsLib());
-
-        libraries.add(new BaseLib());
-        libraries.add(new OsLib());
-        libraries.add(new GameLib(undertailor));
-        libraries.add(new ColorsLib());
-        libraries.add(new TextsLib(undertailor));
-        libraries.add(new MetaLib());
+        this.globals = this.generateGlobals();
     }
 
     /**
@@ -129,50 +109,11 @@ public class ScriptManager {
             baseLibPath += File.separator;
         }
 
-        if(!scriptPath.exists()) {
+        if (!scriptPath.exists()) {
             scriptPath.mkdirs();
         }
 
         BaseLib.setScriptPath(baseLibPath);
-    }
-
-    /**
-     * Registers a {@link LuaLibrary} to be registered into
-     * any {@link Globals} object this {@link ScriptManager}
-     * generates.
-     * 
-     * @param library a LuaLibrary to register
-     */
-    public void registerLibrary(LuaLibrary library) {
-        if (!this.libraries.contains(library, false))
-            this.libraries.add(library);
-    }
-
-    /**
-     * Generates a {@link Globals} object with most default
-     * Lua libraries and any LuaLibraries (
-     * {@link LuaLibrary}) registered with this
-     * {@link ScriptManager}.
-     * 
-     * @return a new Globals object
-     */
-    public Globals generateGlobals() {
-        Globals returned = new Globals();
-        LoadState.install(returned);
-        LuaC.install(returned);
-
-        this.baseLibraries.forEach(clazz -> {
-            try {
-                returned.load(clazz.newInstance());
-            } catch (Exception e) {
-                log.error("Failed to load base library of class " + clazz.getSimpleName(), e);
-            }
-        });
-
-        this.libraries.forEach(returned::load);
-        this.cleanGlobals(returned);
-
-        return returned;
     }
 
     /**
@@ -209,7 +150,7 @@ public class ScriptManager {
      */
     public LuaTable loadAsModule(File luaFile, LuaTable store)
         throws FileNotFoundException, LuaScriptException {
-        LuaValue value = this.runScript(luaFile);
+        LuaValue value = this.runScript(luaFile).arg(1);
         if (value.istable()) {
             if (store == null) {
                 return (LuaTable) value;
@@ -236,15 +177,10 @@ public class ScriptManager {
      * @throws FileNotFoundException if the file wasn't
      *         found
      */
-    public LuaValue runScript(File luaFile) throws FileNotFoundException {
-        Globals globals = this.generateGlobals();
-        InputStream stream = globals.finder.findResource(luaFile.getAbsolutePath());
-        if (stream == null) {
-            throw new FileNotFoundException(luaFile.getAbsolutePath());
-        }
-
+    public Varargs runScript(File luaFile) throws FileNotFoundException {
+        InputStream stream = new FileInputStream(luaFile);
         String chunkname = "@" + luaFile.getName();
-        return globals.load(stream, chunkname, "bt", globals).invoke().arg(1);
+        return globals.load(stream, chunkname, "bt", this.globals).invoke();
     }
 
     // ---------------- internal methods ----------------
@@ -252,11 +188,35 @@ public class ScriptManager {
     /**
      * Internal method.
      * 
-     * <p>Removes disallowed functions from the provided
-     * {@link Globals} object.</p>
+     * <p>Generates a {@link Globals} object with all Lua
+     * and Undertailor libraries loaded, used for all Lua
+     * operations of Undertailor.</p>
      */
-    private void cleanGlobals(Globals globals) {
-        LuaValue lib = globals.get("os");
+    private Globals generateGlobals() {
+        Globals returned = new Globals();
+        LoadState.install(returned);
+        LuaC.install(returned);
+
+        // core Lua libraries
+        returned.load(new JseBaseLib());
+        returned.load(new PackageLib());
+        returned.load(new DebugLib());
+        returned.load(new Bit32Lib());
+        returned.load(new TableLib());
+        returned.load(new StringLib());
+        returned.load(new JseMathLib());
+        returned.load(new JseOsLib());
+
+        // undertailor libraries
+        returned.load(new BaseLib(this));
+        returned.load(new OsLib());
+        returned.load(new GameLib(undertailor));
+        returned.load(new ColorsLib());
+        returned.load(new TextsLib(undertailor));
+        returned.load(new MetaLib());
+
+        // Clean the globals.
+        LuaValue lib = returned.get("os");
         if (lib.istable()) {
             lib.set("execute", LuaValue.NIL);
             lib.set("exit", LuaValue.NIL);
@@ -266,12 +226,13 @@ public class ScriptManager {
             lib.set("tmpname", LuaValue.NIL);
         }
 
-        globals.set("load", LuaValue.NIL);
-        globals.set("dofile", LuaValue.NIL);
-        globals.set("loadfile", LuaValue.NIL);
-        globals.set("collectgarbage", LuaValue.NIL);
+        returned.set("load", LuaValue.NIL);
+        returned.set("loadfile", LuaValue.NIL);
+        returned.set("collectgarbage", LuaValue.NIL);
 
-        globals.set("debug", LuaValue.NIL);
-        globals.set("package", LuaValue.NIL);
+        returned.set("debug", LuaValue.NIL);
+        returned.set("package", LuaValue.NIL);
+
+        return returned;
     }
 }

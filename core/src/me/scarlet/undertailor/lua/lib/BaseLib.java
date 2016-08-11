@@ -33,8 +33,7 @@ package me.scarlet.undertailor.lua.lib;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 
 import com.badlogic.gdx.utils.ObjectMap;
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.slf4j.Logger;
@@ -44,8 +43,10 @@ import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaLibrary;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
+import me.scarlet.undertailor.lua.ScriptManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Replaces core functions to either function correctly with
@@ -59,38 +60,6 @@ public class BaseLib extends LuaLibrary {
 
     static {
         LOADED = new ObjectMap<>();
-    }
-
-    /**
-     * Internal method.
-     * 
-     * <p>Used by <code>require</code>.</p>
-     */
-    static Varargs loadLib(Globals globals, String lib) {
-        String path = new File(scriptPath, lib).getAbsolutePath();
-        if (!path.endsWith(".lua"))
-            path += ".lua";
-
-        if (LOADED.containsKey(path)) {
-            return LOADED.get(path);
-        }
-
-        Varargs loadedLib = globals.loadfile(path).invoke();
-        LOADED.put(path, loadedLib);
-        return loadedLib;
-    }
-
-    /**
-     * Internal method.
-     * 
-     * <p>Used by <code>dofile</code>.</p>
-     */
-    static Varargs doFile(Globals globals, String file) {
-        String path = new File(scriptPath, file).getAbsolutePath();
-        if (!path.endsWith(".lua"))
-            path += ".lua";
-
-        return globals.loadfile(path).invoke();
     }
 
     /**
@@ -108,9 +77,7 @@ public class BaseLib extends LuaLibrary {
         BaseLib.scriptPath = scriptPath;
     }
 
-    private Globals globals;
-
-    public BaseLib() {
+    public BaseLib(ScriptManager manager) {
         super(null);
 
         // print(string) -- Prints to console.
@@ -122,12 +89,33 @@ public class BaseLib extends LuaLibrary {
         // require(path) -- Loads a file, executes and returns its result.
         //               -- If already done before, returns the old result.
         this.set("require", asFunction(vargs -> {
-            return BaseLib.loadLib(globals, vargs.arg(1).checkjstring());
+            String path = vargs.checkjstring(1);
+            File file = new File(scriptPath, path);
+
+            String abs = file.getAbsolutePath();
+            if (LOADED.containsKey(abs)) {
+                return LOADED.get(abs);
+            }
+
+            try {
+                Varargs loadedLib = manager.runScript(file);
+                LOADED.put(path, loadedLib);
+                return loadedLib;
+            } catch (FileNotFoundException wontHappen) {
+                throw new LuaError("module " + path + " not found");
+            }
         }));
 
         // dofile(path) -- Loads a file. Does not cache.
         this.set("dofile", asFunction(vargs -> {
-            return BaseLib.doFile(globals, vargs.arg(1).checkjstring());
+            String path = vargs.checkjstring(1);
+            File file = new File(scriptPath, path);
+
+            try {
+                return manager.runScript(file);
+            } catch (FileNotFoundException e) {
+                throw new LuaError("file at " + path + " not found");
+            }
         }));
 
         // istype(obj, type) -- Checks the type.
@@ -150,10 +138,5 @@ public class BaseLib extends LuaLibrary {
 
             return valueOf(false);
         }));
-    }
-
-    @Override
-    public void postinit(LuaTable table, LuaValue environment) {
-        this.globals = environment.checkglobals();
     }
 }
