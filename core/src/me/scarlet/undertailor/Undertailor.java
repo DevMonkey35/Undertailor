@@ -180,7 +180,7 @@ public class Undertailor extends ApplicationAdapter {
 
     @Override
     public void create() {
-        this.input = new InputRetriever();
+        this.input = new InputRetriever(this);
         this.renderer = new MultiRenderer();
         Gdx.input.setInputProcessor(this.input);
         Box2D.init();

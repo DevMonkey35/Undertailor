@@ -35,6 +35,9 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import me.scarlet.undertailor.Undertailor;
+import me.scarlet.undertailor.engine.events.Event;
+
 /**
  * Handles input tracking operations. Intended to be set as
  * the input processor of the system, done by feeding an
@@ -87,11 +90,13 @@ public class InputRetriever implements InputProcessor {
     // ---------------- object ----------------
 
     private long tick;
+    private Undertailor tailor;
     private InputData currentData;
     private ObjectMap<Integer, PressData> pressData;
 
-    public InputRetriever() {
+    public InputRetriever(Undertailor tailor) {
         this.tick = 0;
+        this.tailor = tailor;
         this.pressData = new ObjectMap<>();
         this.currentData = new InputData(pressData);
     }
@@ -135,6 +140,7 @@ public class InputRetriever implements InputProcessor {
             pressData.put(keycode, new PressData(currentData));
         }
 
+        this.tailor.getEnvironmentManager().callEvent(new Event(Event.EVT_KEYDOWN, keycode));
         pressData.get(keycode).down();
         return true;
     }
@@ -152,6 +158,7 @@ public class InputRetriever implements InputProcessor {
             pressData.put(keycode, new PressData(currentData));
         }
 
+        this.tailor.getEnvironmentManager().callEvent(new Event(Event.EVT_KEYUP, keycode));
         pressData.get(keycode).up();
         return true;
     }

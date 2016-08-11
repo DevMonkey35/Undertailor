@@ -81,6 +81,14 @@ public class Event {
      * Called by the system when the window focus changes.
      */
     public static final String EVT_FOCUSCHANGED = "focusChanged";
+    /**
+     * Called when the player pushes a key down.
+     */
+    public static final String EVT_KEYDOWN = "keyPressed";
+    /**
+     * Called when the player releases a pressed key.
+     */
+    public static final String EVT_KEYUP = "keyReleased";
 
     EventListener source;
     boolean processed;
