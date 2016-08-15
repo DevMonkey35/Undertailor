@@ -117,6 +117,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     private ObjectMap<String, ObjectSet<Body>> collisionLayers;
     private IntFloatMap opacityMapping;
     private Array<Layerable> renderOrder;
+    private ObjectSet<String> disabledCollision;
 
     public WorldRoom(Tilemap map) {
         this.destroyed = false;
@@ -132,6 +133,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
         this.opacityMapping = new IntFloatMap();
         this.collisionLayers = new ObjectMap<>();
         this.renderOrder = new Array<>(true, 16);
+        this.disabledCollision = new ObjectSet<>();
     }
 
     // ---------------- abstract method implementation ----------------
@@ -421,13 +423,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      * @return whether or not the layer is active
      */
     public boolean getCollisionLayerState(String layerName) {
-        if (this.collisionLayers.containsKey(layerName)) {
-            for (Body body : this.collisionLayers.get(layerName)) {
-                return body.isActive();
-            }
-        }
-
-        return false;
+        return !this.disabledCollision.contains(layerName);
     }
 
     /**
@@ -437,11 +433,19 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
      * @param flag whether or not the layer is active
      */
     public void setCollisionLayerState(String layerName, boolean flag) {
-        if (this.collisionLayers.containsKey(layerName)
-            && this.getCollisionLayerState(layerName) != flag) { // activating a body is just as expensive as creating it
-            this.collisionLayers.get(layerName).forEach(body -> {
-                body.setActive(flag);
-            });
+        if (flag != this.getCollisionLayerState(layerName)) {
+            if (flag) {
+                this.disabledCollision.remove(layerName);
+            } else {
+                this.disabledCollision.add(layerName);
+            }
+
+            ObjectSet<Body> bodies = this.collisionLayers.get(layerName);
+            if (bodies != null) {
+                bodies.forEach(body -> {
+                    body.setActive(flag);
+                });
+            }
         }
     }
 
@@ -549,16 +553,17 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                 // def layer, ignore
             } else {
                 ObjectSet<Body> layerBodies = new ObjectSet<>();
+                boolean active = this.getCollisionLayerState(layer.getName());
                 layer.getShapes().forEach(data -> {
                     def.position.set(data.getPosition());
                     def.position.x = def.position.x * OverworldController.PIXELS_TO_METERS;
                     def.position.y = def.position.y * OverworldController.PIXELS_TO_METERS;
+                    def.active = active;
+
                     Shape shape = data.generateShape();
                     layerBodies.add(world.createBody(def).createFixture(shape, 0).getBody());
                     shape.dispose();
                 });
-
-                this.collisionLayers.put(layer.getName(), layerBodies);
             }
         });
 
