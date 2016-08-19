@@ -80,9 +80,17 @@ public class BaseLib extends LuaLibrary {
     public BaseLib(ScriptManager manager) {
         super(null);
 
-        // print(string) -- Prints to console.
+        // print(...) -- Prints to console.
         this.set("print", asFunction(vargs -> {
-            Lua.log("[print] " + vargs.arg(1).tojstring());
+            String str = "[print] ";
+            for(int i = 0; i < vargs.narg(); i++) {
+                str = str.concat(vargs.arg(i + 1).tojstring());
+                if(i + 1 != vargs.narg()) {
+                    str = str.concat("\t");
+                }
+            }
+
+            Lua.log(str);
             return LuaValue.NIL;
         }));
 
