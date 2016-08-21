@@ -564,6 +564,8 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
                     layerBodies.add(world.createBody(def).createFixture(shape, 0).getBody());
                     shape.dispose();
                 });
+
+                this.collisionLayers.put(layer.getName(), layerBodies);
             }
         });
 
