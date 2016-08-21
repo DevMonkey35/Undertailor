@@ -181,7 +181,8 @@ public class EnvironmentManager implements EventListener, Processable, Renderabl
      * @return the curret active Environment
      */
     public Environment getActiveEnvironment() {
-        Environment environment = this.environments.get(this.activeEnvironment);
+        Environment environment =
+            this.activeEnvironment == null ? null : this.environments.get(this.activeEnvironment);
         if (environment != null) {
             if (environment.isDestroyed()) {
                 this.environments.remove(activeEnvironment);
