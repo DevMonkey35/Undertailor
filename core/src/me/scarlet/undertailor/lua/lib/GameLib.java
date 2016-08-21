@@ -154,13 +154,17 @@ public class GameLib extends LuaLibrary {
             return obj.getObjectValue();
         }));
 
-        // game.newWorldRoom(scriptPath[, params])
+        // game.newWorldRoom([scriptPath, params])
         set("newWorldRoom", asFunction(vargs -> {
-            String filePath = vargs.checkjstring(1);
+            String filePath = vargs.optjstring(1, null);
             LuaWorldRoom obj;
             try {
-                obj = new LuaWorldRoom(scriptMan, new File(scriptMan.getScriptPath(), filePath),
-                    vargs.subargs(2));
+                if(filePath != null) {
+                    obj = new LuaWorldRoom(scriptMan, new File(scriptMan.getScriptPath(), filePath),
+                        vargs.subargs(2));
+                } else {
+                    obj = new LuaWorldRoom();
+                }
             } catch (Exception e) {
                 throw LuaUtil.causedError(e);
             }

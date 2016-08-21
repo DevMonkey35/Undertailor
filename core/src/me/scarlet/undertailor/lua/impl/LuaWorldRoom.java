@@ -54,6 +54,11 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
 
     private LuaObjectValue<WorldRoom> luaObj;
 
+    public LuaWorldRoom() {
+        super(null);
+        this.luaObj = LuaObjectValue.of(this);
+    }
+
     public LuaWorldRoom(ScriptManager manager, File luaFile, Object... params)
         throws FileNotFoundException, LuaScriptException {
         this(manager, luaFile, params.length > 0 ? LuaUtil.varargsOf(params) : null);
@@ -61,9 +66,8 @@ public class LuaWorldRoom extends WorldRoom implements LuaImplementable<WorldRoo
 
     public LuaWorldRoom(ScriptManager manager, File luaFile, Varargs params)
         throws FileNotFoundException, LuaScriptException {
-        super(null);
+        this();
 
-        this.luaObj = LuaObjectValue.of(this);
         this.luaObj.load(manager, luaFile);
 
         String loadedMap = this.luaObj.get(FIELD_TILEMAP).optjstring(null);
