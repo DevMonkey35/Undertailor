@@ -139,8 +139,9 @@ public class BaseLib extends LuaLibrary {
             // wasn't? check for if its a tailor type
             if (obj instanceof LuaObjectValue<?>) {
                 LuaObjectMeta meta = Lua.getMeta(typename);
+                System.out.println("meta null?: " + (meta == null));
                 if (meta != null) {
-                    return valueOf(meta.getTargetObjectClass().isInstance(obj));
+                    return valueOf(meta.getTargetObjectClass().isInstance(((LuaObjectValue<?>) obj).getObject()));
                 }
             }
 
