@@ -187,7 +187,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
         Iterator<WorldObject> iter = obj.iterator();
         while (iter.hasNext()) {
             WorldObject next = iter.next();
-            if (next.isDestroyed()) {
+            if (next.isDestroyed() || next.getRoom() != this) {
                 iter.remove();
             } else {
                 next.process();
@@ -235,6 +235,11 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     }
 
     @Override
+    public OverworldController getParent() {
+        return this.controller;
+    }
+
+    @Override
     public final boolean claim(OverworldController controller) {
         if (this.controller == null) {
             this.controller = controller;
@@ -246,8 +251,12 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
 
     @Override
     public final boolean release(OverworldController controller) {
-        this.destroy();
-        return true;
+        if(this.controller == controller) {
+            this.destroy();
+            return true;
+        }
+
+        return false;
     }
 
     @Override

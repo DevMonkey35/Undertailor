@@ -75,6 +75,17 @@ public class LuaUIComponentMeta implements LuaObjectMeta {
             Vector2 pos = obj(vargs).getScreenPosition();
             return varargsOf(valueOf(pos.x), valueOf(pos.y));
         }));
+
+        // we're modular and can actually be safely reused without error
+        // component:remove()
+        set("remove", asFunction(vargs -> {
+            UIComponent obj = obj(vargs);
+            if (obj.getParent() != null) {
+                return valueOf(obj.release(obj.getParent()));
+            }
+
+            return LuaValue.FALSE;
+        }));
     }
 
     @Override

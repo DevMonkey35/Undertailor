@@ -141,10 +141,16 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
             return;
         }
 
+        this.parent = null;
         this.destroyed = true;
         this.components.forEach(comp -> comp.release(this));
         this.components.clear();
         this.components = null;
+    }
+
+    @Override
+    public UIController getParent() {
+        return this.parent;
     }
 
     @Override
@@ -162,7 +168,6 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     public boolean release(UIController parent) {
         if (this.parent == parent) {
             this.parent = null;
-            this.destroy();
             return true;
         }
 
@@ -200,7 +205,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
         Iterator<UIComponent> iter = this.compIterator.iterator();
         while (iter.hasNext()) {
             UIComponent next = iter.next();
-            if (next.isDestroyed()) {
+            if (next.isDestroyed() || next.getParent() != this) {
                 iter.remove();
             } else {
                 next.process();
@@ -313,19 +318,6 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
 
         if (component.claim(this)) {
             this.components.add(component);
-        }
-    }
-
-    /**
-     * Removes this {@link UIObject} from its parent
-     * {@link UIController}.
-     * 
-     * <p>Shortcut method for
-     * {@link UIController#removeUIObject(UIObject)}.</p>
-     */
-    public void remove() {
-        if (this.parent != null) {
-            this.parent.removeUIObject(this);
         }
     }
 

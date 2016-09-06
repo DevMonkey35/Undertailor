@@ -56,4 +56,11 @@ public interface Modular<T> {
      */
     boolean release(T parent);
 
+    /**
+     * Returns the current parent of this {@link Modular}
+     * object.
+     * 
+     * @return the parent object
+     */
+    T getParent();
 }

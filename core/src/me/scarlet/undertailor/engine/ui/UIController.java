@@ -127,7 +127,7 @@ public class UIController
             Iterator<UIObject> iter = bObj.values();
             while (iter.hasNext()) {
                 UIObject next = iter.next();
-                if (next.isDestroyed() || this.removed.contains(next.getId())) {
+                if (next.isDestroyed() || next.getParent() != this || this.removed.contains(next.getId())) {
                     iter.remove();
                 } else {
                     next.process();

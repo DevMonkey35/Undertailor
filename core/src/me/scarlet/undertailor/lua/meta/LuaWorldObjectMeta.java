@@ -113,6 +113,17 @@ public class LuaWorldObjectMeta implements LuaObjectMeta {
 
         // lua-only functions
 
+        // we're modular and can actually be safely reused without error
+        // worldObject:remove()
+        set("remove", asFunction(vargs -> {
+            WorldObject obj = obj(vargs);
+            if (obj.getParent() != null) {
+                return valueOf(obj.release(obj.getParent()));
+            }
+
+            return LuaValue.FALSE;
+        }));
+
         // bounding shape creation methods respect overworld scale
         // worldObject:addBoundingPolygon(...)
         set("addBoundingPolygon", asFunction(vargs -> {

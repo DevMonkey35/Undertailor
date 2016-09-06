@@ -143,6 +143,11 @@ public class Entrypoint implements Collider, Modular<WorldRoom> {
     // ---------------- modular ----------------
 
     @Override
+    public WorldRoom getParent() {
+        return this.parent;
+    }
+
+    @Override
     public boolean claim(WorldRoom parent) {
         if (this.parent == null) {
             this.parent = parent;

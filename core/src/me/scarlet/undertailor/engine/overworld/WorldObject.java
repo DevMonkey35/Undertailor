@@ -239,6 +239,7 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         }
 
         this.def = null;
+        this.room = null;
         this.actor = null;
         if (this.body != null) {
             this.body.getWorld().destroyBody(this.body);
@@ -249,6 +250,11 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
     }
 
     // -------- modular --------
+
+    @Override
+    public WorldRoom getParent() {
+        return this.room;
+    }
 
     @Override
     public final boolean claim(WorldRoom room) {

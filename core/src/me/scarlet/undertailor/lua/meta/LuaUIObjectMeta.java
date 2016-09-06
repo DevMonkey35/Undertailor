@@ -109,10 +109,15 @@ public class LuaUIObjectMeta implements LuaObjectMeta {
             return NIL;
         }));
 
-        // uiObject:remove()
+        // we're modular and can actually be safely reused without error
+        // worldObject:remove()
         set("remove", asFunction(vargs -> {
-            obj(vargs).remove();
-            return NIL;
+            UIObject obj = obj(vargs);
+            if (obj.getParent() != null) {
+                return valueOf(obj.release(obj.getParent()));
+            }
+
+            return LuaValue.FALSE;
         }));
     }
 

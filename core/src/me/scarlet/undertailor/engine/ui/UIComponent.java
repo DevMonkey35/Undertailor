@@ -99,6 +99,16 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
         Transform.setOrDefault(this.transform, transform);
     }
 
+    /**
+     * Returns the parent {@link UIObject} of this
+     * {@link UIComponent}.
+     * 
+     * @return the parent UIObject
+     */
+    public UIObject getParent() {
+        return this.parent;
+    }
+
     @Override
     public boolean claim(UIObject parent) {
         if(this.parent == null) {
@@ -115,7 +125,6 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
     public boolean release(UIObject parent) {
         if(this.parent == parent) {
             this.parent = null;
-            this.destroy();
             return true;
         }
 
@@ -133,6 +142,7 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
             return;
         }
 
+        this.parent = null;
         this.destroyed = true;
     }
 
@@ -169,16 +179,6 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
     public abstract void render(float x, float y, Transform transform);
 
     // ---------------- object ----------------
-
-    /**
-     * Returns the parent {@link UIObject} of this
-     * {@link UIComponent}.
-     * 
-     * @return the parent UIObject
-     */
-    public UIObject getParent() {
-        return this.parent;
-    }
 
     /**
      * Returns the real screen position of this
