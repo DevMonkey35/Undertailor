@@ -30,6 +30,7 @@
 
 package me.scarlet.undertailor.lua;
 
+import org.luaj.vm2.LuaClosure;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
@@ -94,7 +95,7 @@ public interface LuaImplementable<T> {
      * @return if the function exists
      */
     default boolean hasFunction(String funcName) {
-        return !this.getObjectValue().get(funcName).isnil();
+        return !this.getObjectValue().get(funcName).isnil() && this.getObjectValue().get(funcName) instanceof LuaClosure;
     }
 
     /**
