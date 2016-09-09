@@ -127,7 +127,8 @@ public class UIController
             Iterator<UIObject> iter = bObj.values();
             while (iter.hasNext()) {
                 UIObject next = iter.next();
-                if (next.isDestroyed() || next.getParent() != this || this.removed.contains(next.getId())) {
+                if (next.isDestroyed() || next.getParent() != this
+                    || this.removed.contains(next.getId())) {
                     iter.remove();
                 } else {
                     next.process();
@@ -138,7 +139,8 @@ public class UIController
             UIObject processed = null;
             while (iter.hasNext()) {
                 UIObject next = iter.next();
-                if (next.isDestroyed() || this.removed.contains(next.getId())) {
+                if (next.isDestroyed() || next.getParent() != this
+                    || this.removed.contains(next.getId())) {
                     iter.remove();
                 } else {
                     processed = next;
@@ -214,13 +216,17 @@ public class UIController
             return -1;
         }
 
-        if (obj.isActive()) {
-            this.aObj.put(obj.getId(), obj);
-        } else {
-            this.bObj.put(obj.getId(), obj);
+        if (obj.claim(this)) {
+            if (obj.isActive()) {
+                this.aObj.put(obj.getId(), obj);
+            } else {
+                this.bObj.put(obj.getId(), obj);
+            }
+
+            return obj.getId();
         }
 
-        return obj.getId();
+        return -1;
     }
 
     /**
