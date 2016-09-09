@@ -85,6 +85,7 @@ public class Lua {
     static final Logger log = LoggerFactory.getLogger(Lua.class);
     static final ObjectSet<LuaObjectMeta> metas;
 
+    private static final LuaTable EMPTY_METATABLE;
     private static final ObjectMap<Class<?>, LuaObjectMeta> META;
     private static final ObjectMap<Class<?>, LuaObjectMeta> PMETA;
     private static final ObjectMap<Class<?>, LuaTable> METATABLES;
@@ -97,6 +98,7 @@ public class Lua {
         PMETA = new ObjectMap<>();
         METATABLES = new ObjectMap<>();
         GLOBAL_METATABLE = new ObjectMap<>();
+        EMPTY_METATABLE = new LuaTable();
 
         // Metamethods implementation for all LuaObjectValues.
 
@@ -302,44 +304,48 @@ public class Lua {
      * @return the metatable for the given Object
      */
     public static LuaTable generateMetatable(Object obj) {
-        if (Lua.METATABLES.containsKey(obj.getClass())) {
-            return Lua.METATABLES.get(obj.getClass());
-        }
-
-        LuaTable functable = new LuaTable();
-        Lua.metas.clear();
-        Lua.PMETA.values().forEach(Lua.metas::add);
-        Lua.META.values().forEach(Lua.metas::add);
-
-        Lua.metas.forEach(meta -> {
-            if (meta.getTargetObjectClass().isInstance(obj) && meta.getMetatable() != null) {
-                LuaUtil.iterateTable(meta.getMetatable(), vargs -> {
-                    functable.set(vargs.arg(1), vargs.arg(2));
-                });
-            }
-        });
-
-        Lua.metas.forEach(meta -> {
-            meta.postMetaInit(functable);
-        });
-
-        if (LuaUtil.getTableSize(functable) > 0) {
-            LuaTable metatable = new LuaTable();
-
-            // add the object's metatable functions
-            metatable.set("__index", functable);
-
-            // add the stuff we do for every metatable
-            GLOBAL_METATABLE.entries().forEach(entry -> {
-                metatable.set(entry.key, entry.value);
+        LuaTable copyTable = Lua.METATABLES.get(obj.getClass());
+        if(copyTable == null && copyTable != Lua.EMPTY_METATABLE) {
+            LuaTable functable = new LuaTable();
+            Lua.metas.clear();
+            Lua.PMETA.values().forEach(Lua.metas::add);
+            Lua.META.values().forEach(Lua.metas::add);
+    
+            Lua.metas.forEach(meta -> {
+                if (meta.getTargetObjectClass().isInstance(obj) && meta.getMetatable() != null) {
+                    LuaUtil.iterateTable(meta.getMetatable(), vargs -> {
+                        functable.set(vargs.arg(1), vargs.arg(2));
+                    });
+                }
             });
-
-            Lua.METATABLES.put(obj.getClass(), metatable);
-            return metatable;
-        } else {
-            Lua.METATABLES.put(obj.getClass(), null);
-            return null;
+    
+            Lua.metas.forEach(meta -> {
+                meta.postMetaInit(functable);
+            });
+    
+            if (LuaUtil.getTableSize(functable) > 0) {
+                LuaTable metatable = new LuaTable();
+    
+                // add the object's metatable functions
+                metatable.set("__index", functable);
+    
+                // add the stuff we do for every metatable
+                GLOBAL_METATABLE.entries().forEach(entry -> {
+                    metatable.set(entry.key, entry.value);
+                });
+    
+                Lua.METATABLES.put(obj.getClass(), metatable);
+                copyTable = metatable;
+            } else {
+                Lua.METATABLES.put(obj.getClass(), Lua.EMPTY_METATABLE);
+            }
         }
+
+        if(copyTable != null && copyTable != Lua.EMPTY_METATABLE) {
+            return LuaUtil.copyTable(copyTable, true);
+        }
+
+        return null;
     }
 
     /**

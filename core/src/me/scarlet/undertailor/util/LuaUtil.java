@@ -84,6 +84,36 @@ public class LuaUtil {
     }
 
     /**
+     * Copies the values of the provided table into a new
+     * table.
+     * 
+     * <p>Deep copies will also duplicate tables within the
+     * source table.</p>
+     * 
+     * @param table the source table to copy
+     * @param deep whether or not to also duplicate tables
+     *        found within the source table
+     * 
+     * @return a copy of the provided table
+     */
+    public static LuaTable copyTable(LuaTable table, boolean deep) {
+        if (table.next(LuaValue.NIL) == LuaValue.NIL) {
+            return new LuaTable(); // copied a blank table
+        }
+
+        LuaTable copy = new LuaTable();
+        iterateTable(table, vargs -> {
+            if (deep && vargs.arg(2).istable()) {
+                copy.set(vargs.arg(1), copyTable(vargs.arg(2).checktable(), true));
+            } else {
+                copy.set(vargs.arg(1), vargs.arg(2));
+            }
+        });
+
+        return copy;
+    }
+
+    /**
      * Generates a new anonymously-typed {@link LuaFunction}
      * object from the provided {@link Function}.
      * 
