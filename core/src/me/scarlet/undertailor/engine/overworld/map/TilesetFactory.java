@@ -45,9 +45,6 @@ import me.scarlet.undertailor.engine.overworld.map.TilesetReader.TilesetMeta;
 import me.scarlet.undertailor.exception.BadAssetException;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.animation.Animation;
-import me.scarlet.undertailor.gfx.animation.FrameAnimation;
-import me.scarlet.undertailor.gfx.animation.FrameAnimation.KeyFrame;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
 import me.scarlet.undertailor.resource.Resource;
 import me.scarlet.undertailor.resource.ResourceFactory;
@@ -94,19 +91,17 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
             if (!this.tiles.containsKey(index)) {
                 Renderable renderable = factory.animatedTiles.get(index);
                 if (renderable == null) {
-                    if(index < factory.tiles.size) {
+                    if (index < factory.tiles.size) {
                         renderable = factory.tiles.get(index);
                     } else {
                         return null;
                     }
                 }
 
-                if (renderable instanceof FrameAnimation) {
-                    renderable = ((FrameAnimation) renderable).clone();
-                    ((FrameAnimation) renderable).getFrames().forEach(frame -> {
-                        if (frame.getFrame() instanceof Sprite) {
-                            ((Sprite) frame.getFrame()).sourceObject = this;
-                        }
+                if (renderable instanceof AnimatedTile) {
+                    renderable = ((AnimatedTile) renderable).clone();
+                    ((AnimatedTile) renderable).getFrames().forEach(frame -> {
+                        frame.getB().sourceObject = this;
                     });
                 }
 
@@ -136,7 +131,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
     private boolean reading;
 
     private Array<Sprite> tiles;
-    private ObjectMap<Integer, Animation> animatedTiles;
+    private ObjectMap<Integer, AnimatedTile> animatedTiles;
 
     public TilesetFactory(MultiRenderer renderer, File textureFile) {
         this.tiles = new Array<>(true, 8);
@@ -166,7 +161,7 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 if (tsxFile.exists()) {
-                    if(!reading) {
+                    if (!reading) {
                         this.reading = true;
                         this.meta = reader.read(tsxFile);
                         this.reading = false;
@@ -232,9 +227,10 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
      * for generated {@link Tileset}s to reference.</p>
      */
     private void loadTexture(Texture texture) throws BadAssetException {
-        if (texture.getWidth() % meta.getTileWidth() != 0 || texture.getHeight() % meta.getTileHeight() != 0) {
-            throw new BadAssetException(
-                "invalid texture size, sprites must all be " + meta.getTileWidth() + "x" + meta.getTileHeight() + "px in size");
+        if (texture.getWidth() % meta.getTileWidth() != 0
+            || texture.getHeight() % meta.getTileHeight() != 0) {
+            throw new BadAssetException("invalid texture size, sprites must all be "
+                + meta.getTileWidth() + "x" + meta.getTileHeight() + "px in size");
         }
 
         int width = texture.getWidth() / meta.getTileWidth();
@@ -242,11 +238,10 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                this.tiles
-                    .add(
-                        new Sprite(
-                            this.renderer, new TextureRegion(texture, x * meta.getTileWidth(),
-                                y * meta.getTileHeight(), meta.getTileWidth(), meta.getTileHeight()), null));
+                this.tiles.add(new Sprite(
+                    this.renderer, new TextureRegion(texture, x * meta.getTileWidth(),
+                        y * meta.getTileHeight(), meta.getTileWidth(), meta.getTileHeight()),
+                    null));
             }
         }
 
@@ -254,27 +249,13 @@ public class TilesetFactory extends ResourceFactory<Texture, Tileset> {
             this.meta.getAnimations().forEach(entry -> {
                 int id = entry.key;
                 Array<Tuple<Integer, Long>> animations = entry.value;
-                KeyFrame[] frames = new KeyFrame[animations.size + 1];
-
-                long currentTime = 0;
+                AnimatedTile tile = new AnimatedTile();
                 for (int i = 0; i < animations.size; i++) {
-                    Tuple<Integer, Long> tupleFrame = animations.get(i);
-                    if (i != 0) {
-                        currentTime += animations.get(i - 1).getB();
-                    }
-
-                    frames[i] = new KeyFrame(currentTime, this.tiles.get(tupleFrame.getA()));
+                    Tuple<Integer, Long> tup = animations.get(i);
+                    tile.addFrame(tup.getB(), this.tiles.get(tup.getA()));
                 }
 
-                Tuple<Integer, Long> last = animations.get(animations.size - 1);
-                frames[frames.length - 1] = new KeyFrame(currentTime + last.getB(),
-                    this.tiles.get(animations.get(0).getA()));
-
-                FrameAnimation animation = new FrameAnimation(frames);
-                animation.setLooping(true);
-                animation.play();
-
-                this.animatedTiles.put(id, animation);
+                this.animatedTiles.put(id, tile);
             });
         }
     }
