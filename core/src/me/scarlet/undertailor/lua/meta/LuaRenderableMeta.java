@@ -30,7 +30,6 @@
 
 package me.scarlet.undertailor.lua.meta;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
 import static org.luaj.vm2.LuaValue.NIL;
 
@@ -39,7 +38,6 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
 import me.scarlet.undertailor.lua.LuaObjectValue;
@@ -63,34 +61,16 @@ public class LuaRenderableMeta implements LuaObjectMeta {
     public LuaRenderableMeta() {
         this.metatable = new LuaTable();
 
-        // renderable:getTransform()
-        set("getTransform", asFunction(vargs -> {
-            return orNil(obj(vargs).getTransform());
-        }));
-
-        // renderable:setTransform(transform)
-        set("setTransform", asFunction(vargs -> {
-            obj(vargs).setTransform(
-                Lua.<Transform>checkType(vargs.checknotnil(2), LuaTransformMeta.class).getObject());
-            return NIL;
-        }));
-
-        // renderable:render([x, y, transform])
+        // renderable:render([x, y])
         set("render", asFunction(vargs -> {
-            if(vargs.narg() == 0) {
+            if (vargs.narg() == 0) {
                 obj(vargs).render();
                 return NIL;
             }
 
-            float x = vargs.checknumber(2).tofloat();
-            float y = vargs.checknumber(3).tofloat();
-            Transform transform = vargs.isnil(4) ? null
-                : Lua.<Transform>checkType(vargs.arg(4), LuaTransformMeta.class).getObject();
-            if (transform == null) {
-                obj(vargs).render(x, y);
-            } else {
-                obj(vargs).render(x, y, transform);
-            }
+            float x = (float) vargs.optdouble(2, 0);
+            float y = (float) vargs.optdouble(3, 0);
+            obj(vargs).render(x, y);
 
             return NIL;
         }));

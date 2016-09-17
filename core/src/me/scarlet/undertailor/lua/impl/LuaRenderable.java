@@ -30,14 +30,12 @@
 
 package me.scarlet.undertailor.lua.impl;
 
-import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static org.luaj.vm2.LuaValue.valueOf;
 
 import org.luaj.vm2.Varargs;
 
 import me.scarlet.undertailor.exception.LuaScriptException;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.ScriptManager;
@@ -51,11 +49,9 @@ public class LuaRenderable implements LuaImplementable<Renderable>, Renderable {
     public static final String FUNC_CREATE = "create";
     public static final String FUNC_RENDER = "render";
 
-    private Transform transform;
     private LuaObjectValue<Renderable> luaObj;
 
     public LuaRenderable() {
-        this.transform = new Transform();
         this.luaObj = LuaObjectValue.of(this);
     }
 
@@ -85,19 +81,9 @@ public class LuaRenderable implements LuaImplementable<Renderable>, Renderable {
     }
 
     @Override
-    public Transform getTransform() {
-        return this.transform;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {
-        Transform.setOrDefault(this.transform, transform);
-    }
-
-    @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         if (this.hasFunction(FUNC_RENDER)) {
-            this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y), orNil(transform));
+            this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y));
         }
     }
 

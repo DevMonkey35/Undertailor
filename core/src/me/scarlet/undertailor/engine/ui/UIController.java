@@ -46,7 +46,6 @@ import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 import java.util.Iterator;
 
@@ -158,7 +157,7 @@ public class UIController
     }
 
     @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         if (!destroyed) {
             this.renderer.setProjectionMatrix(this.camera.combined);
             this.bObj.values().forEach(UIObject::render);
@@ -259,14 +258,4 @@ public class UIController
             this.removed.add(obj.getId());
         }
     }
-
-    // ---------------- ignored ----------------
-
-    @Override
-    public Transform getTransform() {
-        return null;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {}
 }

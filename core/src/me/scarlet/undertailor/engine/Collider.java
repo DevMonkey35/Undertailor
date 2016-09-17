@@ -166,6 +166,21 @@ public interface Collider {
     void setCanCollide(boolean canCollide);
 
     /**
+     * Returns the rotation of the collider, in degrees.
+     * 
+     * @return the rotation of the collider in degrees
+     */
+    float getRotation();
+
+    /**
+     * Sets the rotation of the collider, in degrees.
+     * 
+     * @param rotation the new rotation of the collider, in
+     *        degrees
+     */
+    void setRotation(float rotation);
+
+    /**
      * Returns whether or not this {@link Collider}'s
      * physical rotation will be affected by physics
      * simulation.

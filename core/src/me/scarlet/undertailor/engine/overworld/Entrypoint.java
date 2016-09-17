@@ -262,6 +262,14 @@ public class Entrypoint implements Collider, Modular<WorldRoom> {
     public void setCanCollide(boolean canCollide) {}
 
     @Override
+    public float getRotation() {
+        return 0;
+    }
+
+    @Override
+    public void setRotation(float rotation) {}
+
+    @Override
     public boolean isRotationFixed() {
         return false;
     }

@@ -35,7 +35,6 @@ import org.luaj.vm2.Varargs;
 import me.scarlet.undertailor.engine.events.Event;
 import me.scarlet.undertailor.engine.overworld.WorldObject;
 import me.scarlet.undertailor.exception.LuaScriptException;
-import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.ScriptManager;
@@ -114,12 +113,12 @@ public class LuaWorldObject extends WorldObject implements LuaImplementable<Worl
     }
 
     @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         if (this.hasFunction(FUNC_PRERENDER)) {
             this.invokeSelf(FUNC_PRERENDER);
         }
 
-        super.render(x, y, transform);
+        super.render(x, y);
 
         if (this.hasFunction(FUNC_POSTRENDER)) {
             this.invokeSelf(FUNC_POSTRENDER);

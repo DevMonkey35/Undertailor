@@ -42,7 +42,6 @@ import me.scarlet.undertailor.engine.overworld.OverworldController;
 import me.scarlet.undertailor.engine.scheduler.Scheduler;
 import me.scarlet.undertailor.engine.ui.UIController;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 /**
  * A primary system running a single game environment.
@@ -85,15 +84,7 @@ public class Environment implements Processable, Renderable, Destructible, Event
     }
 
     @Override
-    public Transform getTransform() {
-        return null;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {}
-
-    @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         this.overworld.render();
         this.ui.render();
     }

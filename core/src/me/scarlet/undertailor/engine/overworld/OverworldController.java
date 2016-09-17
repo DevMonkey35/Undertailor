@@ -49,7 +49,6 @@ import me.scarlet.undertailor.engine.scheduler.Scheduler;
 import me.scarlet.undertailor.engine.scheduler.Task;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.util.Pair;
 
 /**
@@ -117,15 +116,7 @@ public class OverworldController
     }
 
     @Override
-    public Transform getTransform() {
-        return null;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {} // Cannot transform the rendering of the Overworld.
-
-    @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         this.renderer.setProjectionMatrix(this.camera.combined);
 
         if (this.room != null) {

@@ -31,7 +31,6 @@
 package me.scarlet.undertailor.engine.overworld.map;
 
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 public class Tile implements Renderable {
 
@@ -51,17 +50,7 @@ public class Tile implements Renderable {
     }
 
     @Override
-    public Transform getTransform() {
-        return this.renderable.getTransform();
-    }
-
-    @Override
-    public void setTransform(Transform transform) {
-        this.renderable.setTransform(transform);
-    }
-
-    @Override
-    public void render(float x, float y, Transform transform) {
-        this.renderable.render(x, y, transform);
+    public void render(float x, float y) {
+        this.renderable.render(x, y);
     }
 }

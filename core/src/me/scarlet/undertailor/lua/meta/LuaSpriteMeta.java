@@ -32,6 +32,7 @@ package me.scarlet.undertailor.lua.meta;
 
 import static me.scarlet.undertailor.lua.LuaObjectValue.orNil;
 import static me.scarlet.undertailor.util.LuaUtil.asFunction;
+import static org.luaj.vm2.LuaValue.NIL;
 import static org.luaj.vm2.LuaValue.valueOf;
 import static org.luaj.vm2.LuaValue.varargsOf;
 
@@ -40,6 +41,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
+import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.gfx.spritesheet.Sprite;
 import me.scarlet.undertailor.lua.Lua;
 import me.scarlet.undertailor.lua.LuaObjectMeta;
@@ -64,6 +66,18 @@ public class LuaSpriteMeta implements LuaObjectMeta {
     public LuaSpriteMeta() {
         this.metatable = new LuaTable();
 
+        // sprite:getTransform()
+        set("getTransform", asFunction(vargs -> {
+            return orNil(obj(vargs).getTransform());
+        }));
+
+        // sprite:setTransform(transform)
+        set("setTransform", asFunction(vargs -> {
+            obj(vargs).setTransform(
+                Lua.<Transform>checkType(vargs.checknotnil(2), LuaTransformMeta.class).getObject());
+            return NIL;
+        }));
+
         // sprite:clone()
         set("clone", asFunction(vargs -> {
             return orNil(obj(vargs).clone());
@@ -73,6 +87,26 @@ public class LuaSpriteMeta implements LuaObjectMeta {
         set("getSpriteSize", asFunction(vargs -> {
             TextureRegion region = obj(vargs).getTextureRegion();
             return varargsOf(valueOf(region.getRegionWidth()), valueOf(region.getRegionHeight()));
+        }));
+
+        // sprite:render([x, y, transform])
+        set("render", asFunction(vargs -> {
+            if (vargs.narg() == 0) {
+                obj(vargs).render();
+                return NIL;
+            }
+
+            float x = (float) vargs.optdouble(2, 0);
+            float y = (float) vargs.optdouble(3, 0);
+            Transform transform = vargs.isnil(4) ? null
+                : Lua.<Transform>checkType(vargs.arg(4), LuaTransformMeta.class).getObject();
+            if(transform != null) {
+                obj(vargs).render(x, y, transform);
+            } else {
+                obj(vargs).render(x, y);
+            }
+
+            return NIL;
         }));
     }
 

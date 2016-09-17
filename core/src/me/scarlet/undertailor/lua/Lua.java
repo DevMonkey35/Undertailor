@@ -308,8 +308,8 @@ public class Lua {
         if(copyTable == null && copyTable != Lua.EMPTY_METATABLE) {
             LuaTable functable = new LuaTable();
             Lua.metas.clear();
-            Lua.PMETA.values().forEach(Lua.metas::add);
             Lua.META.values().forEach(Lua.metas::add);
+            Lua.PMETA.values().forEach(Lua.metas::add);
     
             Lua.metas.forEach(meta -> {
                 if (meta.getTargetObjectClass().isInstance(obj) && meta.getMetatable() != null) {

@@ -220,21 +220,11 @@ public class Text extends TextComponent implements Renderable {
 
     // ---------------- abstract method implementation ----------------
 
-    @Override
-    public Transform getTransform() {
-        return this.transform;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {
-        Transform.setOrDefault(this.transform, transform);
-    }
-
     // method-specific variables because stupid scope rules
     float dX, dY, prevSpacing;
 
     @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         dX = x;
         dY = y;
         prevSpacing = 0;

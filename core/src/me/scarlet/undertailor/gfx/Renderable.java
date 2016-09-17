@@ -38,25 +38,6 @@ import com.badlogic.gdx.math.Vector2;
 public interface Renderable {
 
     /**
-     * Returns the {@link Transform} object used to render
-     * this {@link Renderable} with.
-     * 
-     * @return this Renderable's transform
-     */
-    public Transform getTransform();
-
-    /**
-     * Sets a new {@link Transform} object used to render
-     * this {@link Renderable} with.
-     * 
-     * <p>If null is provided, the {@link Renderable} will
-     * assume a Transform object with default values.</p>
-     * 
-     * @param transform the new Transform object
-     */
-    public void setTransform(Transform transform);
-
-    /**
      * Draws this {@link Renderable} object.
      * 
      * <p>Convenience method for drawing objects who
@@ -80,29 +61,6 @@ public interface Renderable {
 
     /**
      * Draws this {@link Renderable} object at the given
-     * position.
-     * 
-     * @param x the x coordinate of the position to draw at
-     * @param y the y coordinate of the position to draw at
-     */
-    public default void render(float x, float y) {
-        this.render(x, y, this.getTransform());
-    }
-
-    /**
-     * Draws this {@link Renderable} object at the given
-     * position and the provided {@link Transform}.
-     * 
-     * @param pos the position to draw at
-     * @param transform the transformations to apply to the
-     *        drawn object
-     */
-    public default void render(Vector2 pos, Transform transform) {
-        this.render(pos.x, pos.y, transform);
-    }
-
-    /**
-     * Draws this {@link Renderable} object at the given
      * position and the provided {@link Transform}.
      * 
      * @param x the x coordinate of the position to draw at
@@ -110,5 +68,6 @@ public interface Renderable {
      * @param transform the transformations to apply to the
      *        drawn object
      */
-    public void render(float x, float y, Transform transform);
+    public void render(float x, float y);
+
 }

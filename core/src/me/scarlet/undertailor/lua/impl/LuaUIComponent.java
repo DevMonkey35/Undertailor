@@ -38,7 +38,6 @@ import org.luaj.vm2.Varargs;
 import me.scarlet.undertailor.engine.ui.UIComponent;
 import me.scarlet.undertailor.engine.ui.UIObject;
 import me.scarlet.undertailor.exception.LuaScriptException;
-import me.scarlet.undertailor.gfx.Transform;
 import me.scarlet.undertailor.lua.LuaImplementable;
 import me.scarlet.undertailor.lua.LuaObjectValue;
 import me.scarlet.undertailor.lua.ScriptManager;
@@ -102,9 +101,9 @@ public class LuaUIComponent extends UIComponent implements LuaImplementable<UICo
     }
 
     @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         if (this.hasFunction(FUNC_RENDER)) {
-            this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y), orNil(transform));
+            this.invokeSelf(FUNC_RENDER, valueOf(x), valueOf(y));
         }
     }
 }

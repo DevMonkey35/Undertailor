@@ -35,7 +35,6 @@ import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.engine.overworld.map.TilesetFactory.Tileset;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 /**
  * A layer of a set of images defined by a {@link Tileset}
@@ -69,19 +68,10 @@ public class TileLayer implements Layerable, Renderable, Identifiable {
         this.layer = layer;
     }
 
-    @Override
-    public Transform getTransform() {
-        return null;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {}
-
     // Intended to draw at overworld scale.
-    // Ignores transform.
     // Origin bottomleft.
     @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         int tileY = parent.getHeight() - 1;
         int tileX = 0;
 

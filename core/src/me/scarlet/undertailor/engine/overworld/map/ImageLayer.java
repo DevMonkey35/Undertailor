@@ -38,7 +38,6 @@ import me.scarlet.undertailor.engine.Layerable;
 import me.scarlet.undertailor.engine.Positionable;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 public class ImageLayer implements Layerable, Renderable, Positionable, Identifiable {
 
@@ -92,19 +91,10 @@ public class ImageLayer implements Layerable, Renderable, Positionable, Identifi
         this.position.set(x, y);
     }
 
-    @Override
-    public Transform getTransform() {
-        return null;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {}
-
     // Ignores position.
-    // Ignores transform.
     // Intended to only render on the overworld.
     @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         renderer.draw(image, this.position.x, this.position.y);
     }
 }

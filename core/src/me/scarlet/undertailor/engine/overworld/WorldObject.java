@@ -50,7 +50,6 @@ import me.scarlet.undertailor.engine.events.Event;
 import me.scarlet.undertailor.engine.events.EventHelper;
 import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 /**
  * An entity within an Overworld.
@@ -75,15 +74,11 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     private short layer;
     private float height;
-    private Transform transform; // The modifiable transform.
-    private Transform proxyTransform;
     private Renderable actor;
 
     public WorldObject() {
         this.id = nextId++;
         this.destroyed = false;
-        this.transform = new Transform();
-        this.proxyTransform = new Transform();
         this.boundingQueue = new ObjectSet<>();
         this.def = new BodyDef();
         this.persistent = false;
@@ -154,18 +149,6 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         this.layer = layer;
     }
 
-    // -------- renderable --------
-
-    @Override
-    public Transform getTransform() {
-        return this.transform;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {
-        Transform.setOrDefault(this.transform, transform);
-    }
-
     // -------- eventlistener --------
 
     @Override
@@ -178,14 +161,9 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
 
     // Ignores provided positions.
     @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         if (!this.visible || this.destroyed || this.actor == null) {
             return;
-        }
-
-        transform.copyInto(proxyTransform);
-        if (this.body != null) {
-            proxyTransform.addRotation((float) Math.toDegrees(this.body.getAngle()));
         }
 
         float drawX;
@@ -367,6 +345,26 @@ public abstract class WorldObject implements Renderable, Layerable, Processable,
         }
 
         this.def.fixedRotation = rotationFixed;
+    }
+
+    @Override
+    public float getRotation() {
+        float rad = this.def.angle;
+        if (this.body != null) {
+            rad = this.body.getAngle();
+        }
+
+        return (float) Math.toDegrees(rad);
+    }
+
+    @Override
+    public void setRotation(float rotation) {
+        float ang = (float) Math.toRadians(rotation);
+        if (this.body != null) {
+            this.body.setTransform(this.body.getPosition(), ang);
+        }
+
+        this.def.angle = ang;
     }
 
     @Override

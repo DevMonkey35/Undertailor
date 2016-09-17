@@ -46,7 +46,6 @@ import me.scarlet.undertailor.engine.events.Event;
 import me.scarlet.undertailor.engine.events.EventHelper;
 import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 import java.util.Iterator;
 
@@ -177,7 +176,7 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     // Ignores provided position.
     // Ignores own transform.
     @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         if (this.destroyed) {
             return;
         }
@@ -331,11 +330,4 @@ public class UIObject implements Identifiable, Processable, Renderable, EventLis
     @Override
     public void setHeight(float height) {}
 
-    @Override
-    public Transform getTransform() {
-        return null;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {}
 }

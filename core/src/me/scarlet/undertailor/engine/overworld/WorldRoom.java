@@ -57,7 +57,6 @@ import me.scarlet.undertailor.engine.overworld.map.TilemapFactory;
 import me.scarlet.undertailor.engine.overworld.map.TilemapFactory.Tilemap;
 import me.scarlet.undertailor.gfx.MultiRenderer;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -164,15 +163,7 @@ public abstract class WorldRoom implements Renderable, Processable, Destructible
     }
 
     @Override
-    public Transform getTransform() {
-        return null;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {}
-
-    @Override
-    public void render(float x, float y, Transform transform) {
+    public void render(float x, float y) {
         Array<Layerable> rendered = this.getInRenderOrder();
         MultiRenderer renderer = this.controller.getRenderer();
         rendered.forEach(obj -> {

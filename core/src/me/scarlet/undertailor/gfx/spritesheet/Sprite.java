@@ -92,17 +92,19 @@ public class Sprite implements Renderable, Cloneable {
 
     // ---------------- abstract method implementation ----------------
 
-    @Override
     public Transform getTransform() {
         return this.transform;
     }
 
-    @Override
     public void setTransform(Transform transform) {
         Transform.setOrDefault(this.transform, transform);
     }
 
     @Override
+    public void render(float posX, float posY) {
+        this.render(posX, posY, this.transform);
+    }
+
     public void render(float posX, float posY, Transform transform) {
         float originX = 0, originY = 0;
         int offX = 0, offY = 0;

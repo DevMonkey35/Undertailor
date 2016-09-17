@@ -40,7 +40,6 @@ import me.scarlet.undertailor.engine.events.Event;
 import me.scarlet.undertailor.engine.events.EventHelper;
 import me.scarlet.undertailor.engine.events.EventListener;
 import me.scarlet.undertailor.gfx.Renderable;
-import me.scarlet.undertailor.gfx.Transform;
 
 /**
  * Child object of a {@link UIObject}, of which handles most
@@ -51,14 +50,12 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
 
     private boolean destroyed;
     private EventHelper events;
-    private Transform transform;
     private Vector2 screenProxy;
     private Vector2 position;
     private UIObject parent;
 
     protected UIComponent() {
         this.screenProxy = new Vector2();
-        this.transform = new Transform();
         this.position = new Vector2(0, 0);
         this.events = new EventHelper(this);
         this.destroyed = false;
@@ -87,16 +84,6 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
     @Override
     public void setPosition(float x, float y) {
         this.position.set(x, y);
-    }
-
-    @Override
-    public Transform getTransform() {
-        return this.transform;
-    }
-
-    @Override
-    public void setTransform(Transform transform) {
-        Transform.setOrDefault(this.transform, transform);
     }
 
     /**
@@ -176,7 +163,7 @@ public abstract class UIComponent implements Positionable, Renderable, Processab
     public abstract void onClaim(UIObject parent);
 
     @Override
-    public abstract void render(float x, float y, Transform transform);
+    public abstract void render(float x, float y);
 
     // ---------------- object ----------------
 
