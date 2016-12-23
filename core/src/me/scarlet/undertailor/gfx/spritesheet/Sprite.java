@@ -47,31 +47,30 @@ public class Sprite implements Renderable, Cloneable {
     /**
      * Metadata for sprite rendering offsets.
      */
-    public static class SpriteMeta {
-
-        public static final String[] META_VALUES =
-            {"originX", "originY", "wrapX", "wrapY", "offX", "offY"};
+    public static class SpriteMeta implements Cloneable {
 
         public float originX, originY;
-        public int wrapX, wrapY, offX, offY;
+        public int offX, offY;
 
         public SpriteMeta() {
-            this(0.0F, 0.0F, 0, 0, 0, 0);
+            this(0.0F, 0.0F, 0, 0);
         }
 
-        public SpriteMeta(float originX, float originY, int offX, int offY, int wrapX, int wrapY) {
+        public SpriteMeta(float originX, float originY, int offX, int offY) {
             this.originX = originX;
             this.originY = originY;
-            this.wrapX = wrapX;
-            this.wrapY = wrapY;
             this.offX = offX;
             this.offY = offY;
         }
 
         @Override
         public String toString() {
-            return "[" + originX + ", " + originY + ", " + wrapX + ", " + wrapY + ", " + offX + ", "
-                + offY + "]";
+            return "[" + originX + ", " + originY + ", " + offX + ", " + offY + "]";
+        }
+
+        @Override
+        public SpriteMeta clone() {
+            return new SpriteMeta(this.originX, this.originY, this.offX, this.offY);
         }
     }
 
